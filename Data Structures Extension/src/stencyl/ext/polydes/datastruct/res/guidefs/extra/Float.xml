@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Float">
+	<field name="editor" type="Selection" label="Editor" options="Plain,Spinner,Slider" default="Plain" />
+	<field name="min" type="Float" label="Min Value" optional="true" />
+	<field name="max" type="Float" label="Max Value" optional="true" />
+	<if hideWhenFalse="true"><is field="editor" value="Slider" />
+		<field name="decimalPlaces" type="Int" label="Decimal Places" optional="true" />
+	</if>
+	<if hideWhenFalse="true"><is field="editor" value="Spinner" />
+		<field name="step" type="Float" label="Step" default=".01"/>
+	</if>
+	<field name="default" type="Float" label="Default" default="0.0" />
+</structure>

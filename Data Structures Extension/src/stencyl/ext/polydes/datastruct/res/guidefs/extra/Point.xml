@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Point">
+	<field name="default" type="Point" label="Default" optional="true" />
+</structure>

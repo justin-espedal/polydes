@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras String">
+	<field name="editor" type="Selection" label="Editor" options="Single Line,Expanding" default="Single Line" />
+	<field name="default" type="String" label="Default" default="" />
+</structure>

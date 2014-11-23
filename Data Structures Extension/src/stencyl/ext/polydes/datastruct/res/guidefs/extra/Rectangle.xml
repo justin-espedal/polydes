@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Rectangle">
+	<field name="default" type="Rectangle" label="Default" optional="true" />
+</structure>

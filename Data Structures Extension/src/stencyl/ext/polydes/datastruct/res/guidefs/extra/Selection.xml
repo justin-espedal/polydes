@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Selection">
+	<field name="editor" type="Selection" label="Editor" options="Dropdown,Radio Buttons,Grid,Cycle" default="Dropdown" />
+	<field name="options" type="Array" label="Options" editor="Simple" genType="String" />
+	<field name="default" type="String" label="Default" default="" />
+</structure>

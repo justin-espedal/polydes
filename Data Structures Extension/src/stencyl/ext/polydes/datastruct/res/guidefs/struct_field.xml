@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field">
+	<field name="name" type="VarName" label="Name" />
+	<field name="type" type="Type" label="Type" default="String" />
+	<field name="label" type="String" label="Label" />
+	<field name="hint" type="String" label="Hint" editor="Expanding" />
+	<field name="optional" type="Boolean" label="Optional" />
+</structure>

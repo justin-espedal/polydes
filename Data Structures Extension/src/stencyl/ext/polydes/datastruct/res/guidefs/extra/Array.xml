@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Array">
+	<field name="editor" type="Selection" label="Editor" options="Standard,Simple" default="Standard" />
+	<field name="genType" type="Type" label="Element Type" default="String" typeLimit="DynamicArraySubType" />
+	<field name="default" type="Array" label="Default" optional="true" />
+</structure>

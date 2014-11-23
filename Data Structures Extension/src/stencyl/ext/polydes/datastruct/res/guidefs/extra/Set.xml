@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Set">
+	<field name="editor" type="Selection" label="Editor" options="Checklist,Grid" default="Checklist" />
+	<field name="sourceType" type="Selection" label="Source Type" options="Structure,Resource,Custom" default="Structure" />
+	<if hideWhenFalse="true"><is field="sourceType" value="Structure" />
+		<field name="structureSource" type="StructureType" label="Source" />
+	</if>
+	<if hideWhenFalse="true"><is field="sourceType" value="Resource" />
+		<field name="resourceSource" type="StencylType" label="Source" />
+	</if>
+	<if hideWhenFalse="true"><is field="sourceType" value="Custom" />
+		<field name="customSource" type="Array" label="Source" editor="Simple" />
+	</if>
+</structure>

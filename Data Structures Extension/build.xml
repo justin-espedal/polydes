@@ -1,0 +1,57 @@
+<!--
++==========================================================================
+| Data Structures Extension
++==========================================================================
+-->
+
+<project name="stencyl" basedir="." default="dist">
+	
+	<property name="name" value="DataStructuresExtension" />
+	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	
+	<!-- Support ant's "for" task -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="dist">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		
+		<javac source="1.5" target="1.5" destdir="build" debug="on">
+			<src path="src/" />
+			<src path="target/generated-sources/" />
+			<classpath>
+				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+				<pathelement path="J:/Java/libs/tablelayout.jar" />
+				<pathelement path="J:/Java/libs/antlr-runtime-4.4.jar" />
+			</classpath>
+		</javac>
+		
+		<!-- Include extra resources -->
+		<copy toDir="build/stencyl/ext/polydes/datastruct/res">
+			<fileset dir="src/stencyl/ext/polydes/datastruct/res">
+				<exclude name="Resources.java" />
+			</fileset>
+		</copy>
+		
+		<!-- Primary .jar export location -->
+		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
+			<zipgroupfileset dir="J:/Java/libs/" includes="tablelayout.jar" />
+			<zipgroupfileset dir="J:/Java/libs/" includes="antlr-runtime-4.4.jar" />
+		</jar>
+
+		<!-- Extra .jar locations to copy to -->
+		<for param="file">
+			<path>
+				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/${name}.jar"/>
+			</path>
+			<sequential>
+				<copy file="${swworkdir}/extensions/${name}.jar" tofile="@{file}" />
+			</sequential>
+		</for>
+	</target>
+
+</project>

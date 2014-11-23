@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Control">
+	<field name="default" type="Control" label="Default" optional="true" />
+</structure>

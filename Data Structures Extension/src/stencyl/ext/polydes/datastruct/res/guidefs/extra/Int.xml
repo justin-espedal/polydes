@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<structure label="Field Extras Int">
+	<field name="editor" type="Selection" label="Editor" options="Plain,Spinner,Slider" default="Plain" />
+	<field name="min" type="Int" label="Min Value" optional="true" />
+	<field name="max" type="Int" label="Max Value" optional="true" />
+	<if hideWhenFalse="true"><is field="editor" value="Spinner" />
+		<field name="step" type="Int" label="Step" default="1"/>
+	</if>
+	<field name="default" type="Int" label="Default" default="0" />
+</structure>
