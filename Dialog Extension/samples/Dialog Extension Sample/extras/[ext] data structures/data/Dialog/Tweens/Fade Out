@@ -1,0 +1,5 @@
+struct_id=6
+struct_type=tween
+duration=300
+opacityStart=1.0
+opacityStop=0.0

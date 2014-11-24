@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<groups>
+    <group eventID="1" id="0">
+        <draw comment="false" x="15" y="15">
+            <group eventID="1" id="-1">
+                <if comment="false" x="26" y="40">
+                    <group eventID="1" id="-1">
+                        <incdec comment="false" x="37" y="65">
+                            <int id="0" val="1"/>
+                            <int id="1" val="1"/>
+                            <int id="2" val="4"/>
+                        </incdec>
+                        <if comment="false" x="37" y="92">
+                            <group eventID="1" id="-1">
+                                <set-val-3-1 comment="false" x="48" y="122">
+                                    <int id="0" val="0"/>
+                                </set-val-3-1>
+                            </group>
+                            <less comment="false" id="0" x="0" y="0">
+                                <get-val-3-1 comment="false" id="0" x="0" y="0"/>
+                                <int id="1" val="0"/>
+                            </less>
+                        </if>
+                    </group>
+                    <get-game-val-5 comment="false" id="0" x="0" y="0"/>
+                </if>
+                <else comment="false" x="26" y="166">
+                    <group eventID="1" id="-1">
+                        <incdec comment="false" x="37" y="186">
+                            <int id="0" val="1"/>
+                            <int id="1" val="0"/>
+                            <int id="2" val="1"/>
+                        </incdec>
+                        <if comment="false" x="37" y="213">
+                            <group eventID="1" id="-1">
+                                <set-val-3-1 comment="false" x="48" y="243">
+                                    <int id="0" val="100"/>
+                                </set-val-3-1>
+                            </group>
+                            <more comment="false" id="0" x="0" y="0">
+                                <get-val-3-1 comment="false" id="0" x="0" y="0"/>
+                                <int id="1" val="100"/>
+                            </more>
+                        </if>
+                    </group>
+                </else>
+                <set-alpha comment="false" x="26" y="287">
+                    <get-val-3-1 comment="false" id="0" x="0" y="0"/>
+                </set-alpha>
+                <draw-image-actor comment="false" x="26" y="312">
+                    <ACTOR eid="this" id="0"/>
+                </draw-image-actor>
+            </group>
+        </draw>
+    </group>
+    <group eventID="1" id="-1"/>
+    <group eventID="2" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="2" id="-1">
+                <set-val-3-1 comment="false" x="26" y="40">
+                    <int id="0" val="0"/>
+                </set-val-3-1>
+                <toggle-image comment="false" x="26" y="60">
+                    <ACTOR eid="this" id="0"/>
+                    <int id="1" val="1"/>
+                </toggle-image>
+            </group>
+        </init>
+    </group>
+    <group eventID="2" id="-1"/>
+</groups>

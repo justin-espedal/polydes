@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Sound Scripts" classname="SoundScripts.hx">
+	<cmds>
+		<cmd name="playsound">
+			<arg name="sound" type="Sound" />
+		</cmd>
+		<cmd name="loopsound">
+			<arg name="sound" type="Sound" />
+		</cmd>
+		<cmd name="stopsound" />
+		<cmd name="playchan">
+			<arg name="sound" type="Sound" />
+			<arg name="channel" type="Int" />
+		</cmd>
+		<cmd name="loopchan">
+			<arg name="sound" type="Sound" />
+			<arg name="channel" type="Int" />
+		</cmd>
+		<cmd name="stopchan">
+			<arg name="channel" type="Int" />
+		</cmd>
+	</cmds>
+</extension>

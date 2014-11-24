@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<game accelFramerate="0" adsPosition="0" aheight="480" airCert="" airPass="" androidAlias="" androidCert="" androidMinVersion="0" androidPassword="" androidPublicKey="" androidTargetVersion="7" antialias="true" appName="My Game" appType="0" atlasBindingDefault="true" author="" authorURL="" autoRotate="false" awidth="640" backgroundColor="-15592942" barBackgroundColor="-12303292" barColor="-7829368" barHeight="8" barLocation="0" barOffsetX="0" barOffsetXPhone="0" barOffsetXTablet="0" barOffsetY="0" barOffsetYPhone="0" barOffsetYTablet="0" barScalePhone="1.0" barScaleTablet="2.0" barWidth="120" bindAllAtlasesDefault="true" borderColor="-12303292" borderThickness="2" bundleID="com.yourname.gamename" bundleVersion="1.0" checksum="none" cpmID="" cws-desc="Description" cws-icon128="" cws-icon16="" cws-name="Name" cws-version="1.0" default="0" defaultFramerate="60" defaultSceneID="0" desc="" desktopScale="1x" desktopScaleMode="1" deviceOS="4.3" disableBackButton="false" enablePurchases="false" engine="0" format="3.2" gameid="-1" haxeExtras="" height="480" internalVersion="1" internalVersionIOS="1" kit="false" lockURL="" macBundleID="com.yourcompany.gamename" maxScaleAndroid="4x" maxScaleDesktop="4x" maxScaleIOS="4x" maxScaleWeb="4x" metroColor="-12566464" mochi="" multitouch="true" name="Dialog Extension Sample" ngID="" ngKey="" orientation="1" p12="" p12pwd="" physicsMode="0" preloaderstyle="0" products="" prov-adhoc="" prov-store="" scale="1" scaleModeAndroid="0" scaleModeDesktop="0" scaleModeIOS="0" scaleModeWeb="0" showAds="false" simulatorOS="4.3" splashStyle="0" startInFullScreenDesktop="false" startInFullScreenWeb="false" swfHeight="0" swfWidth="0" swfX="0" swfY="0" swfloc="" useGlossyIcon="false" webScale="1x" whirlKey="" width="640" windowsAppName="" windowsAuthor="" windowsBundleID="com.yourcompany.gamename">
+    <exts>
+        <e enabled="false" id="raycastapi"/>
+        <e enabled="false" id="test-native"/>
+        <e enabled="false" id="list-utils"/>
+        <e enabled="false" id="test"/>
+        <e enabled="false" id="perlin-noise"/>
+        <e enabled="false" id="decision-making"/>
+        <e enabled="false" id="label"/>
+        <e enabled="false" id="test-flash"/>
+        <e enabled="true" id="dialog"/>
+        <e enabled="false" id="sockjs"/>
+        <e enabled="false" id="sfxr-stencyl"/>
+        <e enabled="false" id="tileapi"/>
+    </exts>
+    <scales>
+        <scale detailed="1x" id="0" name="1x" size="1.0"/>
+        <scale detailed="1.5x" id="1" name="1.5x" size="1.5"/>
+        <scale detailed="2x" id="2" name="2x" size="2.0"/>
+        <scale detailed="3x" id="3" name="3x" size="3.0"/>
+        <scale detailed="4x" id="4" name="4x" size="4.0"/>
+    </scales>
+    <projectScales>
+        <scale enabled="true" name="1x"/>
+        <scale enabled="true" name="1.5x"/>
+        <scale enabled="true" name="2x"/>
+        <scale enabled="false" name="3x"/>
+        <scale enabled="true" name="4x"/>
+    </projectScales>
+    <webScales>
+        <scale enabled="true" name="1x"/>
+        <scale enabled="true" name="1.5x"/>
+        <scale enabled="true" name="2x"/>
+        <scale enabled="false" name="3x"/>
+        <scale enabled="true" name="4x"/>
+    </webScales>
+    <desktopScales>
+        <scale enabled="true" name="1x"/>
+        <scale enabled="true" name="1.5x"/>
+        <scale enabled="true" name="2x"/>
+        <scale enabled="false" name="3x"/>
+        <scale enabled="true" name="4x"/>
+    </desktopScales>
+    <iOSScales>
+        <scale enabled="true" name="1x"/>
+        <scale enabled="true" name="1.5x"/>
+        <scale enabled="true" name="2x"/>
+        <scale enabled="false" name="3x"/>
+        <scale enabled="true" name="4x"/>
+    </iOSScales>
+    <androidScales>
+        <scale enabled="true" name="1x"/>
+        <scale enabled="true" name="1.5x"/>
+        <scale enabled="true" name="2x"/>
+        <scale enabled="false" name="3x"/>
+        <scale enabled="true" name="4x"/>
+    </androidScales>
+    <folders/>
+    <packs/>
+    <groups/>
+    <cgroups>
+        <cgroup g1="3" g2="3"/>
+    </cgroups>
+    <input>
+        <key id="0" keyname="UP" name="up" vk="38" vks="38"/>
+        <key id="1" keyname="DOWN" name="down" vk="40" vks="40"/>
+        <key id="2" keyname="LEFT" name="left" vk="37" vks="37"/>
+        <key id="3" keyname="RIGHT" name="right" vk="39" vks="39"/>
+        <key id="4" keyname="Z" name="z" vk="90" vks="90"/>
+        <key id="5" keyname="X" name="x" vk="88" vks="88"/>
+        <key id="6" keyname="ENTER" name="enter" vk="10" vks="10"/>
+        <key id="7" keyname="C" name="c" vk="67" vks="67"/>
+        <key id="8" keyname="V" name="v" vk="86" vks="86"/>
+    </input>
+    <attcats>
+        <cat id="-1" name="Default"/>
+    </attcats>
+    <props/>
+    <attributes>
+        <bool cid="-1" id="6" name="Advance Dialog" save="true" value="false"/>
+        <bool cid="-1" id="5" name="Dialog Open" save="true" value="false"/>
+    </attributes>
+    <collisions>
+        <poly id="1" name="Square" pts="0.0,0.0#0.0,1.0#1.0,1.0#1.0,0.0"/>
+        <poly id="2" name="Tri 45R" pts="0.0,0.0#0.0,1.0#1.0,1.0"/>
+        <poly id="3" name="Tri 45L" pts="1.0,0.0#0.0,1.0#1.0,1.0"/>
+        <poly id="4" name="Tri 45R Inv" pts="0.0,0.0#0.0,1.0#1.0,0.0"/>
+        <poly id="5" name="Tri 45L Inv" pts="0.0,0.0#1.0,1.0#1.0,0.0"/>
+        <poly id="6" name="Tri 30R" pts="0.0,1.0#1.0,1.0#1.0,0.5"/>
+        <poly id="7" name="Tri 30L" pts="0.0,0.5#0.0,1.0#1.0,1.0"/>
+        <poly id="8" name="Tri 30-2R" pts="0.0,0.5#0.0,1.0#1.0,1.0#1.0,0.0"/>
+        <poly id="9" name="Tri 30-2L" pts="0.0,0.0#0.0,1.0#1.0,1.0#1.0,0.5"/>
+        <poly id="10" name="Tri 30R Inv" pts="0.0,0.0#1.0,0.5#1.0,0.0"/>
+        <poly id="11" name="Tri 30L Inv" pts="0.0,0.0#0.0,0.5#1.0,0.0"/>
+        <poly id="12" name="Tri 30-2R Inv" pts="0.0,0.0#0.0,0.5#1.0,1.0#1.0,0.0"/>
+        <poly id="13" name="Tri 30-2L Inv" pts="0.0,0.0#0.0,1.0#1.0,0.5#1.0,0.0"/>
+        <poly id="14" name="Tri 60R" pts="0.5,1.0#1.0,1.0#1.0,0.0"/>
+        <poly id="15" name="Tri 60L" pts="0.0,0.0#0.0,1.0#0.5,1.0"/>
+        <poly id="17" name="Tri 60-2L" pts="0.0,0.0#0.0,1.0#1.0,1.0#0.5,0.0"/>
+        <poly id="16" name="Tri 60-2R" pts="0.5,0.0#0.0,1.0#1.0,1.0#1.0,0.0"/>
+        <poly id="19" name="Tri 60L Inv" pts="0.0,0.0#0.0,1.0#0.5,0.0"/>
+        <poly id="18" name="Tri 60R Inv" pts="0.5,0.0#1.0,1.0#1.0,0.0"/>
+        <poly id="21" name="Tri 60-2L Inv" pts="0.0,0.0#0.0,1.0#0.5,1.0#1.0,0.0"/>
+        <poly id="20" name="Tri 60-2R Inv" pts="0.0,0.0#0.5,1.0#1.0,1.0#1.0,0.0"/>
+    </collisions>
+    <atlases>
+        <atlas allScenes="true" desc="" dirty="true" id="0" members="1,32,33,6,8,9,11,12,13,15,17,16,19,21,27,29,28,31,30," name="Main Atlas" pvr="false" resize="0" target="0"/>
+        <atlas allScenes="true" desc="" dirty="true" id="1" members="" name="Atlas 2" pvr="false" resize="0" target="0"/>
+        <atlas allScenes="true" desc="" dirty="true" id="2" members="" name="Atlas 3" pvr="false" resize="0" target="0"/>
+        <atlas allScenes="true" desc="" dirty="true" id="3" members="" name="Atlas 4" pvr="false" resize="0" target="0"/>
+    </atlases>
+    <libraries/>
+</game>

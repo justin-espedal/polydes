@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Flow Scripts" classname="FlowScripts.hx">
+	<cmds>
+		<cmd name="waitattr">
+			<arg name="source" type="Array" />
+		</cmd>
+		<cmd name="wait">
+			<arg name="duration" type="Float" />
+		</cmd>
+		<cmd name="but" />
+		<cmd name="bc" />
+	</cmds>
+	<draws>
+		<callback name="Draw Wait Pointer" />
+	</draws>
+	<prefs>
+		<pref name="animForPointer" type="Animation" label="Anim For Pointer" hint="Anim to display as the pointer when waiting for user input." />
+		<pref name="pointerPos" type="RatioPoint" label="Pointer Position" hint="position to create pointer at." />
+		<pref name="advanceDialogButton" type="Control" label="Advance Dialog Button" />
+		<pref name="waitingSound" type="Sound" label="Waiting Sound" hint="name of Sound to play when pointer becomes visible" />
+		<pref name="waitingSoundInterval" type="Int" label="Waiting Sound Interval" hint="number of milliseconds between playback of the waiting sound" />
+		<pref name="inputSound" type="Sound" label="Input Sound" hint="name of Sound to play when dialog is advanced" />
+		<pref name="noInputSoundWithTags" type="Array" label="No Input Sound Tags"  hint="names of tags. If any of these tags is found next to the &lt;but&gt; tag, the input sound won&apos;t be played when you advance the dialog. Used normally for if the other tag plays a sound that might conflict with the &lt;but&gt; sound." />
+	</prefs>
+</extension>

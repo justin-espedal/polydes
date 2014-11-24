@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Extra Glyphs" classname="ExtraGlyphs.hx">
+	<cmds>
+		<cmd name="glyph">
+			<arg name="glyphName" type="String" />
+		</cmd>
+	</cmds>
+	<prefs>
+		<pref name="padding" type="Int" label="Padding" hint="extra pixels counted for the width of a glyph." />
+	</prefs>
+</extension>

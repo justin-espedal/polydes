@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Typing Scripts" classname="TypingScripts.hx">
+	<cmds>
+		<cmd name="font">
+			<arg name="font" type="Font" />
+		</cmd>
+		<cmd name="color">
+			<arg name="color" type="Color" />
+		</cmd>
+		<cmd name="typespeed">
+			<arg name="speed" type="Float" />
+		</cmd>
+		<cmd name="typesound">
+			<arg name="sound" type="Sound" />
+		</cmd>
+	</cmds>
+	<prefs>
+		<pref name="defaultTypeSound" type="Sound" label="Default Type Sound" />
+	</prefs>
+</extension>

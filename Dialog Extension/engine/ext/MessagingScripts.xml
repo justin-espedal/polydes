@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Messaging Scripts" classname="MessagingScripts.hx">
+	<cmds>
+		<cmd name="setattr">
+			<arg name="args" type="Array" />
+		</cmd>
+		<cmd name="getattr" returns="Dynamic">
+			<arg name="args" type="Array" />
+		</cmd>
+		<cmd name="showattr">
+			<arg name="args" type="Array" />
+		</cmd>
+		<cmd name="messagescene">
+			<arg name="behaviorName" type="String" />
+			<arg name="messageName" type="String" />
+			<arg name="args" type="Array" />
+		</cmd>
+		<cmd name="messageactor">
+			<arg name="actorName" type="String" />
+			<arg name="behaviorName" type="String" />
+			<arg name="messageName" type="String" />
+			<arg name="args" type="Array" />
+		</cmd>
+	</cmds>
+</extension>

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+
+1) Types
+[void, actor, actortype, boolean, camera, color, control, font, group, number, list, anything, region, scene, sound, text, dropdown]
+
+2) The Spec
+
+<block> - An entry for a custom block
+tag = unique name for block, only ABC and - (dash) allowed
+spec = like what you see in language files, use %0, %1, etc. to specify where the spaces go
+code = output code, use ~ to specify the blanks. Must match the order in which fields are specified.
+type = any of these [normal, action, wrapper, event]
+color = any of these [blue, cyan, green, lime, purple, red, gray, charcoal]
+returns = a TYPE
+
+<fields> - A list of fields that a block contains
+For children, the tag name corresponds to a TYPE. The order attribute starts at 0 and increments by 1. Do not skip values.
+
+If you wish to use a dropdown, look at the example below for syntax.
+
+3) Stuff that is not implemented yet
+
+- No support for dropdowns yet.
+- No support for embedded blocks yet.
+- This format will be reused for customized palettes in the future.
+
+-->
+
+<palette>
+	<block tag="display-dialog" spec="show dialog %0" code='Dialog.cbCall(~, "base", this, "");' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog2" spec="show dialog %0 and trigger event %1 upon completion" code='Dialog.cbCall(~, "base", this, ~);' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog3" spec="show dialog %0 with style %1" code='Dialog.cbCall(~, ~, this, "");' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog4" spec="show dialog %0 with style %1 and trigger event %2 upon completion" code='Dialog.cbCall(~, ~, this, ~);' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+			<text order="2"></text>
+		</fields>
+	</block>
+
+	<block tag="display-dialog5" spec="show text %0" code='Dialog.globalCall(~, "base", this, "");' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog6" spec="show text %0 and trigger event %1 upon completion" code='Dialog.globalCall(~, "base", this, ~);' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog7" spec="show text %0 with style %1" code='Dialog.globalCall(~, ~, this, "");' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog8" spec="show text %0 with style %1 and trigger event %2 upon completion" code='Dialog.globalCall(~, ~, this, ~);' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+			<text order="2"></text>
+		</fields>
+	</block>
+</palette>

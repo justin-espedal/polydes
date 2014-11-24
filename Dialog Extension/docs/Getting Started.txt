@@ -1,0 +1,39 @@
+1) This is a combined toolset and engine extension for Stencyl 3.
+
+2) The engine extension is found in the "dialog" folder. Move that folder to "[Your Stencyl Workspace]/engine-extensions/".
+
+3) The toolset extensions are "DialogExtension.jar" and "DataStructuresExtension.jar". Move those to "[Your Stencyl Workspace]/extensions/".
+
+4) Restart Stencyl if it's already open.
+
+5) In the menu bar, Extensions > Extension Manager to make sure the Dialog Toolset Extension is installed and enabled.
+
+6) Create a new game or open an existing one.
+
+7) In the toolbar, Settings > Extension, make sure the Dialog Engine Extension is installed.
+
+8) Enabled it, then close and reopen your game.
+
+9) The dialog text can be found in the "Dialog Extension" link on the sidebar. Most of the preferences related to dialog presentation can be found in the "Data Structures" sidebar link.
+
+10) To display your dialog in the game, some custom blocks are included:
+
+The following blocks use the name of a dialog chunk to start dialog.
+
+- show dialog [ ... ]
+- show dialog [ ... ] and trigger event [ ... ] upon completion
+- show dialog [ ... ] with style [ ... ]
+- show dialog [ ... ] with style [ ... ] and trigger event [ ... ] upon completion
+
+- The field after "show dialog" is filled with the name of the Dialog Chunk you wish to display.
+- If one of the no-style blocks is used, the default "base" style is shown.
+- If a "trigger event" block is used, once the dialog is ended with the <end> tag, the specified Custom Event is called.
+
+There are four alternate blocks, "show text [ ... ] ..." which you can use to call a dialog with text from an attribute.
+
+In addition, you can set up a Game Attribute to always be TRUE if a Dialog is open, which can be used for game rules such as disallowing player movement during dialog.
+The setting for this is in Data Structures > Default Style > Basic Settings > Control Attribute. Just set it equal to the name of the Game Attribute you want set to true while Dialog is open.
+
+11) I'd love to hear any feedback, even if it's like "yeah this is okay I might use it in the future whatever. You did an okay job." Was this the most poorly written guide ever? Did you have any trouble getting things set up? If you have hate mail, bug reports, requests, feel free to post at the extensions thread at Stencyl or send me a PM.
+
+Thanks!

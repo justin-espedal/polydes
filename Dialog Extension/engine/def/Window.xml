@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="scripts.ds.dialog.WindowTemplate">
+    <field hint="ex: (0   0) top left, (50%   100%) middle bottom, (100% - 10   100% - 10) ten pixels from bottom right" label="Position" name="position" type="RatioPoint"/>
+    <field label="Scaling Image" name="image" type="ScalingImage"/>
+    <field label="Creation Tween" name="createTween" type="Tween"/>
+    <field label="Destruction Tween" name="destroyTween" type="Tween"/>
+    <field editor="Dropdown" label="Width" name="scaleWidth" options="[No Scale,Fit Contents,Custom]:String" type="Selection"/>
+    <if>
+        <is field="scaleWidth" value="Custom"/>
+        <field label="Custom Width" name="scaleWidthSize" type="RatioInt"/>
+    </if>
+    <field editor="Dropdown" label="Height" name="scaleHeight" options="[No Scale,Fit Contents,Custom]:String" type="Selection"/>
+    <if>
+        <is field="scaleHeight" value="Custom"/>
+        <field label="Custom Height" name="scaleHeightSize" type="RatioInt"/>
+    </if>
+    <field hint="If &amp;quot;Fit Contents&amp;quot; is used, this provides padding for the contents. If &amp;quot;No Scale&amp;quot; or &amp;quot;Custom&amp;quot; is used, and this window&amp;apos;s contents are sized to fit the window, they will stay within the insets." label="Insets" name="insets" type="Rectangle"/>
+</structure>

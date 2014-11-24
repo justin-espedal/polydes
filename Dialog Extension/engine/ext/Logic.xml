@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Logic" classname="Logic.hx">
+	<cmds>
+		<cmd name="if">
+			<arg name="condition" type="Boolean" />
+		</cmd>
+		<cmd name="elseif">
+			<arg name="condition" type="Boolean" />
+		</cmd>
+		<cmd name="else" />
+		<cmd name="endif" />
+	</cmds>
+</extension>

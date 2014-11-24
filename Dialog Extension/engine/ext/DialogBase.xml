@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Dialog Base" classname="DialogBase.hx">
+	<cmds>
+		<cmd name="br" />
+		<cmd name="end" />
+		<cmd name="clear" />
+		<cmd name="close" />
+		<cmd name="dg">
+			<arg name="toCall" type="String" />
+		</cmd>
+	</cmds>
+	<draws>
+		<callback name="Draw Window Frame" />
+		<callback name="Draw Message" />
+	</draws>
+	<prefs>
+		<pref name="window" type="Window" label="Message Window" />
+		<pref name="fitToWindow" type="Boolean" label="Fit Message Area To Window" />
+		<if><is pref="fitToWindow" value="false" />
+			<pref name="msgBounds" type="Rectangle" label="Message Bounds" hint="Position on screen of the message" />
+		</if>
+		<pref name="msgFont" type="Font" label="Message Font" />
+		<pref name="msgTypeSpeed" type="Float" label="Message Type Speed" hint="Seconds between characters being typed. (0.05, 20 characters / second)" />
+		<pref name="msgStartSound" type="Sound" label="Message Start Sound" />
+		<pref name="controlAttribute" type="String" label="Control Attribute" hint="Name of Game Attribute that will be set to &quot;true&quot; while Dialog is open." />
+		<pref name="lineSpacing" type="Int" label="Line Spacing" hint="Pixels added between lines." />
+		<pref name="clearSound" type="Sound" label="Clear Sound" hint="Name of sound to play when &lt;clear&gt; is used." />
+		<pref name="closeSound" type="Sound" label="Close Sound" hint="Name of sound to play when &lt;close&gt; is used." />
+		<pref name="endSound" type="Sound" label="End Sound" hint="Name of sound to play when &lt;end&gt; is used." />
+	</prefs>
+</extension>

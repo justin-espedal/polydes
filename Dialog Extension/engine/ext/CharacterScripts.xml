@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Character Scripts" classname="CharacterScripts.hx">
+	<cmds>
+		<cmd name="showname">
+			<arg name="nameToDraw" type="String" />
+		</cmd>
+		<cmd name="hidename" />
+		<cmd name="face">
+			<arg name="facename" type="String" />
+		</cmd>
+	</cmds>
+	<draws>
+		<callback name="Draw Namebox" />
+		<callback name="Draw Face" />
+	</draws>
+	<prefs>
+		<pref name="nameboxWindow" type="Window" label="Namebox Window" />
+		<pref name="typeOffset" type="Point" label="Type Offset" hint="Name&apos;s offset from top-left window corner" />
+		<pref name="nameboxFont" type="Font" label="Namebox Font" />
+		<pref name="faceImagePrefix" type="String" label="Face Image Prefix" hint="To be added to the beginning of the face called for. &quot;Face &quot; will turn &lt;face Lenny&gt; into &quot;Face Lenny.png&quot;" />
+		<pref name="faceRelation" type="String" label="Draw Face in Relation to" dropdown="Screen,Message Window" />
+		<pref name="faceOrigin" type="RatioPoint" label="Face Image Origin" />
+		<pref name="facePos" type="RatioPoint" label="Face Position" />
+		<pref name="faceMessageOffset" type="Rectangle" label="Face Message Offset" hint="Change the borders of the dialog message by the specified amounts if a face is shown." />
+	</prefs>
+</extension>

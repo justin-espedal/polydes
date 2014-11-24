@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Skip Scripts" classname="SkipScripts.hx">
+	<cmds>
+		<cmd name="skip" />
+		<cmd name="noskip" />
+	</cmds>
+	<prefs>
+		<pref name="fastSpeed" type="Float" label="Fast Speed"  hint="seconds between characters being typed for fast mode." />
+		<pref name="fastButton" type="Control" label="Fast Button" />
+		<pref name="fastSound" type="Sound" label="Fast Sound" />
+		<pref name="fastSoundInterval" type="Int" label="Fast Sound Interval" hint="number of milliseconds between playback of the fast sound (0 makes the sound play when a character is typed.)" />
+		<pref name="zoomSpeed" type="Float" label="Zoom Speed" hint="seconds between characters being typed for zoom mode." />
+		<pref name="zoomButton" type="Control" label="Zoom Button" />
+		<pref name="zoomSound" type="Sound" label="Zoom Sound" />
+		<pref name="zoomSoundInterval" type="Int" label="Zoom Sound Interval" hint="number of milliseconds between playback of the zoom sound (0 makes the sound play when a character is typed.)" />
+		<pref name="instantButton" type="Control" label="Instant Button" />
+		<pref name="instantSound" type="Sound" label="Instant Sound" />
+		<pref name="skippableDefault" type="Boolean" label="Skippable Default" hint="whether these buttons have any effect by default." />
+	</prefs>
+</extension>

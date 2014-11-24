@@ -25,8 +25,8 @@
 			<src path="target/generated-sources/" />
 			<classpath>
 				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-				<pathelement path="J:/Java/libs/tablelayout.jar" />
-				<pathelement path="J:/Java/libs/antlr-runtime-4.4.jar" />
+				<pathelement path="libs/tablelayout.jar" />
+				<pathelement path="libs/antlr-runtime-4.4.jar" />
 			</classpath>
 		</javac>
 		
@@ -38,9 +38,8 @@
 		</copy>
 		
 		<!-- Primary .jar export location -->
-		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
-			<zipgroupfileset dir="J:/Java/libs/" includes="tablelayout.jar" />
-			<zipgroupfileset dir="J:/Java/libs/" includes="antlr-runtime-4.4.jar" />
+		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build" >
+			<zipgroupfileset dir="libs" includes = "*.jar" />
 		</jar>
 
 		<!-- Extra .jar locations to copy to -->

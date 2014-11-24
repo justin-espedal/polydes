@@ -1,0 +1,7 @@
+struct_id=3
+struct_type=scalingimage
+image=Dialog Choice Selection
+origin=0,0
+type=Stretch Image
+part=Inside Border
+border=5,5

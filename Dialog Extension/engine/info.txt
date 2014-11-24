@@ -1,0 +1,6 @@
+name=Dialog Extension
+description=The Dialog Extension
+author=Justin, Irock
+website=http://dialog.justin.espedaladventures.com/
+version=1.4.1
+compatibility=all

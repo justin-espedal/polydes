@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Dialog Options" classname="DialogOptions.hx">
+	<cmds>
+		<cmd name="option">
+			<arg name="args" type="Array" />
+		</cmd>
+	</cmds>
+	<draws>
+		<callback name="Draw Dialog Choice" />
+	</draws>
+	<prefs>
+		<pref name="window" type="Window" label="Window Name" />
+		<pref name="windowFont" type="Font" label="Window Font" />
+		<pref name="cursorType" type="String" label="Cursor Type" dropdown="Use Image,Use Window" />
+		<if><is pref="cursorType" value="Use Image" />
+			<pref name="cursorImage" type="Image" label="Cursor Image" />
+			<pref name="cursorOffset" type="Point" label="Cursor Offset" hint="x/y offset from top-left of the currently selected option." />
+		</if>
+		<if><is pref="cursorType" value="Use Window" />
+			<pref name="cursorWindow" type="Window" label="Cursor Window" />
+		</if>
+		<pref name="choiceLayout" type="String" label="Choice Layout" dropdown="Horizontal,Vertical" />
+		<pref name="selectChoiceButton" type="Control" label="Select Choice Button" hint="control used to confirm your selection." />
+		<pref name="scrollWait" type="Int" label="Scroll Delay" hint="milliseconds after button is pressed before scrolling begins" />
+		<pref name="scrollDuration" type="Int" label="Scroll Duration" hint="milliseconds per movement of the selector when scrolling" />
+		<pref name="selectionAppearSound" type="Sound" label="Selection Appear Sound" hint="sound to play when options appear" />
+		<pref name="selectionChangeSound" type="Sound" label="Selection Change Sound" hint="sound to play when selector is moved" />
+		<pref name="selectionConfirmSound" type="Sound" label="Selection Confirm Sound" hint="sound to play when option selected" />
+		<pref name="itemPadding" type="Int" label="Item Padding" hint="pixels between each item" />
+		<pref name="inactiveTime" type="Int" label="Inactive Time" hint="milliseconds to wait before allowing input" />
+	</prefs>
+</extension>

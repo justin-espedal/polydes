@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="Text Effects" classname="TextEffects.hx">
+	<cmds>
+		<cmd name="shake" />
+		<cmd name="/shake" />
+		<cmd name="sine" />
+		<cmd name="/sine" />
+		<cmd name="revolve" />
+		<cmd name="/revolve" />
+		<cmd name="grow" />
+		<cmd name="/grow" />
+	</cmds>
+	<draws>
+		<callback name="Draw Text Effects" />
+	</draws>
+	<prefs>
+		<pref name="v_maxShakeOffsetX" type="Int" label="Max Shake Offset X" hint="maximum x range form base position when vibrating." />
+		<pref name="v_maxShakeOffsetY" type="Int" label="Max Shake Offset Y" hint="maximum y range form base position when vibrating." />
+		<pref name="v_shakeFrequency" type="Int" label="Shake Frequency" hint="milliseconds before the character moves again. (100, vibrates 10 times / second)" />
+		<pref name="s_magnitude" type="Int" label="Sine Magnitude" hint="maximum distance from base y position (5, ranges from base_y - 5 ~ base_y + 5)" />
+		<pref name="s_frequency" type="Int" label="Sine Frequency" hint="milliseconds it takes to complete a cycle. (1000, takes 1 second to go up, then down, then back to start)" />
+		<pref name="s_pattern" type="Int" label="Sine Pattern" hint="milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)" />
+		<pref name="r_diameter" type="Int" label="Revolve Diameter" hint="diameter of the circle that the revolution of this character will form. (4, this character will have a max range of 2 pixels up/down/left/right from its base position)" />
+		<pref name="r_frequency" type="Int" label="Revolve Frequency" hint="milliseconds it takes to complete a cycle. (1000, takes 1 second to go around in a circle and return to starting position)" />
+		<pref name="r_pattern" type="Int" label="Revolve Pattern" hint="milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)" />
+		<pref name="g_start" type="Int" label="Grow Start" hint="scale that the character starts at. (5, character begins at 5x its normal size)" />
+		<pref name="g_stop" type="Int" label="Grow Stop" hint="scale that the character stops at. (1, character returns to its normal size)" />
+		<pref name="g_duration" type="Int" label="Grow Duration" hint="milliseconds it takes the character to grow from start size to stop size." />
+	</prefs>
+</extension>

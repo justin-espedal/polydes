@@ -1,0 +1,114 @@
+#-Info-
+
+﻿//I should probably use the same format for all the others here. > names a dialog if it's the first character, # begins a comment.//
+//comments are inside two pairs of double-slashes//
+//use a hash (#) to begin a number or text label//
+//using special symbols in dialog://
+// \< = < //
+// \> = > //
+// \$ = $ //
+// \\ = \ //
+
+#Start
+
+<setattr [game adam true]>
+<setattr [game adamclark false]>
+<setattr [game adamangry false]>
+Press V to advance. <but>Press C to instantly draw all text. <but>Press X to go ZOOM. <but>Press Z to go fast.<but><dg "Main Choice">
+
+#Welcome Back
+
+<setattr [game adam true]>
+<setattr [game adamclark false]>
+<setattr [game adamangry false]>
+Welcome back! <but><dg "Main Choice">
+
+#Bye
+
+Come back again!<but><end>
+
+#Text Flow
+
+Hello, <wait 0.4>this is an example of dynamic text flow. <but>Please refrain from using the C, X, and Z keys if you'd like to fully enjoy everything this particular demonstration has to offer. <but><clear>As you can see, <wait 0.2>we're pausing the text after every comma<wait 0.2>.<wait 0.4>.<wait 0.4>. <wait 0.6>and during ellipses.<but><clear>
+This is accomplished by using the {cb}\<wait #\>{cd} command. <but>You may have also noticed us pausing and awaiting a button input. <but>This is accomplished by using the {cb}\<but\>{cd} command. <but><clear>
+<typespeed 0.02>We can also change the character drawing speed. <wait 0.1>We're drawing faster-<wait 0.4> exactly 0.02 seconds per character. <but><typespeed 0.15>Now we're drawing slowly-<wait 0.4> exactly 0.15 seconds per character. <but><clear>
+<typespeed 0.05>We accomplish this by using the {cb}\<typespeed #\>{cd} command.<but><dg "Main Choice">
+
+#Name and Face
+
+<showname "Names and Faces Master">Whoa,<wait 0.4> I have a name! <wait 0.5>And you can see it!<but><clear>
+This is accomplished by using the {cb}\<showname NAME\>{cd} command.<but><clear>
+<face 1>Now I have a face! <wait 0.5>This day just keeps on getting better and better!<but><clear>
+This is accomplished by using the {cb}\<face IMAGE\>{cd} command.<but><clear>
+<face 2><showname "Police Officer">Ohh go away mister Names and Faces Master, <wait 0.4>it's POLICE OFFICER time now!<but><clear>
+Hellloooo! <wait 0.3>Welcome to the Police Officer show!<but><clear>
+<face 1><showname "Names and Faces Master">Enough!<but><clear>
+<face 2><showname "Police Officer">I am going to ARREST you,<wait 0.1> mister! <but>O<wait 0.1><typespeed 0.08>kaaaaaaaaaaay!<typespeed 0.05><but><hidename><dg "Main Choice">
+
+#Visual Text
+
+<shake>This is shaking text.</shake> <but>Shaking text is accomplished by using the {cb}\<shake\>{cd} command.<but><br>
+<sine>This is sine-wave text.</sine> <but>Sine-wave text can be accomplished by using the {cb}\<sine\>{cd} command.<but><br>
+<grow>This is growing (actually, shrinking) text.</grow> <but>Growing text can be accomplished by using the {cb}\<grow\>{cd} command.<but><br>
+<revolve>This is revolving text.</revolve> <but>Revolving text can be accomplished by using the {cb}\<revolve\>{cd} command.<but><br>
+<color #F31D1D>This is colored text.<color -1> <but>Colored text can be accomplished by using the {cb}\<color HEX_COLOR\>{cd} command.<but><br>
+<font "Big Font">This text uses a different font.<but><font "Textbox Font"><br>
+You can change the font using the {cb}\<font FONT\>{cd} command.<but>
+<clear>
+<typespeed 0.08><shake>I- <wait 0.4>I- <wait 0.6><typespeed 0.05><font "Textbox Small">I'm so scared<font "Textbox Font"><typespeed 0.08><wait 0.2>.<wait 0.4>.<wait 0.4>. <wait 0.5>I have a <wait 0.09>f-<wait 0.12> feeling that a <wait 0.4>s-<wait 0.08> s-<wait 0.5><typespeed 0.05>spooky ghost is present.<but><clear>
+<revolve><sine><grow><typespeed 0.1><font "Big Font"><color #FF5A4B>Oh my gosh!<color -1><font "Textbox Font"></grow></sine></revolve></shake><but><dg "Main Choice">
+
+#Sound
+
+<stopchan 29><playchan Piano 29><sine>{gm2}</sine><but><dg "Main Choice">
+
+#Bitmap
+
+<font "Handdrawn Font">I can use a custom bitmap font. This can also be used to support other languages, like Japanese.<bc>
+<font Wagahai><typespeed 0.02><typesound none>
+吾輩わがはいは猫である。名前はまだ無い。<bc>
+どこで生れたかとんと見当けんとうがつかぬ。何でも薄暗いじめじめした所でニャーニャー泣いていた事だけは記憶している。吾輩はここで始めて人間というものを見た。しかもあとで聞くとそれは書生という人間中で一番獰悪どうあくな種族であったそうだ。この書生というのは時々我々を捕つかまえて煮にて食うという話である。しかしその当時は何という考もなかったから別段恐しいとも思わなかった。<bc>
+ただ彼の掌てのひらに載せられてスーと持ち上げられた時何だかフワフワした感じがあったばかりである。掌の上で少し落ちついて書生の顔を見たのがいわゆる人間というものの見始みはじめであろう。この時妙なものだと思った感じが今でも残っている。第一毛をもって装飾されべきはずの顔がつるつるしてまるで薬缶やかんだ。その後ご猫にもだいぶ逢あったがこんな片輪かたわには一度も出会でくわした事がない。<bc>
+のみならず顔の真中があまりに突起している。そうしてその穴の中から時々ぷうぷうと煙けむりを吹く。どうも咽むせぽくて実に弱った。これが人間の飲む煙草たばこというものである事はようやくこの頃知った。<but>
+<typesound "Type Text">
+<dg "Main Choice">
+OKAY LETS TRY THIS AGAIN
+OKAY??
+
+#Main Choice
+
+What would you like to see?
+<option [
+	["Text Flow" "Text Flow"]
+	["Namebox and Face" "Name and Face"]
+	["Visual text stuff" "Visual Text"]
+	["Sound" "Sound"]
+	["Adam" "Adam" <getattr [game adam]>]
+	["Adam (Clark)" "Adam Clark" <getattr [game adamclark]>]
+	["Adam (Angry)" "Adam Angry" <getattr [game adamangry]>]
+	["Bitmap Fonts" "Bitmap"]
+	["Bye!" "Bye"]
+]>
+
+#Adam
+
+<showname "Adam">
+Time traveling warrior. I am <color #3D9FEB>Adam<color -1>.<wait 0.4><br>
+And you are?<but>
+<option [
+	["Klark, destroyer of worlds." "Adam Clark"]
+	["None of your business." "Adam Angry"]
+]>
+
+#Adam Clark
+
+<setattr [game adam false]>
+<setattr [game adamclark true]>
+It's a pleasure to meet you, Klark.<but><hidename><dg "Main Choice">
+
+#Adam Angry
+
+<setattr [game adam false]>
+<setattr [game adamangry true]>
+<shake><sine>Waaaaaaaaaah!</sine></shake><but><br>
+You have disrespected me! <wait 0.4>Leave this area at once!<but><hidename><dg "Main Choice">

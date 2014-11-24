@@ -7,7 +7,10 @@
 <project name="stencyl" basedir="." default="dist">
 	
 	<property name="name" value="DialogExtension" />
-	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks" />
+	
+	<property name="dsjarloc" value="J:/Cloud/Dropbox/Public/Extensions" />
+	<property name="dsjarname" value="DataStructuresExtension.jar" />
 	
 	<!-- Support ant's "for" task -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -15,15 +18,39 @@
 			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
 		</classpath>
 	</taskdef>
-
+	
+	<target name="release package">
+		
+		<delete dir="release" />
+		<mkdir dir="release" />
+		
+		<antcall target="dist" />
+		
+		<copy file="${swworkdir}/extensions/${name}.jar" tofile="release/${name}.jar" />
+		<copy file="${dsjarloc}/${dsjarname}" tofile="release/${dsjarname}" />
+		
+		<copy toDir="release/dialog">
+			<fileset dir="engine" />
+		</copy>
+		
+		<zip destfile="release/Dialog Extension Sample.stencyl" basedir="samples/Dialog Extension Sample" />
+		
+		<copy file="docs/Getting Started.txt" tofile="release/Getting Started.txt" />
+		<copy file="docs/Command Reference.rtf" tofile="release/Command Reference.rtf" />
+		
+		<zip destfile="release/Dialog Extension.zip" basedir="release" />
+		
+	</target>
+	
 	<target name="dist">
+		
 		<delete dir="build" />
 		<mkdir dir="build" />
 		
 		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
 			<classpath>
 				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/DataStructuresExtension.jar" />
+				<pathelement path="${dsjarloc}/${dsjarname}" />
 				<pathelement path="libs/tablelayout.jar" />
 			</classpath>
 		</javac>
@@ -55,6 +82,14 @@
 			</sequential>
 		</for>
 	
+	</target>
+	
+	<target name="engine">
+		
+		<copy toDir="${swworkdir}/engine-extensions/dialog">
+			<fileset dir="engine" />
+		</copy>
+		
 	</target>
 
 </project>

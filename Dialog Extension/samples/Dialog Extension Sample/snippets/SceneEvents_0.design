@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<groups>
+    <group eventID="1" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="1" id="-1">
+                <set-val-1-1 comment="false" x="26" y="40">
+                    <false comment="false" id="0" x="0" y="0"/>
+                </set-val-1-1>
+            </group>
+        </init>
+    </group>
+    <group eventID="1" id="-1"/>
+    <group eventID="2" id="0">
+        <event-key-press-release comment="false" x="15" y="15">
+            <group eventID="2" id="-1">
+                <if comment="false" x="26" y="42">
+                    <group eventID="2" id="-1">
+                        <set-val-1-1 comment="false" x="37" y="72">
+                            <true comment="false" id="0" x="0" y="0"/>
+                        </set-val-1-1>
+                        <display-dialog comment="false" x="37" y="97">
+                            <int id="0" val="Start"/>
+                        </display-dialog>
+                    </group>
+                    <not comment="false" id="0" x="0" y="0">
+                        <get-val-1-1 comment="false" id="0" x="0" y="0"/>
+                    </not>
+                </if>
+                <else-if comment="false" x="26" y="129">
+                    <group eventID="2" id="-1">
+                        <display-dialog comment="false" x="37" y="159">
+                            <int id="0" val="Welcome Back"/>
+                        </display-dialog>
+                    </group>
+                    <not comment="false" id="0" x="0" y="0">
+                        <get-game-val-5 comment="false" id="0" x="0" y="0"/>
+                    </not>
+                </else-if>
+            </group>
+            <CONTROL eid="6" id="0"/>
+            <int id="1" val="0"/>
+        </event-key-press-release>
+    </group>
+    <group eventID="2" id="-1"/>
+</groups>
