@@ -1,0 +1,105 @@
+>Typing Scripts
+
+defaultTypeSound=String, Sound name
+
+>Dialog Base
+
+msgX=Number, x position on screen of the message
+msgY=Number, y position on screen of the message
+msgW=Number, width of the message (for automatic wordwrap)
+msgH=Number, height of the message (for automatic scrolling)
+msgFont=String, Font name
+msgTypeSpeed=Number, seconds between characters being typed. (0.05, 20 characters / second)
+msgStartSound=String, Sound name
+window=String, name of window
+controlAttribute=String, name of Game Attribute that will be set to "true" while Dialog is open.
+lineSpacing=Number, pixels added between lines
+
+clearSound=String, name of sound to play when <clear> is used.
+closeSound=String, name of sound to play when <close> is used.
+endSound=String, name of sound to play when <end> is used.
+
+>Extra Glyphs
+
+padding=Number, extra pixels counted for the width of a glyph.
+
+>Character Scripts
+
+nameboxWindow=String, Window name
+typeXOffset=Number, name's x offset from top-left window corner
+typeYOffset=Number, name's y offset from top-left window corner of the name
+nameboxFont=String, Font name
+faceImagePrefix=String, to be added to the beginning of the face called for. "Face " will turn <face Lenny> into "Face Lenny.png"
+faceX=Number, x position on screen to draw the face
+faceY=Number, y position on screen to draw the face
+faceMessageX=Number, changes the x position of the dialog message if a face is shown.
+faceMessageY=Number, changes the y position of the dialog message if a face is shown.
+faceMessageWidth=Number, changes the width of the dialog message if a face is shown.
+faceMessageHeight=Number, changes the height of the dialog message if a face is shown.
+
+>Flow Scripts
+
+animForPointer=String, name of Animation to display as the pointer when waiting for user input.
+pointerX=Number, x position to create actor at.
+pointerY=Number, y position to create actor at.
+advanceDialogButton=String, name of control used to advance dialog (such as "action1")
+waitingSound=String, name of Sound to play when pointer is visible
+waitingSoundInterval=Int, number of milliseconds between playback of the waiting sound
+inputSound=String, name of Sound to play when dialog is advanced
+
+noInputSoundWithTags=List, names of tags. If any of these tags is found next to the <but> tag, the input sound won't be played when you advance the dialog. Used normally for if the other tag plays a sound that might conflict with the <but> sound.
+
+>Skip Scripts
+
+fastSpeed=Number, seconds between characters being typed for fast mode. (0.01, 100 characters / second)
+fastButton=String, name of control used to make dialog fast.
+fastSound=String, name of sound to play when dialog is fast.
+fastSoundInterval=Int, number of milliseconds between playback of the fast sound (0 makes the sound play when a character is typed.)
+
+zoomSpeed=Number, seconds between characters being typed for zoom mode. (0.002, 500 characters / second)
+zoomButton=String, name of control used to make dialog zoom.
+zoomSound=String, name of sound to play when dialog is zooming.
+zoomSoundInterval=Int, number of milliseconds between playback of the zoom sound (0 makes the sound play when a character is typed.)
+
+instantButton=String, button to press to make dialog go by instantly.
+instantSound=String, sound to play when the instant button is pressed.
+skippableDefault=Bool, whether these buttons have any effect by default.
+
+>Text Effects
+
+#vibrate
+v_maxShakeOffsetX=Number, maximum x range form base position when vibrating.
+v_maxShakeOffsetY=Number, maximum y range form base position when vibrating.
+v_shakeFrequency=Number, milliseconds before the character moves again. (100, vibrates 10 times / second)
+#sine
+s_magnitude=Number, maximum distance from base y position (5, ranges from base_y - 5 ~ base_y + 5)
+s_frequency=Number, milliseconds it takes to complete a cycle. (1000, takes 1 second to go up, then down, then back to start)
+s_pattern=Number, milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)
+#revolve
+r_diameter=Number, diameter of the circle that the revolution of this character will form. (4, this character will have a max range of 2 pixels up/down/left/right from its base position)
+r_frequency=Number, milliseconds it takes to complete a cycle. (1000, takes 1 second to go around in a circle and return to starting position)
+r_pattern=Number, milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)
+#grow
+g_start=Number, scale that the character starts at. (5, character begins at 5x its normal size)
+g_stop=Number, scale that the character stops at. (1, character returns to its normal size)
+g_duration=Number, milliseconds it takes the character to grow from start size to stop size.
+
+>Dialog Options
+
+window=String, name of window
+windowFont=String, name of font
+typeOffset=Point, x/y offset from top-left of window of the first option.
+selectionImage=String, name of image file in extras folder (minus .png).
+selectionOffset=Point, x/y offset from top-left of the currently selected option.
+selectionResize=Point, how the selection image is resized to fit the current option. (-1 -1), not scaled. (100, 100), scaled to 100 pixels by 100 pixels. (100% 100%), scaled to 100% of the width/height of the currently selected option.
+selectionResizePadding=Point, extra pixels to add on to the scale if using percentage of option size.
+selectionCornerDimension=Point, width/height of the "corner" of the image, which is unscaled.
+selectionScaleType=String, either "Stretch" or "Tile".
+choiceLayout=String, either "Horizontal" or "Vertical".
+selectChoiceButton=String, name of control used to confirm your selection.
+scrollWait=Number, milliseconds after button is presed before scrolling begins. (200, scrolling begins 1/5th second after button is pressed)
+scrollDuration=Number, milliseconds per movement of the selector when scrolling. (90, selector moves around 11 times / second)
+selectionChangeSound=String, name of sound to play when selector is moved.
+selectionConfirmSound=String, name of sound to play when option selected.
+itemPadding=Number, pixels between each item.
+inactiveTime=Number, milliseconds to wait before allowing input

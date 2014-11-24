@@ -1,0 +1,21 @@
+>-Info-
+# Definitions of Dialog Fonts.
+# Values are entered as key-value pairs in the form "key=value", and all values are grouped together by font name.
+# A hash mark at the beginning of a line signifies a comment, and comments can be placed throughout with no practical impact. So can blank lines.
+#
+# Settings:
+#
+# base="Name of Font" (gets info from: "extras/Name of Font.fnt", "extras/Name of Font.png")
+# base="Stencyl_Name of Font" (gets info from a font resource in Stencyl)
+# color=-1 for default or a color in the form of 0xffffff
+# dropshadow_color=-1 for no dropshadow, or a color in the form of 0xffffff
+# dropshadow_xOffset=1 for 1 pixel right
+# dropshadow_yOffset=1 for 1 pixel down
+
+>Default
+base="Default Font"
+color=-1
+dropshadow_color=-1
+dropshadow_xOffset=0
+dropshadow_yOffset=0
+

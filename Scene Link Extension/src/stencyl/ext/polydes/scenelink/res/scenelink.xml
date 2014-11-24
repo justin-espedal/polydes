@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<scenelink>
+    <images>
+        <image id="0" name="no image"/>
+    </images>
+    <pages>
+        <page id="0" name="Page 1"/>
+    </pages>
+</scenelink>

@@ -1,0 +1,27 @@
+# A macro is a set of characters that is replaced by other characters when the dialog is read in.
+# They could be useful for generally making certain tags much shorter and easier to call, or for combining multiple tags commonly used together into one.
+# Macros are also further diided into "Normal" and "Special".
+# A "Normal" macro is surrounded in {curly braces}. Characters will only be read as a macro if found inside curcly braces in your dialog.
+#
+# Normal Macro
+# {id} -> replace with
+# Used in dialog like ...{id}...
+# Turns into: ...replace with...
+#
+# A "Special" macro is one which will always be read as a macro. Be careful not to use a character that's bound to show up often in dialog.
+# Another feature of a special macro is that it can come in pairs. When multiple special macros are found, each instance may be replaced by different text, which can be handy for using a single character for both the opening and closing of a pair of tags.
+#
+# Special Macro
+# !X -> replace with
+# Used in dialog like ...X...
+# Turns into: ...replace with...
+# Or
+# !X...X -> first replacement...second replacement
+# Used in dialog like ...X...X...
+# Turns into: ...first replacement...second repalcement...
+#
+# In each case the macro definition begins with ! followed by a single character to be used as the identifier.
+# If a character is defined here as a special macro, that character will need to be escaped to be used in dialog. \X
+
+# Examples of probably not highly used characters that might be good to use for special macros:
+# @, #, $, %, ^, &, *, -, _, =, +, ~, `, |

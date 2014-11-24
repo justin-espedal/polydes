@@ -1,0 +1,60 @@
+<!--
++==========================================================================
+| New StencylWorks Extension
++==========================================================================
+-->
+
+<project name="stencyl" basedir="." default="dist">
+	
+	<property name="name" value="SampleExtension" /> <!--Update per extension-->
+	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	
+	<!-- Support ant's "for" task -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="dist">
+		<delete dir="build" />
+		<mkdir dir="build" />
+	
+		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
+			<classpath>
+				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+				<!-- Include any extra external libraries here
+				<pathelement path="libs/xxx.jar" />
+				<pathelement path="libs/xxx.jar" />
+				-->
+			</classpath>
+		</javac>
+		
+		<!-- Include extra resources -->
+		<copy toDir="build/stencyl/ext/polydes/example/res">
+			<fileset dir="src/stencyl/ext/polydes/example/res">
+				<exclude name="Resources.java" />
+			</fileset>
+		</copy>
+		
+		<!-- Primary .jar export location -->
+		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
+			<!-- Include any extra external libraries here as well
+			<zipgroupfileset dir="libs/" includes="*.jar" />
+			-->
+		</jar>
+		
+		<!-- Extra .jar locations to copy to -->
+		<for param="file">
+			<path>
+				<!-- list them here -->
+				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/${name}.jar"/>
+			</path>
+			<sequential>
+				<copy file="${swworkdir}/extensions/${name}.jar" tofile="@{file}" />
+			</sequential>
+		</for>
+		
+	</target>
+
+</project>

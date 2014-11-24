@@ -1,0 +1,13 @@
+#-Info-
+
+//comments are inside two pairs of double-slashes//
+
+using special symbols in dialog:
+\< = <
+\> = >
+\$ = $
+\\ = \
+
+#Start
+Hey, hey, hey, kids!! It's Krusty the Klown!<but><br>
+Kome on down to Krusty Burger for the new, limited-time only, KOW-DOG-LOBSTER BURGER!!!<but><end>
