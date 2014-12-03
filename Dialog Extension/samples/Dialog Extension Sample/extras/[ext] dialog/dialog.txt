@@ -88,6 +88,7 @@ What would you like to see?
 	["Adam (Angry)" "Adam Angry" <getattr [game adamangry]>]
 	["Bitmap Fonts" "Bitmap"]
 	["Bye!" "Bye"]
+	["Switch" "Switching Scene"]
 ]>
 
 #Adam
@@ -112,3 +113,8 @@ It's a pleasure to meet you, Klark.<but><hidename><dg "Main Choice">
 <setattr [game adamangry true]>
 <shake><sine>Waaaaaaaaaah!</sine></shake><but><br>
 You have disrespected me! <wait 0.4>Leave this area at once!<but><hidename><dg "Main Choice">
+
+#Switching Scene
+
+Some dialog.<but>+Another Scene+
+

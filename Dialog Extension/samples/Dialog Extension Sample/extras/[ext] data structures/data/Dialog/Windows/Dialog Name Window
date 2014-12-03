@@ -1,6 +1,6 @@
 struct_id=8
-struct_type=window
-position=0,66% + 2
+struct_type=Window
+position=[0,66% + 2]
 image=1
 createTween=4
 destroyTween=4
@@ -8,4 +8,4 @@ scaleWidth=Fit Contents
 scaleWidthSize=
 scaleHeight=Fit Contents
 scaleHeightSize=
-insets=6, 10, 10, 6
+insets=[6, 10, 10, 6]

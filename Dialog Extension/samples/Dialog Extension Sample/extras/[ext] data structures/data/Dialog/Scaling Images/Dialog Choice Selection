@@ -1,7 +1,7 @@
 struct_id=3
-struct_type=scalingimage
+struct_type=ScalingImage
 image=Dialog Choice Selection
-origin=0,0
+origin=[0,0]
 type=Stretch Image
 part=Inside Border
-border=5,5
+border=[5,5]

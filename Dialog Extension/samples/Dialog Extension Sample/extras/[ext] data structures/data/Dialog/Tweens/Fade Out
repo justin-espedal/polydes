@@ -1,5 +1,5 @@
 struct_id=6
-struct_type=tween
+struct_type=Tween
 duration=300
 opacityStart=1.0
 opacityStop=0.0

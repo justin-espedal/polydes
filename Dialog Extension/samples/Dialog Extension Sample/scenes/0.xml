@@ -9,8 +9,87 @@
     <terrainRegions/>
     <actors>
         <actor a="0.0" aid="1" c="false" group="3" id="17" name="Press Enter 1" sx="1.0" sy="1.0" x="54" y="233" z="0"/>
+        <actor a="0.0" aid="2" c="true" group="3" id="34" name="Controls 2" sx="1.0" sy="1.0" x="7" y="7" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="up"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="3" c="true" group="3" id="34" name="Controls 3" sx="1.0" sy="1.0" x="7" y="53" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="down"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="4" c="true" group="3" id="34" name="Controls 4" sx="1.0" sy="1.0" x="7" y="100" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="enter"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="5" c="true" group="3" id="34" name="Controls 5" sx="1.0" sy="1.0" x="553" y="10" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="z"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="6" c="true" group="3" id="34" name="Controls 6" sx="1.0" sy="1.0" x="553" y="55" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="x"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="7" c="true" group="3" id="34" name="Controls 7" sx="1.0" sy="1.0" x="553" y="101" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="c"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
+        <actor a="0.0" aid="8" c="true" group="3" id="34" name="Controls 8" sx="1.0" sy="1.0" x="553" y="147" z="0">
+            <snippets>
+                <s enabled="true" id="5"/>
+                <s enabled="true" id="6">
+                    <prop id="1" list="0" val="v"/>
+                    <prop id="2" list="0" val="No Control"/>
+                    <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
+                </s>
+            </snippets>
+        </actor>
     </actors>
-    <snippets/>
+    <snippets>
+        <s enabled="true" id="7"/>
+    </snippets>
     <terrain/>
     <atlases members="" retainAtlases="true"/>
 </scene>

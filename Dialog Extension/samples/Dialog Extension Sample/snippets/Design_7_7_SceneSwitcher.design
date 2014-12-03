@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<groups>
+    <group eventID="1" id="0">
+        <event-custom-code comment="false" x="15" y="15">
+            <group eventID="3" id="-1">
+                <custom-code comment="false" x="26" y="40">
+                    <int id="0" val="public function gotoScene(sceneName:String):Void {"/>
+                </custom-code>
+                <scene-change-through comment="false" x="26" y="60">
+                    <scenebyname comment="false" id="0" x="0" y="0">
+                        <code-short comment="false" id="0" x="0" y="0">
+                            <int id="0" val="sceneName"/>
+                        </code-short>
+                    </scenebyname>
+                    <int id="1" val="0"/>
+                    <int id="2" val=".2"/>
+                </scene-change-through>
+                <code-long comment="false" x="26" y="97">
+                    <int id="0" val="for(dialogBox in Dialog.dialogBoxes)&#10;{&#10;&#9;dialogBox.endMessage();&#10;}"/>
+                </code-long>
+                <custom-code comment="false" x="26" y="287">
+                    <int id="0" val="}"/>
+                </custom-code>
+            </group>
+        </event-custom-code>
+    </group>
+    <group eventID="1" id="-1"/>
+</groups>

@@ -106,7 +106,7 @@
 <char character="£" id="163" x="72" y="22" width="16" height="18" xoffset="0" yoffset="5" padding="0" xadvance="16" page="0" chnl="0"/>
 <char character="¢" id="162" x="127" y="0" width="10" height="20" xoffset="2" yoffset="5" padding="0" xadvance="10" page="0" chnl="0"/>
 <char character="¡" id="161" x="176" y="0" width="5" height="19" xoffset="0" yoffset="7" padding="0" xadvance="5" page="0" chnl="0"/>
-<char character=" " id="160" x="61" y="58" width="3" height="1" xoffset="-1" yoffset="27" padding="0" xadvance="3" page="0" chnl="0"/>
+<char character=" " id="160" x="61" y="58" width="3" height="1" xoffset="-1" yoffset="27" padding="0" xadvance="3" page="0" chnl="0"/>
 <char character="§" id="167" x="108" y="0" width="12" height="21" xoffset="0" yoffset="5" padding="0" xadvance="12" page="0" chnl="0"/>
 <char character="¦" id="166" x="20" y="0" width="2" height="23" xoffset="2" yoffset="3" padding="0" xadvance="2" page="0" chnl="0"/>
 <char character="¥" id="165" x="94" y="41" width="16" height="16" xoffset="-2" yoffset="5" padding="0" xadvance="16" page="0" chnl="0"/>

@@ -48,4 +48,5 @@
 !*...* -> <typefont Orange>...<typefont White>
 !^...^ -> <grow>...</grow>
 !&...& -> <glyph "...">
+!+...+ -> <messagescene "Scene Switcher" "gotoScene" ["..."]>
 

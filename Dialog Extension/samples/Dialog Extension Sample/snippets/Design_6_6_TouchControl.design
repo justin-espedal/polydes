@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<groups>
+    <group eventID="1" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="1" id="-1">
+                <setanim comment="false" x="26" y="40">
+                    <ACTOR eid="this" id="0"/>
+                    <string-to-anim comment="false" id="1" x="0" y="0">
+                        <get-val-6-1 comment="false" id="0" x="0" y="0"/>
+                    </string-to-anim>
+                </setanim>
+                <custom-code comment="false" x="26" y="77">
+                    <int id="0" val="_ctrl = _control;"/>
+                </custom-code>
+                <set-val-6-3 comment="false" x="26" y="97">
+                    <false comment="false" id="0" x="0" y="0"/>
+                </set-val-6-3>
+                <if comment="false" x="26" y="122">
+                    <group eventID="1" id="-1">
+                        <die comment="false" x="37" y="160">
+                            <ACTOR eid="this" id="0"/>
+                        </die>
+                    </group>
+                    <not comment="false" id="0" x="0" y="0">
+                        <is-platform comment="false" id="0" x="0" y="0">
+                            <int id="0" val="6"/>
+                        </is-platform>
+                    </not>
+                </if>
+            </group>
+        </init>
+    </group>
+    <group eventID="1" id="-1"/>
+    <group eventID="2" id="0">
+        <event-mouse-enter-exit-actor comment="false" x="15" y="15">
+            <group eventID="2" id="-1">
+                <simulate-key comment="false" x="26" y="42">
+                    <int id="0" val="0"/>
+                    <get-val-6-2 comment="false" id="1" x="0" y="0"/>
+                </simulate-key>
+                <set-val-6-3 comment="false" x="26" y="74">
+                    <true comment="false" id="0" x="0" y="0"/>
+                </set-val-6-3>
+            </group>
+            <ACTOR eid="this" id="0"/>
+            <int id="1" val="2"/>
+        </event-mouse-enter-exit-actor>
+    </group>
+    <group eventID="2" id="-1"/>
+    <group eventID="3" id="0">
+        <event-mouse-enter-exit-actor comment="false" x="15" y="15">
+            <group eventID="3" id="-1">
+                <simulate-key comment="false" x="26" y="42">
+                    <int id="0" val="1"/>
+                    <get-val-6-2 comment="false" id="1" x="0" y="0"/>
+                </simulate-key>
+                <set-val-6-3 comment="false" x="26" y="74">
+                    <false comment="false" id="0" x="0" y="0"/>
+                </set-val-6-3>
+            </group>
+            <ACTOR eid="this" id="0"/>
+            <int id="1" val="4"/>
+        </event-mouse-enter-exit-actor>
+    </group>
+    <group eventID="3" id="-1"/>
+    <group eventID="4" id="0">
+        <event-mouse-press-release comment="false" x="15" y="15">
+            <group eventID="4" id="-1">
+                <if comment="false" x="26" y="42">
+                    <group eventID="4" id="-1">
+                        <set-val-6-3 comment="false" x="37" y="67">
+                            <false comment="false" id="0" x="0" y="0"/>
+                        </set-val-6-3>
+                        <simulate-key comment="false" x="37" y="92">
+                            <int id="0" val="1"/>
+                            <get-val-6-2 comment="false" id="1" x="0" y="0"/>
+                        </simulate-key>
+                    </group>
+                    <get-val-6-3 comment="false" id="0" x="0" y="0"/>
+                </if>
+            </group>
+            <int id="0" val="1"/>
+        </event-mouse-press-release>
+    </group>
+    <group eventID="4" id="-1"/>
+</groups>
