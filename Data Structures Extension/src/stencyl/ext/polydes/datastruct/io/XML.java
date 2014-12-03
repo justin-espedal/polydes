@@ -42,7 +42,6 @@ import stencyl.ext.polydes.datastruct.data.structure.StructureTabset;
 import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
-import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.utils.DelayedInitialize;
 import stencyl.sw.util.FileHelper;
 
@@ -251,16 +250,13 @@ public class XML
 					ExtrasMap emap = new ExtrasMap();
 					emap.putAll(map);
 					
-					DataType<?> dtype = Types.fromXML(type);
-					StructureField toAdd = new StructureField(model, name, dtype, label, hint, optional, emap);
+					//DataType<?> dtype = Types.fromXML(type);
+					StructureField toAdd = new StructureField(model, name, null, label, hint, optional, emap);
 					gui.addItem(new DataItem(toAdd.getLabel(), toAdd));
 					model.addField(toAdd);
 					
-					if(dtype == null)
-					{
-						DelayedInitialize.addObject(toAdd, "type", type);
-						DelayedInitialize.addMethod(toAdd, "loadExtras", new Object[]{emap}, type);
-					}
+					DelayedInitialize.addObject(toAdd, "type", type);
+					DelayedInitialize.addMethod(toAdd, "loadExtras", new Object[]{emap}, type);
 				}
 			}
 		}

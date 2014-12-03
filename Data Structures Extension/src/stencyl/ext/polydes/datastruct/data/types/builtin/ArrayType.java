@@ -22,6 +22,7 @@ import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType;
 import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType.DataTypeEditor;
 import stencyl.ext.polydes.datastruct.ui.comp.DataListEditor;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureObjectPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
@@ -161,10 +162,12 @@ public class ArrayType extends BuiltinType<DataList>
 			}
 		});
 		
-		//=== Type
+		//=== Type, Default
 		
 		@SuppressWarnings("rawtypes")
 		final DataEditor<DataType> typeField = new DataTypeEditor(DataTypeType.dynamicArraySubTypes);
+		final SimpleArrayEditor defaultField = new SimpleArrayEditor(panel.style, e.genType);
+		
 		typeField.setValue(e.genType);
 		typeField.addListener(new UpdateListener()
 		{
@@ -173,12 +176,10 @@ public class ArrayType extends BuiltinType<DataList>
 			{
 				e.genType = typeField.getValue();
 				preview.refreshDataItem(previewKey);
+				defaultField.setType(typeField.getValue());
 			}
 		});
 		
-		//=== Default Value
-		/*
-		final DataEditor<DataList> defaultField = new SimpleArrayEditor(style, e.genType);
 		defaultField.setValue(e.defaultValue);
 		defaultField.addListener(new UpdateListener()
 		{
@@ -188,10 +189,10 @@ public class ArrayType extends BuiltinType<DataList>
 				e.defaultValue = defaultField.getValue();
 			}
 		});
-		*/
+		
 		panel.addGenericRow(expansion, "Editor", editorChooser);
-		panel.addGenericRow(expansion, "Options", typeField);
-		//panel.addGenericRow(expansion, "Default", defaultField);
+		panel.addGenericRow(expansion, "Data Type", typeField);
+		panel.addGenericRow(expansion, "Default", defaultField, StructureObjectPanel.RESIZE_FLAG);
 	}
 	
 	@Override
@@ -221,6 +222,12 @@ public class ArrayType extends BuiltinType<DataList>
 		public Editor editor;
 		public DataType<?> genType;
 		public DataList defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	enum Editor
@@ -265,6 +272,15 @@ public class ArrayType extends BuiltinType<DataList>
 					updated();
 				}
 			});
+		}
+		
+		public void setType(DataType<?> type)
+		{
+			if(!genType.xml.equals(type.xml))
+			{
+				genType = type;
+				set(null);
+			}
 		}
 		
 		@Override

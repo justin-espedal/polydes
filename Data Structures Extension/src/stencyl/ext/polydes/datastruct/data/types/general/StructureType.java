@@ -170,7 +170,21 @@ public class StructureType extends DataType<Structure>
 			}
 		});
 		
+		//=== Default Value
+		
+		final DataEditor<Structure> defaultField = new StructureEditor();
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
 		panel.addEnablerRow(expansion, "Filter", filterField, e.sourceFilter != null);
+		panel.addGenericRow(expansion, "Default", defaultField);
 	}
 	
 	@Override
@@ -180,6 +194,7 @@ public class StructureType extends DataType<Structure>
 		String filterText = extras.get("sourceFilter", Types._String, null);
 		if(filterText != null)
 			e.sourceFilter = new StructureCondition(null, filterText);
+		e.defaultValue = extras.get(DEFAULT_VALUE, this, null);
 		return e;
 	}
 	
@@ -190,19 +205,31 @@ public class StructureType extends DataType<Structure>
 		ExtrasMap emap = new ExtrasMap();
 		if(e.sourceFilter != null)
 			emap.put("sourceFilter", e.sourceFilter.getText());
+		if(e.defaultValue != null)
+			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
 		return emap;
 	}
 	
 	public class Extras extends ExtraProperties
 	{
 		public StructureCondition sourceFilter;
-		//public Structure defaultValue;
+		public Structure defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public class StructureEditor extends DataEditor<Structure>
 	{
 		private UpdatingCombo<Structure> editor;
 		
+		/**
+		 * @param e 
+		 * @param currentStructure
+		 */
 		public StructureEditor(Extras e, Structure currentStructure)
 		{
 			CollectionPredicate<Structure> filter =
@@ -210,6 +237,20 @@ public class StructureType extends DataType<Structure>
 					new StructurePredicate(e.sourceFilter, currentStructure);
 			
 			editor = new UpdatingCombo<Structure>(Structures.getList(def), filter);
+			
+			editor.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		public StructureEditor()
+		{
+			editor = new UpdatingCombo<Structure>(Structures.getList(def), null);
 			
 			editor.addActionListener(new ActionListener()
 			{

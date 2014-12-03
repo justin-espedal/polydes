@@ -102,6 +102,12 @@ public class DimensionType extends BuiltinType<Dimension>
 	class Extras extends ExtraProperties
 	{
 		public Dimension defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public static class DimensionEditor extends DataEditor<Dimension>

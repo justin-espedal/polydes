@@ -47,6 +47,17 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		dref.setIcon(template.getSmallIcon());
 	}
 	
+	public void loadDefaults()
+	{
+		for(StructureField f : template.getFields())
+			if(f.getExtras() != null)
+			{
+				Object defValue = f.getExtras().getDefault();
+				if(defValue != null)
+				setProperty(f, f.getType().checkCopy(defValue));
+			}
+	}
+	
 	public int getID()
 	{
 		return id;

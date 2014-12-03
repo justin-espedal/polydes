@@ -152,6 +152,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 				int id = Structures.newID();
 				StructureDefinition type = (StructureDefinition) selected.data;
 				Structure toReturn = new Structure(id, nodeName, type);
+				toReturn.loadDefaults();
 				Structures.structures.get(type).add(toReturn);
 				Structures.structuresByID.put(id, toReturn);
 				return toReturn.dref;

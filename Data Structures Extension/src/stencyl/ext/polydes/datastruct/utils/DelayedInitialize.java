@@ -37,6 +37,24 @@ public class DelayedInitialize
 			set.write(value);
 	}
 	
+	public static final int CALL_FIELDS = 0x01;
+	public static final int CALL_METHODS = 0x02;
+	
+	public static void initPropPartial(String prop, Object value, int callFlag)
+	{
+		ArrayList<DelayedSet> toInit = initList.get(prop);
+		if(toInit == null)
+			return;
+		
+		for(DelayedSet set : toInit)
+		{
+			if((callFlag & CALL_FIELDS) > 0 && !(set instanceof DelayedMethodSet))
+				set.write(value);
+			if((callFlag & CALL_METHODS) > 0 && (set instanceof DelayedMethodSet))
+				set.write(value);
+		}
+	}
+	
 	public static void clearProps()
 	{
 		initList.clear();

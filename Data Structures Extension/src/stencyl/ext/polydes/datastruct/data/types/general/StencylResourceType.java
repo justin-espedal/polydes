@@ -13,7 +13,9 @@ import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StencylResourceType<T extends Resource> extends DataType<T>
@@ -90,15 +92,56 @@ public class StencylResourceType<T extends Resource> extends DataType<T>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		@SuppressWarnings("unchecked")
+		final Extras e = (Extras) panel.getExtras();
+		
+		//=== Default Value
+		
+		final DataEditor<T> defaultField = new DropdownResourceEditor();
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
+		panel.addGenericRow(expansion, "Default", defaultField);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
-		return null;
+		Extras e = new Extras();
+		e.defaultValue = extras.get(DEFAULT_VALUE, this, null);
+		return e;
 	}
 	
 	@Override
 	public ExtrasMap saveExtras(ExtraProperties extras)
 	{
-		return null;
+		@SuppressWarnings("unchecked")
+		Extras e = (Extras) extras;
+		ExtrasMap emap = new ExtrasMap();
+		if(e.defaultValue != null)
+			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
+		return emap;
+	}
+	
+	class Extras extends ExtraProperties
+	{
+		public T defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public class DropdownResourceEditor extends DataEditor<T>

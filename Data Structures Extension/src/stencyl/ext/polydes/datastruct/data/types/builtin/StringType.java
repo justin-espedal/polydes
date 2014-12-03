@@ -117,6 +117,12 @@ public class StringType extends BuiltinType<String>
 	{
 		public Editor editor;
 		public String defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	enum Editor

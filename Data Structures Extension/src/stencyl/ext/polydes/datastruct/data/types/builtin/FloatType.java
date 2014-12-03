@@ -225,6 +225,12 @@ public class FloatType extends BuiltinType<Float>
 		public Integer decimalPlaces;
 		public Float step;
 		public Float defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	enum Editor

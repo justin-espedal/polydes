@@ -184,6 +184,12 @@ public class RectangleType extends BuiltinType<Rectangle>
 	class Extras extends ExtraProperties
 	{
 		public Rectangle defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public static class RectangleEditor extends DataEditor<Rectangle>

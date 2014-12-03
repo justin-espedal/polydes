@@ -33,7 +33,10 @@ import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.builtin.ColorType;
+import stencyl.ext.polydes.datastruct.data.types.builtin.ColorType.ColorEditor;
 import stencyl.ext.polydes.datastruct.data.types.general.StructureType;
+import stencyl.ext.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
 import stencyl.sw.util.comp.RoundedLabel;
 
@@ -398,6 +401,10 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 			deditor = ((StructureType) type).new StructureEditor((StructureType.Extras) f.getExtras(), model);
 		else
 			deditor = type.createEditor(f.getExtras(), style);
+		
+		//special case for Color editors inside preview structures. Need to make sure the popup window works.
+		if(type instanceof ColorType && model.getID() == -1)
+			((ColorEditor) deditor).setOwner(StructureDefinitionsWindow.get());
 		
 		deditor.setValue(model.getProperty(f));
 		deditor.addListener(new UpdateListener()

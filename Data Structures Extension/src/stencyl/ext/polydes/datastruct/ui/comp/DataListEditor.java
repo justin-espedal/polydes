@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -28,6 +29,7 @@ import stencyl.core.lib.io.read.ActorTypeReader.ListElement;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
+import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.data.types.builtin.DynamicType;
@@ -35,6 +37,7 @@ import stencyl.ext.polydes.datastruct.data.types.builtin.DynamicType.DynamicEdit
 import stencyl.ext.polydes.datastruct.ui.MiniDialog;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
+import stencyl.ext.polydes.datastruct.utils.Lang;
 import stencyl.sw.actions.Actions;
 import stencyl.sw.actions.SAction;
 import stencyl.sw.lnf.Theme;
@@ -266,6 +269,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		downAction.setEnabled(list.getModel().getSize() > 0	&& list.getSelectedIndex() < list.getModel().getSize() - 1);
 	}
 
+	private static HashSet<DataType<?>> excludedTypes = Lang.hashset(Types._Array, Types._DataType, Types._Dynamic, Types._Selection, Types._Set);
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -274,7 +279,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		{
 			if (model.genType.xml.equals("Dynamic"))
 			{
-				DynamicEditor deditor = new DynamicType.DynamicEditor(DynamicType.arrayDynamicExcludeExtras, PropertiesSheetStyle.DARK);
+				DynamicEditor deditor = new DynamicType.DynamicEditor(PropertiesSheetStyle.DARK);
+				deditor.excludeTypes(excludedTypes);
 				deditor.setValue(new Dynamic("", "String"));
 				MiniDialog dg = new MiniDialog(deditor.createMiniPage(), "Add Item", 400, 170);
 				
@@ -399,7 +405,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 			if (model.genType.xml.equals("Dynamic"))
 			{
 				Dynamic o = Types._Dynamic.copy((Dynamic) model.get(selectedRow));
-				DynamicEditor deditor = new DynamicType.DynamicEditor(DynamicType.arrayDynamicExcludeExtras, PropertiesSheetStyle.DARK);
+				DynamicEditor deditor = new DynamicType.DynamicEditor(PropertiesSheetStyle.DARK);
+				deditor.excludeTypes(excludedTypes);
 				
 				deditor.setValue(o);
 				MiniDialog dg = new MiniDialog(deditor.createMiniPage(), "Edit Item", 400, 170);

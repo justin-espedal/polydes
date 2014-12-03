@@ -203,6 +203,12 @@ public class IntType extends BuiltinType<Integer>
 		public Integer max;
 		public Integer step;
 		public Integer defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	enum Editor

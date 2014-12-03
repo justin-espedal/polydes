@@ -213,10 +213,18 @@ public class Main extends BaseExtension
 		for(DataStructureExtension ext : dataStructureExtensions)
 			StructureDefinitions.get().addFolder(ext.getDefinitionsFolder(), ((BaseExtension) ext).getName());
 		
-		DelayedInitialize.clearProps();
+		//Field datatypes need to be loaded before Structures are loaded.
+		for(DataType<?> type : Types.typeFromXML.values())
+			DelayedInitialize.initPropPartial(type.xml, type, DelayedInitialize.CALL_FIELDS);
 		
 		Images.get().load(new File(Locations.getGameLocation(game), "extras"));
 		Structures.get().load(dataFolder);
+		
+		//This is how extras are loaded, because they often rely on things that haven't been loaded
+		//yet when they're read in from XML files.
+		for(DataType<?> type : Types.typeFromXML.values())
+			DelayedInitialize.initPropPartial(type.xml, type, DelayedInitialize.CALL_METHODS);
+		DelayedInitialize.clearProps();
 		
 		Blocks.addDesignModeBlocks();
 	}

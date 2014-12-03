@@ -160,6 +160,12 @@ public class SelectionType extends BuiltinType<String>
 		public Editor editor;
 		public DataList options;//editor Simple, genType String
 		public String defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	enum Editor

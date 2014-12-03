@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
-import stencyl.ext.polydes.datastruct.data.core.PredicateFactory;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
@@ -18,6 +17,7 @@ import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
 import stencyl.sw.util.dg.DialogPanel;
@@ -34,7 +34,7 @@ public class DynamicType extends BuiltinType<Dynamic>
 	@Override
 	public DataEditor<Dynamic> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		return new DynamicEditor(extras, style);
+		return new DynamicEditor(style);
 	}
 	
 	@Override
@@ -67,22 +67,33 @@ public class DynamicType extends BuiltinType<Dynamic>
 		return new Dynamic(Types.fromXML(t.type).checkCopy(t.value), t.type);
 	}
 	
-	public static String TYPE_LIMIT = "typeLimit";
-	public static String DYNAMIC_SUB = "dynamicSubType";
-	public static String DYNAMIC_ARRAY_SUB = "dynamicArraySubType";
+	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		
+		//=== Default Value
+		
+		final DataEditor<Dynamic> defaultField = new DynamicEditor(panel.style);
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
+		panel.addGenericRow(expansion, "Default", defaultField);
+	}
 	
 	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
-		String limit = extras.get(TYPE_LIMIT, "");
-		if(limit.equals(DYNAMIC_SUB))
-			e.excludeFilter = dynamicExclude;
-		else if(limit.equals(DYNAMIC_ARRAY_SUB))
-			e.excludeFilter = arrayDynamicExclude;
-		else
-			e.excludeFilter = noExclude;
-		
+		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Dynamic, null);
 		return e;
 	}
 	
@@ -91,47 +102,20 @@ public class DynamicType extends BuiltinType<Dynamic>
 	{
 		Extras e = (Extras) extras;
 		ExtrasMap emap = new ExtrasMap();
-		if(e.excludeFilter == dynamicExclude)
-			emap.put(TYPE_LIMIT, DYNAMIC_SUB);
-		else if(e.excludeFilter == arrayDynamicExclude)
-			emap.put(TYPE_LIMIT, DYNAMIC_ARRAY_SUB);
-		
+		if(e.defaultValue != null)
+			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
 		return emap;
-	}
-	
-	public static CollectionPredicate<DataType<?>> noExclude;
-	public static CollectionPredicate<DataType<?>> dynamicExclude;
-	public static CollectionPredicate<DataType<?>> arrayDynamicExclude;
-	
-	public static Extras noExcludeExtras = new Extras();
-	public static Extras dynamicExcludeExtras = new Extras();
-	public static Extras arrayDynamicExcludeExtras = new Extras();
-	
-	static
-	{
-		HashSet<DataType<?>> toExclude;
-		
-		noExclude = null;
-		
-		toExclude = new HashSet<DataType<?>>();
-		toExclude.add(Types._Dynamic);
-		dynamicExclude = PredicateFactory.isNotIn(toExclude);
-		
-		toExclude = new HashSet<DataType<?>>();
-		toExclude.add(Types._Dynamic);
-		toExclude.add(Types._Array);
-		toExclude.add(Types._Selection);
-		toExclude.add(Types._Set);
-		arrayDynamicExclude = PredicateFactory.isNotIn(toExclude);
-		
-		noExcludeExtras.excludeFilter = noExclude;
-		dynamicExcludeExtras.excludeFilter = dynamicExclude;
-		arrayDynamicExcludeExtras.excludeFilter = arrayDynamicExclude;
 	}
 	
 	static class Extras extends ExtraProperties
 	{
-		public CollectionPredicate<DataType<?>> excludeFilter;
+		public Dynamic defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -144,12 +128,11 @@ public class DynamicType extends BuiltinType<Dynamic>
 		
 		private Dynamic data;
 		
-		public DynamicEditor(ExtraProperties extras, PropertiesSheetStyle style)
+		public DynamicEditor(PropertiesSheetStyle style)
 		{
-			Extras e = (Extras) extras;
 			this.style = style;
 			
-			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), e.excludeFilter);
+			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), null);
 			valueEditorWrapper = new JPanel();
 			valueEditorWrapper.setBackground(null);
 			
@@ -160,6 +143,18 @@ public class DynamicType extends BuiltinType<Dynamic>
 				{
 					setType(typeChooser.getSelected());
 					updated();
+				}
+			});
+		}
+		
+		public void excludeTypes(final HashSet<DataType<?>> types)
+		{
+			typeChooser.setFilter(new CollectionPredicate<DataType<?>>()
+			{
+				@Override
+				public boolean test(DataType<?> t)
+				{
+					return !types.contains(t);
 				}
 			});
 		}

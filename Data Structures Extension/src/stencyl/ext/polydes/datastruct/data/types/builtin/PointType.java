@@ -187,6 +187,12 @@ public class PointType extends BuiltinType<Point>
 	class Extras extends ExtraProperties
 	{
 		public Point defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public static class PointEditor extends DataEditor<Point>

@@ -97,6 +97,12 @@ public class IControlType extends BuiltinType<IControl>
 	class Extras extends ExtraProperties
 	{
 		public IControl defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public static class IControlEditor extends DataEditor<IControl>

@@ -88,6 +88,12 @@ public class BooleanType extends BuiltinType<Boolean>
 	class Extras extends ExtraProperties
 	{
 		public Boolean defaultValue;
+		
+		@Override
+		public Object getDefault()
+		{
+			return defaultValue;
+		}
 	}
 	
 	public static class BooleanEditor extends DataEditor<Boolean>

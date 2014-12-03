@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 
 import javax.swing.JCheckBox;
@@ -333,7 +333,7 @@ public class SetType extends BuiltinType<DataSet>
 	{
 		DataSet set;
 		JPanel buttonPanel;
-		HashMap<Object, JCheckBox> map;
+		IdentityHashMap<Object, JCheckBox> map;
 		String properType;
 		
 		public ChecklistDataSetEditor(Collection<?> source, PropertiesSheetStyle style, String properType)
@@ -342,7 +342,7 @@ public class SetType extends BuiltinType<DataSet>
 			
 			ArrayList<JCheckBox> buttons = new ArrayList<JCheckBox>();
 			
-			map = new HashMap<Object, JCheckBox>();
+			map = new IdentityHashMap<Object, JCheckBox>();
 			
 			for(final Object o : source)
 			{

@@ -7,6 +7,7 @@ import stencyl.core.engine.actor.IActorType;
 import stencyl.core.engine.sound.ISoundClip;
 import stencyl.ext.polydes.datastruct.data.types.builtin.ArrayType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.BooleanType;
+import stencyl.ext.polydes.datastruct.data.types.builtin.ColorType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.DimensionType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.DynamicType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.ExtrasImageType;
@@ -35,6 +36,7 @@ public class Types
 	public static DynamicType _Dynamic = new DynamicType();
 	public static ArrayType _Array = new ArrayType();
 	public static BooleanType _Boolean = new BooleanType();
+	public static ColorType _Color = new ColorType();
 	public static DimensionType _Dimension = new DimensionType();
 	public static ExtrasImageType _ExtrasImage = new ExtrasImageType();
 	public static FloatType _Float = new FloatType();
@@ -51,7 +53,7 @@ public class Types
 	public static void addBasicTypes()
 	{
 		addType(_Boolean);
-		//addType(new ColorType());
+		addType(_Color);
 		addType(_Integer);
 		addType(_Float);
 		addType(_String);

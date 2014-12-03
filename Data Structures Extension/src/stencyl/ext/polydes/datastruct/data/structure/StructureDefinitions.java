@@ -125,7 +125,6 @@ public class StructureDefinitions
 		defMap.put(def.getName(), def);
 		Structures.structures.put(def, new ArrayList<Structure>());
 		Types.addType(new StructureType(def));
-		DelayedInitialize.initProp(def.getName(), Types.fromXML(def.getName()));
 	}
 	
 	/*

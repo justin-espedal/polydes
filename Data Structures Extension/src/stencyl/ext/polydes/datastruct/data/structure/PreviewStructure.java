@@ -11,6 +11,7 @@ public class PreviewStructure extends Structure
 	{
 		super(-1, template.getName(), template);
 		this.model = model;
+		loadDefaults();
 	}
 
 	@Override

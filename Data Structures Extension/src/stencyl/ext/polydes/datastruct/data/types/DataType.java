@@ -22,6 +22,8 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	public String haxeClassname;
 	public String haxePackage;
 	
+	private final int hash;
+	
 	public DataType(Class<T> javaType, String haxeType, String stencylType, String xml)
 	{
 		this.javaType = javaType;
@@ -40,6 +42,8 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 			haxePackage = haxeType.substring(0, lastDot);
 			haxeClassname = haxeType.substring(lastDot + 1);
 		}
+		
+		hash = xml.hashCode();
 	}
 	
 	public abstract ExtrasMap saveExtras(ExtraProperties extras);
@@ -185,5 +189,17 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 		{
 			return comps(style.createSoftLabel(msg));
 		}
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return (obj instanceof DataType) && xml.equals(((DataType<?>) obj).xml);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return hash;
 	}
 }
