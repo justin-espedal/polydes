@@ -10,8 +10,8 @@ import javax.swing.JTextField;
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
@@ -31,7 +31,7 @@ public class AnimationType extends DataType<Animation>
 	@Override
 	public Animation decode(String s)
 	{
-		Animation a = new Animation();
+		Animation a = new Animation(null, "");
 		
 		String rid = s.split("-")[0];
 		try
@@ -39,13 +39,13 @@ public class AnimationType extends DataType<Animation>
 			Resource r = Game.getGame().getResources().getResource(Integer.parseInt(rid));
 			if(r instanceof IActorType)
 			{
-				a.actor = (IActorType) r;
+				a.actorType = (IActorType) r;
 				a.anim = s.substring(rid.length() + 1);
 			}
 		}
 		catch(NumberFormatException e)
 		{
-			a.actor = null;
+			a.actorType = null;
 			a.anim = "";
 		}
 		
@@ -55,10 +55,10 @@ public class AnimationType extends DataType<Animation>
 	@Override
 	public String encode(Animation a)
 	{
-		if(a == null || a.actor == null)
+		if(a == null || a.actorType == null)
 			return "";
 		
-		return a.actor.getID() + "-" + a.anim;
+		return a.actorType.getID() + "-" + a.anim;
 	}
 
 	@Override
@@ -74,52 +74,21 @@ public class AnimationType extends DataType<Animation>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Animation> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Animation> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final UpdatingCombo<IActorType> actorCombo = new UpdatingCombo<IActorType>(Game.getGame().getResources().getResourcesByType(IActorType.class), null);
-		final JTextField animField = style.createTextField();
-		if(updater.get() == null)
-			updater.set(new Animation());
-		final Animation a = updater.get();
-		
-		actorCombo.setSelectedItem(a.actor);
-		animField.setText(a.anim);
-		
-		actorCombo.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				a.actor = actorCombo.getSelected();
-				updater.updated();
-			}
-		});
-		animField.getDocument().addDocumentListener(new DocumentAdapter(false)
-		{
-			@Override
-			protected void update()
-			{
-				a.anim = animField.getText();
-				updater.updated();
-			}
-		});
-		
-		return comps(actorCombo, animField);
+		return new AnimationEditor(style);
 	}
 	
 	@Override
 	public String toDisplayString(Animation data)
 	{
-		return String.valueOf(data.actor) + " - " + data.anim;
+		return String.valueOf(data.actorType) + " - " + data.anim;
 	}
 
 	@Override
 	public Animation copy(Animation a)
 	{
-		Animation copyAnim = new Animation();
-		copyAnim.actor = a.actor;
-		copyAnim.anim = a.anim;
-		return copyAnim;
+		return new Animation(a.actorType, a.anim);
 	}
 
 	@Override
@@ -132,5 +101,69 @@ public class AnimationType extends DataType<Animation>
 	public ExtrasMap saveExtras(ExtraProperties arg0)
 	{
 		return null;
+	}
+	
+	public static class AnimationEditor extends DataEditor<Animation>
+	{
+		private UpdatingCombo<IActorType> actorCombo;
+		private JTextField animField;
+		private Animation a;
+		
+		public AnimationEditor(PropertiesSheetStyle style)
+		{
+			actorCombo = new UpdatingCombo<IActorType>(Game.getGame().getResources().getResourcesByType(IActorType.class), null);
+			animField = style.createTextField();
+			
+			actorCombo.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					a.actorType = actorCombo.getSelected();
+					updated();
+				}
+			});
+			animField.getDocument().addDocumentListener(new DocumentAdapter(false)
+			{
+				@Override
+				protected void update()
+				{
+					a.anim = animField.getText();
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(Animation t)
+		{
+			if(t == null)
+				t = new Animation(null, "");
+			a = t;
+			
+			actorCombo.setSelectedItem(t.actorType);
+			animField.setText(t.anim);
+		}
+		
+		@Override
+		public Animation getValue()
+		{
+			return a;
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(actorCombo, animField);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			actorCombo.dispose();
+			actorCombo = null;
+			animField = null;
+		}
 	}
 }

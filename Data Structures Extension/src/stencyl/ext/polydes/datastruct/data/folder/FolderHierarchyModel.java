@@ -1,18 +1,13 @@
 package stencyl.ext.polydes.datastruct.data.folder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import org.apache.commons.lang3.ArrayUtils;
 
-import stencyl.ext.polydes.datastruct.ui.tree.DTree;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeNodeCreator;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionState;
-import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
+import stencyl.ext.polydes.datastruct.data.folder.DataItemUtil.DataItemRunnable;
 
-/*
+/**
  * Folder that can be represented as the root of a hierarchical file system.
  * Changes to files and folders within this root's structure are reflected in
  * representative models.
@@ -21,46 +16,39 @@ import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
 public class FolderHierarchyModel implements DataItemListener, FolderListener
 {
 	private Folder rootFolder;
-	private DTree tree;
-	private DefaultTreeModel treeModel;
+	private FolderHierarchyRepresentation[] reps;
 	
 	private HashSet<String> itemNames;
 	private boolean simpleMove;
 	private boolean uniqueItemNames;
 	
-	private DefaultMutableTreeNode recentlyCreated = null;
-	
 	public FolderHierarchyModel(Folder rootFolder)
 	{
 		this.rootFolder = rootFolder;
-		installListeners(rootFolder);
+		DataItemUtil.installListeners(rootFolder, this, this);
 		
 		itemNames = new HashSet<String>();
 		simpleMove = false;
 		uniqueItemNames = false;
 		
-		tree = new DTree(this);
-		tree.loadRoot(createNodeFromFolder(rootFolder));
-		tree.setNodeCreator(new DefaultNodeCreator()
+		reps = new FolderHierarchyRepresentation[0];
+		
+		DataItemUtil.recursiveRun(rootFolder, new DataItemRunnable()
 		{
 			@Override
-			public Collection<PopupItem> getCreatableNodeList()
+			public void run(DataItem item)
 			{
-				return null;
-			}
-			
-			@Override
-			public Object createNode(PopupItem selected, String nodeName)
-			{
-				return null;
-			}
-			
-			@Override
-			public void nodeRemoved(DataItem toRemove)
-			{
+				if(!(item instanceof Folder))
+					itemNames.add(item.getName());
 			}
 		});
-		treeModel = tree.getModel();
+	}
+	
+	public void dispose()
+	{
+		DataItemUtil.uninstallListeners(rootFolder, this, this);
+		itemNames.clear();
+		rootFolder = null;
 	}
 	
 	public ArrayList<DataItem> getPath(DataItem item)
@@ -78,17 +66,31 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 		return null;
 	}
 	
-	public DTree getTree()
+	public boolean isUniqueItemNames()
 	{
-		return tree;
+		return uniqueItemNames;
 	}
+
+	public void setUniqueItemNames(boolean uniqueItemNames)
+	{
+		this.uniqueItemNames = uniqueItemNames;
+	}
+
+	public Folder getRootFolder()
+	{
+		return rootFolder;
+	}
+	
+	/*================================================*\
+	 | Folder/DataItem Listening
+	\*================================================*/
 	
 	@Override
 	public void folderItemAdded(Folder folder, DataItem item)
 	{
 //		System.out.println("Folder Item Added: " + folder + ", " + item);
 		if(!simpleMove)
-			installListeners(item);
+			DataItemUtil.installListeners(item, this, this);
 		
 		modelAddItem(folder, item, folder.getItems().indexOf(item));
 	}
@@ -98,7 +100,7 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 	{
 //		System.out.println("Folder Item Removed: " + folder + ", " + item);
 		if(!simpleMove)
-			uninstallListeners(item);
+			DataItemUtil.uninstallListeners(item, this, this);
 		
 		modelRemoveItem(item);
 	}
@@ -116,8 +118,9 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 	public void dataItemStateChanged(DataItem source)
 	{
 //		System.out.println("Data Item State Changed: " + source);
-		tree.getModel().nodeChanged(tree.getNode(source));
-		tree.repaint();
+		
+		for(FolderHierarchyRepresentation rep : reps)
+			rep.dataItemStateChanged(source);
 	}
 
 	@Override
@@ -131,11 +134,13 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 			itemNames.add(source.getName());
 		}
 		
-		tree.getModel().nodeChanged(tree.getNode(source));
-		tree.repaint();
+		for(FolderHierarchyRepresentation rep : reps)
+			rep.dataItemNameChanged(source, oldName);
 	}
 	
-	//these functions called by tree and associated structures.
+	/*================================================*\
+	 | Hierarchy Modification API
+	\*================================================*/
 	
 	public boolean canMoveItem(DataItem item, Folder target)
 	{
@@ -165,6 +170,7 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 		simpleMove = false;
 	}
 	
+	//This is currently never called.
 	public void moveItem(DataItem item, Folder target, int position)
 	{
 		simpleMove = true;
@@ -197,125 +203,34 @@ public class FolderHierarchyModel implements DataItemListener, FolderListener
 			itemNames.remove(item.getName());
 	}
 	
+	/*================================================*\
+	 | Folder Hierarchy Representation
+	\*================================================*/
+	
+	public void addRepresentation(FolderHierarchyRepresentation rep)
+	{
+		reps = ArrayUtils.add(reps, rep);
+	}
+	
+	public void removeRepresentation(FolderHierarchyRepresentation rep)
+	{
+		reps = ArrayUtils.removeElement(reps, rep);
+	}
+	
+	public boolean isMovingItem()
+	{
+		return simpleMove;
+	}
+	
 	private void modelAddItem(Folder folder, DataItem item, int position)
 	{
-		DefaultMutableTreeNode itemNode;
-		if(simpleMove)
-			itemNode = tree.getNode(item);
-		else
-		{
-			itemNode = new DefaultMutableTreeNode(item);
-			recentlyCreated = itemNode;
-			tree.setNode(item, itemNode);
-		}
-		treeModel.insertNodeInto(itemNode, tree.getNode(folder), position);
+		for(FolderHierarchyRepresentation rep : reps)
+			rep.itemAdded(folder, item, position);
 	}
 	
 	private void modelRemoveItem(DataItem item)
 	{
-		treeModel.removeNodeFromParent(tree.getNode(item));
-		if(!simpleMove)
-			tree.removeNode(item);
-	}
-	
-	private void installListeners(DataItem item)
-	{
-		item.addListener(this);
-		if(item instanceof Folder)
-		{
-			((Folder) item).addFolderListener(this);
-			for(DataItem curItem : ((Folder) item).getItems())
-			{
-				installListeners(curItem);
-			}
-		}
-	}
-	
-	private void uninstallListeners(DataItem item)
-	{
-		item.removeListener(this);
-		if(item instanceof Folder)
-		{
-			((Folder) item).removeFolderListener(this);
-			for(DataItem curItem : ((Folder) item).getItems())
-			{
-				uninstallListeners(curItem);
-			}
-		}
-	}
-	
-	private DefaultMutableTreeNode createNodeFromFolder(Folder folder)
-	{
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(folder);
-		DefaultMutableTreeNode newSubNode;
-		tree.setNode(folder, newNode);
-		
-		for(DataItem item : folder.getItems())
-		{
-			if(item instanceof Folder)
-				newNode.add(createNodeFromFolder((Folder) item));
-			else
-			{
-				newSubNode = new DefaultMutableTreeNode(item);
-				tree.setNode(item, newSubNode);
-				newNode.add(newSubNode);
-				itemNames.add(item.getName());
-			}
-		}
-		
-		return newNode;
-	}
-	
-	public boolean isUniqueItemNames()
-	{
-		return uniqueItemNames;
-	}
-
-	public void setUniqueItemNames(boolean uniqueItemNames)
-	{
-		this.uniqueItemNames = uniqueItemNames;
-	}
-
-	public Folder getRootFolder()
-	{
-		return rootFolder;
-	}
-
-	public DefaultMutableTreeNode getRecentlyCreated()
-	{
-		return recentlyCreated;
-	}
-	
-	public abstract class DefaultNodeCreator implements DTreeNodeCreator
-	{
-		@Override
-		public abstract Object createNode(PopupItem selected, String nodeName);
-		
-		@Override
-		public void editNode(DataItem toEdit)
-		{
-		}
-		
-		@Override
-		public abstract void nodeRemoved(DataItem toRemove);
-		
-		protected DTreeSelectionState selectionState;
-		
-		@Override
-		public void setSelectionState(DTreeSelectionState selectionState)
-		{
-			this.selectionState = selectionState;
-		}
-		
-		//TODO: Do we need complete uniqueness of item names?
-		/*
-		@Override
-		public boolean canCreate(String name, Folder folder)
-		{
-			return
-				(folder.getItemByName(name) == null) &&
-				(uniqueItemNames ? !itemNames.contains(name) : true);
-		}
-		*/
+		for(FolderHierarchyRepresentation rep : reps)
+			rep.itemRemoved(item);
 	}
 }

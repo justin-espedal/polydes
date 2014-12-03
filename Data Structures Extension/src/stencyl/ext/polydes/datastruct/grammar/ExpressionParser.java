@@ -55,7 +55,7 @@ public class ExpressionParser
 	 * @param expression A Java expression
 	 * @return           A {@code Node} representing the root of an AST, or {@code null} if the input wasn't a valid Java expression
 	 */
-	public static Node buildTree(String expression)
+	public static SyntaxNode buildTree(String expression)
 	{
 		if(instance == null)
 			instance = new ExpressionParser();
@@ -79,7 +79,7 @@ public class ExpressionParser
 	/**
 	 * returns null if the input wasn't a valid Java expression
 	 */
-	private Node internalBuildTree(String expression)
+	private SyntaxNode internalBuildTree(String expression)
 	{
 		ANTLRInputStream stream = new ANTLRInputStream(expression);
 		
@@ -110,17 +110,17 @@ public class ExpressionParser
 	
 	class SimpleTreeBuilder extends ConditionBaseListener
 	{
-		Stack<Node> stack = new Stack<Node>();
+		Stack<SyntaxNode> stack = new Stack<SyntaxNode>();
 		
 		/**
 		 * returns null if the input wasn't a valid Java expression
 		 */
-		public Node getResult()
+		public SyntaxNode getResult()
 		{
 			if(stack.isEmpty())
 				return null;
 			
-			Node o = stack.pop();
+			SyntaxNode o = stack.pop();
 			stack.clear();
 			return o;
 		}
@@ -128,64 +128,64 @@ public class ExpressionParser
 		@Override
 		public void exitExprAdd(ExprAddContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.ADD, l, r));
+			stack.push(new SyntaxNode(LangElement.ADD, l, r));
 		}
 		
 		@Override
 		public void exitExprAnd(ExprAndContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.AND, l, r));
+			stack.push(new SyntaxNode(LangElement.AND, l, r));
 		}
 		
 		@Override
 		public void exitExprDivide(ExprDivideContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.DIVIDE, l, r));
+			stack.push(new SyntaxNode(LangElement.DIVIDE, l, r));
 		}
 		
 		@Override
 		public void exitExprEqual(ExprEqualContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.EQUAL, l, r));
+			stack.push(new SyntaxNode(LangElement.EQUAL, l, r));
 		}
 		
 		@Override
 		public void exitExprField(ExprFieldContext ctx)
 		{
-			Node o = stack.pop();
+			SyntaxNode o = stack.pop();
 			String name = ctx.name.getText();
 			
-			stack.push(new Node(LangElement.FIELD, o, new Node(LangElement.STRING, name)));
+			stack.push(new SyntaxNode(LangElement.FIELD, o, new SyntaxNode(LangElement.STRING, name)));
 		}
 		
 		@Override
 		public void exitExprGe(ExprGeContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.GE, l, r));
+			stack.push(new SyntaxNode(LangElement.GE, l, r));
 		}
 		
 		@Override
 		public void exitExprGt(ExprGtContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.GT, l, r));
+			stack.push(new SyntaxNode(LangElement.GT, l, r));
 		}
 		
 		@Override
@@ -194,123 +194,126 @@ public class ExpressionParser
 			List<ExpressionContext> list = ctx.expression();
 			String name = ctx.name.getText();
 			
-			Node[] args = new Node[list.size() + 1];
+			SyntaxNode[] args = new SyntaxNode[list.size() + 1];
 			int argIndex = args.length - 1;
 			while(argIndex > 1)
 				args[argIndex--] = stack.pop();
-			args[1] = new Node(LangElement.STRING, name);
+			args[1] = new SyntaxNode(LangElement.STRING, name);
 			args[0] = stack.pop();
 			
-			stack.push(new Node(LangElement.METHOD, args));
+			stack.push(new SyntaxNode(LangElement.METHOD, args));
 		}
 		
 		@Override
 		public void exitExprLe(ExprLeContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.LE, l, r));
+			stack.push(new SyntaxNode(LangElement.LE, l, r));
 		}
 		
 		@Override
 		public void exitExprLt(ExprLtContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.LT, l, r));
+			stack.push(new SyntaxNode(LangElement.LT, l, r));
 		}
 		
 		@Override
 		public void exitExprMod(ExprModContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.MOD, l, r));
+			stack.push(new SyntaxNode(LangElement.MOD, l, r));
 		}
 		
 		@Override
 		public void exitExprMultiply(ExprMultiplyContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.MULTIPLY, l, r));
+			stack.push(new SyntaxNode(LangElement.MULTIPLY, l, r));
 		}
 		
 		@Override
 		public void exitExprNegate(ExprNegateContext ctx)
 		{
-			Node o = stack.pop();
+			SyntaxNode o = stack.pop();
 			
-			stack.push(new Node(LangElement.NEGATE, o));
+			stack.push(new SyntaxNode(LangElement.NEGATE, o));
 		}
 		
 		@Override
 		public void exitExprNot(ExprNotContext ctx)
 		{
-			Node o = stack.pop();
+			SyntaxNode o = stack.pop();
 			
-			stack.push(new Node(LangElement.NOT, o));
+			stack.push(new SyntaxNode(LangElement.NOT, o));
 		}
 		
 		@Override
 		public void exitExprNotEqual(ExprNotEqualContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.NOTEQUAL, l, r));
+			stack.push(new SyntaxNode(LangElement.NOTEQUAL, l, r));
 		}
 		
 		@Override
 		public void exitExprOr(ExprOrContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.OR, l, r));
+			stack.push(new SyntaxNode(LangElement.OR, l, r));
 		}
 		
 		@Override
 		public void exitExprSub(ExprSubContext ctx)
 		{
-			Node r = stack.pop();
-			Node l = stack.pop();
+			SyntaxNode r = stack.pop();
+			SyntaxNode l = stack.pop();
 			
-			stack.push(new Node(LangElement.SUB, l, r));
+			stack.push(new SyntaxNode(LangElement.SUB, l, r));
 		}
 		
 		@Override
 		public void exitLiteralBool(LiteralBoolContext ctx)
 		{
-			stack.push(new Node(LangElement.BOOL, Boolean.parseBoolean(ctx.getText())));
+			stack.push(new SyntaxNode(LangElement.BOOL, Boolean.parseBoolean(ctx.getText())));
 		}
 		
 		@Override
 		public void exitLiteralFloat(LiteralFloatContext ctx)
 		{
-			stack.push(new Node(LangElement.FLOAT, Float.parseFloat(ctx.getText())));
+			stack.push(new SyntaxNode(LangElement.FLOAT, Float.parseFloat(ctx.getText())));
 		}
 		
 		@Override
 		public void exitLiteralInt(LiteralIntContext ctx)
 		{
-			stack.push(new Node(LangElement.INT, Integer.parseInt(ctx.getText())));
+			stack.push(new SyntaxNode(LangElement.INT, Integer.parseInt(ctx.getText())));
 		}
 		
 		@Override
 		public void exitLiteralNull(LiteralNullContext ctx)
 		{
-			stack.push(new Node(LangElement.NULL));
+			stack.push(new SyntaxNode(LangElement.NULL));
 		}
 		
 		@Override
 		public void exitLiteralString(LiteralStringContext ctx)
 		{
-			stack.push(new Node(LangElement.STRING, ctx.getText()));
+			String s = ctx.getText();
+			if(s.startsWith("\"") && s.endsWith("\""))
+				s = s.substring(1, s.length() - 1);
+			stack.push(new SyntaxNode(LangElement.STRING, s));
 		}
 		
 		@Override
@@ -328,7 +331,7 @@ public class ExpressionParser
 		@Override
 		public void exitPrimIdent(PrimIdentContext ctx)
 		{
-			stack.push(new Node(LangElement.REFERENCE, ctx.name.getText()));
+			stack.push(new SyntaxNode(LangElement.REFERENCE, ctx.name.getText()));
 		}
 		
 		@Override
@@ -340,7 +343,7 @@ public class ExpressionParser
 		@Override
 		public void exitPrimThis(PrimThisContext ctx)
 		{
-			stack.push(new Node(LangElement.REFERENCE, "this"));
+			stack.push(new SyntaxNode(LangElement.REFERENCE, "this"));
 		}
 	}
 }

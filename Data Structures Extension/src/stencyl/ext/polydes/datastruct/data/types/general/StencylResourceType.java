@@ -9,8 +9,8 @@ import javax.swing.JComponent;
 
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
@@ -44,21 +44,9 @@ public class StencylResourceType<T extends Resource> extends DataType<T>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<T> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<T> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final UpdatingCombo<T> editor = new UpdatingCombo<T>(Game.getGame().getResources().getResourcesByType(javaType), null);
-		editor.setSelectedItem(updater.get());
-		
-		editor.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				updater.set(editor.getSelected());
-			}
-		});
-		
-		return comps(editor);
+		return new DropdownResourceEditor();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -111,5 +99,50 @@ public class StencylResourceType<T extends Resource> extends DataType<T>
 	public ExtrasMap saveExtras(ExtraProperties extras)
 	{
 		return null;
+	}
+	
+	public class DropdownResourceEditor extends DataEditor<T>
+	{
+		UpdatingCombo<T> editor;
+		
+		public DropdownResourceEditor()
+		{
+			editor = new UpdatingCombo<T>(Game.getGame().getResources().getResourcesByType(javaType), null);
+			
+			editor.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(T t)
+		{
+			editor.setSelectedItem(t);
+		}
+		
+		@Override
+		public T getValue()
+		{
+			return editor.getSelected();
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(editor);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			editor.dispose();
+			editor = null;
+		}
 	}
 }

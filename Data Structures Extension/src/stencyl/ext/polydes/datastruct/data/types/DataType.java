@@ -61,7 +61,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 			}
 	}*/
 	
-	protected JComponent[] comps(JComponent... c)
+	protected static JComponent[] comps(JComponent... c)
 	{
 		return c;
 	}
@@ -69,18 +69,39 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	//return null for classes that already exist
 	public abstract List<String> generateHaxeClass();
 	public abstract List<String> generateHaxeReader();
-	public abstract JComponent[] getEditor(DataUpdater<T> updater, ExtraProperties extras, PropertiesSheetStyle style);
-	public JComponent[] getEditor(DataUpdater<T> updater, ExtrasMap extras, PropertiesSheetStyle style)
+//	public abstract JComponent[] getEditor(DataUpdater<T> updater, ExtraProperties extras, PropertiesSheetStyle style);
+//	public JComponent[] getEditor(DataUpdater<T> updater, ExtrasMap extras, PropertiesSheetStyle style)
+//	{
+//		return getEditor(updater, loadExtras(extras), style);
+//	}
+	/**
+	 * Create editor, set value, add listener.<br />
+	 * Dispose when you're done.
+	 */
+	public abstract DataEditor<T> createEditor(ExtraProperties extras, PropertiesSheetStyle style);
+	public DataEditor<T> createEditor(ExtrasMap extras, PropertiesSheetStyle style)
 	{
-		return getEditor(updater, loadExtras(extras), style);
+		return createEditor(loadExtras(extras), style);
 	}
-	//public abstract void applyToFieldPanel(StructureFieldPanel panel);
-	public void applyToFieldPanel(StructureFieldPanel panel){};
+	
+	/**
+	 * From the passed in StructureFieldPanel, the following are accessible:	<br />
+	 * - panel  :  StructureFieldPanel											<br />
+	 * - extraProperties  :  Card												<br />
+	 * 																			<br />
+	 * - field  :  StructureField												<br />
+	 * - preview  :  PropertiesSheet											<br />
+	 * - previewKey  :  DataItem												<br />
+	 */
+	public /*abstract*/ void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		System.out.println("APPLYING OTHER " + xml);
+	};
 	
 	public abstract T decode(String s);
 	public abstract String toDisplayString(T data);
 	
-	protected <S> S or(S item, S defaultValue)
+	protected static <S> S or(S item, S defaultValue)
 	{
 		return item == null ? defaultValue: item;
 	}
@@ -143,5 +164,26 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	public ArrayList<Definition> getBlocks()
 	{
 		return null;
+	}
+	
+	public static class InvalidEditor<T> extends DataEditor<T>
+	{
+		PropertiesSheetStyle style;
+		String msg;
+		
+		public InvalidEditor(String msg, PropertiesSheetStyle style)
+		{
+			this.msg = msg;
+			this.style = style;
+		}
+		
+		@Override public void set(T t) {}
+		@Override public T getValue() { return null; }
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(style.createSoftLabel(msg));
+		}
 	}
 }

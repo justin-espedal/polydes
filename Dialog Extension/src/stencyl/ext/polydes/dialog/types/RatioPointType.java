@@ -6,8 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -64,33 +64,9 @@ public class RatioPointType extends DataType<RatioPoint>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<RatioPoint> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<RatioPoint> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final JTextField editor1 = style.createTextField();
-		final JTextField editor2 = style.createTextField();
-		
-		((PlainDocument) editor1.getDocument()).setDocumentFilter(new RatioIntegerFilter());
-		((PlainDocument) editor2.getDocument()).setDocumentFilter(new RatioIntegerFilter());
-		RatioPoint pt = updater.get();
-		if (pt == null)
-			pt = new RatioPoint("0", "0");
-
-		editor1.setText(pt.getX());
-		editor2.setText(pt.getY());
-		
-		DocumentAdapter updatePoint = new DocumentAdapter(true)
-		{
-			@Override
-			protected void update()
-			{
-				updater.set(new RatioPoint(editor1.getText(), editor2.getText()));
-			}
-		};
-		
-		editor1.getDocument().addDocumentListener(updatePoint);
-		editor2.getDocument().addDocumentListener(updatePoint);
-		
-		return comps(editor1, editor2);
+		return new RatioPointEditor(style);
 	}
 	
 	@Override
@@ -115,5 +91,53 @@ public class RatioPointType extends DataType<RatioPoint>
 	public ExtrasMap saveExtras(ExtraProperties arg0)
 	{
 		return null;
+	}
+	
+	public static class RatioPointEditor extends DataEditor<RatioPoint>
+	{
+		private JTextField xField;
+		private JTextField yField;
+		
+		public RatioPointEditor(PropertiesSheetStyle style)
+		{
+			xField = style.createTextField();
+			yField = style.createTextField();
+			
+			((PlainDocument) xField.getDocument()).setDocumentFilter(new RatioIntegerFilter());
+			((PlainDocument) yField.getDocument()).setDocumentFilter(new RatioIntegerFilter());
+			
+			DocumentAdapter updatePoint = new DocumentAdapter(true)
+			{
+				@Override
+				protected void update()
+				{
+					updated();
+				}
+			};
+			
+			xField.getDocument().addDocumentListener(updatePoint);
+			yField.getDocument().addDocumentListener(updatePoint);
+		}
+		
+		@Override
+		public void set(RatioPoint t)
+		{
+			if(t == null)
+				t = new RatioPoint("0", "0");
+			xField.setText(t.getX());
+			yField.setText(t.getY());
+		}
+		
+		@Override
+		public RatioPoint getValue()
+		{
+			return new RatioPoint(xField.getText(), yField.getText());
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(xField, yField);
+		}
 	}
 }

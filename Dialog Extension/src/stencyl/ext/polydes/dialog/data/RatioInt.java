@@ -27,4 +27,10 @@ public class RatioInt
 		
 		return(((RatioInt) o).get().equals(get()));
 	}
+	
+	@Override
+	public String toString()
+	{
+		return data;
+	}
 }

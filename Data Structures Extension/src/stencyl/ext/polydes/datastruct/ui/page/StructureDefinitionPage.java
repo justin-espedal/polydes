@@ -5,6 +5,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -22,17 +23,22 @@ import stencyl.ext.polydes.datastruct.data.folder.Folder;
 import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
+import stencyl.ext.polydes.datastruct.data.structure.StructureTable;
+import stencyl.ext.polydes.datastruct.data.structure.StructureTabset;
+import stencyl.ext.polydes.datastruct.data.structure.Structures;
 import stencyl.ext.polydes.datastruct.ui.MiniSplitPane;
 import stencyl.ext.polydes.datastruct.ui.StatusBar;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.list.ListUtils;
+import stencyl.ext.polydes.datastruct.ui.objeditors.PreviewableEditor;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
 import stencyl.ext.polydes.datastruct.ui.tree.DTree;
 import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionListener;
 import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionState;
+import stencyl.ext.polydes.datastruct.ui.tree.DefaultNodeCreator;
 import stencyl.ext.polydes.datastruct.ui.tree.SelectionType;
-import stencyl.ext.polydes.datastruct.ui.utils.SnappingDialog;
 import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
+import stencyl.ext.polydes.datastruct.ui.utils.SnappingDialog;
 import stencyl.sw.util.UI;
 
 public class StructureDefinitionPage extends JPanel
@@ -53,7 +59,6 @@ public class StructureDefinitionPage extends JPanel
 	protected JScrollPane scroller;
 	protected JPanel page;
 	
-	private StructureDefinition currentDefinition;
 	private StructureDefinitionEditor editor;
 	
 	private DTreeSelectionListener definitionStateListener = new DTreeSelectionListener()
@@ -74,7 +79,7 @@ public class StructureDefinitionPage extends JPanel
 				return;
 			}
 			DataItem di = (DataItem) selectionState.nodes.get(0).getUserObject();
-			StructureDefinition toEdit = currentDefinition = (StructureDefinition) di.getObject();
+			StructureDefinition toEdit = (StructureDefinition) di.getObject();
 			editor = toEdit.getEditor();
 			editor.setAlignmentX(LEFT_ALIGNMENT);
 			
@@ -82,7 +87,7 @@ public class StructureDefinitionPage extends JPanel
 			
 			if(editorTree != null)
 				editorTree.removeTreeListener(editorStateListener);
-			editorTree = editor.model.getTree();
+			editorTree = editor.tree;
 			editorTree.addTreeListener(editorStateListener);
 			
 			splitPane.setTopComponent(definitionTreeView);
@@ -116,25 +121,39 @@ public class StructureDefinitionPage extends JPanel
 		@Override
 		public void selectionStateChanged()
 		{
-			editor.removeAll();
+			PropertiesWindow propsWindow = StructureDefinitionsWindow.get().getPropsWindow();
 			
 			DataItem di = (DataItem) editorState.nodes.get(0).getUserObject();
 			EditableObject selected = (di == null) ? null : di.getObject();
 			if(selected != null)
 			{
-				EditableObject toEdit = (EditableObject) selected;
-				PropertiesWindow.setObject(toEdit);
-				PropertiesWindow.showWindow();
-				PropertiesWindow.get().addComponentListener(propsWindowAdapter);
+				if(!(selected instanceof StructureTable || selected instanceof StructureTabset))
+				{
+					EditableObject toEdit = (EditableObject) selected;
+					if(toEdit.getEditor() instanceof PreviewableEditor)
+						((PreviewableEditor) toEdit.getEditor()).setPreviewSheet(editor.getPreview().getEditor().properties, di);
+					
+					propsWindow.setObject(toEdit);
+					if(!propsWindow.isVisible())
+					{
+						propsWindow.setVisible(true);
+						propsWindow.addComponentListener(propsWindowAdapter);
+					}
+				}
+				else if(propsWindow.isVisible())
+				{
+					propsWindow.removeComponentListener(propsWindowAdapter);
+					propsWindow.setObject(null);
+					propsWindow.setVisible(false);
+				}
 				
-				editor.add(currentDefinition.getEditor().getPreview().getEditor());
-				//TODO: highlight currently selected node
-				//currentDefinition.getEditor().getPreview().getEditor().highlightElement(toEdit.gui);
+				editor.getPreview().getEditor().highlightElement(di);
 			}
-			else
+			else if(propsWindow.isVisible())
 			{
-				PropertiesWindow.setObject(null);
-				PropertiesWindow.hideWindow();
+				propsWindow.removeComponentListener(propsWindowAdapter);
+				propsWindow.setObject(null);
+				propsWindow.setVisible(false);
 			}
 			
 			revalidate();
@@ -147,7 +166,7 @@ public class StructureDefinitionPage extends JPanel
 		@Override
 		public void componentHidden(ComponentEvent e)
 		{
-			PropertiesWindow.get().removeComponentListener(this);
+			StructureDefinitionsWindow.get().getPropsWindow().removeComponentListener(this);
 			if(editorTree != null)
 				editorTree.getTree().getSelectionModel().clearSelection();
 		}
@@ -166,8 +185,10 @@ public class StructureDefinitionPage extends JPanel
 		super(new BorderLayout());
 		
 		definitionsfm = new FolderHierarchyModel(StructureDefinitions.root);
-		definitionTree = definitionsfm.getTree();
+		definitionTree = new DTree(definitionsfm);
+		definitionTree.setNamingEditingAllowed(false);
 		definitionTree.addTreeListener(definitionStateListener);
+		definitionTree.expand((Folder) StructureDefinitions.root.getItemByName("My Structures"));
 		
 		page = new JPanel(new BorderLayout());
 		page.setBackground(UIConsts.TEXT_EDITOR_COLOR);
@@ -188,7 +209,7 @@ public class StructureDefinitionPage extends JPanel
 		definitionTree.enablePropertiesButton();
 		definitionsfm.setUniqueItemNames(true);
 		
-		definitionTree.setNodeCreator(definitionsfm.new DefaultNodeCreator()
+		definitionTree.setNodeCreator(new DefaultNodeCreator()
 		{
 			@Override
 			public Collection<PopupItem> getCreatableNodeList()
@@ -216,7 +237,6 @@ public class StructureDefinitionPage extends JPanel
 			@Override
 			public void editNode(DataItem toEdit)
 			{
-				//TODO: Folder editing
 				if(toEdit instanceof Folder)
 					return;
 				
@@ -230,11 +250,30 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
+			public boolean attemptRemove(List<DataItem> toRemove)
+			{
+				if(toRemove.size() > 0 && toRemove.get(0).getObject() instanceof StructureDefinition)
+				{
+					StructureDefinition def = (StructureDefinition) toRemove.get(0).getObject();
+					int result =
+						UI.showYesCancelPrompt(
+							"Remove Structure Definition",
+							"Are you sure you want to remove this structure definition? (Will delete " + Structures.structures.get(def).size() + " structures)",
+							"Remove", "Cancel"
+						);
+					
+					return UI.choseYes(result);
+				}
+				return false;
+			}
+			
+			@Override
 			public void nodeRemoved(DataItem toRemove)
 			{
 				if(toRemove.getObject() instanceof StructureDefinition)
 				{
-					//StructureDefinitions.
+					StructureDefinition def = (StructureDefinition) toRemove.getObject();
+					def.remove();
 				}
 			}
 		});
@@ -250,8 +289,9 @@ public class StructureDefinitionPage extends JPanel
 
 		definitionTree.forceRerender();
 		
-		PropertiesWindow.get().snapToComponent(scroller.getViewport(), SnappingDialog.TOP_RIGHT);
-		PropertiesWindow.hideWindow();
+		PropertiesWindow propsWindow = StructureDefinitionsWindow.get().getPropsWindow();
+		propsWindow.snapToComponent(scroller.getViewport(), SnappingDialog.TOP_RIGHT);
+		propsWindow.setVisible(false);
 	}
 	
 	public void selectNone()
@@ -274,6 +314,11 @@ public class StructureDefinitionPage extends JPanel
 	
 	public static void dispose()
 	{
+		if(_instance != null)
+		{
+			_instance.definitionsfm.dispose();
+			_instance.definitionTree.dispose();
+		}
 		_instance = null;
 	}
 }

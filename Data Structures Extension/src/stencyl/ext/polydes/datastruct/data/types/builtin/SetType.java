@@ -4,10 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,16 +17,28 @@ import stencyl.core.lib.Game;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
 import stencyl.ext.polydes.datastruct.data.core.DataSet;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
+import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.Structures;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.builtin.ArrayType.SimpleArrayEditor;
+import stencyl.ext.polydes.datastruct.data.types.builtin.SelectionType.DropdownSelectionEditor;
+import stencyl.ext.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
 import stencyl.ext.polydes.datastruct.data.types.general.StencylResourceType;
+import stencyl.ext.polydes.datastruct.data.types.general.StructureType;
+import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType;
+import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType.DataTypeEditor;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureObjectPanel;
+import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
+import stencyl.ext.polydes.datastruct.utils.Lang;
 
 public class SetType extends BuiltinType<DataSet>
 {
@@ -34,78 +48,52 @@ public class SetType extends BuiltinType<DataSet>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<DataSet> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<DataSet> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
 		Extras e = (Extras) extras;
 		String properType = "";
 		Collection<?> source = null;
-		if(e.sourceType.equals(SourceType.Structure))
+		if(e.source != null)
 		{
-			StructureDefinition def = (StructureDefinition) e.source;
-			if(def != null)
+			if(e.sourceType.equals(SourceType.Structure))
 			{
-				source = Structures.getList(def.name);
-				properType = def.name;
+				StructureDefinition def = ((StructureType) e.source).def;
+				if(def != null)
+				{
+					source = Structures.getList(def);
+					properType = def.getName();
+				}
 			}
-		}
-		else if(e.sourceType.equals(SourceType.Resource))
-		{
-			StencylResourceType<?> dtype = (StencylResourceType<?>) e.source;
-			if(dtype != null)
+			else if(e.sourceType.equals(SourceType.Resource))
 			{
-				source = Game.getGame().getResources().getResourcesByType(dtype.javaType);
-				properType = dtype.xml;
+				StencylResourceType<?> dtype = (StencylResourceType<?>) e.source;
+				if(dtype != null)
+				{
+					source = Game.getGame().getResources().getResourcesByType(dtype.javaType);
+					properType = dtype.xml;
+				}
 			}
-		}
-		else
-		{
-			source = (Collection<?>) e.source;
-			if(source == null)
-				source = new ArrayList<Dynamic>();
-			properType = "String";
+			else
+			{
+				source = (Collection<?>) e.source;
+				if(source == null)
+					source = new ArrayList<Dynamic>();
+				properType = "String";
+			}
 		}
 		
 		if(source == null)
-			return comps(style.createSoftLabel("Select a valid data source"));
+			return new InvalidEditor<DataSet>("Select a valid data source", style);
 		
 		if(source.isEmpty())
-			return comps(style.createSoftLabel("The selected source has no items"));
+			return new InvalidEditor<DataSet>("The selected source has no items", style);
 		
-		if(updater.get() == null || !updater.get().genType.xml.equals(properType))
-			updater.set(new DataSet(Types.fromXML(properType)));
-		final DataSet set = updater.get();
-		
-		if(e.editor.equals(Editor.Grid))
-			return comps(style.createSoftLabel("Grid is unimplemented"));
+//		if(e.editor.equals(Editor.Grid))
+//			return comps(style.createSoftLabel("Grid is unimplemented"));
 		
 		else// if(editorType.equals("Checklist"))
 		{
-			ArrayList<JCheckBox> buttons = new ArrayList<JCheckBox>();
-			
-			for(final Object o : source)
-			{
-				final JCheckBox b = new JCheckBox("" + o);
-				buttons.add(b);
-				if(set.contains(o))
-					b.setSelected(true);
-				
-				b.addActionListener(new ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						if(b.isSelected())
-							set.add(o);
-						else
-							set.remove(o);
-					}
-				});
-				
-				b.setBackground(null);
-				b.setForeground(style.labelColor);
-			}
-			
-			return comps(Layout.verticalBox(0, buttons.toArray(new JCheckBox[0])));
+			return new ChecklistDataSetEditor(source, style, properType);
 		}
 	}
 
@@ -160,6 +148,134 @@ public class SetType extends BuiltinType<DataSet>
 	}
 	
 	@Override
+	public void applyToFieldPanel(final StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		final PropertiesSheet preview = panel.getPreview();
+		final DataItem previewKey = panel.getPreviewKey();
+		final PropertiesSheetStyle style = panel.style;
+		
+		final int dataSourceRow;
+		final int customSourceRow;
+		final int dataFilterRow;
+		
+		//=== Editor
+		
+//		DataList editorChoices = Lang.datalist(Types._String, "Checklist"/*, "Grid"*/);
+//		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
+//		editorChooser.setValue("Plain");
+//		editorChooser.addListener(new UpdateListener()
+//		{
+//			@Override
+//			public void updated()
+//			{
+//				e.editor = Editor.valueOf(editorChooser.getValue());
+//				preview.refreshDataItem(previewKey);
+//			}
+//		});
+		
+		//=== Source Type
+		
+		DataList sourceTypeChoices = Lang.datalist(Types._String, "Structure", "Resource", "Custom");
+		final DataEditor<String> sourceTypeChooser = new DropdownSelectionEditor(sourceTypeChoices);
+		sourceTypeChooser.setValue(e.sourceType.name());
+		//sourceTypeChooser listener later, after dataSourceRow and customSourceRow are added.
+		
+		//=== Sources
+		
+		final DataTypeEditor dataSourceField = new DataTypeEditor();
+		dataSourceField.setValue((DataType<?>) e.source);
+		dataSourceField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.source = dataSourceField.getValue();
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		final DataEditor<DataList> customSourceField = new SimpleArrayEditor(style, Types._String);
+		customSourceField.setValue((DataList) e.source);
+		customSourceField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.source = customSourceField.getValue();
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		//=== Source Filter
+
+		final DataEditor<String> filterField = new SingleLineStringEditor(style);
+		filterField.setValue(e.sourceFilter);
+		filterField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.sourceFilter = filterField.getValue();
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		//panel.addGenericRow(expansion, "Editor", editorChooser);
+		
+		panel.addGenericRow(expansion, "Source Type", sourceTypeChooser);
+		dataSourceRow = panel.addGenericRow(expansion, "Source", dataSourceField);
+		dataFilterRow = panel.addEnablerRow(expansion, "Filter", filterField, e.sourceFilter != null);
+		customSourceRow = panel.addGenericRow(expansion, "Source", customSourceField, StructureObjectPanel.RESIZE_FLAG);
+		
+		sourceTypeChooser.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.sourceType = SourceType.valueOf(sourceTypeChooser.getValue());
+				
+				boolean custom = e.sourceType == SourceType.Custom;
+				panel.setRowVisibility(dataSourceRow, !custom);
+				panel.setRowVisibility(dataFilterRow, !custom);
+				panel.setRowVisibility(customSourceRow, custom);
+				
+				if(custom)
+				{
+					e.source = customSourceField.getValue();
+					e.sourceFilter = null;
+				}
+				else
+				{
+					if(e.sourceType == SourceType.Resource)
+						dataSourceField.setFilter(DataTypeType.onlyStencylTypes);
+					else
+						dataSourceField.setFilter(DataTypeType.onlyStructureDefinitions);
+					dataSourceField.setValue(null);
+					e.source = null;
+					e.sourceFilter = null;
+				}
+				
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		boolean custom = e.sourceType == SourceType.Custom;
+		panel.setRowVisibility(dataSourceRow, !custom);
+		panel.setRowVisibility(dataFilterRow, !custom);
+		panel.setRowVisibility(customSourceRow, custom);
+		
+		if(!custom)
+		{
+			if(e.sourceType == SourceType.Resource)
+				dataSourceField.setFilter(DataTypeType.onlyStencylTypes);
+			else
+				dataSourceField.setFilter(DataTypeType.onlyStructureDefinitions);
+		}
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
@@ -169,6 +285,7 @@ public class SetType extends BuiltinType<DataSet>
 			e.source = Types.fromXML(extras.get("source", ""));
 		else
 			e.source = extras.get("source", Types._Array, null);
+		e.sourceFilter = extras.get("sourceFilter", Types._String, null);
 		return e;
 	}
 	
@@ -179,10 +296,15 @@ public class SetType extends BuiltinType<DataSet>
 		ExtrasMap emap = new ExtrasMap();
 		emap.put(EDITOR, "" + e.editor);
 		emap.put("sourceType", "" + e.sourceType);
-		if(e.sourceType.equals(SourceType.Structure) || e.sourceType.equals(SourceType.Resource))
-			emap.put("source", ((DataType<?>) e.source).xml);
-		else
-			emap.put("source", Types._Array.encode((DataList) e.source));
+		if(e.source != null)
+		{
+			if(e.sourceType.equals(SourceType.Structure) || e.sourceType.equals(SourceType.Resource))
+				emap.put("source", ((DataType<?>) e.source).xml);
+			else
+				emap.put("source", Types._Array.checkEncode(e.source));
+		}
+		if(e.sourceFilter != null)
+			emap.put("sourceFilter", e.sourceFilter);
 		return emap;
 	}
 	
@@ -191,12 +313,13 @@ public class SetType extends BuiltinType<DataSet>
 		public Editor editor;
 		public SourceType sourceType;
 		public Object source; //StructureType, StencylType, or (Array, Simple editor)
+		public String sourceFilter;
 	}
 	
 	enum Editor
 	{
-		Checklist,
-		Grid
+		Checklist/*,
+		Grid*/
 	}
 	
 	enum SourceType
@@ -204,5 +327,70 @@ public class SetType extends BuiltinType<DataSet>
 		Structure,
 		Resource,
 		Custom
+	}
+	
+	public static class ChecklistDataSetEditor extends DataEditor<DataSet>
+	{
+		DataSet set;
+		JPanel buttonPanel;
+		HashMap<Object, JCheckBox> map;
+		String properType;
+		
+		public ChecklistDataSetEditor(Collection<?> source, PropertiesSheetStyle style, String properType)
+		{
+			this.properType = properType;
+			
+			ArrayList<JCheckBox> buttons = new ArrayList<JCheckBox>();
+			
+			map = new HashMap<Object, JCheckBox>();
+			
+			for(final Object o : source)
+			{
+				final JCheckBox b = new JCheckBox("" + o);
+				buttons.add(b);
+				map.put(o, b);
+				
+				b.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						if(b.isSelected())
+							set.add(o);
+						else
+							set.remove(o);
+						updated();
+					}
+				});
+				
+				b.setBackground(null);
+				b.setForeground(style.labelColor);
+			}
+			
+			buttonPanel = Layout.verticalBox(0, buttons.toArray(new JCheckBox[0]));
+		}
+		
+		@Override
+		public void set(DataSet t)
+		{
+			if(t == null)
+				t = new DataSet(Types.fromXML(properType));
+			Iterator<Object> it = t.iterator();
+			while(it.hasNext())
+				map.get(it.next()).setSelected(true);
+			set = t;
+		}
+		
+		@Override
+		public DataSet getValue()
+		{
+			return set;
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(buttonPanel);
+		}
 	}
 }

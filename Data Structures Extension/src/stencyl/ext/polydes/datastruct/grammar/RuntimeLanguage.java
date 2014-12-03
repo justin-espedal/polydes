@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
-public class Lang
+public class RuntimeLanguage
 {
 	public static Object invoke(Object o, String name, List<Object> args)
 	{

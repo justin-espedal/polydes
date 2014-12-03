@@ -34,7 +34,14 @@ public class StructureDefinitions
 		root = new Folder("Structure Definitions");
 		baseFolders = new HashMap<Folder, File>();
 		
-		FolderPolicy policy = new FolderPolicy();
+		FolderPolicy policy = new FolderPolicy()
+		{
+			@Override
+			public boolean canAcceptItem(Folder folder, DataItem item)
+			{
+				return false;
+			}
+		};
 		policy.folderCreationEnabled = false;
 		policy.itemCreationEnabled = false;
 		policy.itemEditingEnabled = false;
@@ -52,14 +59,13 @@ public class StructureDefinitions
 	
 	public void addFolder(File fsfolder, String name)
 	{
-		//TODO: Disallow name editing of Base Folders.
 		Folder newFolder = new Folder(name);
 		newFolder.setPolicy(new UniqueRootPolicy());
 		baseFolders.put(newFolder, fsfolder);
 		for(File f : fsfolder.listFiles())
 			load(f, newFolder);
 		root.addItem(newFolder);
-		root.setClean();
+		root.setDirty(false);
 	}
 	
 	public void load(File fsfile, Folder dsfolder)
@@ -106,7 +112,7 @@ public class StructureDefinitions
 		}
 		catch (IOException e)
 		{
-			System.out.println("Couldn't load icon for Structure Definition " + def.name);
+			System.out.println("Couldn't load icon for Structure Definition " + def.getName());
 		}
 		
 		addDefinition(def);
@@ -116,10 +122,10 @@ public class StructureDefinitions
 	
 	public static void addDefinition(StructureDefinition def)
 	{
-		defMap.put(def.name, def);
-		Structures.structures.put(def.name, new ArrayList<Structure>());
+		defMap.put(def.getName(), def);
+		Structures.structures.put(def, new ArrayList<Structure>());
 		Types.addType(new StructureType(def));
-		DelayedInitialize.initProp(def.name, Types.fromXML(def.name));
+		DelayedInitialize.initProp(def.getName(), Types.fromXML(def.getName()));
 	}
 	
 	/*
@@ -189,7 +195,7 @@ public class StructureDefinitions
 				FileUtils.copyDirectory(temp, fsfolder);
 			}
 		}
-		root.setClean();
+		root.setDirty(false);
 	}
 	
 	public void save(DataItem item, File file) throws IOException
@@ -211,16 +217,18 @@ public class StructureDefinitions
 			Element e = doc.createElement("structure");
 			XML.writeDefinition(doc, e, def);
 			doc.appendChild(e);
-			FileHelper.writeXMLToFile(doc, new File(file, def.name + ".xml").getAbsolutePath());
-			if(def.iconImg != null)
-				ImageIO.write(def.iconImg, "png", new File(file, def.name + ".png"));
+			FileHelper.writeXMLToFile(doc, new File(file, def.getName() + ".xml").getAbsolutePath());
+			if(def.getIconImg() != null)
+				ImageIO.write(def.getIconImg(), "png", new File(file, def.getName() + ".png"));
 			if(!def.customCode.isEmpty())
-				FileUtils.writeStringToFile(new File(file, def.name + ".hx"), def.customCode);
+				FileUtils.writeStringToFile(new File(file, def.getName() + ".hx"), def.customCode);
 		}
 	}
 	
 	public static void dispose()
 	{
+		for(StructureDefinition def : defMap.values())
+			def.dispose();
 		defMap.clear();
 		baseFolders.clear();
 		_instance = null;

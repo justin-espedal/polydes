@@ -127,11 +127,17 @@ public class Folder extends DataItem
 		return items.get(position);
 	}
 	
+	public int indexOfItem(DataItem item)
+	{
+		return items.indexOf(item);
+	}
+	
 	public void removeItem(DataItem item)
 	{
-		if(policy.duplicateItemNamesAllowed || itemNames.contains(item.getName()))
+		if(Lang.or(policy, DEFAULT_POLICY).duplicateItemNamesAllowed || itemNames.contains(item.getName()))
 		{
 			items.remove(item);
+			item.parent = null;
 			itemNames.remove(item.getName());
 			for(FolderListener l : fListeners) {l.folderItemRemoved(this, item);}
 			
@@ -139,6 +145,7 @@ public class Folder extends DataItem
 		}
 	}
 	
+	//This is currently never called.
 	public void moveItem(DataItem item, int position)
 	{
 		int curPos = items.indexOf(item);
@@ -173,15 +180,14 @@ public class Folder extends DataItem
 		super.setDirty(false);
 	}
 	
-	public void setClean()
+	@Override
+	public void setDirty(boolean value)
 	{
-		super.setDirty(false);
+		super.setDirty(value);
 		
-		for(DataItem item : items)
-		{
-			if(item.isDirty())
+		if(!value)
+			for(DataItem item : items)
 				item.setDirty(false);
-		}
 	}
 
 	public void registerNameChange(String oldName, String newName)
@@ -190,9 +196,9 @@ public class Folder extends DataItem
 		itemNames.add(newName);
 	}
 	
-	//===
-	
-	//TODO: maybe change
+	/*================================================*\
+	 | Folder Policies
+	\*================================================*/
 	
 	public final boolean canAcceptItem(DataItem item)
 	{

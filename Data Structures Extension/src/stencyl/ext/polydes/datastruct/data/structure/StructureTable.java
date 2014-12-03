@@ -4,9 +4,12 @@ import javax.swing.JPanel;
 
 public class StructureTable extends StructureTab
 {
-	public StructureTable()
+	StructureDefinition def;
+	
+	public StructureTable(StructureDefinition def)
 	{
 		super("");
+		this.def = def;
 	}
 	
 	@Override
@@ -23,5 +26,12 @@ public class StructureTable extends StructureTab
 	@Override
 	public void revertChanges()
 	{
+	}
+	
+	@Override
+	public void setDirty(boolean value)
+	{
+		super.setDirty(value);
+		def.dref.setDirty(value);
 	}
 }

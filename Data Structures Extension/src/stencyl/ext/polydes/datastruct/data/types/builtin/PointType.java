@@ -8,10 +8,12 @@ import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
 import stencyl.ext.polydes.datastruct.Blocks;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
@@ -34,32 +36,9 @@ public class PointType extends BuiltinType<Point>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Point> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Point> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final JTextField editor1 = style.createTextField();
-		final JTextField editor2 = style.createTextField();
-		((PlainDocument) editor1.getDocument()).setDocumentFilter(new IntegerFilter());
-		((PlainDocument) editor2.getDocument()).setDocumentFilter(new IntegerFilter());
-		Point pt = updater.get();
-		if (pt == null)
-			pt = new Point(0, 0);
-
-		editor1.setText("" + pt.x);
-		editor2.setText("" + pt.y);
-
-		DocumentAdapter updatePoint = new DocumentAdapter(true)
-		{
-			@Override
-			protected void update()
-			{
-				updater.set(new Point(Integer.parseInt(editor1.getText()), Integer.parseInt(editor2.getText())));
-			}
-		};
-		
-		editor1.getDocument().addDocumentListener(updatePoint);
-		editor2.getDocument().addDocumentListener(updatePoint);
-		
-		return comps(editor1, editor2);
+		return new PointEditor(style);
 	}
 	
 	@Override
@@ -165,6 +144,29 @@ public class PointType extends BuiltinType<Point>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		PropertiesSheetStyle style = panel.style;
+		
+		//=== Default Value
+		
+		final DataEditor<Point> defaultField = new PointEditor(style);
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
+		panel.addGenericRow(expansion, "Default", defaultField);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
@@ -185,5 +187,52 @@ public class PointType extends BuiltinType<Point>
 	class Extras extends ExtraProperties
 	{
 		public Point defaultValue;
+	}
+	
+	public static class PointEditor extends DataEditor<Point>
+	{
+		JTextField xField;
+		JTextField yField;
+		
+		public PointEditor(PropertiesSheetStyle style)
+		{
+			xField = style.createTextField();
+			yField = style.createTextField();
+			((PlainDocument) xField.getDocument()).setDocumentFilter(new IntegerFilter());
+			((PlainDocument) yField.getDocument()).setDocumentFilter(new IntegerFilter());
+			
+			DocumentAdapter updatePoint = new DocumentAdapter(true)
+			{
+				@Override
+				protected void update()
+				{
+					updated();
+				}
+			};
+			
+			xField.getDocument().addDocumentListener(updatePoint);
+			yField.getDocument().addDocumentListener(updatePoint);
+		}
+		
+		@Override
+		public void set(Point t)
+		{
+			if(t == null)
+				t = new Point(0, 0);
+			xField.setText("" + t.x);
+			yField.setText("" + t.y);
+		}
+		
+		@Override
+		public Point getValue()
+		{
+			return new Point(Integer.parseInt(xField.getText()), Integer.parseInt(yField.getText()));
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(xField, yField);
+		}
 	}
 }

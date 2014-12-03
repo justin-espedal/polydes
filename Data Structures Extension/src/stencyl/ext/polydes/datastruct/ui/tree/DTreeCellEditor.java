@@ -20,6 +20,8 @@ import stencyl.ext.polydes.datastruct.data.folder.Folder;
 
 public class DTreeCellEditor implements TreeCellEditor, KeyListener, DocumentListener
 {
+	private DTree dtree;
+	
 	private InlineTreeInput input;
 	private ArrayList<CellEditorListener> listeners;
 	
@@ -37,6 +39,7 @@ public class DTreeCellEditor implements TreeCellEditor, KeyListener, DocumentLis
 		input.addKeyListener(this);
 		input.getDocument().addDocumentListener(this);
 		listeners = new ArrayList<CellEditorListener>();
+		this.dtree = dtree;
 	}
 	
 	@Override
@@ -62,11 +65,6 @@ public class DTreeCellEditor implements TreeCellEditor, KeyListener, DocumentLis
 	public Object getCellEditorValue()
 	{
 		return value;
-	}
-	
-	public Object getCellEditorPreviousValue()
-	{
-		return previousValue;
 	}
 	
 	public String getCellEditorTextValue()
@@ -109,7 +107,7 @@ public class DTreeCellEditor implements TreeCellEditor, KeyListener, DocumentLis
 			return false;
 		
 		if(e instanceof MouseEvent)
-			return ((MouseEvent) e).getClickCount() >= 2;
+			return dtree.isNameEditingAllowed() && ((MouseEvent) e).getClickCount() >= 2;
 		
 		return false;
 	}
@@ -141,6 +139,7 @@ public class DTreeCellEditor implements TreeCellEditor, KeyListener, DocumentLis
 		{
 			value = previousValue;
 			((DataItem) value).setName(getCellEditorTextValue());
+			previousValue = null;
 		}
 		else
 		{

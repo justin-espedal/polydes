@@ -6,10 +6,12 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
@@ -23,34 +25,9 @@ public class DimensionType extends BuiltinType<Dimension>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Dimension> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Dimension> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final JTextField editor1 = style.createTextField();
-		final JTextField editor2 = style.createTextField();
-		((PlainDocument) editor1.getDocument()).setDocumentFilter(new IntegerFilter());
-		((PlainDocument) editor2.getDocument()).setDocumentFilter(new IntegerFilter());
-		Dimension d = updater.get();
-		if(d == null)
-			d = new Dimension(0, 0);
-		
-		editor1.setText("" + d.width);
-		editor2.setText("" + d.height);
-		
-		DocumentAdapter updateDimension = new DocumentAdapter(true)
-		{
-			@Override
-			protected void update()
-			{
-				updater.set(new Dimension(
-						Integer.parseInt(editor1.getText()),
-						Integer.parseInt(editor2.getText())));
-			}
-		};
-		
-		editor1.getDocument().addDocumentListener(updateDimension);
-		editor2.getDocument().addDocumentListener(updateDimension);
-
-		return comps(editor1, editor2);
+		return new DimensionEditor(style);
 	}
 
 	@Override
@@ -82,6 +59,29 @@ public class DimensionType extends BuiltinType<Dimension>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		final PropertiesSheetStyle style = panel.style;
+		
+		//=== Default Value
+		
+		final DataEditor<Dimension> defaultField = new DimensionEditor(style);
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
+		panel.addGenericRow(expansion, "Default", defaultField);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
@@ -102,5 +102,54 @@ public class DimensionType extends BuiltinType<Dimension>
 	class Extras extends ExtraProperties
 	{
 		public Dimension defaultValue;
+	}
+	
+	public static class DimensionEditor extends DataEditor<Dimension>
+	{
+		private JTextField widthField;
+		private JTextField heightField;
+		
+		public DimensionEditor(PropertiesSheetStyle style)
+		{
+			widthField = style.createTextField();
+			heightField = style.createTextField();
+			((PlainDocument) widthField.getDocument()).setDocumentFilter(new IntegerFilter());
+			((PlainDocument) heightField.getDocument()).setDocumentFilter(new IntegerFilter());
+			
+			DocumentAdapter updateDimension = new DocumentAdapter(true)
+			{
+				@Override
+				protected void update()
+				{
+					updated();
+				}
+			};
+			
+			widthField.getDocument().addDocumentListener(updateDimension);
+			heightField.getDocument().addDocumentListener(updateDimension);
+		}
+		
+		@Override
+		public Dimension getValue()
+		{
+			return new Dimension(
+					Integer.parseInt(widthField.getText()),
+					Integer.parseInt(heightField.getText()));
+		}
+		
+		@Override
+		public void set(Dimension t)
+		{
+			if(t == null)
+				t = new Dimension(0, 0);
+			widthField.setText("" + t.width);
+			heightField.setText("" + t.height);
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(widthField, heightField);
+		}
 	}
 }

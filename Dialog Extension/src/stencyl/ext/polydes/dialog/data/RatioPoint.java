@@ -40,4 +40,10 @@ public class RatioPoint
 		RatioPoint p = (RatioPoint) o;
 		return (p.x.equals(x) && p.y.equals(y));
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "[" + x.get() + ", " + y.get() + "]";
+	}
 }

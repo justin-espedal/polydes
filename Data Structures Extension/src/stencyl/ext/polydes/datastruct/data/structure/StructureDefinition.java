@@ -12,21 +12,25 @@ import stencyl.ext.polydes.datastruct.data.core.Pair;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.EditableObject;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
+import stencyl.ext.polydes.datastruct.data.folder.FolderPolicy;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
+import stencyl.ext.polydes.datastruct.ui.page.StructurePage;
 import stencyl.sw.util.gfx.GraphicsUtilities;
 
 public class StructureDefinition extends EditableObject
 {
-	public BufferedImage iconImg;
-	public ImageIcon smallIcon;
-	public ImageIcon mediumIcon;
+	public static FolderPolicy STRUCTURE_DEFINITION_POLICY = new StructureDefinitionEditingPolicy();
 	
-	public String name;
-	public String classname;
+	private BufferedImage iconImg;
+	private ImageIcon smallIcon;
+	private ImageIcon mediumIcon;
+	
+	private String name;
+	private String classname;
 	
 	public String customCode;
 	private LinkedHashMap<String, StructureField> fields;
@@ -45,6 +49,17 @@ public class StructureDefinition extends EditableObject
 		
 		dref = new DataItem(name, this);
 		dref.setIcon(smallIcon);
+		
+		guiRoot = new Folder("root", new StructureTable(this));
+		guiRoot.setPolicy(STRUCTURE_DEFINITION_POLICY);
+	}
+	
+	public void dispose()
+	{
+		disposeEditor();
+		Structure.removeType(this);
+		dref = null;
+		guiRoot = null;
 	}
 	
 	public void setImage(BufferedImage image)
@@ -62,10 +77,29 @@ public class StructureDefinition extends EditableObject
 		
 		Types.typeFromXML.get(oldName).xml = newName;
 		Types.typeFromXML.put(newName, Types.typeFromXML.remove(oldName));
-		Structures.structures.put(newName, Structures.structures.remove(oldName));
 		StructureDefinitions.defMap.put(newName, StructureDefinitions.defMap.remove(oldName));
 		
 		Structures.root.setDirty(true);
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public String getClassname()
+	{
+		return classname;
+	}
+
+	public void setClassname(String classname)
+	{
+		this.classname = classname;
+	}
+	
+	public BufferedImage getIconImg()
+	{
+		return iconImg;
 	}
 	
 	public ImageIcon getSmallIcon()
@@ -100,7 +134,7 @@ public class StructureDefinition extends EditableObject
 		if(editor == null)
 		{
 			editor = new StructureDefinitionEditor(this);
-			savedDefinitionDirtyState = isDirty();
+			savedDefinitionDirtyState = dref.isDirty();
 		}
 		
 		return editor;
@@ -158,7 +192,7 @@ public class StructureDefinition extends EditableObject
 		fields.remove(f);
 	}
 	
-	public void setFieldType(StructureField f, Structure s, DataType<?> type)
+	public void setFieldTypeForPreview(StructureField f, DataType<?> type)
 	{
 		if(typeUpdates == null)
 			typeUpdates = new HashMap<StructureField, TypeUpdate>();
@@ -181,8 +215,7 @@ public class StructureDefinition extends EditableObject
 		update.type.r = type;
 		update.optArgs.r = type.loadExtras(new ExtrasMap());
 		
-		s.clearProperty(f);
-		f.setType(type);
+		editor.preview.clearProperty(f);
 		f.setExtras(update.optArgs.r);
 	}
 	
@@ -190,8 +223,6 @@ public class StructureDefinition extends EditableObject
 	{
 		updateTypes();
 		refreshFields(true);
-		//TODO:
-		//commitGui();
 		refreshEditors();
 	}
 	
@@ -201,11 +232,9 @@ public class StructureDefinition extends EditableObject
 		revertTypes();
 		revertNames();
 		refreshFields(false);
-		//TODO:
-		//revertGui();
 		
 		if(!savedDefinitionDirtyState)
-			setDirty(false);
+			dref.setDirty(false);
 	}
 	
 	public void updateTypes()
@@ -253,13 +282,8 @@ public class StructureDefinition extends EditableObject
 	{
 		if(commit)
 		{
-			if(removedFields != null)
-			{
-				for(StructureField f : removedFields)
-					addField(f);
-				removedFields.clear();
-				removedFields = null;
-			}
+			//if(removeField != null) ... was in here before. Why?
+			//This does nothing now.
 		}
 		else //revert
 		{
@@ -269,6 +293,13 @@ public class StructureDefinition extends EditableObject
 					removeField(f);
 				addedFields.clear();
 				addedFields = null;
+			}
+			if(removedFields != null)
+			{
+				for(StructureField f : removedFields)
+					addField(f);
+				removedFields.clear();
+				removedFields = null;
 			}
 		}
 	}
@@ -293,53 +324,60 @@ public class StructureDefinition extends EditableObject
 	public void setFieldName(StructureField f, String name)
 	{
 		fields.remove(f.getVarname());
-		f.setVarname(name);
 		fields.put(name, f);
 	}
 	
 	//===
 	
-	//TODO: For reverting changes.
-	
-	
-//	private Folder guiRoot2 = null;
-//	private boolean guiAlreadyChanged = false;
 	private boolean savedDefinitionDirtyState;
 	
-	/*
-	public void guiChanged()
-	{
-		if(guiAlreadyChanged)
-			return;
-		
-		guiAlreadyChanged = true;
-		gui2 = gui.copy();
-	}
-	
-	private void commitGui()
-	{
-		if(gui2 != null)
-			gui2.dispose();
-
-		gui2 = null;
-		guiAlreadyChanged = false;
-	}
-	
-	private void revertGui()
-	{
-		if(gui2 != null)
-		{
-			gui = gui2.copy();
-			gui2.dispose();
-		}
-		gui2 = null;
-		guiAlreadyChanged = false;
-	}*/
-
 	public void disposeEditor()
 	{
 		if(editor != null)
 			editor.dispose();
 		editor = null;
+	}
+	
+	@Override
+	public void setDirty(boolean value)
+	{
+		guiRoot.setDirty(value);
+		super.setDirty(value);
+	}
+	
+	static class StructureDefinitionEditingPolicy extends FolderPolicy
+	{
+		public StructureDefinitionEditingPolicy()
+		{
+			duplicateItemNamesAllowed = false;
+			folderCreationEnabled = false;
+			itemCreationEnabled = true;
+			itemEditingEnabled = false;
+			itemRemovalEnabled = true;
+		}
+		
+		@Override
+		public boolean canAcceptItem(Folder folder, DataItem item)
+		{
+			boolean tabset = folder.getObject() instanceof StructureTabset;
+			boolean tab = item.getObject() instanceof StructureTab;
+			
+			if(tabset != tab)
+				return false;
+			
+			return super.canAcceptItem(folder, item);
+		}
+	}
+
+	public void remove()
+	{
+		for(Structure s : Structures.structures.get(this))
+			StructurePage.get().getFolderModel().removeItem(s.dref, s.dref.getParent());
+		
+		StructureDefinitions.defMap.remove(getName());
+		Structures.structures.remove(this);
+		Types.typeFromXML.remove(name);	
+		
+		dispose();
 	}
 }

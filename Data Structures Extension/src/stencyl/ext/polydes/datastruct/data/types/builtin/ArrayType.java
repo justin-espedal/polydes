@@ -11,87 +11,47 @@ import org.apache.commons.lang3.StringUtils;
 
 import stencyl.ext.polydes.datastruct.Main;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
+import stencyl.ext.polydes.datastruct.data.folder.DataItem;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType;
+import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType.DataTypeEditor;
 import stencyl.ext.polydes.datastruct.ui.comp.DataListEditor;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
+import stencyl.ext.polydes.datastruct.utils.Lang;
 import stencyl.ext.polydes.datastruct.utils.ListElementArrays;
 import stencyl.ext.polydes.datastruct.utils.StringData;
 
 public class ArrayType extends BuiltinType<DataList>
 {
-	private DynamicType type = new DynamicType();
-	
 	public ArrayType()
 	{
 		super(DataList.class, "Array<Dynamic>", "LIST", "Array");
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<DataList> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<DataList> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
 		final Extras e = (Extras) extras;
 		
-		if(updater.get() == null || !updater.get().genType.xml.equals(e.genType.xml))
-			updater.set(new DataList(e.genType));
-		
 		if(e.editor.equals(Editor.Simple))
-		{
-			final JTextArea editor = new JTextArea();
-			editor.setBackground(style.fieldBg);
-			editor.setForeground(style.fieldtextColor);
-			editor.setCaretColor(style.fieldtextColor);
-			editor.setLineWrap(true);
-			editor.setWrapStyleWord(true);
-			if(style.fieldBorder != null)
-				editor.setBorder
-				(
-					BorderFactory.createCompoundBorder
-					(
-						BorderFactory.createLineBorder(style.fieldBorder, 1),
-						BorderFactory.createEmptyBorder(0, 3, 0, 3)
-					)
-				);
-			
-			editor.setText(StringUtils.join(ListElementArrays.toStrings(updater.get()), "\n"));
-			
-			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
-			{
-				@Override
-				protected void update()
-				{
-					updater.set(ListElementArrays.fromStrings(StringUtils.split(editor.getText(), "\n"), e.genType));
-				}
-			});
-			
-			return comps(editor);
-		}
+			return new SimpleArrayEditor(style, e.genType);
 		else //if(editorType.equals("Standard"))
-		{
-			final DataListEditor editor = new DataListEditor(updater.get());
-			
-			editor.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					updater.updated();
-				}
-			});
-			
-			return comps(editor);
-		}
+			return new StandardArrayEditor();
 	}
 
 	@Override
 	public DataList decode(String s)
 	{
 		if(s.isEmpty())
-			return new DataList(type);
+			return new DataList(Types._Dynamic);
 		
 		//backwards compatibility
 		if(!s.startsWith("["))
@@ -179,6 +139,62 @@ public class ArrayType extends BuiltinType<DataList>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		final PropertiesSheet preview = panel.getPreview();
+		final DataItem previewKey = panel.getPreviewKey();
+		
+		//=== Editor
+		
+		DataList editorChoices = Lang.datalist(Types._String, "Standard", "Simple"/*, "Grid", "Cycle"*/);
+		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
+		editorChooser.setValue(e.editor.name());
+		editorChooser.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.editor = Editor.valueOf(editorChooser.getValue());
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		//=== Type
+		
+		@SuppressWarnings("rawtypes")
+		final DataEditor<DataType> typeField = new DataTypeEditor(DataTypeType.dynamicArraySubTypes);
+		typeField.setValue(e.genType);
+		typeField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.genType = typeField.getValue();
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		//=== Default Value
+		/*
+		final DataEditor<DataList> defaultField = new SimpleArrayEditor(style, e.genType);
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		*/
+		panel.addGenericRow(expansion, "Editor", editorChooser);
+		panel.addGenericRow(expansion, "Options", typeField);
+		//panel.addGenericRow(expansion, "Default", defaultField);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
@@ -211,5 +227,104 @@ public class ArrayType extends BuiltinType<DataList>
 	{
 		Standard,
 		Simple;
+	}
+	
+	public static class SimpleArrayEditor extends DataEditor<DataList>
+	{
+		JTextArea editor;
+		DataType<?> genType;
+		
+		DataList list;
+		
+		public SimpleArrayEditor(PropertiesSheetStyle style, DataType<?> genType)
+		{
+			this.genType = genType;
+			
+			editor = new JTextArea();
+			editor.setBackground(style.fieldBg);
+			editor.setForeground(style.fieldtextColor);
+			editor.setCaretColor(style.fieldtextColor);
+			editor.setLineWrap(true);
+			editor.setWrapStyleWord(true);
+			if(style.fieldBorder != null)
+				editor.setBorder
+				(
+					BorderFactory.createCompoundBorder
+					(
+						BorderFactory.createLineBorder(style.fieldBorder, 1),
+						BorderFactory.createEmptyBorder(0, 3, 0, 3)
+					)
+				);
+			
+			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
+			{
+				@Override
+				protected void update()
+				{
+					list = ListElementArrays.fromStrings(StringUtils.split(editor.getText(), "\n"), list.genType);
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(DataList t)
+		{
+			if(t == null)
+				t = new DataList(genType);
+			list = t;
+			editor.setText(StringUtils.join(ListElementArrays.toStrings(t), "\n"));
+		}
+		
+		@Override
+		public DataList getValue()
+		{
+			return list;
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(editor);
+		}
+	}
+	
+	public static class StandardArrayEditor extends DataEditor<DataList>
+	{
+		DataListEditor editor;
+		
+		public StandardArrayEditor()
+		{
+			editor = new DataListEditor(null);
+			
+			editor.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(DataList t)
+		{
+			if(t == null)
+				t = new DataList(Types._String);
+			editor.setList(t);
+		}
+		
+		@Override
+		public DataList getValue()
+		{
+			return editor.getModel();
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(editor);
+		}
 	}
 }

@@ -81,7 +81,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 			@Override
 			public boolean verifyText(JTextField field, String text)
 			{
-				nameOk = (editDef != null && editDef.name.equals(text)) ||
+				nameOk = (editDef != null && editDef.getName().equals(text)) ||
 						(isValidName(text) && !Types.typeFromXML.containsKey(text));
 				verify();
 				
@@ -196,11 +196,11 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		title.setTitle("Edit Structure");
 		
 		editDef = def;
-		nameField.getTextField().setText(def.name);
-		int lastDot = def.classname.lastIndexOf('.');
-		classField.getTextField().setText(def.classname.substring(lastDot + 1));
-		packageField.getTextField().setText(def.classname.substring(0, lastDot));
-		iconImg = editDef.iconImg;
+		nameField.getTextField().setText(def.getName());
+		int lastDot = def.getClassname().lastIndexOf('.');
+		classField.getTextField().setText(def.getClassname().substring(lastDot + 1));
+		packageField.getTextField().setText(def.getClassname().substring(0, lastDot));
+		iconImg = editDef.getIconImg();
 		
 		verify();
 		setVisible(true);
@@ -252,15 +252,15 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	{
 		if(editDef != null)
 		{
-			if(!editDef.name.equals(nameField.getText()))
+			if(!editDef.getName().equals(nameField.getText()))
 				editDef.setName(nameField.getText());
-			editDef.classname = packageField.getText() + "." + classField.getText();
-			if(editDef.iconImg != iconImg)
+			editDef.setClassname(packageField.getText() + "." + classField.getText());
+			if(editDef.getIconImg() != iconImg)
 				editDef.setImage(iconImg);
 			
 			JLabel previewLabel = editDef.getEditor().getPreview().getEditor().label;
-			previewLabel.setText(editDef.name);
-			previewLabel.setIcon(editDef.mediumIcon);
+			previewLabel.setText(editDef.getName());
+			previewLabel.setIcon(editDef.getMediumIcon());
 			editDef.setDirty(true);
 		}
 		else

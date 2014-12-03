@@ -6,24 +6,24 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import stencyl.ext.polydes.datastruct.data.folder.EditableObject;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.grammar.ExpressionParser;
-import stencyl.ext.polydes.datastruct.grammar.Lang;
-import stencyl.ext.polydes.datastruct.grammar.Node;
+import stencyl.ext.polydes.datastruct.grammar.RuntimeLanguage;
 import stencyl.ext.polydes.datastruct.grammar.SyntaxException;
+import stencyl.ext.polydes.datastruct.grammar.SyntaxNode;
 import stencyl.ext.polydes.datastruct.io.XML;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureConditionPanel;
+import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
+import stencyl.sw.util.VerificationHelper;
 
 public class StructureCondition extends EditableObject
 {
 	public StructureDefinition def;
-	public Node root;
+	public SyntaxNode root;
 	
 	private String text;
 	
@@ -64,10 +64,16 @@ public class StructureCondition extends EditableObject
 	}
 	
 	//State variables.
-	private static HashMap<String, Object> idMap = new HashMap<String, Object>();
+	private static HashMap<String, Object> idMap = new HashMap<String, Object>(2);
 	private static Structure structureRef;
 	
-	private boolean check(Node n) throws SyntaxException
+	public static void dispose()
+	{
+		idMap.clear();
+		structureRef = null;
+	}
+	
+	private boolean check(SyntaxNode n) throws SyntaxException
 	{
 		try
 		{
@@ -83,7 +89,7 @@ public class StructureCondition extends EditableObject
 		}
 	}
 	
-	private Object eval(Node n) throws SyntaxException
+	private Object eval(SyntaxNode n) throws SyntaxException
 	{
 		try
 		{
@@ -106,22 +112,22 @@ public class StructureCondition extends EditableObject
 						ref = structureRef.getPropByName(refName);
 					return ref;
 				
-				case AND: return Lang.and(eval(n.get(0)), eval(n.get(1)));
-				case OR: return Lang.or(eval(n.get(0)), eval(n.get(1)));
-				case NOT: return Lang.not(eval(n.get(0)));
-				case EQUAL: return Lang.equals(eval(n.get(0)), eval(n.get(1)));
-				case NOTEQUAL: return !Lang.equals(eval(n.get(0)), eval(n.get(1)));
-				case GT: return Lang.gt(eval(n.get(0)), eval(n.get(1)));
-				case LT: return Lang.lt(eval(n.get(0)), eval(n.get(1)));
-				case GE: return Lang.ge(eval(n.get(0)), eval(n.get(1)));
-				case LE: return Lang.le(eval(n.get(0)), eval(n.get(1)));
+				case AND: return RuntimeLanguage.and(eval(n.get(0)), eval(n.get(1)));
+				case OR: return RuntimeLanguage.or(eval(n.get(0)), eval(n.get(1)));
+				case NOT: return RuntimeLanguage.not(eval(n.get(0)));
+				case EQUAL: return RuntimeLanguage.equals(eval(n.get(0)), eval(n.get(1)));
+				case NOTEQUAL: return !RuntimeLanguage.equals(eval(n.get(0)), eval(n.get(1)));
+				case GT: return RuntimeLanguage.gt(eval(n.get(0)), eval(n.get(1)));
+				case LT: return RuntimeLanguage.lt(eval(n.get(0)), eval(n.get(1)));
+				case GE: return RuntimeLanguage.ge(eval(n.get(0)), eval(n.get(1)));
+				case LE: return RuntimeLanguage.le(eval(n.get(0)), eval(n.get(1)));
 				
-				case ADD: return Lang.add(eval(n.get(0)), eval(n.get(1)));
-				case SUB: return Lang.sub(eval(n.get(0)), eval(n.get(1)));
-				case MOD: return Lang.mod(eval(n.get(0)), eval(n.get(1)));
-				case DIVIDE: return Lang.divide(eval(n.get(0)), eval(n.get(1)));
-				case MULTIPLY: return Lang.multiply(eval(n.get(0)), eval(n.get(1)));
-				case NEGATE: return Lang.negate(eval(n.get(0)));
+				case ADD: return RuntimeLanguage.add(eval(n.get(0)), eval(n.get(1)));
+				case SUB: return RuntimeLanguage.sub(eval(n.get(0)), eval(n.get(1)));
+				case MOD: return RuntimeLanguage.mod(eval(n.get(0)), eval(n.get(1)));
+				case DIVIDE: return RuntimeLanguage.divide(eval(n.get(0)), eval(n.get(1)));
+				case MULTIPLY: return RuntimeLanguage.multiply(eval(n.get(0)), eval(n.get(1)));
+				case NEGATE: return RuntimeLanguage.negate(eval(n.get(0)));
 				
 				case FIELD:
 					Object o = eval(n.get(0));
@@ -134,10 +140,11 @@ public class StructureCondition extends EditableObject
 					if(o instanceof Structure)
 						return ((Structure) o).getPropByName(fieldName);
 					else
-						return Lang.field(o, fieldName);
+						return RuntimeLanguage.field(o, fieldName);
 					
 				case METHOD:
 					//TODO: May not work with fields that have primary parameters.
+					//Can look at Haxe's Runtime callField() to see what happens there
 					Object callOn = eval(n.get(0));
 					String methodName = (String) n.get(1).data;
 					List<Object> args = new ArrayList<Object>();
@@ -149,7 +156,7 @@ public class StructureCondition extends EditableObject
 //					System.out.println(methodName);
 //					System.out.println(StringUtils.join(args.toArray(), ", "));
 					
-					return Lang.invoke(callOn, methodName, args);
+					return RuntimeLanguage.invoke(callOn, methodName, args);
 			}
 		}
 		catch(ClassCastException ex)
@@ -181,19 +188,22 @@ public class StructureCondition extends EditableObject
 		return sc;
 	}
 	
-	//TODO: StructureCondition revert and dispose
 	private StructureConditionPanel editor;
 	
 	@Override
 	public void disposeEditor()
 	{
+		if(editor != null)
+			editor.dispose();
+		
+		editor = null;
 	}
 	
 	@Override
 	public JPanel getEditor()
 	{
 		if(editor == null)
-			editor = new StructureConditionPanel(this);
+			editor = new StructureConditionPanel(this, PropertiesSheetStyle.LIGHT);
 		
 		return editor;
 	}
@@ -201,6 +211,8 @@ public class StructureCondition extends EditableObject
 	@Override
 	public void revertChanges()
 	{
+		if(editor != null)
+			setText(editor.getOldText());
 	}
 	
 	@Override
@@ -209,85 +221,49 @@ public class StructureCondition extends EditableObject
 		return "if " + text;
 	}
 	
-	//=== REVERSE COMPATIBILITY
-	
-	/*public static Node fromText(String s)
-	{
-		
-	}*/
+	//Backwards compatibility
 	
 	public static StructureCondition fromXML(StructureDefinition def, Element e)
 	{
 		if(!e.getTagName().equals("if"))
 			return null;
 		
-		StructureCondition toReturn = null;//new StructureCondition(subFromXML(def, XML.child(e, 0)));
-		
-		return toReturn;
+		return new StructureCondition(def, subFromXML(XML.child(e, 0)));
 	}
 	
-	public static SubCondition subFromXML(StructureDefinition def, Element e)
+	public static String subFromXML(Element e)
 	{
 		if(e.getTagName().equals("is"))
 		{
-			return new IsCondition(def.getField(XML.read(e, "field")), XML.read(e, "value"));
+			return XML.read(e, "field") + " == " + codeRepresentation(XML.read(e, "value"));
 		}
 		else if(e.getTagName().equals("not"))
 		{
-			return new NotCondition(subFromXML(def, XML.child(e, 0)));
+			if(XML.child(e, 0).getTagName().equals("is"))
+			{
+				Element sub = XML.child(e, 0);
+				return XML.read(sub, "field") + " != " + codeRepresentation(XML.read(sub, "value"));
+			}
+			else
+				return "!(" + subFromXML(XML.child(e, 0)) + ")";
 		}
 		else if(e.getTagName().equals("and"))
 		{
-			return new AndCondition(subFromXML(def, XML.child(e, 0)), subFromXML(def, XML.child(e, 1)));
+			return subFromXML(XML.child(e, 0)) + " && " + subFromXML(XML.child(e, 1));
 		}
 		else if(e.getTagName().equals("or"))
 		{
-			return new OrCondition(subFromXML(def, XML.child(e, 0)), subFromXML(def, XML.child(e, 1)));
+			return subFromXML(XML.child(e, 0)) + " || " + subFromXML(XML.child(e, 1));
 		}
 		else
-			return null;
+			return "";
 	}
 	
-	public static Element toXML(Document doc, StructureCondition data)
+	public static String codeRepresentation(String value)
 	{
-		Element e = doc.createElement("if");
-		//e.appendChild(subToXML(doc, ((StructureCondition) data).c));
-		return e;
-	}
-	
-	public static Element subToXML(Document doc, SubCondition data)
-	{
-		Element e = null;
-		if(data == null)
-			return doc.createElement("null");
-		else if(data instanceof IsCondition)
-		{
-			IsCondition c = (IsCondition) data;
-			e = doc.createElement("is");
-			e.setAttribute("field", c.field.getVarname());
-			e.setAttribute("value", c.value);
-		}
-		else if(data instanceof NotCondition)
-		{
-			NotCondition c = (NotCondition) data;
-			e = doc.createElement("not");
-			e.appendChild(subToXML(doc, c.c));
-		}
-		else if(data instanceof AndCondition)
-		{
-			AndCondition c = (AndCondition) data;
-			e = doc.createElement("and");
-			e.appendChild(subToXML(doc, c.c1));
-			e.appendChild(subToXML(doc, c.c2));
-		}
-		else if(data instanceof OrCondition)
-		{
-			OrCondition c = (OrCondition) data;
-			e = doc.createElement("or");
-			e.appendChild(subToXML(doc, c.c1));
-			e.appendChild(subToXML(doc, c.c2));
-		}
-		
-		return e;
+		if(VerificationHelper.isInteger(value) || VerificationHelper.isFloat(value) || value.equals("true") || value.equals("false"))
+			return value;
+		else
+			return "\"" + value + "\"";
 	}
 }

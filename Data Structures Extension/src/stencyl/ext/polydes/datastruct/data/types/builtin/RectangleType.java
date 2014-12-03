@@ -8,10 +8,12 @@ import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
 import stencyl.ext.polydes.datastruct.Blocks;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
@@ -34,45 +36,9 @@ public class RectangleType extends BuiltinType<Rectangle>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Rectangle> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Rectangle> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final JTextField x = style.createTextField();
-		final JTextField y = style.createTextField();
-		final JTextField w = style.createTextField();
-		final JTextField h = style.createTextField();
-		((PlainDocument) x.getDocument()).setDocumentFilter(new IntegerFilter());
-		((PlainDocument) y.getDocument()).setDocumentFilter(new IntegerFilter());
-		((PlainDocument) w.getDocument()).setDocumentFilter(new IntegerFilter());
-		((PlainDocument) h.getDocument()).setDocumentFilter(new IntegerFilter());
-		
-		Rectangle r = updater.get();
-		if(r == null)
-			r = new Rectangle(0, 0, 0, 0);
-		
-		x.setText("" + r.x);
-		y.setText("" + r.y);
-		w.setText("" + r.width);
-		h.setText("" + r.height);
-
-		DocumentAdapter updateRectangle = new DocumentAdapter(true)
-		{
-			@Override
-			protected void update()
-			{
-				updater.set(new Rectangle(
-						Integer.parseInt(x.getText()),
-						Integer.parseInt(y.getText()),
-						Integer.parseInt(w.getText()),
-						Integer.parseInt(h.getText())));
-			}
-		};
-		
-		x.getDocument().addDocumentListener(updateRectangle);
-		y.getDocument().addDocumentListener(updateRectangle);
-		w.getDocument().addDocumentListener(updateRectangle);
-		h.getDocument().addDocumentListener(updateRectangle);
-
-		return comps(x, y, w, h);
+		return new RectangleEditor(style);
 	}
 	
 	@Override
@@ -176,6 +142,28 @@ public class RectangleType extends BuiltinType<Rectangle>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		
+		//=== Default Value
+		
+		final DataEditor<Rectangle> defaultField = new RectangleEditor(panel.style);
+		defaultField.setValue(e.defaultValue);
+		defaultField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				e.defaultValue = defaultField.getValue();
+			}
+		});
+		
+		panel.addGenericRow(expansion, "Default", defaultField);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
@@ -196,5 +184,76 @@ public class RectangleType extends BuiltinType<Rectangle>
 	class Extras extends ExtraProperties
 	{
 		public Rectangle defaultValue;
+	}
+	
+	public static class RectangleEditor extends DataEditor<Rectangle>
+	{
+		JTextField x;
+		JTextField y;
+		JTextField w;
+		JTextField h;
+		
+		public RectangleEditor(PropertiesSheetStyle style)
+		{
+			x = style.createTextField();
+			y = style.createTextField();
+			w = style.createTextField();
+			h = style.createTextField();
+			((PlainDocument) x.getDocument()).setDocumentFilter(new IntegerFilter());
+			((PlainDocument) y.getDocument()).setDocumentFilter(new IntegerFilter());
+			((PlainDocument) w.getDocument()).setDocumentFilter(new IntegerFilter());
+			((PlainDocument) h.getDocument()).setDocumentFilter(new IntegerFilter());
+			
+			DocumentAdapter updateRectangle = new DocumentAdapter(true)
+			{
+				@Override
+				protected void update()
+				{
+					updated();
+				}
+			};
+			
+			x.getDocument().addDocumentListener(updateRectangle);
+			y.getDocument().addDocumentListener(updateRectangle);
+			w.getDocument().addDocumentListener(updateRectangle);
+			h.getDocument().addDocumentListener(updateRectangle);
+		}
+		
+		@Override
+		public void set(Rectangle t)
+		{
+			if(t == null)
+				t = new Rectangle(0, 0, 0, 0);
+			x.setText("" + t.x);
+			y.setText("" + t.y);
+			w.setText("" + t.width);
+			h.setText("" + t.height);
+		}
+		
+		@Override
+		public Rectangle getValue()
+		{
+			return new Rectangle(
+					Integer.parseInt(x.getText()),
+					Integer.parseInt(y.getText()),
+					Integer.parseInt(w.getText()),
+					Integer.parseInt(h.getText()));
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(x, y, w, h);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			x = null;
+			y = null;
+			w = null;
+			h = null;
+		}
 	}
 }

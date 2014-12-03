@@ -6,8 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -49,27 +49,9 @@ public class RatioIntType extends DataType<RatioInt>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<RatioInt> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<RatioInt> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final JTextField editor = style.createTextField();
-		
-		((PlainDocument) editor.getDocument()).setDocumentFilter(new RatioIntegerFilter());
-		RatioInt i = updater.get();
-		if (i == null)
-			i = new RatioInt("0");
-
-		editor.setText(i.get());
-		
-		editor.getDocument().addDocumentListener(new DocumentAdapter(true)
-		{
-			@Override
-			protected void update()
-			{
-				updater.set(new RatioInt(editor.getText()));
-			}
-		});
-		
-		return comps(editor);
+		return new RatioIntEditor(style);
 	}
 	
 	@Override
@@ -94,5 +76,46 @@ public class RatioIntType extends DataType<RatioInt>
 	public ExtrasMap saveExtras(ExtraProperties arg0)
 	{
 		return null;
+	}
+	
+	public static class RatioIntEditor extends DataEditor<RatioInt>
+	{
+		JTextField editor;
+		
+		public RatioIntEditor(PropertiesSheetStyle style)
+		{
+			editor = style.createTextField();
+			
+			((PlainDocument) editor.getDocument()).setDocumentFilter(new RatioIntegerFilter());
+			
+			editor.getDocument().addDocumentListener(new DocumentAdapter(true)
+			{
+				@Override
+				protected void update()
+				{
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(RatioInt t)
+		{
+			if(t == null)
+				t = new RatioInt("0");
+			editor.setText(t.get());			
+		}
+		
+		@Override
+		public RatioInt getValue()
+		{
+			return new RatioInt(editor.getText());
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(editor);
+		}
 	}
 }

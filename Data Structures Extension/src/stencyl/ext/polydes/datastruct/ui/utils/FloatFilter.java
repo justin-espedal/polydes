@@ -5,8 +5,19 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 
+import stencyl.sw.util.VerificationHelper;
+
 public class FloatFilter extends DocumentFilter
 {
+	float min;
+	float max;
+	
+	public FloatFilter(float min, float max)
+	{
+		this.min = min;
+		this.max = max;
+	}
+
 	@Override
 	public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException
 	{
@@ -27,7 +38,7 @@ public class FloatFilter extends DocumentFilter
 
 	private boolean test(String text)
 	{
-		return text.matches("-?([0-9]*)?.?([0-9]*)?");
+		return text.isEmpty() || VerificationHelper.isFloatWithinRange(text, min, max);
 	}
 
 	@Override

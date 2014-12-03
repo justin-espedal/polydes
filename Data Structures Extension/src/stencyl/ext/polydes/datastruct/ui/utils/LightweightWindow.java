@@ -7,10 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,6 +20,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import stencyl.ext.polydes.datastruct.res.Resources;
 import stencyl.sw.lnf.Theme;
@@ -35,12 +38,25 @@ public abstract class LightweightWindow extends SnappingDialog
 	private JPanel wrapper;
 	private JPanel contents;
 	
+	private Action closeWindowAction = new AbstractAction()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			cancel();
+		}
+	};
+	
 	public LightweightWindow(JDialog owner)
 	{
 		super(owner);
 		setUndecorated(true);
 		
+		getRootPane().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "closeWindow");
+		getRootPane().getActionMap().put("closeWindow", closeWindowAction);
+		
 		resizeListener = new ResizeListener();
+		resizeListener.setWindow(this);
 		
 		wrapper = new JPanel(new BorderLayout());
 		wrapper.add(createTitleBar(), BorderLayout.NORTH);
@@ -54,7 +70,6 @@ public abstract class LightweightWindow extends SnappingDialog
 		setVisible(true);
 	}
 	
-	//TODO: Maybe unimportant. The component that had resize attached to it before was PropertiesSheet.root
 	public void setContents(JPanel contents)
 	{
 		if(this.contents != null)
@@ -158,14 +173,30 @@ public abstract class LightweightWindow extends SnappingDialog
 	public void submit()
 	{
 		setVisible(false);
-		//dispose();
 	}
 	
 	public void cancel()
 	{
-		System.out.println("cancel");
 		setVisible(false);
-		//dispose();
+	}
+	
+	@Override
+	public void dispose()
+	{
+		if(contents != null)
+			contents.removeComponentListener(resizeListener);
+		if(wrapper != null)
+			wrapper.removeAll();
+		
+		getRootPane().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), null);
+		getRootPane().getActionMap().put("closeWindow", null);
+		
+		dragger = null;
+		contents = null;
+		wrapper = null;
+		resizeListener = null;
+		
+		super.dispose();
 	}
 }
 

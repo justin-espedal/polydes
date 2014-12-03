@@ -4,11 +4,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -25,25 +22,26 @@ import javax.swing.SwingUtilities;
 
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
+import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
+import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyRepresentation;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.data.structure.StructureField;
 import stencyl.ext.polydes.datastruct.data.structure.StructureHeader;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTab;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTabset;
 import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.general.StructureType;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
 import stencyl.sw.util.comp.RoundedLabel;
 
-public class PropertiesSheet extends JPanel
+public class PropertiesSheet extends JPanel implements FolderHierarchyRepresentation
 {
-	public void addNode(Folder parent, DataItem n, int i)
+	public void addDataItem(Folder parent, DataItem n, int i)
 	{
 		Card parentCard = getFirstCardParent(parent);
-		if(!parent.hasItem(n))
-			parent.addItem(n, i);
 		
 		if(isRowGroupDataItem(n))
 		{
@@ -75,7 +73,7 @@ public class PropertiesSheet extends JPanel
 			Deck deckParent = getFirstDeckParent(parent);
 			
 			Card card = new Card(tab.getLabel(), true);
-			deckParent.addCard(card);
+			deckParent.addCard(card, i);
 			
 			guiMap.put(n, card);
 		}
@@ -160,20 +158,21 @@ public class PropertiesSheet extends JPanel
 				subcard.setCard(null);
 				conditionalCards.remove(subcard);
 			}
+			else if(n.getObject() instanceof StructureField)
+			{
+				fieldEditorMap.remove((StructureField) n.getObject()).dispose();
+			}
 			
 			card.layoutContainer();
 		}
 		else if(n.getObject() instanceof StructureTab)
 		{
 			Card card = (Card) guiMap.get(n);
-			card.deck.removeCard(card);
+			if(card.deck != null)
+				card.deck.removeCard(card);
 		}
 		
-		n.getParent().removeItem(n);
 		guiMap.remove(n);
-		//TODO:
-		//remove all child nodes as well?
-		//would need to add all child nodes later
 		
 		revalidate();
 	}
@@ -285,17 +284,24 @@ public class PropertiesSheet extends JPanel
 	public PropertiesSheetStyle style;
 	
 	public HashMap<DataItem, GuiObject> guiMap;
+	public HashMap<StructureField, DataEditor<?>> fieldEditorMap;
 	public ArrayList<Card> conditionalCards = new ArrayList<Card>();
 	public JScrollPane scroller;
 	
-	public PropertiesSheet(Structure model)
+	/**
+	 * folderModel is null if this isn't the preview of a structure definition editor
+	 */
+	public PropertiesSheet(Structure model, FolderHierarchyModel folderModel)
 	{
-		this(model, PropertiesSheetStyle.DARK);
+		this(model, folderModel, PropertiesSheetStyle.DARK);
 	}
 	
 	public boolean isChangingLayout;
 	
-	public PropertiesSheet(Structure model, PropertiesSheetStyle style)
+	/**
+	 * folderModel is null if this isn't the preview of a structure definition editor
+	 */
+	public PropertiesSheet(Structure model, FolderHierarchyModel folderModel, PropertiesSheetStyle style)
 	{
 		root = new Table(style);
 		this.style = style;
@@ -315,59 +321,18 @@ public class PropertiesSheet extends JPanel
 		
 		this.model = model;
 		guiMap = new HashMap<DataItem, GuiObject>();
+		fieldEditorMap = new HashMap<StructureField, DataEditor<?>>();
 		add(root);
 		
-		if(model != null)
-			guiMap.put(model.getTemplate().guiRoot, root);
+		Folder rootFolder = model.getTemplate().guiRoot;
+		guiMap.put(rootFolder, root);
 		
 		isChangingLayout = true;
-	}
-	
-	public void setStructure(Structure model)
-	{
-		guiMap.clear();
-		conditionalCards.clear();
-		root.removeAll();
-		this.model = model;
-		if(model != null)
-			guiMap.put(model.getTemplate().guiRoot, root);
-		isChangingLayout = true;
-	}
-	
-	private ResizeListener resizeListener;
-	
-	public void setWindow(Window window)
-	{
-		if(resizeListener == null)
-			root.addComponentListener(resizeListener = new ResizeListener());
-		
-		resizeListener.setWindow(window);
-	}
-	
-	class ResizeListener extends ComponentAdapter
-	{
-		private Window window;
-		
-		public ResizeListener()
-		{
-		}
-		
-		public void setWindow(Window window)
-		{
-			this.window = window;
-		}
-		
-		@Override
-		public void componentResized(ComponentEvent e)
-		{
-			if(window != null)
-				window.pack();
-		}
-	}
-	
-	public void finishedBuilding()
-	{
+		buildSheetFromFolder(rootFolder);
 		isChangingLayout = false;
+		
+		if(folderModel != null)
+			folderModel.addRepresentation(this);
 		
 		for(DataItem n : guiMap.keySet())
 		{
@@ -380,6 +345,27 @@ public class PropertiesSheet extends JPanel
 		revalidate();
 		repaint();
 	}
+	/*
+	public void setStructure(Structure model)
+	{
+		guiMap.clear();
+		conditionalCards.clear();
+		root.removeAll();
+		for(DataEditor<?> editor : fieldEditorMap.values())
+			editor.dispose();
+		fieldEditorMap.clear();
+		
+		if(this.model != null)
+			removeDataItem(this.model.getTemplate().guiRoot);
+		
+		this.model = model;
+		
+		if(model != null)
+			guiMap.put(model.getTemplate().guiRoot, root);
+		
+		isChangingLayout = true;
+	}
+	*/
 	
 	@Override
 	public Dimension getPreferredSize()
@@ -398,26 +384,40 @@ public class PropertiesSheet extends JPanel
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public JComponent createEditor(final StructureField f)
 	{
-		JComponent editor = null;
+		JComponent editPanel = null;
 		
-		DataType<?> type = f.getType();
-		final DataUpdater updater = new DataUpdater(model.getProperty(f), null);
+		DataType type = f.getType();
 		
-		updater.listener = new UpdateListener()
+		if(fieldEditorMap.containsKey(f))
+			fieldEditorMap.get(f).dispose();
+		
+		final DataEditor deditor;
+		
+		//special case for "Structure" editors, because they may need to know which Structure they're in for filtering.
+		if(type instanceof StructureType)
+			deditor = ((StructureType) type).new StructureEditor((StructureType.Extras) f.getExtras(), model);
+		else
+			deditor = type.createEditor(f.getExtras(), style);
+		
+		deditor.setValue(model.getProperty(f));
+		deditor.addListener(new UpdateListener()
 		{
 			@Override
 			public void updated()
 			{
-				model.setProperty(f, updater.get());
+				model.setProperty(f, deditor.getValue());
 				refreshVisibleComponents();
 			}
-		};
-		editor = Layout.horizontalBox(style.fieldDimension, type.getEditor(updater, f.getExtras(), style));
+		});
+		
+		fieldEditorMap.put(f, deditor);
+		
+		editPanel = Layout.horizontalBox(style.fieldDimension, deditor.getComponents());
 		
 		if(f.isOptional())
-			return constrict(createEnabler(editor, f), editor);
+			return constrict(createEnabler(editPanel, f), editPanel);
 		else
-			return editor;
+			return editPanel;
 	}
 	
 	private JCheckBox createEnabler(final JComponent component, final StructureField f)
@@ -460,15 +460,20 @@ public class PropertiesSheet extends JPanel
 	
 	public void dispose()
 	{
-		setStructure(null);
-		setWindow(null);
+		removeDataItem(model.getTemplate().guiRoot);
+		guiMap.clear();
+		conditionalCards.clear();
+		root.removeAll();
+		for(DataEditor<?> editor : fieldEditorMap.values())
+			editor.dispose();
+		fieldEditorMap.clear();
+		
 		removeAll();
 		highlighter = null;
-		resizeListener = null;
 		style = null;
 		tweener = null;
 	}
-
+	
 	private Highlighter highlighter = new Highlighter();
 	private Timer tweener;
 	
@@ -576,5 +581,44 @@ public class PropertiesSheet extends JPanel
 					}
 			}
 		};
+	}
+
+	/*================================================*\
+	 | Folder Hierarchy Representation
+	\*================================================*/
+	
+	@Override
+	public void dataItemStateChanged(DataItem source)
+	{
+		
+	}
+
+	@Override
+	public void dataItemNameChanged(DataItem source, String oldName)
+	{
+		
+	}
+
+	@Override
+	public void itemAdded(Folder folder, DataItem item, int position)
+	{
+		addDataItem(folder, item, position);
+	}
+
+	@Override
+	public void itemRemoved(DataItem item)
+	{
+		removeDataItem(item);
+	}
+	
+	public void buildSheetFromFolder(Folder folder)
+	{
+		for(int i = 0; i < folder.getItems().size(); ++i)
+		{
+			DataItem d = folder.getItemAt(i);
+			addDataItem(folder, d, i);
+			if(d instanceof Folder)
+				buildSheetFromFolder((Folder) d); 
+		}
 	}
 }

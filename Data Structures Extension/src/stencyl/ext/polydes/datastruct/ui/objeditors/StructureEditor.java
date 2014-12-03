@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
-import stencyl.ext.polydes.datastruct.data.folder.Folder;
+import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
@@ -24,6 +24,11 @@ public class StructureEditor extends JPanel
 	
 	public StructureEditor(Structure structure)
 	{
+		this(structure, null);
+	}
+	
+	public StructureEditor(Structure structure, FolderHierarchyModel model)
+	{
 		super(new BorderLayout());
 		
 		this.structure = structure;
@@ -37,34 +42,12 @@ public class StructureEditor extends JPanel
 		label.setOpaque(true);
 		label.setIcon(structure.getMediumIcon());
 		
-		properties = new PropertiesSheet(structure, PropertiesSheetStyle.DARK);
-		loadSheet(properties, structure);
+		properties = new PropertiesSheet(structure, model, PropertiesSheetStyle.DARK);
 		
 		add(label, BorderLayout.NORTH);
 		add(Layout.aligned(properties, SwingConstants.LEFT, SwingConstants.TOP), BorderLayout.CENTER);
 		
 		revalidate();
-	}
-	
-	protected void loadSheet(PropertiesSheet properties, Structure structure)
-	{
-		int i = 0;
-		Folder gui = structure.getTemplate().guiRoot;
-		for(DataItem n : gui.getItems())
-			addNode(properties, gui, n, i++);
-		properties.finishedBuilding();
-	}
-	
-	public void addNode(PropertiesSheet properties, Folder parent, DataItem n, int i)
-	{
-		properties.addNode(parent, n, i);
-		if(n instanceof Folder)
-		{
-			int j = 0;
-			Folder branch = (Folder) n;
-			for(DataItem n2 : branch.getItems())
-				addNode(properties, branch, n2, j++);
-		}
 	}
 	
 	public void nameChanged(String name)

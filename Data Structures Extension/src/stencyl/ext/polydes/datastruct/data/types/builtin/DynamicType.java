@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
 import stencyl.ext.polydes.datastruct.data.core.PredicateFactory;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
@@ -24,64 +24,19 @@ import stencyl.sw.util.dg.DialogPanel;
 
 public class DynamicType extends BuiltinType<Dynamic>
 {
+	private static final ExtrasMap noExtras = new ExtrasMap();
+	
 	public DynamicType()
 	{
 		super(Dynamic.class, "Dynamic", "OBJECT", "Dynamic");
 	}
 	
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Dynamic> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Dynamic> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		Extras e = (Extras) extras;
-		
-		if(updater.get() == null)
-			updater.set(new Dynamic("", "String"));
-		final Dynamic element = updater.get();
-		
-		final UpdatingCombo<DataType<?>> typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), e.excludeFilter);
-		typeChooser.setSelectedItem(Types.fromXML(element.type));
-		
-		final DynamicPanel dynamicPanel = new DynamicPanel(updater);
-		
-		typeChooser.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				dynamicPanel.setType(typeChooser.getSelected());
-			}
-		});
-		
-		return comps(typeChooser, dynamicPanel);
+		return new DynamicEditor(extras, style);
 	}
 	
-	public JComponent getVerticalEditor(final DataUpdater<Dynamic> updater, PropertiesSheetStyle style)
-	{
-		final Dynamic element = updater.get();
-		
-		final UpdatingCombo<DataType<?>> typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), arrayDynamicExclude);
-		typeChooser.setSelectedItem(Types.fromXML(element.type));
-		
-		final DynamicPanel dynamicPanel = new DynamicPanel(updater);
-		dynamicPanel.setBackground(style.pageBg.darker());
-		
-		typeChooser.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				dynamicPanel.setType(typeChooser.getSelected());
-			}
-		});
-		
-		DialogPanel page = new DialogPanel(style.pageBg.darker());
-		page.addGenericRow("Type", typeChooser);
-		page.addGenericRow("Value", dynamicPanel);
-		page.finishBlock();
-		
-		return page;
-	}
-
 	@Override
 	public Dynamic decode(String s)
 	{
@@ -98,50 +53,6 @@ public class DynamicType extends BuiltinType<Dynamic>
 	public String encode(Dynamic e)
 	{
 		return Types.fromXML(e.type).checkEncode(e.value) + ":" + e.type;
-	}
-	
-	class DynamicPanel extends JPanel
-	{
-		DataType<?> type;
-		Dynamic data;
-		DataUpdater<?> outerUpdater;
-		
-		public DynamicPanel(DataUpdater<?> outerUpdater)
-		{
-			super(new BorderLayout());
-			this.outerUpdater = outerUpdater;
-			data = (Dynamic) outerUpdater.get();
-			setType(Types.fromXML(data.type));
-		}
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void setType(DataType<?> type)
-		{
-			if(!type.equals(this.type))
-			{
-				this.type = type;
-				data.type = type.xml;
-				
-				if(!type.javaType.isInstance(data.value))
-					data.value = type.decode("");
-				
-				removeAll();
-				
-				final DataUpdater updater = new DataUpdater(data.value, null);
-				updater.listener = new UpdateListener()
-				{
-					@Override
-					public void updated()
-					{
-						data.value = updater.get();
-						outerUpdater.updated();
-					}
-				};
-				
-				add(Layout.horizontalBox(type.getEditor(updater, dynamicExcludeExtras, PropertiesSheetStyle.DARK)), BorderLayout.CENTER);
-				revalidate();
-			}
-		}
 	}
 
 	@Override
@@ -218,9 +129,121 @@ public class DynamicType extends BuiltinType<Dynamic>
 		arrayDynamicExcludeExtras.excludeFilter = arrayDynamicExclude;
 	}
 	
-	
 	static class Extras extends ExtraProperties
 	{
 		public CollectionPredicate<DataType<?>> excludeFilter;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class DynamicEditor extends DataEditor<Dynamic>
+	{
+		private UpdatingCombo<DataType<?>> typeChooser;
+		private JPanel valueEditorWrapper;
+		private DataEditor valueEditor;
+		private PropertiesSheetStyle style;
+		
+		private Dynamic data;
+		
+		public DynamicEditor(ExtraProperties extras, PropertiesSheetStyle style)
+		{
+			Extras e = (Extras) extras;
+			this.style = style;
+			
+			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), e.excludeFilter);
+			valueEditorWrapper = new JPanel();
+			valueEditorWrapper.setBackground(null);
+			
+			typeChooser.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					setType(typeChooser.getSelected());
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public Dynamic getValue()
+		{
+			return data;
+		}
+
+		@Override
+		public void set(Dynamic t)
+		{
+			if(t == null)
+				t = new Dynamic("", "String");
+			data = t;
+			typeChooser.setSelectedItem(Types.fromXML(t.type));
+		}
+		
+		@SuppressWarnings("unchecked")
+		private void setType(DataType newType)
+		{
+			if(valueEditor == null || !newType.xml.equals(data.type))
+			{
+				data.type = newType.xml;
+				if(!newType.javaType.isInstance(data.value))
+					data.value = newType.decode("");
+				
+				valueEditorWrapper.removeAll();
+				
+				if(valueEditor != null)
+					valueEditor.dispose();
+				
+				JComponent editor = null;
+				
+				valueEditor = newType.createEditor(noExtras, PropertiesSheetStyle.DARK);
+				valueEditor.setValue(data.value);
+				valueEditor.addListener(new UpdateListener()
+				{
+					@Override
+					public void updated()
+					{
+						data.value = valueEditor.getValue();
+						DynamicEditor.this.updated();
+					}
+				});
+				
+				editor = Layout.horizontalBox(style.fieldDimension, valueEditor.getComponents());
+				
+				valueEditorWrapper.add(editor, BorderLayout.CENTER);
+				valueEditorWrapper.revalidate();
+			}
+		}
+
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(typeChooser, valueEditorWrapper);
+		}
+		
+		public DialogPanel createMiniPage()
+		{
+			DialogPanel page = new DialogPanel(style.pageBg.darker());
+			page.addGenericRow("Type", typeChooser);
+			page.addGenericRow("Value", valueEditorWrapper);
+			page.finishBlock();
+			
+			return page;
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			typeChooser.dispose();
+			valueEditorWrapper.removeAll();
+			if(valueEditor != null)
+				valueEditor.dispose();
+			
+			data = null;
+			typeChooser = null;
+			valueEditorWrapper = null;
+			valueEditor = null;
+			style = null;
+		}
 	}
 }

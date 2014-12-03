@@ -5,8 +5,24 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 
+import stencyl.sw.util.VerificationHelper;
+
 public class IntegerFilter extends DocumentFilter
 {
+	private int min;
+	private int max;
+	
+	public IntegerFilter(int min, int max)
+	{
+		this.min = min;
+		this.max = max;
+	}
+
+	public IntegerFilter()
+	{
+		this(Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
 	@Override
 	public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException
 	{
@@ -27,7 +43,7 @@ public class IntegerFilter extends DocumentFilter
 
 	private boolean test(String text)
 	{
-		return text.matches("-?([0-9]*)?");
+		return text.isEmpty() || VerificationHelper.isIntegerWithinRange(text, min, max);
 	}
 
 	@Override

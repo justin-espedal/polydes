@@ -26,6 +26,8 @@ public class DTreeTransferHandler extends TransferHandler
 
 	public DTreeTransferHandler(FolderHierarchyModel folderModel, DTree dtree)
 	{
+//		System.out.println("new DTreeTransferHandler()");
+		
 		try
 		{
 			String mimeType = DataFlavor.javaJVMLocalObjectMimeType
@@ -94,6 +96,8 @@ public class DTreeTransferHandler extends TransferHandler
 
 	protected Transferable createTransferable(JComponent c)
 	{
+//		System.out.println("createTransferable()");
+		
 		// get the transfer nodes. removes any children of selected folders from
 		// selection.
 		dtree.getSelectionState().prepareNodesForTransfer();
@@ -121,16 +125,19 @@ public class DTreeTransferHandler extends TransferHandler
 
 	protected void exportDone(JComponent source, Transferable data, int action)
 	{
-
+//		System.out.println("exportDone()");
 	}
 
 	public int getSourceActions(JComponent c)
 	{
-		return COPY_OR_MOVE;
+//		System.out.println("getSourceActions()");
+		return MOVE;
 	}
 
 	public boolean importData(TransferSupport support)
 	{
+//		System.out.println("importData()");
+		
 		if (!canImport(support))
 			return false;
 		
@@ -174,6 +181,8 @@ public class DTreeTransferHandler extends TransferHandler
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
 		
+//		System.out.println(StringUtils.join(transferItems, ", "));
+		
 		folderModel.massMove(transferItems, parentFolder, index);
 		
 		return true;
@@ -181,6 +190,7 @@ public class DTreeTransferHandler extends TransferHandler
 
 	public String toString()
 	{
+//		System.out.println("toString()");
 		return getClass().getName();
 	}
 
@@ -190,12 +200,15 @@ public class DTreeTransferHandler extends TransferHandler
 
 		public NodesTransferable(DefaultMutableTreeNode[] nodes)
 		{
+//			System.out.println("new nodesTransferable()");
 			this.nodes = nodes;
 		}
 
 		public Object getTransferData(DataFlavor flavor)
 				throws UnsupportedFlavorException
 		{
+//			System.out.println("nodesTransferable.getTransferData()");
+			
 			if (!isDataFlavorSupported(flavor))
 				throw new UnsupportedFlavorException(flavor);
 			return nodes;
@@ -208,6 +221,7 @@ public class DTreeTransferHandler extends TransferHandler
 
 		public boolean isDataFlavorSupported(DataFlavor flavor)
 		{
+//			System.out.println("nodesTransferable.isDataFlavorSupported()");
 			return nodesFlavor.equals(flavor);
 		}
 	}

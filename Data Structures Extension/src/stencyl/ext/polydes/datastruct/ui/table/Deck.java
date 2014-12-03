@@ -55,12 +55,12 @@ public class Deck extends JPanel implements GuiObject
 		}
 	}
 	
-	public void addCard(Card card)
+	public void addCard(Card card, int i)
 	{
 		card.setDeck(this);
 		
-		cards = ArrayUtils.add(cards, card);
-		labels = ArrayUtils.add(labels, card.name);
+		cards = ArrayUtils.add(cards, i, card);
+		labels = ArrayUtils.add(labels, i, card.name);
 		refreshButtons();
 		bgroup.add(card.button);
 		add(card, card.name);

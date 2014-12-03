@@ -1,6 +1,7 @@
 package stencyl.ext.polydes.datastruct.ui.tree;
 
 import java.util.Collection;
+import java.util.List;
 
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
@@ -13,4 +14,5 @@ public interface DTreeNodeCreator
 	Object createNode(PopupItem selected, String nodeName);
 	void editNode(DataItem dataItem);
 	void nodeRemoved(DataItem toRemove);
+	boolean attemptRemove(List<DataItem> toRemove);
 }

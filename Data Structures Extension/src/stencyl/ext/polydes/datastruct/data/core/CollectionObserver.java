@@ -29,7 +29,10 @@ public class CollectionObserver
 	public void checkList()
 	{
 		if(observed.size() != cachedSize)
+		{
+			cachedSize = observed.size();
 			listUpdated();
+		}
 	}
 	
 	public void addListener(CollectionUpdateListener l)
@@ -40,6 +43,21 @@ public class CollectionObserver
 	public void removeListener(CollectionUpdateListener l)
 	{
 		listeners.remove(l);
+	}
+	
+	public boolean hasNoListeners()
+	{
+		return listeners.isEmpty();
+	}
+	
+	public void cancel()
+	{
+		listeners.clear();
+		cachedSize = 0;
+		observed = null;
+		observers.remove(this);
+		if(observers.size() == 0)
+			cancelTimer();
 	}
 	
 	public void listUpdated()
@@ -61,5 +79,13 @@ public class CollectionObserver
 		};
 		observerPollTimer = new Timer();
 		observerPollTimer.schedule(observerPollTask, 1000, 1000);
+	}
+	
+	private static void cancelTimer()
+	{
+		observerPollTimer.cancel();
+		observerPollTask.cancel();
+		observerPollTimer = null;
+		observerPollTask = null;
 	}
 }

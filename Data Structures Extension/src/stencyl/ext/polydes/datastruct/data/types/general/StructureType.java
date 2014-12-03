@@ -10,17 +10,25 @@ import javax.swing.JComponent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
+import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureField;
 import stencyl.ext.polydes.datastruct.data.structure.Structures;
+import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
+import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
 import stencyl.ext.polydes.datastruct.io.Text;
 import stencyl.ext.polydes.datastruct.res.Resources;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
+import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureType extends DataType<Structure>
@@ -29,7 +37,7 @@ public class StructureType extends DataType<Structure>
 	
 	public StructureType(StructureDefinition def)
 	{
-		super(Structure.class, def.classname, "OBJECT", def.name);
+		super(Structure.class, def.getClassname(), "OBJECT", def.getName());
 		this.def = def;
 	}
 	
@@ -87,21 +95,9 @@ public class StructureType extends DataType<Structure>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Structure> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Structure> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final UpdatingCombo<Structure> editor = new UpdatingCombo<Structure>(Structures.getList(def.name), null);
-		editor.setSelectedItem(updater.get());
-		
-		editor.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				updater.set(editor.getSelected());
-			}
-		});
-		
-		return comps(editor);
+		return new StructureEditor((Extras) extras, null);
 	}
 
 	@Override
@@ -144,14 +140,129 @@ public class StructureType extends DataType<Structure>
 	}
 	
 	@Override
+	public void applyToFieldPanel(StructureFieldPanel panel)
+	{
+		int expansion = panel.getExtraPropertiesExpansion();
+		final Extras e = (Extras) panel.getExtras();
+		final PropertiesSheet preview = panel.getPreview();
+		final DataItem previewKey = panel.getPreviewKey();
+		final PropertiesSheetStyle style = panel.style;
+		
+		//=== Source Filter
+
+		final DataEditor<String> filterField = new SingleLineStringEditor(style);
+		filterField.setValue(e.sourceFilter == null ? null : e.sourceFilter.getText());
+		filterField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				String text = filterField.getValue();
+				
+				if(e.sourceFilter == null && !text.isEmpty())
+					e.sourceFilter = new StructureCondition(null, text);
+				else if(e.sourceFilter != null && text.isEmpty())
+					e.sourceFilter = null;
+				else if(e.sourceFilter != null && !text.isEmpty())
+					e.sourceFilter.setText(text);
+				
+				preview.refreshDataItem(previewKey);
+			}
+		});
+		
+		panel.addEnablerRow(expansion, "Filter", filterField, e.sourceFilter != null);
+	}
+	
+	@Override
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
-		return null;
+		Extras e = new Extras();
+		String filterText = extras.get("sourceFilter", Types._String, null);
+		if(filterText != null)
+			e.sourceFilter = new StructureCondition(null, filterText);
+		return e;
 	}
 	
 	@Override
 	public ExtrasMap saveExtras(ExtraProperties extras)
 	{
-		return null;
+		Extras e = (Extras) extras;
+		ExtrasMap emap = new ExtrasMap();
+		if(e.sourceFilter != null)
+			emap.put("sourceFilter", e.sourceFilter.getText());
+		return emap;
+	}
+	
+	public class Extras extends ExtraProperties
+	{
+		public StructureCondition sourceFilter;
+		//public Structure defaultValue;
+	}
+	
+	public class StructureEditor extends DataEditor<Structure>
+	{
+		private UpdatingCombo<Structure> editor;
+		
+		public StructureEditor(Extras e, Structure currentStructure)
+		{
+			CollectionPredicate<Structure> filter =
+					e.sourceFilter == null ? null :
+					new StructurePredicate(e.sourceFilter, currentStructure);
+			
+			editor = new UpdatingCombo<Structure>(Structures.getList(def), filter);
+			
+			editor.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		@Override
+		public void set(Structure t)
+		{
+			editor.setSelectedItem(t);
+		}
+		
+		@Override
+		public Structure getValue()
+		{
+			return editor.getSelected();
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(editor);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			editor.dispose();
+			editor = null;
+		}
+	}
+	
+	class StructurePredicate implements CollectionPredicate<Structure>
+	{
+		private StructureCondition condition;
+		private Structure s;
+		
+		public StructurePredicate(StructureCondition condition, Structure s)
+		{
+			this.condition = condition;
+			this.s = s;
+		}
+		
+		@Override
+		public boolean test(Structure s2)
+		{
+			return condition.check(s, s2);
+		}
 	}
 }

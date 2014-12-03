@@ -24,6 +24,24 @@ public class MainPage extends JPanel
 	private JPanel pageView;
 	private MiniSplitPane splitPane;
 	
+	private JButton defButton;
+	private final ActionListener openDefinitionsWindowAction = new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			StructureDefinitionsWindow.get();
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					StructureDefinitionsWindow.get().setVisible(true);
+				}
+			});
+		}
+	};
+	
 	private MainPage()
 	{
 		super(new BorderLayout());
@@ -46,23 +64,9 @@ public class MainPage extends JPanel
 		JPanel bWrapper = new JPanel();
 		bWrapper.setBackground(UIConsts.SIDEBAR_COLOR);
 		
-		JButton defButton = new JButton("Open Structure Editor");
-		defButton.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				StructureDefinitionsWindow.get();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						StructureDefinitionsWindow.get().setVisible(true);
-					}
-				});
-			}
-		});
+		defButton = new JButton("Open Structure Editor");
+		defButton.addActionListener(openDefinitionsWindowAction);
+		defButton.setBackground(null);
 		
 		bWrapper.add(defButton);
 		bWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -81,11 +85,21 @@ public class MainPage extends JPanel
 		return _instance;
 	}
 	
+	public void dispose()
+	{
+		pageView.removeAll();
+		splitPane.removeAll();
+		defButton.removeActionListener(openDefinitionsWindowAction);
+		removeAll();
+	}
+	
 	public static void disposePages()
 	{
 		StructurePage.dispose();
 		StructureDefinitionPage.dispose();
 		StructureDefinitionsWindow.disposeWindow();
+		if(_instance != null)
+			_instance.dispose();
 		_instance = null;
 	}
 

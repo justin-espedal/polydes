@@ -42,5 +42,9 @@ public class ExtrasMap extends HashMap<String, String>
 		{
 			return (T) enm;
 		}
+		catch(NullPointerException ex)
+		{
+			return (T) enm;
+		}
 	}
 }

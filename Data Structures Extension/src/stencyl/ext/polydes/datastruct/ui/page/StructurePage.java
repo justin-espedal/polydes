@@ -5,6 +5,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -30,6 +31,7 @@ import stencyl.ext.polydes.datastruct.ui.objeditors.StructureEditor;
 import stencyl.ext.polydes.datastruct.ui.tree.DTree;
 import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionListener;
 import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionState;
+import stencyl.ext.polydes.datastruct.ui.tree.DefaultNodeCreator;
 import stencyl.ext.polydes.datastruct.ui.tree.SelectionType;
 import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
 import stencyl.sw.SW;
@@ -64,9 +66,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 		super(new BorderLayout());
 		
 		folderModel = new FolderHierarchyModel(rootFolder);
-		tree = folderModel.getTree();
+		tree = new DTree(folderModel);
 		tree.addTreeListener(this);
-
+		tree.expandLevel(1);
+		
 		multiPage = new JPanel();
 		multiPage.setLayout(new BoxLayout(multiPage, BoxLayout.Y_AXIS));
 		multiPage.setBackground(UIConsts.TEXT_EDITOR_COLOR);
@@ -122,7 +125,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 		folderModel.setUniqueItemNames(true);
 		
 		tree.enablePropertiesButton();
-		tree.setNodeCreator(folderModel.new DefaultNodeCreator()
+		tree.setNodeCreator(new DefaultNodeCreator()
 		{
 			//For our purposes here, the object these folders point to is a type limiter.
 			
@@ -133,10 +136,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 				
 				ArrayList<PopupItem> items = new ArrayList<PopupItem>();
 				if(parent.childType != null)
-					items.add(new PopupItem(parent.childType.name, parent.childType, parent.childType.smallIcon));
+					items.add(new PopupItem(parent.childType.getName(), parent.childType, parent.childType.getSmallIcon()));
 				else
 					for(StructureDefinition def : StructureDefinitions.defMap.values())
-						items.add(new PopupItem(def.name, def, def.smallIcon));
+						items.add(new PopupItem(def.getName(), def, def.getSmallIcon()));
 				return items;
 			}
 			
@@ -149,20 +152,41 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 				int id = Structures.newID();
 				StructureDefinition type = (StructureDefinition) selected.data;
 				Structure toReturn = new Structure(id, nodeName, type);
-				Structures.structures.get(type.name).add(toReturn);
+				Structures.structures.get(type).add(toReturn);
 				Structures.structuresByID.put(id, toReturn);
 				return toReturn.dref;
 			}
 			
 			@Override
+			public boolean attemptRemove(List<DataItem> toRemove)
+			{
+				int numStructuresToRemove = 0;
+				for(DataItem item : toRemove)
+					if(!(item instanceof Folder))
+						++numStructuresToRemove;
+				
+				String plural = (numStructuresToRemove > 1 ? "s" : "");
+				
+				int result =
+					UI.showYesCancelPrompt(
+						"Remove Selected Structure" + plural,
+						"Are you sure you want to remove " + numStructuresToRemove +  " structure" + plural + "?",
+						"Remove", "Cancel"
+					);
+				
+				return UI.choseYes(result);
+			}
+			
+			@Override
 			public void nodeRemoved(DataItem toRemove)
 			{
+				System.out.println("REMOVED NODE " + toRemove);
 				if(toRemove.getObject() instanceof Structure)
 				{
 					Structure s = (Structure) toRemove.getObject();
-					String type = s.getDefname();
-					Structures.structures.get(type).remove(s);
+					Structures.structures.get(s.getTemplate()).remove(s);
 					Structures.structuresByID.remove(s.getID());
+					s.dispose();
 				}
 			}
 			
@@ -210,6 +234,11 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 			_instance = new StructurePage(Structures.root);
 
 		return _instance;
+	}
+	
+	public FolderHierarchyModel getFolderModel()
+	{
+		return folderModel;
 	}
 	
 	public void refreshSelected()
@@ -293,6 +322,13 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 	
 	public static void dispose()
 	{
+		if(_instance != null)
+		{
+			_instance.removeAll();
+			_instance.sidebar.removeAll();
+			_instance.folderModel.dispose();
+			_instance.tree.dispose();
+		}
 		_instance = null;
 	}
 }

@@ -38,7 +38,6 @@ import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureField;
 import stencyl.ext.polydes.datastruct.data.structure.StructureHeader;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTab;
-import stencyl.ext.polydes.datastruct.data.structure.StructureTable;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTabset;
 import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
@@ -194,7 +193,6 @@ public class XML
 	
 	public static void readDefinition(Element root, StructureDefinition model)
 	{
-		model.guiRoot = new Folder("root", new StructureTable());
 		readFields(root, model, model.guiRoot);
 	}
 	
@@ -206,12 +204,18 @@ public class XML
 			{
 				if(e.getTagName().equals("if"))
 				{
-					//TODO: old, provide backward compatibility
-//					StructureCondition c = StructureCondition.fromXML(model, e);
-//					Folder ifNode = new Folder(c.toString(), c);
-//					readFields(e, model, ifNode);
-//					gui.addItem(ifNode);
-					StructureCondition c = new StructureCondition(model, XML.read(e, "condition"));
+					StructureCondition c;
+					
+					if(e.hasAttribute("condition"))
+					{
+						c = new StructureCondition(model, XML.read(e, "condition"));
+					}
+					else
+					{
+						//backwards compatibility
+						c = StructureCondition.fromXML(model, e);
+					}
+					
 					Folder ifNode = new Folder(c.toString(), c);
 					readFields(e, model, ifNode);
 					gui.addItem(ifNode);
@@ -248,7 +252,7 @@ public class XML
 					emap.putAll(map);
 					
 					DataType<?> dtype = Types.fromXML(type);
-					StructureField toAdd = new StructureField(name, dtype, label, hint, optional, emap);
+					StructureField toAdd = new StructureField(model, name, dtype, label, hint, optional, emap);
 					gui.addItem(new DataItem(toAdd.getLabel(), toAdd));
 					model.addField(toAdd);
 					
@@ -284,7 +288,7 @@ public class XML
 	
 	public static void writeDefinition(Document doc, Element root, StructureDefinition def)
 	{
-		root.setAttribute("classname", def.classname);
+		root.setAttribute("classname", def.getClassname());
 		for(DataItem n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}
@@ -306,7 +310,8 @@ public class XML
 			}
 			else if(gui.getObject() instanceof StructureCondition)
 			{
-				e = StructureCondition.toXML(doc, (StructureCondition) gui.getObject());
+				e = doc.createElement("if");
+				e.setAttribute("condition", StringEscapeUtils.escapeXml10(((StructureCondition) gui.getObject()).getText()));
 			}
 			for(DataItem n : ((Folder) gui).getItems())
 				writeNode(doc, e, n);

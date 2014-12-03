@@ -8,13 +8,13 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.datastruct.data.core.Images;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
 import stencyl.ext.polydes.datastruct.data.structure.Structures;
+import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.ext.DataStructureExtension;
@@ -150,7 +150,7 @@ public class Main extends BaseExtension
 		{
 			if(dataFolder == null)
 				return;
-						
+			
 			File temp = new File(Locations.getTemporaryDirectory() + File.separator + "data structures save");
 			temp.mkdirs();
 			boolean failedToSave = false;
@@ -209,11 +209,10 @@ public class Main extends BaseExtension
 			for(DataType<?> type : ext.getDataTypes())
 				Types.addType(type);
 		
+		StructureDefinitions.get().addFolder(defsFolder, "My Structures");
 		for(DataStructureExtension ext : dataStructureExtensions)
 			StructureDefinitions.get().addFolder(ext.getDefinitionsFolder(), ((BaseExtension) ext).getName());
-		StructureDefinitions.get().addFolder(defsFolder, "My Structures");
 		
-		Types.sort();
 		DelayedInitialize.clearProps();
 		
 		Images.get().load(new File(Locations.getGameLocation(game), "extras"));
@@ -250,6 +249,7 @@ public class Main extends BaseExtension
 		
 		MainPage.disposePages();
 		StructureDefinitions.dispose();
+		StructureCondition.dispose();
 		Types.dispose();
 		Images.dispose();
 		Structures.dispose();

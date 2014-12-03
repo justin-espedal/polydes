@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultButtonModel;
@@ -38,8 +39,11 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
+import stencyl.ext.polydes.datastruct.data.folder.DataItemUtil;
+import stencyl.ext.polydes.datastruct.data.folder.DataItemUtil.DataItemRunnable;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
 import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
+import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyRepresentation;
 import stencyl.ext.polydes.datastruct.res.Resources;
 import stencyl.ext.polydes.datastruct.ui.StatusBar;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
@@ -49,7 +53,8 @@ import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupSelectionListener;
 import stencyl.sw.util.UI;
 
 //Short for "Dialog" Tree. Just because. ...But it could also mean "DataItem Tree".
-public class DTree extends JPanel implements TreeSelectionListener, ActionListener, KeyListener, CellEditorListener, CellEditValidator
+public class DTree extends JPanel implements TreeSelectionListener, ActionListener, KeyListener,
+	CellEditorListener, CellEditValidator, FolderHierarchyRepresentation
 {
 	public static final int DEF_WIDTH = 200;
 	public static final int MINI_BUTTON_WIDTH = 25;
@@ -68,6 +73,8 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 	private DTreeCellEditor editor;
 	private DTreeSelectionState selectionState;
 
+	private boolean nameEditingAllowed = true;
+	
 	private ArrayList<DTreeSelectionListener> listeners;
 	
 	private JScrollPane scroller;
@@ -105,13 +112,15 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 	public DTree(FolderHierarchyModel folderModel)
 	{
 		super(new BorderLayout());
-
+		
+		folderModel.addRepresentation(this);
+		
 		this.folderModel = folderModel;
 		nodeMap = new HashMap<DataItem, DefaultMutableTreeNode>();
 		
 		listEditEnabled = false;
-
-		root = new DefaultMutableTreeNode(new Folder("root"));
+		
+		root = createNodeFromFolder(folderModel.getRootFolder());
 		tree = new JTree(root)
 		{
 			@Override
@@ -129,11 +138,14 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 			}
 		};
 		model = (DefaultTreeModel) tree.getModel();
+		tree.expandPath(new TreePath(root.getPath()));
 		editor = new DTreeCellEditor(this);
 		editor.setValidator(this);
 		editor.addCellEditorListener(this);
+		renderer = new DTreeCellRenderer();
 		tree.setUI(new DTreeUI(this));
 		tree.setCellEditor(editor);
+		tree.setCellRenderer(renderer);
 		tree.setInvokesStopCellEditing(true);
 		tree.setBackground(UIConsts.SIDEBAR_COLOR);
 		tree.setRowHeight(ITEM_HEIGHT);
@@ -174,26 +186,32 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 
 		setOpaque(true);
 		setBorder(null);
-
+		
 		listeners = new ArrayList<DTreeSelectionListener>();
 		selectedNodes = new ArrayList<DefaultMutableTreeNode>();
 		selectionState = new DTreeSelectionState();
 		selectionState.nodes = selectedNodes;
-	}
-
-	public void loadRoot(DefaultMutableTreeNode top)
-	{
-		model.setRoot(top);
-		root = top;
-		
-		tree.expandPath(new TreePath(root.getPath()));
-		
-		renderer = new DTreeCellRenderer();
-		tree.setCellRenderer(renderer);
 		
 		tree.setSelectionPath(new TreePath(model.getPathToRoot(root)));
-		
 		refreshDisplay();
+	}
+	
+	public void dispose()
+	{
+		editor = null;
+		renderer = null;
+		listeners.clear();
+		nodeCreator = null;
+		nodeMap.clear();
+		root = null;
+		selectedNodes.clear();
+		selectionState = null;
+		recentlyCreated = null;
+		
+		folderModel.removeRepresentation(this);
+		tree.removeTreeSelectionListener(this);
+		tree.removeKeyListener(this);
+		model.setRoot(null);
 	}
 	
 	public void setNode(DataItem item, DefaultMutableTreeNode node)
@@ -221,6 +239,40 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 	    tree.treeDidChange();
 	}
 	
+	public void expand(Folder folder)
+	{
+		tree.expandPath(new TreePath(getNode(folder).getPath()));
+	}
+	
+	public void expandLevel(int level)
+	{
+		expandLevel(level, folderModel.getRootFolder());
+	}
+	
+	private void expandLevel(int level, Folder folder)
+	{
+		for(DataItem item : folder.getItems())
+		{
+			if(item instanceof Folder)
+			{
+				tree.expandPath(new TreePath(getNode(item).getPath()));
+				if(level > 0)
+					expandLevel(level - 1, (Folder) item);
+			}
+		}
+	}
+	
+	public void setNamingEditingAllowed(boolean value)
+	{
+		nameEditingAllowed = value;
+	}
+	
+	public boolean isNameEditingAllowed()
+	{
+		return nameEditingAllowed;
+	}
+	
+	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
 		selectedNodes.clear();
@@ -286,6 +338,7 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 			return ((DataItem) selectedNodes.get(selectedNodes.size() - 1).getUserObject()).getParent();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		if(e.getSource() == newItemButton)
@@ -323,9 +376,10 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 		}
 	}
 	
-	private void createNewItem(PopupItem item)
+	public void createNewItem(PopupItem item)
 	{
 		Folder newNodeFolder = getCreationParentFolder(selectionState);
+		
 		int insertPosition;
 		
 		if(selectionState.type == SelectionType.FOLDERS)
@@ -333,6 +387,11 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 		else
 			insertPosition = newNodeFolder.getItems().indexOf(selectedNodes.get(selectedNodes.size() - 1).getUserObject()) + 1;
 		
+		createNewItemFromFolder(item, newNodeFolder, insertPosition);
+	}
+	
+	public void createNewItemFromFolder(PopupItem item, Folder newNodeFolder, int insertPosition)
+	{
 		Object newNodeObject;
 		
 		if (nodeCreator == null)
@@ -351,10 +410,11 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 		
 		folderModel.addItem((DataItem) newNodeObject, newNodeFolder, insertPosition);
 		
-		TreePath path = new TreePath(model.getPathToRoot(folderModel.getRecentlyCreated()));
+		TreePath path = new TreePath(model.getPathToRoot(recentlyCreated));
 		tree.setSelectionPath(path);
+		recentlyCreated = null;
 		
-		if(((DataItem) newNodeObject).canEditName())
+		if(nameEditingAllowed && ((DataItem) newNodeObject).canEditName())
 		{
 			editor.allowEdit();
 			tree.startEditingAtPath(path);
@@ -374,18 +434,32 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 		if (reselectNode == null)
 			reselectNode = (DefaultMutableTreeNode) selectedNodes.get(selectedNodes.size() - 1).getParent();
 		
+		final HashSet<DataItem> toRemoveDiList = new HashSet<DataItem>();
 		for(DefaultMutableTreeNode toRemoveNode : toRemoveList)
 		{
-			DataItem toRemove = (DataItem) toRemoveNode.getUserObject();
-			Folder parent = (Folder) ((DefaultMutableTreeNode) toRemoveNode.getParent()).getUserObject();
-			
-			folderModel.removeItem(toRemove, parent);
-			
-			nodeCreator.nodeRemoved(toRemove);
+			DataItemUtil.recursiveRun((DataItem) toRemoveNode.getUserObject(), new DataItemRunnable()
+			{
+				@Override
+				public void run(DataItem item)
+				{
+					toRemoveDiList.add(item);
+				}
+			});
 		}
-
-		if (reselectNode != null)
-			tree.setSelectionPath(new TreePath(model.getPathToRoot(reselectNode)));
+		
+		if(nodeCreator.attemptRemove(new ArrayList<DataItem>(toRemoveDiList)))
+		{
+			for(DataItem toRemove : toRemoveDiList)
+			{
+				Folder parent = toRemove.getParent();
+				
+				folderModel.removeItem(toRemove, parent);
+				nodeCreator.nodeRemoved(toRemove);
+			}
+			
+			if(reselectNode != null)
+				tree.setSelectionPath(new TreePath(model.getPathToRoot(reselectNode)));
+		}
 	}
 
 	@Override
@@ -515,6 +589,7 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 	{
 		JButton button = new JButton()
 		{
+			@Override
 			public void paintComponent(Graphics g)
 			{
 				if (((DefaultButtonModel) getModel()).isPressed())
@@ -589,5 +664,69 @@ public class DTree extends JPanel implements TreeSelectionListener, ActionListen
 				refreshDisplay();
 			}
 		}, 100);
+	}
+	
+	/*================================================*\
+	 | Folder Hierarchy Representation
+	\*================================================*/
+	
+	private DefaultMutableTreeNode recentlyCreated = null;
+	
+	@Override
+	public void dataItemNameChanged(DataItem item, String oldName)
+	{
+		model.nodeChanged(getNode(item));
+		repaint();
+	}
+	
+	@Override
+	public void dataItemStateChanged(DataItem item)
+	{
+		model.nodeChanged(getNode(item));
+		repaint();
+	}
+	
+	@Override
+	public void itemAdded(Folder folder, DataItem item, int position)
+	{
+		DefaultMutableTreeNode itemNode;
+		if(folderModel.isMovingItem())
+			itemNode = getNode(item);
+		else
+		{
+			itemNode = new DefaultMutableTreeNode(item);
+			recentlyCreated = itemNode;
+			setNode(item, itemNode);
+		}
+		model.insertNodeInto(itemNode, getNode(folder), position);
+	}
+	
+	@Override
+	public void itemRemoved(DataItem item)
+	{
+		model.removeNodeFromParent(getNode(item));
+		if(!folderModel.isMovingItem())
+			removeNode(item);
+	}
+	
+	private DefaultMutableTreeNode createNodeFromFolder(Folder folder)
+	{
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(folder);
+		DefaultMutableTreeNode newSubNode;
+		setNode(folder, newNode);
+		
+		for(DataItem item : folder.getItems())
+		{
+			if(item instanceof Folder)
+				newNode.add(createNodeFromFolder((Folder) item));
+			else
+			{
+				newSubNode = new DefaultMutableTreeNode(item);
+				setNode(item, newSubNode);
+				newNode.add(newSubNode);
+			}
+		}
+		
+		return newNode;
 	}
 }

@@ -57,6 +57,7 @@ public class Card extends JPanel implements GuiObject
 		setLayout(layout = new TableLayout(new double[][] {Table.defaultColumns, {}}));
 		setBackground(null);
 		button = new JButton(name);
+		button.setBackground(null);
 		rows = new RowGroup[0];
 		
 		this.isTab = isTab;

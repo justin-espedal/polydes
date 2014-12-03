@@ -46,6 +46,7 @@ public class StructureTab extends EditableObject
 	public void disposeEditor()
 	{
 		editor.dispose();
+		editor = null;
 	}
 	
 	@Override

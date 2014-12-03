@@ -1,34 +1,32 @@
 package stencyl.ext.polydes.datastruct.ui.objeditors;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-
 import stencyl.ext.polydes.datastruct.data.structure.cond.StructureCondition;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.builtin.StringType;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
-import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
-import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil;
 
-public class StructureConditionPanel extends JPanel
+public class StructureConditionPanel extends StructureObjectPanel
 {
-	private JTextField field;
+	private DataEditor<String> field;
+	private String oldText;
 	
-	public StructureConditionPanel(final StructureCondition condition)
+	public StructureConditionPanel(final StructureCondition condition, PropertiesSheetStyle style)
 	{
-		super(new BorderLayout());
+		super(style);
 		
-		field = PropertiesSheetStyle.LIGHT.createTextField();
-		field.setText(condition.getText());
-		field.getDocument().addDocumentListener(new DocumentAdapter(false)
+		oldText = condition.getText();
+		field = new StringType.SingleLineStringEditor(style);
+		field.setValue(condition.getText());
+		field.addListener(new UpdateListener()
 		{
 			@Override
-			protected void update()
+			public void updated()
 			{
-				condition.setText(field.getText());
+				condition.setText(field.getValue());
+				previewKey.setName(field.getValue());
+				preview.lightRefreshDataItem(previewKey);
+				preview.refreshVisibleComponents();
 			}
 		});
 //		addMouseListener(new MouseAdapter()
@@ -49,39 +47,50 @@ public class StructureConditionPanel extends JPanel
 //			}
 //		});
 		
-		add(field);
+		addGenericRow("Condition", field);
 	}
 	
-	private JPopupMenu buildNewSubconditionPopup()
+	public String getOldText()
 	{
-		return PopupUtil.buildPopup(new String[] {"=",  "And", "Or", "Not"}, new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String text = e.getActionCommand();
-				
-				if(text.equals("="))
-					;//setModel(new IsCondition(null, ""));
-				else if(text.equals("And"))
-					;//setModel(new AndCondition(null, null));
-				else if(text.equals("Or"))
-					;//setModel(new OrCondition(null, null));
-				else if(text.equals("Not"))
-					;//setModel(new NotCondition(null));
-			}
-		});
+		return oldText;
 	}
 	
-	private JPopupMenu buildEditPopup()
+//	private JPopupMenu buildNewSubconditionPopup()
+//	{
+//		return PopupUtil.buildPopup(new String[] {"=",  "And", "Or", "Not"}, new ActionListener()
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				String text = e.getActionCommand();
+//				
+//				if(text.equals("="))
+//					;//setModel(new IsCondition(null, ""));
+//				else if(text.equals("And"))
+//					;//setModel(new AndCondition(null, null));
+//				else if(text.equals("Or"))
+//					;//setModel(new OrCondition(null, null));
+//				else if(text.equals("Not"))
+//					;//setModel(new NotCondition(null));
+//			}
+//		});
+//	}
+//	
+//	private JPopupMenu buildEditPopup()
+//	{
+//		return PopupUtil.buildPopup(new String[] {"Remove"}, new ActionListener()
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				;//setModel(null);
+//			}
+//		});
+//	}
+	
+	public void dispose()
 	{
-		return PopupUtil.buildPopup(new String[] {"Remove"}, new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				;//setModel(null);
-			}
-		});
+		clearExpansion(0);
+		field = null;
 	}
 }

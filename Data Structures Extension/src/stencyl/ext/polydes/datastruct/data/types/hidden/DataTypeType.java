@@ -6,14 +6,17 @@ import java.util.HashSet;
 
 import javax.swing.JComponent;
 
+import stencyl.core.lib.Resource;
 import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
+import stencyl.ext.polydes.datastruct.data.structure.Structure;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.ui.comp.UpdatingCombo;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
+import stencyl.ext.polydes.datastruct.utils.Lang;
 
 @SuppressWarnings("rawtypes")
 public class DataTypeType extends HiddenType<DataType>
@@ -24,31 +27,9 @@ public class DataTypeType extends HiddenType<DataType>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<DataType> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<DataType> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
-		final Extras e = (Extras) extras;
-		CollectionPredicate<DataType<?>> filter = new CollectionPredicate<DataType<?>>()
-		{
-			public boolean test(DataType<?> t)
-			{
-				return !e.excludedTypes.contains(t);
-			};
-		};
-		
-		final UpdatingCombo<DataType<?>> typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), filter);
-		
-		typeChooser.setSelectedItem(updater.get());
-		
-		typeChooser.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				updater.set(typeChooser.getSelected());
-			}
-		});
-		
-		return comps(typeChooser);
+		return new DataTypeEditor((Extras) extras);
 	}
 
 	@Override
@@ -90,20 +71,128 @@ public class DataTypeType extends HiddenType<DataType>
 		return e;
 	}
 	
-	public static HashSet<DataType<?>> noExclude = new HashSet<DataType<?>>();
-	public static HashSet<DataType<?>> dynamicExclude = new HashSet<DataType<?>>();
-	public static HashSet<DataType<?>> arrayDynamicExclude = new HashSet<DataType<?>>();
-	static
-	{
-		dynamicExclude.add(Types._Dynamic);
-		arrayDynamicExclude.add(Types._Dynamic);
-		arrayDynamicExclude.add(Types._Array);
-		arrayDynamicExclude.add(Types._Selection);
-		arrayDynamicExclude.add(Types._Set);
-	}
+	public static HashSet<DataType<?>> noExclude = Lang.hashset();
+	public static HashSet<DataType<?>> dynamicExclude = Lang.hashset(Types._Dynamic);
+	public static HashSet<DataType<?>> arrayDynamicExclude =
+			Lang.hashset(Types._Dynamic, Types._Array, Types._Selection, Types._Set);
 	
-	class Extras extends ExtraProperties
+	public static CollectionPredicate<DataType<?>> onlyStructureDefinitions = new CollectionPredicate<DataType<?>>()
+	{
+		@Override
+		public boolean test(DataType<?> t)
+		{
+			return t.javaType.isAssignableFrom(Structure.class);
+		}
+	};
+	
+	public static CollectionPredicate<DataType<?>> onlyStencylTypes = new CollectionPredicate<DataType<?>>()
+	{
+		@Override
+		public boolean test(DataType<?> t)
+		{
+			return Resource.class.isAssignableFrom(t.javaType);
+		}
+	};
+	
+	public static CollectionPredicate<DataType<?>> dynamicArraySubTypes = new CollectionPredicate<DataType<?>>()
+	{
+		@Override
+		public boolean test(DataType<?> t)
+		{
+			return !arrayDynamicExclude.contains(t);
+		}
+	};
+	
+	public static class Extras extends ExtraProperties
 	{
 		public HashSet<DataType<?>> excludedTypes;
+	}
+	
+	public static class DataTypeEditor extends DataEditor<DataType>
+	{
+		UpdatingCombo<DataType<?>> typeChooser;
+		
+		public DataTypeEditor()
+		{
+			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), null);
+			
+			typeChooser.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		public DataTypeEditor(CollectionPredicate<DataType<?>> filter)
+		{
+			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), filter);
+			
+			typeChooser.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+		}
+		
+		public DataTypeEditor(final Extras e)
+		{
+			CollectionPredicate<DataType<?>> filter = new CollectionPredicate<DataType<?>>()
+			{
+				public boolean test(DataType<?> t)
+				{
+					return !e.excludedTypes.contains(t);
+				};
+			};
+			
+			typeChooser = new UpdatingCombo<DataType<?>>(Types.typeFromXML.values(), filter);
+			
+			typeChooser.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					updated();
+				}
+			});
+			
+			typeChooser.setMaximumRowCount(18);
+		}
+		
+		public void setFilter(CollectionPredicate<DataType<?>> filter)
+		{
+			typeChooser.setFilter(filter);
+		}
+		
+		@Override
+		public void set(DataType t)
+		{
+			typeChooser.setSelectedItem(t);
+		}
+		
+		@Override
+		public DataType getValue()
+		{
+			return typeChooser.getSelected();
+		}
+		
+		@Override
+		public JComponent[] getComponents()
+		{
+			return comps(typeChooser);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			typeChooser.dispose();
+			typeChooser = null;
+		}
 	}
 }

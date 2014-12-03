@@ -14,7 +14,6 @@ import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
 import stencyl.ext.polydes.datastruct.ui.MiniSplitPane;
 import stencyl.sw.SW;
-import stencyl.sw.util.UI;
 
 public class StructureDefinitionsWindow extends JDialog
 {
@@ -31,10 +30,13 @@ public class StructureDefinitionsWindow extends JDialog
 	private MiniSplitPane splitPane;
 	private JPanel contents;
 	private boolean initialized;
+	private PropertiesWindow propsWindow;
 	
 	public StructureDefinitionsWindow()
 	{
 		super(SW.get(), "Structure Editor", true);
+		
+		propsWindow = new PropertiesWindow(this);
 		
 		contents = new JPanel(new BorderLayout());
 		
@@ -50,6 +52,7 @@ public class StructureDefinitionsWindow extends JDialog
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
+				/*
 				int result =
 					UI.showYesNoCancelPrompt(
 						"Apply Changes",
@@ -76,6 +79,13 @@ public class StructureDefinitionsWindow extends JDialog
 				{
 					
 				}
+				*/
+				
+				for(StructureDefinition def : StructureDefinitions.defMap.values())
+					def.update();
+				StructurePage.get().refreshSelected();
+				
+				closeWindow();
 			}
 		});
 		
@@ -96,10 +106,15 @@ public class StructureDefinitionsWindow extends JDialog
 		setVisible(false);
 		
 		StructureDefinitionPage.get().selectNone();
-		PropertiesWindow.setObject(null);
-		PropertiesWindow.hideWindow();
+		propsWindow.setObject(null);
+		propsWindow.setVisible(false);
 		for(StructureDefinition def : StructureDefinitions.defMap.values())
 			def.disposeEditor();
+	}
+	
+	public PropertiesWindow getPropsWindow()
+	{
+		return propsWindow;
 	}
 	
 	@Override
@@ -134,13 +149,24 @@ public class StructureDefinitionsWindow extends JDialog
 			setLocation(x, y);
 	}
 	
+	@Override
+	public void dispose()
+	{
+		splitPane.removeAll();
+		contents.removeAll();
+		propsWindow.dispose();
+		
+		super.dispose();
+	}
+	
 	public static void disposeWindow()
 	{
 		if(_instance != null)
 		{
 			_instance.dispose();
 			_instance = null;
+			for(StructureDefinition def : StructureDefinitions.defMap.values())
+				def.disposeEditor();
 		}
-		PropertiesWindow.disposeWindow();
 	}
 }

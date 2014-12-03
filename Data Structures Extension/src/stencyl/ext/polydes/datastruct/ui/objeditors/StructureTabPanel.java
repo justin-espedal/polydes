@@ -1,10 +1,10 @@
 package stencyl.ext.polydes.datastruct.ui.objeditors;
 
-import javax.swing.JTextField;
-
 import stencyl.ext.polydes.datastruct.data.structure.StructureTab;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
+import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
+import stencyl.ext.polydes.datastruct.data.types.builtin.StringType;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
-import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 
 public class StructureTabPanel extends StructureObjectPanel
 {
@@ -12,7 +12,7 @@ public class StructureTabPanel extends StructureObjectPanel
 	
 	String oldLabel;
 	
-	JTextField labelField;
+	DataEditor<String> labelEditor;
 	
 	public StructureTabPanel(final StructureTab tab, PropertiesSheetStyle style)
 	{
@@ -23,21 +23,21 @@ public class StructureTabPanel extends StructureObjectPanel
 		oldLabel = tab.getLabel();
 		
 		//=== Label
-
-		labelField = style.createTextField();
-		labelField.setText(tab.getLabel());
-	
-		labelField.getDocument().addDocumentListener(new DocumentAdapter(false)
+		
+		labelEditor = new StringType.SingleLineStringEditor(style);
+		labelEditor.setValue(tab.getLabel());
+		labelEditor.addListener(new UpdateListener()
 		{
 			@Override
-			protected void update()
+			public void updated()
 			{
-				tab.setLabel(labelField.getText());
+				tab.setLabel(labelEditor.getValue());
+				previewKey.setName(labelEditor.getValue());
+				preview.lightRefreshDataItem(previewKey);
 			}
 		});
 		
-		addGenericRow("Label", labelField);
-		finishBlock(5, style.rowgap, true);
+		addGenericRow("Label", labelEditor);
 	}
 	
 	public void revert()
@@ -47,8 +47,8 @@ public class StructureTabPanel extends StructureObjectPanel
 	
 	public void dispose()
 	{
-		removeAll();
+		clearExpansion(0);
 		oldLabel = null;
-		labelField = null;
+		labelEditor = null;
 	}
 }

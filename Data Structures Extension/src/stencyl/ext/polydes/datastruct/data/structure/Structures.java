@@ -39,6 +39,8 @@ public class Structures
 	
 	//Deepload: The second pass reads in the key-value pairs, which might include refs to other structures.
 	
+	//TODO: The two-pass loading mechanism can be replaced by a promise system.
+	
 	private HashMap<String, HashMap<String, String>> fmaps;
 	
 	public void load(File folder)
@@ -59,7 +61,7 @@ public class Structures
 		}
 		order.clear();
 		info.clear();
-		root.setClean();
+		root.setDirty(false);
 		
 		fmaps.clear();
 		fmaps = null;
@@ -67,6 +69,9 @@ public class Structures
 	
 	public void lightload(File file)
 	{
+		if(!file.exists())
+			return;
+		
 		if(file.isDirectory())
 		{
 			for(String fname : file.list())
@@ -84,7 +89,7 @@ public class Structures
 			nextID = Math.max(nextID, id + 1);
 			
 			Structure model = new Structure(id, name, StructureDefinitions.defMap.get(type));
-			structures.get(model.getDefname()).add(model);
+			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
 		}
 	}
@@ -138,7 +143,7 @@ public class Structures
 			info.writeToFolder(file);
 			info.clear();
 		}
-		root.setClean();
+		root.setDirty(false);
 	}
 	
 	public void save(DataItem item, File file) throws IOException
@@ -158,7 +163,7 @@ public class Structures
 			}
 			
 			if(((StructureFolder) item).childType != null)
-				info.put("childType", ((StructureFolder) item).childType.name);
+				info.put("childType", ((StructureFolder) item).childType.getName());
 			
 			info.writeToFolder(saveDir);
 			info.clear();
@@ -179,10 +184,10 @@ public class Structures
 		}
 	}
 
-	public static HashMap<String, ArrayList<Structure>> structures = new HashMap<String, ArrayList<Structure>>();
+	public static HashMap<StructureDefinition, ArrayList<Structure>> structures = new HashMap<StructureDefinition, ArrayList<Structure>>();
 	public static HashMap<Integer, Structure> structuresByID = new HashMap<Integer, Structure>();
 	
-	public static Collection<Structure> getList(String type)
+	public static Collection<Structure> getList(StructureDefinition type)
 	{
 		return structures.get(type);
 	}
@@ -199,6 +204,9 @@ public class Structures
 
 	public static void dispose()
 	{
+		for(StructureDefinition key : structures.keySet())
+			for(Structure s : structures.get(key))
+				s.dispose();
 		structures.clear();
 		structuresByID.clear();
 		_instance = null;

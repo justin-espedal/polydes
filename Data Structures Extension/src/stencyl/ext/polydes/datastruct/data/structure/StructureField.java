@@ -11,6 +11,8 @@ import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureField extends EditableObject
 {
+	private StructureDefinition owner;
+	
 	private String varname;
 	private DataType<?> type;
 	private String label;
@@ -18,8 +20,9 @@ public class StructureField extends EditableObject
 	private boolean optional;
 	private ExtraProperties extras;
 	
-	public StructureField(String varname, DataType<?> type, String label, String hint, boolean optional, ExtrasMap extras)
+	public StructureField(StructureDefinition owner, String varname, DataType<?> type, String label, String hint, boolean optional, ExtrasMap extras)
 	{
+		this.owner = owner;
 		this.varname = varname;
 		this.type = type;
 		this.label = label;
@@ -27,6 +30,11 @@ public class StructureField extends EditableObject
 		this.optional = optional;
 		if(type != null)
 			this.extras = type.loadExtras(extras);
+	}
+	
+	public StructureDefinition getOwner()
+	{
+		return owner;
 	}
 	
 	public void loadExtras(ExtrasMap extras)
@@ -81,6 +89,7 @@ public class StructureField extends EditableObject
 	
 	public void setVarname(String varname)
 	{
+		owner.setFieldName(this, varname);
 		this.varname = varname;
 	}
 	
@@ -89,11 +98,16 @@ public class StructureField extends EditableObject
 		this.optional = optional;
 	}
 	
+	public void setTypeForPreview(DataType<?> type)
+	{
+		this.type = type;
+		owner.setFieldTypeForPreview(this, type);
+	}
+	
 	public void setType(DataType<?> type)
 	{
 		this.type = type;
-		if(editor != null)
-			type.applyToFieldPanel(editor);
+		owner.setFieldType(this, type);
 	}
 	
 	@Override
@@ -108,10 +122,7 @@ public class StructureField extends EditableObject
 	public JPanel getEditor()
 	{
 		if(editor == null)
-		{
 			editor = new StructureFieldPanel(this, PropertiesSheetStyle.LIGHT);
-			type.applyToFieldPanel(editor);
-		}
 		
 		return editor;
 	}
@@ -120,6 +131,7 @@ public class StructureField extends EditableObject
 	public void disposeEditor()
 	{
 		editor.dispose();
+		editor = null;
 	}
 	
 	@Override

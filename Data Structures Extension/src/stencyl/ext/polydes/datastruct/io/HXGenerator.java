@@ -56,9 +56,9 @@ public class HXGenerator
 		String datatypes = "";
 		for(StructureDefinition def : StructureDefinitions.defMap.values())
 		{
-			imports += String.format("import %s;%s", def.classname, IOUtils.LINE_SEPARATOR_WINDOWS);
-			classmap += String.format("\t\tclassmap.set(\"%s\", Type.resolveClass(\"%s\"));%s", def.name, def.classname, IOUtils.LINE_SEPARATOR_WINDOWS);
-			datatypes += String.format("\t\tDataStructures.types.set(\"%s\", \"\");%s", def.classname, IOUtils.LINE_SEPARATOR_WINDOWS);
+			imports += String.format("import %s;%s", def.getClassname(), IOUtils.LINE_SEPARATOR_WINDOWS);
+			classmap += String.format("\t\tclassmap.set(\"%s\", Type.resolveClass(\"%s\"));%s", def.getName(), def.getClassname(), IOUtils.LINE_SEPARATOR_WINDOWS);
+			datatypes += String.format("\t\tDataStructures.types.set(\"%s\", \"\");%s", def.getClassname(), IOUtils.LINE_SEPARATOR_WINDOWS);
 		}
 		
 		s = StringUtils.replace(s, "[IMPORTS]", imports, 1);

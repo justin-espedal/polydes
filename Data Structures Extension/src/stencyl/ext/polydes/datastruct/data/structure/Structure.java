@@ -44,7 +44,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		allStructures.get(template).add(this);
 		
 		dref = new DataItem(name, this);
-		dref.setIcon(template.smallIcon);
+		dref.setIcon(template.getSmallIcon());
 	}
 	
 	public int getID()
@@ -68,28 +68,28 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		Object oldValue = fieldData.get(field);
 		fieldData.put(field, newValue);
 		pcs.firePropertyChange(field.getVarname(), oldValue, newValue);
-		setDirty(true);
+		dref.setDirty(true);
+		
+		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + newValue + " (by string)");
 	}
 	
 	public void setProperty(StructureField field, Object value)
 	{
 		Object oldValue = fieldData.get(field);
-		if(oldValue == (Integer) 50)
-			new Exception().printStackTrace();
 		fieldData.put(field, value);
 		pcs.firePropertyChange(field.getVarname(), oldValue, value);
-		setDirty(true);
+		dref.setDirty(true);
+		
+		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + value + " (by object)");
 	}
 	
 	public void clearProperty(StructureField field)
 	{
 		Object oldValue = fieldData.get(field);
-		if(oldValue == (Integer) 50)
-			new Exception().printStackTrace();
 		fieldData.put(field, null);
 		enabledFields.put(field, !field.isOptional());
 		pcs.firePropertyChange(field.getVarname(), oldValue, null);
-		setDirty(true);
+		dref.setDirty(true);
 	}
 	
 	public boolean isPropertyEnabled(StructureField field)
@@ -159,7 +159,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 	
 	public String getDefname()
 	{
-		return template.name;
+		return template.getName();
 	}
 	
 	public ImageIcon getSmallIcon()
@@ -194,12 +194,19 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		}
 	}
 	
+	public static void removeType(StructureDefinition def)
+	{
+		for(Structure s : allStructures.remove(def))
+			s.dispose();
+	}
+	
 	public void dispose()
 	{
-		allStructures.get(template).remove(this);
 		fieldData.clear();
 		enabledFields.clear();
 		disposeEditor();
+		Structures.structures.get(template).remove(this);
+		Structures.structuresByID.remove(getID());
 	}
 	
 	public static ArrayList<Structure> getAllOfType(StructureDefinition def)
@@ -223,6 +230,12 @@ public class Structure extends EditableObject implements StructureConditionVerif
 	@Override
 	public void revertChanges()
 	{
-		//TODO: revert Structure editor changes
+		
+	}
+	
+	@Override
+	public String toString()
+	{
+		return dref.getName();
 	}
 }

@@ -2,9 +2,7 @@ package stencyl.ext.polydes.datastruct.data.types.builtin;
 
 import java.awt.Color;
 
-import javax.swing.JComponent;
-
-import stencyl.ext.polydes.datastruct.data.types.DataUpdater;
+import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -18,7 +16,7 @@ public class ColorType extends BuiltinType<Color>
 	}
 
 	@Override
-	public JComponent[] getEditor(final DataUpdater<Color> updater, ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Color> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{
 		//TODO: create color editor.
 		return null;
