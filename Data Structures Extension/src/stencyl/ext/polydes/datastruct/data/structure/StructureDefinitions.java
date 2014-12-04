@@ -18,7 +18,6 @@ import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.data.types.general.StructureType;
 import stencyl.ext.polydes.datastruct.io.Text;
 import stencyl.ext.polydes.datastruct.io.XML;
-import stencyl.ext.polydes.datastruct.utils.DelayedInitialize;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 

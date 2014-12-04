@@ -48,6 +48,9 @@ public class StructureFieldPanel extends StructureObjectPanel
 	
 	int extraPropertiesExpansion;
 	
+	private boolean varnameFollowsLabel;
+	private boolean varnameUpdate;
+	
 	public StructureFieldPanel(final StructureField field, PropertiesSheetStyle style)
 	{
 		super(style);
@@ -60,6 +63,8 @@ public class StructureFieldPanel extends StructureObjectPanel
 		oldHint = field.getHint();
 		oldDirty = field.isDirty();
 		oldOptional = field.isOptional();
+		
+		varnameFollowsLabel = StructureField.formatVarname(oldLabel).equals(oldName);
 		
 		//=== Name
 		
@@ -74,6 +79,8 @@ public class StructureFieldPanel extends StructureObjectPanel
 			{
 				field.setVarname(nameField.getText());
 				previewKey.setDirty(true); //Not using a DataEditor so this is done explicitly.
+				if(varnameFollowsLabel && !varnameUpdate)
+					varnameFollowsLabel = false;
 			}
 		});
 		
@@ -117,6 +124,13 @@ public class StructureFieldPanel extends StructureObjectPanel
 			{
 				field.setLabel(labelEditor.getValue());
 				previewKey.setName(labelEditor.getValue());
+				if(varnameFollowsLabel)
+				{
+					varnameUpdate = true;
+					nameField.setText(StructureField.formatVarname(labelEditor.getValue()));
+					varnameUpdate = false;
+				}
+				
 				preview.lightRefreshDataItem(previewKey);
 			}
 		});
@@ -155,9 +169,9 @@ public class StructureFieldPanel extends StructureObjectPanel
 			}
 		});
 		
-		addGenericRow("Name", nameField, nameHint);
-		addGenericRow("Type", typeEditor);
 		addGenericRow("Label", labelEditor);
+		addGenericRow("Type", typeEditor);
+		addGenericRow("Name", nameField, nameHint);
 		addGenericRow("Hint", hintEditor, RESIZE_FLAG);
 		addGenericRow("Optional", optionalEditor);
 		

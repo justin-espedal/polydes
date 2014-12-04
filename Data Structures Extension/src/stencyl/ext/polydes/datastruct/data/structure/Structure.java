@@ -81,7 +81,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		pcs.firePropertyChange(field.getVarname(), oldValue, newValue);
 		dref.setDirty(true);
 		
-		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + newValue + " (by string)");
+//		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + newValue + " (by string)");
 	}
 	
 	public void setProperty(StructureField field, Object value)
@@ -91,7 +91,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		pcs.firePropertyChange(field.getVarname(), oldValue, value);
 		dref.setDirty(true);
 		
-		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + value + " (by object)");
+//		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + value + " (by object)");
 	}
 	
 	public void clearProperty(StructureField field)

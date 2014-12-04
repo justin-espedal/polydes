@@ -2,6 +2,8 @@ package stencyl.ext.polydes.datastruct.data.structure;
 
 import javax.swing.JPanel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import stencyl.ext.polydes.datastruct.data.folder.EditableObject;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
@@ -138,5 +140,20 @@ public class StructureField extends EditableObject
 	public void revertChanges()
 	{
 		editor.revert();
+	}
+	
+	public static String formatVarname(String s)
+	{
+		s = StringUtils.removePattern(s, "[^a-zA-Z0-9_]");
+		
+		if(s.isEmpty())
+			return s;
+		
+		if(Character.isDigit(s.charAt(0)))
+			s = "_" + s;
+		if(Character.isUpperCase(s.charAt(0)))
+			s = Character.toLowerCase(s.charAt(0)) + s.substring(1);
+		
+		return s;
 	}
 }

@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,8 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
-
-import org.apache.commons.lang3.StringUtils;
 
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.DataItemListener;
@@ -178,7 +175,8 @@ public class StructureDefinitionEditor extends JPanel
 				}
 				else if(cls == StructureField.class)
 				{
-					StructureField newField = new StructureField(def, StringUtils.deleteWhitespace(nodeName).toLowerCase(Locale.ENGLISH), Types._String, nodeName, "", false, new ExtrasMap());
+					StructureField newField =
+							new StructureField(def, StructureField.formatVarname(nodeName), Types._String, nodeName, "", false, new ExtrasMap());
 					def.addField(newField, preview);
 					
 					return new DataItem(nodeName, newField);
