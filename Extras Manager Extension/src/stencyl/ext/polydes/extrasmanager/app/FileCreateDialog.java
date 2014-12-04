@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import stencyl.ext.polydes.extrasmanager.data.FileCreator;
+import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.comp.ButtonBarFactory;
@@ -88,7 +88,7 @@ public class FileCreateDialog extends StencylDialog
 	public JComponent createContentPanel()
 	{
 		selector = new JComboBox();
-		for(File f : FileCreator.templates)
+		for(File f : FileOperations.templates)
 			selector.addItem(new FileRep(f));
 		
 		text = new JTextArea(1, 5);

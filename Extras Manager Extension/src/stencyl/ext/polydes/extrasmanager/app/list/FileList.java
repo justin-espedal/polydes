@@ -44,8 +44,9 @@ import stencyl.ext.polydes.extrasmanager.app.tree.FileTree;
 import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
 import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
-import stencyl.ext.polydes.extrasmanager.data.FileCreator;
+import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
+import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.app.doc.FileDrop;
 import stencyl.sw.app.lists.AbstractItemRenderer;
@@ -255,15 +256,13 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 				}
 			};
 			
-			if(FileClipboard.op == FileClipboard.CUT)
-			{
-				MainPage.get().update(FileClipboard.list().get(0).getParentFile());
-			}
-			
-			model.refresh();
-			MainPage.get().update(model.currView);
+//			if(FileClipboard.op == FileClipboard.CUT)
+//			{
+//				MainPage.get().update(FileClipboard.list().get(0).getParentFile());
+//			}
 			
 			FileClipboard.clear();
+			FileMonitor.refresh();
 		}
 		});
 		
@@ -309,9 +308,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileCreator.createFolder(model.currView);
-			MainPage.get().update(model.currView);
-			model.refresh();
+			FileOperations.createFolder(model.currView);
 		}
 		});
 		
@@ -319,9 +316,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileCreator.createFile(model.currView);
-			MainPage.get().update(model.currView);
-			model.refresh();
+			FileOperations.createFile(model.currView);
 		}
 		});
 		

@@ -11,6 +11,9 @@ import javax.swing.JTextField;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.extrasmanager.app.MainEditor;
+import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
+import stencyl.ext.polydes.extrasmanager.data.FileEditor;
+import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.FileHandler;
@@ -129,6 +132,7 @@ public class Main extends BaseExtension
 		
 		if(!extrasFile.exists())
 			extrasFile.mkdir();
+		FileMonitor.registerOnRoot(extrasFile);
 		
 		for(String s : ownedFolderNames)
 		{
@@ -148,7 +152,7 @@ public class Main extends BaseExtension
 		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolder = extrasDir;
 		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolderF = extrasFile;
 		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.ownedFolderNames = ownedFolderNames;
-		stencyl.ext.polydes.extrasmanager.data.FileCreator.templates = templatesFile.listFiles();
+		stencyl.ext.polydes.extrasmanager.data.FileOperations.templates = templatesFile.listFiles();
 		
 		String[] data;
 		if(readData().isEmpty())
@@ -190,10 +194,12 @@ public class Main extends BaseExtension
 	{
 		super.onGameClosed(game);
 
+		FileMonitor.unregister();
+		
 		gameDir = "";
 		extrasDir = "";
-		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolder = "";
-		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolderF = null;
+		ExtrasDirectory.extrasFolder = "";
+		ExtrasDirectory.extrasFolderF = null;
 		
 		MainEditor.disposePages();
 	}
@@ -233,7 +239,7 @@ public class Main extends BaseExtension
 					public void handleFile(File f)
 					{
 						textPath = "\"" + f.getAbsolutePath() + "\"";
-						stencyl.ext.polydes.extrasmanager.data.FileEditor.typeProgramMap.put("text/plain", textPath);
+						FileEditor.typeProgramMap.put("text/plain", textPath);
 					}
 				};
 				FileHandler imageHandler = new FileHandler()
@@ -242,7 +248,7 @@ public class Main extends BaseExtension
 					public void handleFile(File f)
 					{
 						imagePath = "\"" + f.getAbsolutePath() + "\"";
-						stencyl.ext.polydes.extrasmanager.data.FileEditor.typeProgramMap.put("image/png", imagePath);
+						FileEditor.typeProgramMap.put("image/png", imagePath);
 					}
 				};
 				

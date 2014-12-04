@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-@SuppressWarnings("serial")
 public class FNode extends DefaultMutableTreeNode
 {
 	public FNode(File f)
@@ -15,8 +14,8 @@ public class FNode extends DefaultMutableTreeNode
 	@Override
 	public String toString()
 	{
-		if(super.userObject != null && super.userObject instanceof File)
-			return ((File) super.userObject).getName();
+		if(userObject != null && userObject instanceof File)
+			return ((File) userObject).getName();
 		return "";
 	}
 	

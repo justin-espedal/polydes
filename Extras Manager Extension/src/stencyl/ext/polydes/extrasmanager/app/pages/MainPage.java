@@ -3,9 +3,9 @@ package stencyl.ext.polydes.extrasmanager.app.pages;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -17,11 +17,10 @@ import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
 import stencyl.ext.polydes.extrasmanager.app.tree.FileTree;
 import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
+import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
 import stencyl.sw.app.lists.ListListener;
-import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.UI;
-import stencyl.sw.util.dg.YesNoQuestionDialog;
 
 @SuppressWarnings("serial")
 public class MainPage extends JPanel
@@ -113,6 +112,11 @@ public class MainPage extends JPanel
 		repaint();
 	}
 	
+	public File getViewedFile()
+	{
+		return flistmodel.currView;
+	}
+	
 	public void setViewedFile(File f)
 	{
 		if(f.isDirectory())
@@ -132,20 +136,16 @@ public class MainPage extends JPanel
 	
 	public void update(File f)
 	{
-		ftree.refreshFNodeFor(f);
+		if(ExtrasDirectory.isSame(f, flistmodel.currView))
+			flistmodel.refresh(f);
 	}
 	
 	public void deleteSelected()
 	{
-		YesNoQuestionDialog dg = new YesNoQuestionDialog("Delete Files", "Are you sure you want to delete the selected files?", "", new String[] {"Yes", "No"}, true);
-		if(dg.getResult() == JOptionPane.YES_OPTION)
-		{
-			for(Object o : flist.getSelectedValues())
-				FileHelper.delete((File) o);
-			
-			MainPage.get().update(flistmodel.currView);
-			flistmodel.refresh();
-		}
+		ArrayList<File> files = new ArrayList<File>(flist.getSelectedValues().length);
+		for(Object o : flist.getSelectedValues())
+			files.add((File) o);
+		FileOperations.deleteFiles(files);
 	}
 
 	public FileListModel getFlistmodel()
@@ -156,5 +156,10 @@ public class MainPage extends JPanel
 	public void setFlistmodel(FileListModel flistmodel)
 	{
 		this.flistmodel = flistmodel;
+	}
+
+	public void updateTree(File file)
+	{
+		ftree.refreshFNodeFor(file);
 	}
 }

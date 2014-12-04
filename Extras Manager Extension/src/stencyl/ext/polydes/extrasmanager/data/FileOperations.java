@@ -2,14 +2,20 @@ package stencyl.ext.polydes.extrasmanager.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
 
 import stencyl.ext.polydes.extrasmanager.app.FileCreateDialog;
 import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
+import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.sw.SW;
+import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.dg.YesNoQuestionDialog;
 
-public class FileCreator
+public class FileOperations
 {
 	public static File[] templates = {};
 	
@@ -24,6 +30,8 @@ public class FileCreator
 		{
 			e.printStackTrace();
 		}
+		
+		FileMonitor.refresh();
 	}
 	
 	public static void createFolder(File targetDir)
@@ -31,6 +39,8 @@ public class FileCreator
 		String name = ExtrasUtil.getUnusedName("New Folder", targetDir);
 		File f = new File(targetDir, name);
 		f.mkdir();
+		
+		FileMonitor.refresh();
 	}
 	
 	public static void createFile(File targetDir)
@@ -55,6 +65,24 @@ public class FileCreator
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+		
+		FileMonitor.refresh();
+	}
+	
+	public static void deleteFiles(List<File> files)
+	{
+		YesNoQuestionDialog dg = new YesNoQuestionDialog("Delete Files", "Are you sure you want to delete the selected files?", "", new String[] {"Yes", "No"}, true);
+		if(dg.getResult() == JOptionPane.YES_OPTION)
+		{
+			for(Object o : files)
+				FileHelper.delete((File) o);
+			
+			//TODO: This will go elsewhere.
+//			MainPage.get().update(flistmodel.currView);
+//			flistmodel.refresh();
+			
+			FileMonitor.refresh();
 		}
 	}
 }

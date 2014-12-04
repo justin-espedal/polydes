@@ -16,7 +16,6 @@ import javax.swing.tree.TreeSelectionModel;
 import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
 import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
 
-@SuppressWarnings("serial")
 public class FileTree extends JTree
 {
 	public static final Color BG_COLOR = new Color(62, 62, 62);

@@ -9,6 +9,11 @@ public class ExtrasUtil
 {
 	private static HashSet<String> blankSet = new HashSet<String>();
 	
+	/**
+	 * @param toOrder
+	 * @param toExclude
+	 * @return A list of files, minus OS and hidden files, with directories first and files second.
+	 */
 	public static List<File> orderFiles(File[] toOrder, HashSet<String> toExclude)
 	{
 		if(toExclude == null)
@@ -38,6 +43,11 @@ public class ExtrasUtil
 		return folders;
 	}
 	
+	/**
+	 * @param name Desired name, extension included. (New Document.txt)
+	 * @param targetDir Folder to create the new file in
+	 * @return String: the original name plus any numbering needed to make it unique (New Document (1).txt)
+	 */
 	public static String getUnusedName(String name, File targetDir)
 	{
 		String[] nameParts = getNameParts(name);
