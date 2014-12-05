@@ -2,6 +2,7 @@ package stencyl.ext.polydes.extrasmanager.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -14,6 +15,9 @@ import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.sw.SW;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.dg.YesNoQuestionDialog;
+
+//TODO: Move this to IO and move interface stuff to somewhere in app.
+//TODO: Add copy, cut, paste, etc, make this the universal callpoint.
 
 public class FileOperations
 {
@@ -78,11 +82,27 @@ public class FileOperations
 			for(Object o : files)
 				FileHelper.delete((File) o);
 			
-			//TODO: This will go elsewhere.
-//			MainPage.get().update(flistmodel.currView);
-//			flistmodel.refresh();
-			
 			FileMonitor.refresh();
 		}
+	}
+	
+	public static void renameFiles(List<File> files, String newName)
+	{
+		for(File f : files)
+		{
+			File parent = f.getParentFile();
+			String name = ExtrasUtil.getUnusedName(newName, parent);
+			f.renameTo(new File(parent, name));
+		}
+		
+		FileMonitor.refresh();
+	}
+	
+	public static List<File> asFiles(Object[] a)
+	{
+		ArrayList<File> files = new ArrayList<File>(a.length);
+		for(Object o : a)
+			files.add((File) o);
+		return files;
 	}
 }

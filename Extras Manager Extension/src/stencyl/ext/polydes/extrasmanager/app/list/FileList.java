@@ -38,16 +38,18 @@ import javax.swing.event.TreeSelectionListener;
 
 import org.apache.commons.io.FileUtils;
 
+import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 import stencyl.ext.polydes.extrasmanager.app.tree.FNode;
 import stencyl.ext.polydes.extrasmanager.app.tree.FileTree;
 import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
 import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
-import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
+import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
+import stencyl.sw.SW;
 import stencyl.sw.app.doc.FileDrop;
 import stencyl.sw.app.lists.AbstractItemRenderer;
 import stencyl.sw.app.lists.AbstractList;
@@ -281,7 +283,19 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			//RENAME
+			File primaryFile = (File) getSelectedValue();
+			FileRenameDialog rename = new FileRenameDialog(SW.get(), primaryFile);
+			if(rename.getString() == null)
+				return;
+			
+			String name = rename.getString();
+			
+			String ext = ExtrasUtil.getNameParts(primaryFile.getName())[1];
+			
+			if(!name.endsWith(ext))
+				name += ext;
+			
+			FileOperations.renameFiles(FileOperations.asFiles(getSelectedValues()), name);
 		}
 		});
 		

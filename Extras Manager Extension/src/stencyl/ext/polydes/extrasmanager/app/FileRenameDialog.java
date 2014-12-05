@@ -9,7 +9,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,14 +16,13 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.comp.ButtonBarFactory;
 import stencyl.sw.util.comp.GroupButton;
 import stencyl.sw.util.dg.StencylDialog;
 
-public class FileCreateDialog extends StencylDialog
+public class FileRenameDialog extends StencylDialog
 {
 	/*-------------------------------------*\
 	 * Globals
@@ -33,11 +31,10 @@ public class FileCreateDialog extends StencylDialog
 	private static LanguagePack lang = LanguagePack.get();
 
 	public static final int WIDTH = 240;
-	public static final int HEIGHT = 170;
+	public static final int HEIGHT = 120;
 	
-	private String model;
+	private String result;
 	private JPanel panel;
-	private JComboBox selector;
 	private JTextArea text;
 	
 	private AbstractButton okButton;	
@@ -46,38 +43,22 @@ public class FileCreateDialog extends StencylDialog
 	 * Constructor
 	\*-------------------------------------*/ 
 
-	public FileCreateDialog(JFrame owner)
+	public FileRenameDialog(JFrame owner, File model)
 	{
 		super
 		(
 			owner, 
-			"Create New File", 
+			"Rename File", 
 			WIDTH, HEIGHT, 
 			new Color(80, 80, 80), 
 			false
 		);
 		
-		model = "New File";
+		result = model.getName();
 		
 		add(createContentPanel(), BorderLayout.CENTER);
 		
 		setVisible(true);
-	}
-	
-	private class FileRep
-	{
-		public File file;
-		
-		public FileRep(File f)
-		{
-			file = f;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return file.getName();
-		}
 	}
 	
 	/*-------------------------------------*\
@@ -86,19 +67,14 @@ public class FileCreateDialog extends StencylDialog
 
 	public JComponent createContentPanel()
 	{
-		selector = new JComboBox();
-		for(File f : FileOperations.templates)
-			selector.addItem(new FileRep(f));
-		
 		text = new JTextArea(1, 5);
 		text.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
-		text.setText(model);
+		text.setText(result);
 		text.setLineWrap(true);
 		text.setWrapStyleWord(true);
 		
 		panel = new JPanel(new BorderLayout());
-		panel.add(selector, BorderLayout.NORTH);
-		panel.add(text, BorderLayout.SOUTH);
+		panel.add(text, BorderLayout.CENTER);
 		panel.setBackground(Theme.EDITOR_BG_COLOR);
 		
 		text.getDocument().addDocumentListener
@@ -141,7 +117,7 @@ public class FileCreateDialog extends StencylDialog
 			{
 				public void actionPerformed(ActionEvent e) 
 				{
-					model = text.getText();
+					result = text.getText();
 					setVisible(false);
 				}
 			}
@@ -168,17 +144,12 @@ public class FileCreateDialog extends StencylDialog
 	
 	public String getString()
 	{
-		return model;
+		return result;
 	}
 	
 	public void cancel()
 	{
-		model = null;
+		result = null;
 		setVisible(false);
-	}
-
-	public File getTemplate()
-	{
-		return ((FileRep) selector.getSelectedItem()).file;
 	}
 }

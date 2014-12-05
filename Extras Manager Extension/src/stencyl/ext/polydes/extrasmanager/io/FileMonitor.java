@@ -68,12 +68,16 @@ public class FileMonitor
 			public void onDirectoryCreate(File directory)
 			{
 				System.out.println("Folder created: " + directory.getAbsolutePath());
+				maybeRootChanged(directory);
+				
 			}
 			
 			@Override
 			public void onDirectoryDelete(File directory)
 			{
 				System.out.println("Folder deleted: " + directory.getAbsolutePath());
+				maybeRootChanged(directory);
+				
 			}
 			
 			@Override
@@ -95,14 +99,20 @@ public class FileMonitor
 			
 			private void addToChangeSet(File file)
 			{
+				System.out.println("added to changest");
+				
 				if(changeSetTimer == null)
 				{
+					System.out.println("started changeset timer");
+					
 					changeSetTimer = new Timer();
 					changeSetTimer.schedule(new TimerTask()
 					{
 						@Override
 						public void run()
 						{
+							System.out.println("running changeset timer");
+							
 							HashMap<String, File> changeMap = new HashMap<String, File>();
 							for(File file : changedSet)
 								changeMap.put(file.getAbsolutePath(), file);

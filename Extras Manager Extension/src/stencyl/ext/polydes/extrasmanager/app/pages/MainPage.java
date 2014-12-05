@@ -3,7 +3,6 @@ package stencyl.ext.polydes.extrasmanager.app.pages;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -22,7 +21,6 @@ import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
 import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.util.UI;
 
-@SuppressWarnings("serial")
 public class MainPage extends JPanel
 {
 	private static MainPage _instance;
@@ -142,10 +140,7 @@ public class MainPage extends JPanel
 	
 	public void deleteSelected()
 	{
-		ArrayList<File> files = new ArrayList<File>(flist.getSelectedValues().length);
-		for(Object o : flist.getSelectedValues())
-			files.add((File) o);
-		FileOperations.deleteFiles(files);
+		FileOperations.deleteFiles(FileOperations.asFiles(flist.getSelectedValues()));
 	}
 
 	public FileListModel getFlistmodel()

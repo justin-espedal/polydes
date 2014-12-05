@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 
-@SuppressWarnings("serial")
 public class MainEditor extends JPanel
 {
 	private static MainEditor _instance;
