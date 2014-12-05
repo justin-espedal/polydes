@@ -7,6 +7,6 @@ Collection of open source Stencyl extensions.
 
 [Dialog] (http://community.stencyl.com/index.php/topic,26279.0.html)
 
-[Extras] (http://community.stencyl.com/index.php/topic,35128.0.html)
+[Extras] (http://community.stencyl.com/index.php/topic,30830.0.html)
 
 [Scene Link] (http://community.stencyl.com/index.php/topic,33821.0.html)
