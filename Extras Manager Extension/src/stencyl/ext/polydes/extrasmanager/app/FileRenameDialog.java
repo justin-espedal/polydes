@@ -31,7 +31,7 @@ public class FileRenameDialog extends StencylDialog
 	private static LanguagePack lang = LanguagePack.get();
 
 	public static final int WIDTH = 240;
-	public static final int HEIGHT = 120;
+	public static final int HEIGHT = 140;
 	
 	private String result;
 	private JPanel panel;
