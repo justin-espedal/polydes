@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<anim>
+<info image="Pointer" width="16" height="16" repeats="true" />
+<frames count="4">
+<frame id="0" x="0" y="0" width="12" height="7" xoffset="2" yoffset="4" duration="100" />
+<frame id="1" x="0" y="0" width="12" height="7" xoffset="2" yoffset="5" duration="100" />
+<frame id="2" x="0" y="0" width="12" height="7" xoffset="2" yoffset="6" duration="100" />
+<frame id="3" x="0" y="0" width="12" height="7" xoffset="2" yoffset="5" duration="100" />
+</frames>
+</anim>
