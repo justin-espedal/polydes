@@ -4,11 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
@@ -20,16 +23,20 @@ import stencyl.ext.polydes.dialog.data.stores.Macros;
 import stencyl.ext.polydes.dialog.defaults.Defaults;
 import stencyl.ext.polydes.dialog.res.Resources;
 import stencyl.ext.polydes.dialog.types.DialogDataTypes;
+import stencyl.sw.app.ExtensionManager;
 import stencyl.sw.editors.game.advanced.EngineExtension;
 import stencyl.sw.editors.game.advanced.ExtensionInstance;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
 public class Main extends BaseExtension implements DataTypeExtension, DataStructureExtension
 {
 	private static Main _instance;
+	
+	private static String dataFolderName = "[ext] dialog";
 	
 	private EngineExtension dialogExtension;
 	private String gameDir;
@@ -50,11 +57,13 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 */
 	public void onStartup()
 	{
-		super.onStartup();
+		icon = Resources.loadIcon("icon.png");
+		classname = this.getClass().getName();
+		String loc = Locations.getExtensionPrefsLocation(classname);
+		if(new File(loc).exists())
+			Loader.readLocalDictionary(loc, properties);
 
 		_instance = this;
-
-		icon = Resources.loadIcon("icon.png");
 		
 		name = "Dialog Extension";
 		description = "Toolset side of the Dialog Extension.";
@@ -71,6 +80,33 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 
 		dialogExtension = null;
 		gameDir = "";
+	}
+	
+	@Override
+	public void extensionsReady()
+	{
+		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
+		{
+			if(e.getClassname().equals("ExtrasManagerExtension"))
+			{
+				try
+				{
+					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
+				}
+				catch (NoSuchMethodException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (IllegalAccessException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (InvocationTargetException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	/*

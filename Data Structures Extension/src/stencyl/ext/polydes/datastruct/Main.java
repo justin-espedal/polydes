@@ -2,6 +2,7 @@ package stencyl.ext.polydes.datastruct;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.datastruct.data.core.Images;
@@ -28,6 +30,7 @@ import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
 public class Main extends BaseExtension
@@ -54,11 +57,13 @@ public class Main extends BaseExtension
 	@Override
 	public void onStartup()
 	{
-		super.onStartup();
+		icon = Resources.loadIcon("icon.png");
+		classname = this.getClass().getName();
+		String loc = Locations.getExtensionPrefsLocation(classname);
+		if(new File(loc).exists())
+			Loader.readLocalDictionary(loc, properties);
 		
 		instance = this;
-		
-		icon = Resources.loadIcon("icon.png");
 		
 		name = "Data Structures Extension";
 		description = "Create and Manage Data Structures.";
@@ -72,8 +77,6 @@ public class Main extends BaseExtension
 		
 		isInGameCenter = true;
 		gameCenterName = "Data Structures";
-		
-		//requestFolderOwnership(this, dataFolderName);
 	}
 	
 	public static Main get()
@@ -93,6 +96,26 @@ public class Main extends BaseExtension
 				dataTypeExtensions.add((DataTypeExtension) e);
 			if(e instanceof DataStructureExtension)
 				dataStructureExtensions.add((DataStructureExtension) e);
+			
+			if(e.getClassname().equals("ExtrasManagerExtension"))
+			{
+				try
+				{
+					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
+				}
+				catch (NoSuchMethodException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (IllegalAccessException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (InvocationTargetException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 	

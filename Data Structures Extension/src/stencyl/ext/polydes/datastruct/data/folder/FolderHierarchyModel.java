@@ -12,7 +12,6 @@ import stencyl.ext.polydes.datastruct.data.folder.DataItemUtil.DataItemRunnable;
  * Changes to files and folders within this root's structure are reflected in
  * representative models.
  */
-
 public class FolderHierarchyModel implements DataItemListener, FolderListener
 {
 	private Folder rootFolder;

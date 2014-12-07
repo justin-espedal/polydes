@@ -2,6 +2,7 @@ package stencyl.ext.polydes.scenelink;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -9,6 +10,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.scenelink.data.LinkModel;
@@ -18,8 +21,10 @@ import stencyl.ext.polydes.scenelink.res.Resources;
 import stencyl.ext.polydes.scenelink.ui.MainPage;
 import stencyl.ext.polydes.scenelink.ui.combos.PageComboModel;
 import stencyl.ext.polydes.scenelink.util.ColorUtil;
+import stencyl.sw.app.ExtensionManager;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
 public class Main extends BaseExtension
@@ -41,10 +46,12 @@ public class Main extends BaseExtension
 	 */
 	public void onStartup()
 	{
-		super.onStartup();
-		
 		icon = Resources.loadIcon("icon.png");
-
+		classname = this.getClass().getName();
+		String loc = Locations.getExtensionPrefsLocation(classname);
+		if(new File(loc).exists())
+			Loader.readLocalDictionary(loc, properties);
+		
 		name = "Scene Link Extension";
 		description = "View and access Scenes spatially.";
 		authorName = "Justin Espedal";
@@ -59,8 +66,33 @@ public class Main extends BaseExtension
 		gameCenterName = "Scene Link";
 		
 		pages = null;
-		
-		//requestFolderOwnership(this, dataFolderName);
+	}
+	
+	@Override
+	public void extensionsReady()
+	{
+		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
+		{
+			if(e.getClassname().equals("ExtrasManagerExtension"))
+			{
+				try
+				{
+					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
+				}
+				catch (NoSuchMethodException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (IllegalAccessException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (InvocationTargetException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	/*
