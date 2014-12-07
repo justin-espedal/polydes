@@ -13,7 +13,7 @@ public class FileEditor
 		String exec = typeProgramMap.get(Mime.get(f));
 		try
 		{
-			Runtime.getRuntime().exec(exec + " \"" + f.getAbsolutePath() + "\"");
+			Runtime.getRuntime().exec(new String[] {exec, f.getAbsolutePath()});
 		}
 		catch (IOException e)
 		{

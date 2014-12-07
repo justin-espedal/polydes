@@ -2,17 +2,18 @@ package stencyl.ext.polydes.extrasmanager.io;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
-import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
-import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
+import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
+import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
+import stencyl.ext.polydes.extrasmanager.data.folder.Leaf;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 
 public class FileMonitor
 {
@@ -22,12 +23,14 @@ public class FileMonitor
 	private static FileAlterationMonitor monitor;
 	private static FileAlterationListener listener;
 	
-	public static void registerOnRoot(File folder)
+	public static HashMap<String, Leaf<SysFile>> fileCache = new HashMap<String, Leaf<SysFile>>();
+	
+	public static SysFolder registerOnRoot(File folder)
 	{
 		if(!folder.exists())
 		{
 			System.out.println("Couldn't begin file watcher, directory does not exist:\n" + folder.getAbsolutePath());
-			return;
+			return null;
 		}
 		
 		if(observer != null)
@@ -43,88 +46,70 @@ public class FileMonitor
 			public void onFileCreate(File file)
 			{
 				System.out.println("File created: " + file.getAbsolutePath());
-				maybeRootChanged(file);
 				
+				SysFile sysFile = getSysFile(file);
+				SysFolder parent = getParentSysFolder(file);
 				
+				parent.addItem(sysFile, parent.findInsertionIndex(sysFile.getName(), false));
 			}
 
 			@Override
 			public void onFileDelete(File file)
 			{
 				System.out.println("File deleted: " + file.getAbsolutePath());
-				maybeRootChanged(file);
 				
+				SysFile toRemove = getSysFile(file);
+				toRemove.getParent().removeItem(toRemove);
+				
+				FileListRenderer.clearThumbnail(file);
+				dispose(file);
 			}
 			
 			@Override
 			public void onFileChange(File file)
 			{
 				System.out.println("File changed: " + file.getAbsolutePath());
-				maybeRootChanged(file);
 				
+				if(FilePreviewer.getPreviewFile() == getSysFile(file))
+					FilePreviewer.preview(getSysFile(file));
+				FileListRenderer.clearThumbnail(file);
 			}
 			
 			@Override
 			public void onDirectoryCreate(File directory)
 			{
 				System.out.println("Folder created: " + directory.getAbsolutePath());
-				maybeRootChanged(directory);
 				
+				SysFile sysFile = getSysFile(directory);
+				SysFolder parent = getParentSysFolder(directory);
+				
+				//Ignore owned directories.
+				if(parent == Main.getModel().getRootBranch() && Main.ownedFolderNames.contains(directory.getName()))
+					return;
+				
+				parent.addItem(sysFile, parent.findInsertionIndex(sysFile.getName(), true));
 			}
 			
 			@Override
 			public void onDirectoryDelete(File directory)
 			{
 				System.out.println("Folder deleted: " + directory.getAbsolutePath());
-				maybeRootChanged(directory);
 				
+				SysFile toRemove = getSysFile(directory);
+				SysFolder parent = getParentSysFolder(directory);
+				
+				//Ignore owned directories.
+				if(parent == Main.getModel().getRootBranch() && Main.ownedFolderNames.contains(directory.getName()))
+					return;
+				
+				toRemove.getParent().removeItem(toRemove);
+				dispose(directory);
 			}
 			
 			@Override
 			public void onDirectoryChange(File directory)
 			{
 				System.out.println("Folder changed: " + directory.getAbsolutePath());
-				MainPage.get().update(directory);
-				addToChangeSet(directory);
-			}
-			
-			private void maybeRootChanged(File file)
-			{
-				if(ExtrasDirectory.isRoot(file.getParentFile()))
-					onDirectoryChange(ExtrasDirectory.extrasFolderF);
-			}
-			
-			private HashSet<File> changedSet = new HashSet<File>();
-			private Timer changeSetTimer;
-			
-			private void addToChangeSet(File file)
-			{
-				System.out.println("added to changest");
-				
-				if(changeSetTimer == null)
-				{
-					System.out.println("started changeset timer");
-					
-					changeSetTimer = new Timer();
-					changeSetTimer.schedule(new TimerTask()
-					{
-						@Override
-						public void run()
-						{
-							System.out.println("running changeset timer");
-							
-							HashMap<String, File> changeMap = new HashMap<String, File>();
-							for(File file : changedSet)
-								changeMap.put(file.getAbsolutePath(), file);
-							for(File file : changeMap.values())
-								if(!changeMap.containsKey(file.getParentFile().getAbsolutePath()))
-									MainPage.get().updateTree(file);
-							changedSet.clear();
-							changeSetTimer = null;
-						}
-					}, 100);
-				}
-				changedSet.add(file);
 			}
 		};
 
@@ -139,6 +124,56 @@ public class FileMonitor
 		{
 			e.printStackTrace();
 		}
+		
+		SysFolder toReturn = (SysFolder) getSys(folder);
+		readFolder(toReturn, true);
+		return toReturn;
+	}
+	
+	private static Leaf<SysFile> getSys(File file)
+	{
+		String key = file.getAbsolutePath();
+		if(fileCache.containsKey(key))
+			return fileCache.get(key);
+		
+		Leaf<SysFile> newFile;
+		if(file.isDirectory())
+			newFile = new SysFolder(file);
+		else
+			newFile = new SysFile(file);
+		
+		fileCache.put(key, newFile);
+		return newFile;
+	}
+	
+	private static void dispose(File file)
+	{
+		fileCache.remove(file.getAbsolutePath());
+	}
+	
+	//TODO: This could run unnecessarily slow for large filesets.
+	private static void readFolder(SysFolder folder, boolean isRoot)
+	{
+		for(File file : folder.getFile().listFiles())
+		{
+			if(isRoot && Main.ownedFolderNames.contains(file.getName()))
+				continue;
+			
+			Leaf<SysFile> sysFile = getSys(file);
+			folder.addItem(sysFile, folder.findInsertionIndex(sysFile.getName(), sysFile instanceof SysFolder));
+			if(file.isDirectory())
+				readFolder((SysFolder) sysFile, false);
+		}
+	}
+	
+	private static SysFile getSysFile(File file)
+	{
+		return (SysFile) getSys(file);
+	}
+	
+	private static SysFolder getParentSysFolder(File file)
+	{
+		return (SysFolder) getSys(file.getParentFile());
 	}
 	
 	public static void refresh()
@@ -150,7 +185,7 @@ public class FileMonitor
 	{
 		try
 		{
-			monitor.stop();
+			monitor.stop(1);
 			monitor.removeObserver(observer);
 			observer.removeListener(listener);
 			monitor = null;
@@ -161,5 +196,8 @@ public class FileMonitor
 		{
 			e.printStackTrace();
 		}
+		
+		fileCache.clear();
+		FileListRenderer.clearThumbnails();
 	}
 }

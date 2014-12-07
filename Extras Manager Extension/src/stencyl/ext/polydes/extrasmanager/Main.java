@@ -11,24 +11,33 @@ import javax.swing.JTextField;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.extrasmanager.app.MainEditor;
-import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
+import stencyl.ext.polydes.extrasmanager.data.FileOpHierarchyModel;
+import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyModel;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
+import stencyl.ext.polydes.extrasmanager.io.FileOperations;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
 public class Main extends BaseExtension
 {
 	private static Main _instance;
-	private static HashSet<String> ownedFolderNames = new HashSet<String>();
+	public static HashSet<String> ownedFolderNames = new HashSet<String>();
 	private static HashMap<String, BaseExtension> folderOwners = new HashMap<String, BaseExtension>();
+	
+	private static HierarchyModel<SysFile> model;
 
 	public static boolean requestFolderOwnership(BaseExtension ext, String folderName)
 	{
+		System.out.println(ext.getClassname() + " requesting ownership of " + folderName);
+		
 		if(ownedFolderNames.contains(folderName))
 			return false;
 		
@@ -47,6 +56,11 @@ public class Main extends BaseExtension
 		return _instance;
 	}
 
+	public static HierarchyModel<SysFile> getModel()
+	{
+		return model;
+	}
+	
 	/*
 	 * Happens when StencylWorks launches.
 	 * 
@@ -54,8 +68,12 @@ public class Main extends BaseExtension
 	 */
 	public void onStartup()
 	{
-		super.onStartup();
-
+		icon = Resources.loadIcon("icon.png");
+		classname = this.getClass().getName();
+		String loc = Locations.getExtensionPrefsLocation(classname);
+		if(new File(loc).exists())
+			Loader.readLocalDictionary(loc, properties);
+		
 		_instance = this;
 
 		icon = Resources.loadIcon("icon.png");
@@ -132,7 +150,9 @@ public class Main extends BaseExtension
 		
 		if(!extrasFile.exists())
 			extrasFile.mkdir();
-		FileMonitor.registerOnRoot(extrasFile);
+		
+		SysFolder rootFolder = FileMonitor.registerOnRoot(extrasFile);
+		model = new FileOpHierarchyModel(rootFolder);
 		
 		for(String s : ownedFolderNames)
 		{
@@ -149,10 +169,7 @@ public class Main extends BaseExtension
 			loadDefaults(templatesFile);
 		}
 		
-		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolder = extrasDir;
-		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.extrasFolderF = extrasFile;
-		stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory.ownedFolderNames = ownedFolderNames;
-		stencyl.ext.polydes.extrasmanager.data.FileOperations.templates = templatesFile.listFiles();
+		FileOperations.templates = templatesFile.listFiles();
 		
 		String[] data;
 		if(readData().isEmpty())
@@ -162,8 +179,8 @@ public class Main extends BaseExtension
 		
 		String textPath = data[0];
 		String imagePath = data[1];
-		stencyl.ext.polydes.extrasmanager.data.FileEditor.typeProgramMap.put("text/plain", textPath);
-		stencyl.ext.polydes.extrasmanager.data.FileEditor.typeProgramMap.put("image/png", imagePath);
+		FileEditor.typeProgramMap.put("text/plain", textPath);
+		FileEditor.typeProgramMap.put("image/png", imagePath);
 	}
 	
 	public void loadDefaults(File templates)
@@ -194,12 +211,12 @@ public class Main extends BaseExtension
 	{
 		super.onGameClosed(game);
 
+		model.dispose();
+		model = null;
 		FileMonitor.unregister();
 		
 		gameDir = "";
 		extrasDir = "";
-		ExtrasDirectory.extrasFolder = "";
-		ExtrasDirectory.extrasFolderF = null;
 		
 		MainEditor.disposePages();
 	}

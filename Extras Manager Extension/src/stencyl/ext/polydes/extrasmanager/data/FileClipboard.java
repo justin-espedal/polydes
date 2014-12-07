@@ -15,14 +15,14 @@ public class FileClipboard
 	{
 		files.clear();
 		for(Listener l : listeners)
-			l.contentsUpdated();
+			l.clipboardContentsUpdated();
 	}
 	
 	public static void add(File f)
 	{
 		files.add(f);
 		for(Listener l : listeners)
-			l.contentsUpdated();
+			l.clipboardContentsUpdated();
 	}
 	
 	public static ArrayList<File> list()
@@ -32,6 +32,6 @@ public class FileClipboard
 	
 	public interface Listener
 	{
-		public void contentsUpdated();
+		public void clipboardContentsUpdated();
 	}
 }

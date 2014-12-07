@@ -19,8 +19,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import stencyl.ext.polydes.extrasmanager.Main;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.FileHelper;
@@ -34,17 +37,17 @@ public class FilePreviewer
 {
 	private static Color BACKGROUND_COLOR = new Color(62, 62, 62);
 	private static TitlePanel previewBar = new TitlePanel();
-	private static File previewFile = null;
+	private static SysFile previewFile = null;
 	
-	public static void preview(File f)
+	public static void preview(SysFile f)
 	{
-		String type = Mime.get(f);
+		String type = Mime.get(f.getFile());
 		JComponent toPreview = null;
 		
 		if(type.startsWith("image"))
-			toPreview = buildImagePreview(f);
+			toPreview = buildImagePreview(f.getFile());
 		else if(type.startsWith("text"))
-			toPreview = buildTextPreview(f);
+			toPreview = buildTextPreview(f.getFile());
 		
 		if(toPreview != null)
 		{
@@ -54,6 +57,16 @@ public class FilePreviewer
 			previewFile = f;
 			MainPage.get().setView(previewPanel, previewBar);
 		}
+	}
+	
+	public static void endPreview()
+	{
+		previewFile = null;
+	}
+	
+	public static SysFile getPreviewFile()
+	{
+		return previewFile;
 	}
 	
 	private static JComponent buildImagePreview(File f)
@@ -86,7 +99,6 @@ public class FilePreviewer
 		return panel;
 	}
 	
-	@SuppressWarnings("serial")
 	protected static class TitlePanel extends PaintPanel
 	{
 		public JLabel label;
@@ -141,7 +153,7 @@ public class FilePreviewer
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					MainPage.get().setViewedFile(ExtrasDirectory.extrasFolderF);
+					MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
 				}
 			});
 			
@@ -149,7 +161,7 @@ public class FilePreviewer
 			{
 			public void actionPerformed(ActionEvent e)
 			{
-				MainPage.get().setViewedFile(previewFile.getParentFile());
+				MainPage.get().setViewedFile((SysFolder) previewFile.getParent());
 			}
 			});
 			
@@ -171,13 +183,13 @@ public class FilePreviewer
 				int i = model.indexOf(previewFile);
 				if(i == -1)
 					return;
-				File next = null;
-				while(next == null || next.isDirectory())
+				SysFile next = null;
+				while(next == null || next instanceof SysFolder)
 				{
 					i -= 1;
 					if(i < 0) i = model.getSize() - 1;
 					if(i == model.getSize()) i = 0;
-					next = (File) model.get(i);
+					next = (SysFile) model.get(i);
 				}
 				if(next != null)
 					MainPage.get().setViewedFile(next);
@@ -192,13 +204,13 @@ public class FilePreviewer
 				int i = model.indexOf(previewFile);
 				if(i == -1)
 					return;
-				File next = null;
-				while(next == null || next.isDirectory())
+				SysFile next = null;
+				while(next == null || next instanceof SysFolder)
 				{
 					i += 1;
 					if(i < 0) i = model.getSize() - 1;
 					if(i == model.getSize()) i = 0;
-					next = (File) model.get(i);
+					next = (SysFile) model.get(i);
 				}
 				if(next != null)
 					MainPage.get().setViewedFile(next);
@@ -211,7 +223,7 @@ public class FilePreviewer
 			{
 			public void actionPerformed(ActionEvent e)
 			{
-				FileEditor.edit(previewFile);
+				FileEditor.edit(previewFile.getFile());
 			}
 			});
 		}

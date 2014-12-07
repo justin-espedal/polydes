@@ -1,22 +1,25 @@
 package stencyl.ext.polydes.extrasmanager.app.list;
 
-import java.io.File;
-import java.util.HashSet;
-
 import javax.swing.DefaultListModel;
 
-import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
-import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
+import stencyl.ext.polydes.extrasmanager.data.folder.Branch;
+import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyModel;
+import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyRepresentation;
+import stencyl.ext.polydes.extrasmanager.data.folder.Leaf;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 
-@SuppressWarnings("serial")
-public class FileListModel extends DefaultListModel 
+public class FileListModel extends DefaultListModel implements HierarchyRepresentation<SysFile> 
 {
-	public File currView;
+	HierarchyModel<SysFile> model;
+	public SysFolder currView;
 	public FileListModelListener listener;
 	
-	public FileListModel(File path)
+	public FileListModel(HierarchyModel<SysFile> model)
 	{
-		refresh(path);
+		this.model = model;
+		model.addRepresentation(this);
+		refresh((SysFolder) model.getRootBranch());
 	}
 	
 	public void setListener(FileListModelListener listener)
@@ -26,7 +29,7 @@ public class FileListModel extends DefaultListModel
 			listener.viewUpdated(this, currView);
 	}
 	
-	public void refresh(File path)
+	public void refresh(SysFolder path)
 	{
 		clear();
 		
@@ -38,9 +41,9 @@ public class FileListModel extends DefaultListModel
 		if(path == null)
 			return;
 		
-		HashSet<String> toExclude = path.equals(ExtrasDirectory.extrasFolderF) ? ExtrasDirectory.ownedFolderNames : null;
+		//HashSet<String> toExclude = (path == Main.getModel().getRootBranch()) ? Main.ownedFolderNames : null;
 		
-		for(File f : ExtrasUtil.orderFiles(path.listFiles(), toExclude))
+		for(Leaf<SysFile> f : path.getItems())
 		{
 			addElement(f);
 		}
@@ -49,5 +52,53 @@ public class FileListModel extends DefaultListModel
 	public void refresh()
 	{
 		refresh(currView);
+	}
+
+	@Override
+	public void leafStateChanged(Leaf<SysFile> source)
+	{
+		if(source.getParent() == currView)
+		{
+			int i = currView.indexOfItem(source);
+			fireContentsChanged(this, i, i);
+		}
+	}
+	
+	@Override
+	public void leafNameChanged(Leaf<SysFile> source, String oldName)
+	{
+		if(source.getParent() == currView)
+		{
+			int i = currView.indexOfItem(source);
+			fireContentsChanged(this, i, i);
+		}	
+	}
+	
+	@Override
+	public void itemAdded(Branch<SysFile> folder, Leaf<SysFile> item, int position)
+	{
+		if(folder == currView)
+		{
+			add(position, item);
+			fireIntervalAdded(this, position, position);
+		}
+	}
+
+	@Override
+	public void itemRemoved(Branch<SysFile> folder, Leaf<SysFile> item, int position)
+	{
+		if(folder == currView)
+		{
+			removeElement(item);
+			fireIntervalRemoved(this, position, position);
+		}
+	}
+	
+	public void dipose()
+	{
+		model.removeRepresentation(this);
+		model = null;
+		listener = null;
+		currView = null;
 	}
 }

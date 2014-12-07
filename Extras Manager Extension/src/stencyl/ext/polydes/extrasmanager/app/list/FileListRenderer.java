@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import stencyl.ext.polydes.extrasmanager.data.Mime;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
@@ -30,9 +31,10 @@ import stencyl.sw.util.Locations;
 import stencyl.sw.util.gfx.GraphicsUtilities;
 import stencyl.sw.util.gfx.ImageUtil;
 
-@SuppressWarnings("serial")
 public class FileListRenderer extends JLabel implements ListCellRenderer 
 {
+	public static final int MINI_SIZE = 16;
+	
 	public static final int DEFAULT_WIDTH = 92;
 	public static final int DEFAULT_HEIGHT = 80;
 	
@@ -43,6 +45,7 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 	public static ImageIcon fileThumb = Resources.loadIcon("page/file.png");
 
 	public static HashMap<String, Image> renderedIconCache = new HashMap<String, Image>();
+	public static HashMap<String, ImageIcon> miniRenderedIconCache = new HashMap<String, ImageIcon>();
 	
 	private static ImageIcon img = Loader.loadIcon(Locations.PROGRESS_SPINNER);
 	
@@ -115,15 +118,9 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 			setIcon(img);
 		}
 		
-		setText(formatText(((File) value).getName()));
+		setText(formatText(((SysFile) value).getName()));
 		
 		return this;
-	}
-	
-	public Image getIcon(Object value)
-	{
-		cache = fetchIcon(value);
-		return cache;
 	}
 	
 	public void refreshIcon()
@@ -133,32 +130,47 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 	
 	public Image fetchIcon(Object value)
 	{
-		if(!(value instanceof File))
+		if(!(value instanceof SysFile))
 			return null;
 		
-		File file = (File) value; 
+		SysFile file = (SysFile) value; 
 		
 		Image img = null;
 
-		img = renderedIconCache.get(file.getAbsolutePath());
+		img = renderedIconCache.get(file.getFile().getAbsolutePath());
 		
 		if(img == null)
 		{
-			img = fetchFileIcon(file);
-			renderedIconCache.put(file.getAbsolutePath(), img);
+			img = fetchFileIcon(file.getFile());
+			renderedIconCache.put(file.getFile().getAbsolutePath(), img);
 		}
 		
 		return img;
 	}
 	
-	public Object fetchText(Object value)
+	public static ImageIcon fetchMiniIcon(Object value)
 	{
-		return value;
+		if(!(value instanceof SysFile))
+			return null;
+		
+		SysFile file = (SysFile) value; 
+		
+		ImageIcon img = null;
+		
+		img = miniRenderedIconCache.get(file.getFile().getAbsolutePath());
+		
+		if(img == null)
+		{
+			img = generateThumb(file.getFile());
+			img = new ImageIcon(GraphicsUtilities.createThumbnail(ImageUtil.getBufferedImage(img.getImage()), MINI_SIZE));
+			miniRenderedIconCache.put(file.getFile().getAbsolutePath(), img);
+		}
+		
+		return img;
 	}
 	
-	public String formatText(Object value)
+	public String formatText(String s)
 	{
-		String s = fetchText(value).toString();
 		setToolTipText(s);
 		
 		if(s.length() > 40)
@@ -185,27 +197,7 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 		if(file.isDirectory())
 			return folderThumb;
 		else if(type.startsWith("image"))
-		{
-			BufferedImage in = null;
-			try
-			{
-				in = ImageIO.read(file);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			if(in != null)
-			{
-				//BufferedImage thumbnail = Scalr.resize(ImageIO.read(file), Scalr.Method.SPEED, DEFAULT_WIDTH, DEFAULT_HEIGHT, Scalr.OP_ANTIALIAS);
-				if(in.getWidth() > DEFAULT_WIDTH && in.getHeight() > DEFAULT_HEIGHT)
-					in = GraphicsUtilities.createThumbnail(in, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-				ImageIcon icon = new ImageIcon(in);
-				return icon;
-			}
-			else
-				return fileThumb;
-		}
+			return generateImageThumb(file);
 		else if (type.startsWith("text"))
 			return generateTextThumb(file);
 		else
@@ -268,5 +260,40 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 		g.dispose();
 		
 		return new ImageIcon(image);
+	}
+	
+	public static ImageIcon generateImageThumb(File file)
+	{
+		BufferedImage in = null;
+		try
+		{
+			in = ImageIO.read(file);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		if(in != null)
+		{
+			//BufferedImage thumbnail = Scalr.resize(ImageIO.read(file), Scalr.Method.SPEED, DEFAULT_WIDTH, DEFAULT_HEIGHT, Scalr.OP_ANTIALIAS);
+			if(in.getWidth() > DEFAULT_WIDTH && in.getHeight() > DEFAULT_HEIGHT)
+				in = GraphicsUtilities.createThumbnail(in, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+			ImageIcon icon = new ImageIcon(in);
+			return icon;
+		}
+		else
+			return fileThumb;
+	}
+	
+	public static void clearThumbnail(File file)
+	{
+		renderedIconCache.remove(file.getAbsolutePath());
+		miniRenderedIconCache.remove(file.getAbsolutePath());
+	}
+
+	public static void clearThumbnails()
+	{
+		renderedIconCache.clear();
+		miniRenderedIconCache.clear();
 	}
 }

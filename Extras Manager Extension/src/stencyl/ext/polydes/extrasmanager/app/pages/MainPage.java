@@ -2,22 +2,23 @@ package stencyl.ext.polydes.extrasmanager.app.pages;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.io.File;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.tree.TreePath;
 
+import stencyl.ext.polydes.extrasmanager.Main;
 import stencyl.ext.polydes.extrasmanager.app.MiniSplitPane;
+import stencyl.ext.polydes.extrasmanager.app.darktree.DarkTree;
 import stencyl.ext.polydes.extrasmanager.app.list.FileList;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
-import stencyl.ext.polydes.extrasmanager.app.tree.FileTree;
-import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
-import stencyl.ext.polydes.extrasmanager.data.FileOperations;
 import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.util.UI;
 
@@ -39,7 +40,7 @@ public class MainPage extends JPanel
 	protected ListListener flistlistener;
 	
 	protected JScrollPane ftreescroller;
-	protected FileTree ftree;
+	protected DarkTree<SysFile> ftree;
 	
 	protected MiniSplitPane splitPane;
 	
@@ -53,24 +54,55 @@ public class MainPage extends JPanel
 
 	public static void dispose()
 	{
+		if(_instance != null)
+			_instance.localDispose();
 		_instance = null;
+	}
+	
+	private void localDispose()
+	{
+		removeAll();
+		
+		ftree.dispose();
+		flist.dispose();
+		flistmodel.dipose();
+		ftree = null;
+		flist = null;
+		flistmodel = null;
+		
+		flistrenderer = null;
+		flistlistener = null;
+		currView = null;
+		navwindow = null;
+		navbar = null;
+		
+		splitPane.removeAll();
+		flistscroller.removeAll();
+		ftreescroller.removeAll();
+		splitPane = null;
+		flistscroller = null;
+		ftreescroller = null;
+		
+		FilePreviewer.endPreview();
 	}
 	
 	protected MainPage()
 	{
 		super(new BorderLayout());
 		
-		ftree = new FileTree();
+		ftree = new DarkTree<SysFile>(Main.getModel());
+		ftree.getTree().setRootVisible(true);
+		ftree.disableButtonBar();
 		ftreescroller = UI.createScrollPane(ftree);
 		ftreescroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
-		flistmodel = new FileListModel(new File(ExtrasDirectory.extrasFolder));
+		flistmodel = new FileListModel(Main.getModel());
 		flistrenderer = new FileListRenderer(-1, -1);
 		flistlistener = new ListListener()
 		{
 			@Override public void pickedItem(Object item)
 			{
-				setViewedFile((File) item);
+				setViewedFile((SysFile) item);
 			}
 		};
 		
@@ -110,39 +142,34 @@ public class MainPage extends JPanel
 		repaint();
 	}
 	
-	public File getViewedFile()
+	public SysFolder getViewedFolder()
 	{
 		return flistmodel.currView;
 	}
 	
-	public void setViewedFile(File f)
+	public void setViewedFile(SysFile f)
 	{
-		if(f.isDirectory())
+		if(f instanceof SysFolder)
 		{
-			//if(!flistmodel.currView.equals(f))
-			flistmodel.refresh(f);
+			flistmodel.refresh((SysFolder) f);
 			setView(flistscroller, flist.getTitlePanel());
+			FilePreviewer.endPreview();
 		}
 		else
 		{
-			if(!flistmodel.currView.equals(f.getParentFile()))
-				flistmodel.refresh(f.getParentFile());
+			if(flistmodel.currView != f.getParent())
+				flistmodel.refresh((SysFolder) f.getParent());
 			FilePreviewer.preview(f);
 		}
-		ftree.setSelected(f);
+		ftree.getTree().setSelectionPath(new TreePath(ftree.getNode(f).getPath()));
 	}
 	
-	public void update(File f)
+	public void update(SysFolder f)
 	{
-		if(ExtrasDirectory.isSame(f, flistmodel.currView))
+		if(f == flistmodel.currView)
 			flistmodel.refresh(f);
 	}
 	
-	public void deleteSelected()
-	{
-		FileOperations.deleteFiles(FileOperations.asFiles(flist.getSelectedValues()));
-	}
-
 	public FileListModel getFlistmodel()
 	{
 		return flistmodel;
@@ -151,10 +178,5 @@ public class MainPage extends JPanel
 	public void setFlistmodel(FileListModel flistmodel)
 	{
 		this.flistmodel = flistmodel;
-	}
-
-	public void updateTree(File file)
-	{
-		ftree.refreshFNodeFor(file);
 	}
 }

@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import stencyl.ext.polydes.extrasmanager.data.FileOperations;
+import stencyl.ext.polydes.extrasmanager.io.FileOperations;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.comp.ButtonBarFactory;

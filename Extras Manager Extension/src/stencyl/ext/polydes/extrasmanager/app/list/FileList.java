@@ -16,8 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -33,21 +33,18 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
-import org.apache.commons.io.FileUtils;
-
+import stencyl.ext.polydes.extrasmanager.Main;
 import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
+import stencyl.ext.polydes.extrasmanager.app.darktree.DTreeSelectionListener;
+import stencyl.ext.polydes.extrasmanager.app.darktree.DTreeSelectionState;
+import stencyl.ext.polydes.extrasmanager.app.darktree.DarkTree;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
-import stencyl.ext.polydes.extrasmanager.app.tree.FNode;
-import stencyl.ext.polydes.extrasmanager.app.tree.FileTree;
-import stencyl.ext.polydes.extrasmanager.app.utils.ExtrasUtil;
-import stencyl.ext.polydes.extrasmanager.data.ExtrasDirectory;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
-import stencyl.ext.polydes.extrasmanager.data.FileOperations;
-import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
+import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
+import stencyl.ext.polydes.extrasmanager.io.FileOperations;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.SW;
 import stencyl.sw.app.doc.FileDrop;
@@ -55,7 +52,6 @@ import stencyl.sw.app.lists.AbstractItemRenderer;
 import stencyl.sw.app.lists.AbstractList;
 import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Fonts;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.comp.GroupButton;
@@ -65,8 +61,7 @@ import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.list.QuickListFilterField;
 import com.jidesoft.swing.PaintPanel;
 
-@SuppressWarnings("serial")
-public class FileList extends JList implements MouseListener, MouseMotionListener
+public class FileList extends JList implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {
 	public static final int H_PADDING = 40;
 	public static final int V_PADDING = 56;
@@ -85,7 +80,6 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	
 	private JButton homeButton;
 	private JButton upButton;
-	private JButton refreshButton;
 	
 	private JButton copyButton;
 	private JButton cutButton;
@@ -109,7 +103,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
     
 	//---
 	
-	public FileList(final FileListRenderer renderer, ListListener listener, final FileListModel model, final FileTree tree)
+	public FileList(final FileListRenderer renderer, ListListener listener, final FileListModel model, final DarkTree<SysFile> tree)
 	{
 		super(model);
 		
@@ -117,7 +111,8 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	    {
 			public void filesDropped(java.io.File[] files)
 	        {
-				//SW.get().handleDrop(AbstractList.this, files);	            
+				FileOperations.copy(asFiles(files));
+				FileOperations.paste(MainPage.get().getViewedFolder().getFile());
 	        }
 			
 			public void stringDropped(String s, String type){}
@@ -156,13 +151,20 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		//---
 		
-		tree.addTreeSelectionListener(new TreeSelectionListener()
+		tree.addTreeListener(new DTreeSelectionListener<SysFile>()
 		{
+			DTreeSelectionState<SysFile> state;
+			
 			@Override
-			public void valueChanged(TreeSelectionEvent e)
+			public void setSelectionState(DTreeSelectionState<SysFile> state)
 			{
-				File f = ((FNode) e.getPath().getLastPathComponent()).getFile();
-				MainPage.get().setViewedFile(f);
+				this.state = state;
+			}
+			
+			@Override
+			public void selectionStateChanged()
+			{
+				MainPage.get().setViewedFile(state.nodes.get(0).getUserObject());
 			}
 		});
 		
@@ -172,25 +174,17 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				MainPage.get().setViewedFile(ExtrasDirectory.extrasFolderF);
+				MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
 			}
 		});
 		
-		upButton = createButton("back_up", 2, new ActionListener()
+		upButton = createButton("back_up", 3, new ActionListener()
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			if(model.currView == null || model.currView.getParentFile() == null || model.currView.equals(ExtrasDirectory.extrasFolderF))
+			if(model.currView == null || model.currView.getParent() == null || model.currView == Main.getModel().getRootBranch())
 				return;
-			MainPage.get().setViewedFile(model.currView.getParentFile());
-		}
-		});
-		
-		refreshButton = createButton("refresh", 3, new ActionListener()
-		{
-		public void actionPerformed(ActionEvent e)
-		{
-			MainPage.get().setViewedFile(model.currView);
+			MainPage.get().setViewedFile((SysFolder) model.currView.getParent());
 		}
 		});
 		
@@ -200,12 +194,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileClipboard.clear();
-			for(Object o : getSelectedValues())
-			{
-				FileClipboard.add((File) o);
-			};
-			FileClipboard.op = FileClipboard.COPY;
+			FileOperations.copy(asFiles(getSelectedValues()));
 		}
 		});
 		
@@ -213,12 +202,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileClipboard.clear();
-			for(Object o : getSelectedValues())
-			{
-				FileClipboard.add((File) o);
-			};
-			FileClipboard.op = FileClipboard.CUT;
+			FileOperations.cut(asFiles(getSelectedValues()));
 		}
 		});
 		
@@ -228,43 +212,13 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			File targetParent = null;
 			if(isSelectionEmpty())
-				targetParent = model.currView;
+				targetParent = model.currView.getFile();
 			else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
 				targetParent = (File) getSelectedValue();
 			else
 				return;
 			
-			for(File f : FileClipboard.list())
-			{
-				try
-				{
-					String newName = ExtrasUtil.getUnusedName(f.getName(), targetParent);
-					File target = new File(targetParent, newName);
-					if(f.isDirectory())
-					{
-						ArrayList<File> exclude = new ArrayList<File>();
-						exclude.add(target);
-						FileHelper.copyDirectory(f, target, exclude);
-					}
-					else
-						FileUtils.copyFile(f, target);
-					
-					if(FileClipboard.op == FileClipboard.CUT)
-						FileHelper.delete(f);
-				}
-				catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
-			};
-			
-//			if(FileClipboard.op == FileClipboard.CUT)
-//			{
-//				MainPage.get().update(FileClipboard.list().get(0).getParentFile());
-//			}
-			
-			FileClipboard.clear();
-			FileMonitor.refresh();
+			FileOperations.paste(targetParent);
 		}
 		});
 		
@@ -275,7 +229,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		public void actionPerformed(ActionEvent e)
 		{
 			for(Object o : getSelectedValues())
-				FileEditor.edit((File) o);
+				FileEditor.edit(((SysFile) o).getFile());
 		}
 		});
 		
@@ -290,12 +244,12 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			
 			String name = rename.getString();
 			
-			String ext = ExtrasUtil.getNameParts(primaryFile.getName())[1];
+			String ext = FileOperations.getNameParts(primaryFile.getName())[1];
 			
 			if(!name.endsWith(ext))
 				name += ext;
 			
-			FileOperations.renameFiles(FileOperations.asFiles(getSelectedValues()), name);
+			FileOperations.renameFiles(asFiles(getSelectedValues()), name);
 		}
 		});
 		
@@ -304,7 +258,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		public void actionPerformed(ActionEvent e)
 		{
 			Object o = getSelectedValue();
-			MainPage.get().setViewedFile((File) o);
+			MainPage.get().setViewedFile((SysFile) o);
 		}
 		});
 		
@@ -312,7 +266,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			MainPage.get().deleteSelected();
+			FileOperations.deleteFiles(asFiles(getSelectedValues()));
 		}
 		});
 		
@@ -322,7 +276,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileOperations.createFolder(model.currView);
+			FileOperations.createFolder(model.currView.getFile());
 		}
 		});
 		
@@ -330,7 +284,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileOperations.createFile(model.currView);
+			FileOperations.createFile(model.currView.getFile());
 		}
 		});
 		
@@ -361,30 +315,13 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		model.setListener(new FileListModelListener()
 		{
 			@Override
-			public void viewUpdated(FileListModel src, File currView)
+			public void viewUpdated(FileListModel src, SysFolder currView)
 			{
-				upButton.setEnabled(!currView.equals(ExtrasDirectory.extrasFolderF));
+				upButton.setEnabled(currView != Main.getModel().getRootBranch());
 			}
 		});
 		
-		FileClipboard.listeners.add(new FileClipboard.Listener()
-		{
-			@Override
-			public void contentsUpdated()
-			{
-				boolean enabled = false;
-				
-				if(!FileClipboard.list().isEmpty())
-				{
-					if(isSelectionEmpty())
-						enabled = true;
-					else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
-						enabled = true;
-				}
-				
-				pasteButton.setEnabled(enabled);
-			}
-		});
+		FileClipboard.listeners.add(this);
 		
 		addListSelectionListener(new ListSelectionListener()
 		{
@@ -439,7 +376,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				MainPage.get().deleteSelected();
+				FileOperations.deleteFiles(asFiles(getSelectedValues()));
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), JComponent.WHEN_FOCUSED);
 		
@@ -447,7 +384,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				MainPage.get().deleteSelected();
+				FileOperations.deleteFiles(asFiles(getSelectedValues()));
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), JComponent.WHEN_FOCUSED);
 		
@@ -498,7 +435,6 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			add(Box.createHorizontalStrut(8));
 	        add(homeButton);
 	        add(upButton);
-	        add(refreshButton);
 	        add(Box.createHorizontalStrut(8));
 	        add(copyButton);
 	        add(cutButton);
@@ -561,6 +497,12 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			label.setText("Parent" +  " > " + "Child");
 		}
+	}
+	
+	public void dispose()
+	{
+		FileClipboard.listeners.remove(this);
+		listener = null;
 	}
 	
 	@Override
@@ -729,12 +671,40 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	}
 
 	public void paintComponent(Graphics g)
-	{		
+	{
 		super.paintComponent(g);
 	}
 	
 	public Dimension getPreferredSize()
 	{
 		return new Dimension(super.getPreferredSize().width, super.getPreferredSize().height + getFixedCellHeight());
+	}
+	
+	/**
+	 * @param array an array of Objects which should all be SysFiles
+	 * @return A list of all the represented {@code java.io.File}s.
+	 */
+	public static List<File> asFiles(Object[] array)
+	{
+		ArrayList<File> files = new ArrayList<File>(array.length);
+		for(Object o : array)
+			files.add(((SysFile) o).getFile());
+		return files;
+	}
+
+	@Override
+	public void clipboardContentsUpdated()
+	{
+		boolean enabled = false;
+		
+		if(!FileClipboard.list().isEmpty())
+		{
+			if(isSelectionEmpty())
+				enabled = true;
+			else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
+				enabled = true;
+		}
+		
+		pasteButton.setEnabled(enabled);
 	}
 }
