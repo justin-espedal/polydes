@@ -17,6 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -111,7 +112,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	    {
 			public void filesDropped(java.io.File[] files)
 	        {
-				FileOperations.copy(asFiles(files));
+				FileOperations.copy(Arrays.asList(files));
 				FileOperations.paste(MainPage.get().getViewedFolder().getFile());
 	        }
 			
@@ -194,7 +195,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileOperations.copy(asFiles(getSelectedValues()));
+			FileOperations.copy(getSelectedFiles());
 		}
 		});
 		
@@ -202,7 +203,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileOperations.cut(asFiles(getSelectedValues()));
+			FileOperations.cut(getSelectedFiles());
 		}
 		});
 		
@@ -213,8 +214,8 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			File targetParent = null;
 			if(isSelectionEmpty())
 				targetParent = model.currView.getFile();
-			else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
-				targetParent = (File) getSelectedValue();
+			else if(getSelectedValues().length == 1 && getSelectedValue() instanceof SysFolder)
+				targetParent = getSelectedValue().getFile();
 			else
 				return;
 			
@@ -228,8 +229,8 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			for(Object o : getSelectedValues())
-				FileEditor.edit(((SysFile) o).getFile());
+			for(SysFile o : getSelectedValues())
+				FileEditor.edit(o.getFile());
 		}
 		});
 		
@@ -237,7 +238,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			File primaryFile = (File) getSelectedValue();
+			File primaryFile = getSelectedValue().getFile();
 			FileRenameDialog rename = new FileRenameDialog(SW.get(), primaryFile);
 			if(rename.getString() == null)
 				return;
@@ -249,7 +250,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			if(!name.endsWith(ext))
 				name += ext;
 			
-			FileOperations.renameFiles(asFiles(getSelectedValues()), name);
+			FileOperations.renameFiles(getSelectedFiles(), name);
 		}
 		});
 		
@@ -257,8 +258,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			Object o = getSelectedValue();
-			MainPage.get().setViewedFile((SysFile) o);
+			MainPage.get().setViewedFile(getSelectedValue());
 		}
 		});
 		
@@ -266,7 +266,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 		public void actionPerformed(ActionEvent e)
 		{
-			FileOperations.deleteFiles(asFiles(getSelectedValues()));
+			FileOperations.deleteFiles(getSelectedFiles());
 		}
 		});
 		
@@ -345,7 +345,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 				{
 					if(!filesSelected)
 						pasteButton.setEnabled(true);
-					else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
+					else if(getSelectedValues().length == 1 && getSelectedValue() instanceof SysFolder)
 						pasteButton.setEnabled(true);
 					else
 						pasteButton.setEnabled(false);
@@ -376,7 +376,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				FileOperations.deleteFiles(asFiles(getSelectedValues()));
+				FileOperations.deleteFiles(getSelectedFiles());
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), JComponent.WHEN_FOCUSED);
 		
@@ -384,7 +384,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				FileOperations.deleteFiles(asFiles(getSelectedValues()));
+				FileOperations.deleteFiles(getSelectedFiles());
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), JComponent.WHEN_FOCUSED);
 		
@@ -680,14 +680,29 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		return new Dimension(super.getPreferredSize().width, super.getPreferredSize().height + getFixedCellHeight());
 	}
 	
-	/**
-	 * @param array an array of Objects which should all be SysFiles
-	 * @return A list of all the represented {@code java.io.File}s.
-	 */
-	public static List<File> asFiles(Object[] array)
+	@Override
+	public SysFile getSelectedValue()
 	{
-		ArrayList<File> files = new ArrayList<File>(array.length);
-		for(Object o : array)
+		return (SysFile) super.getSelectedValue();
+	}
+	
+	@Override
+	public SysFile[] getSelectedValues()
+	{
+		Object[] objs = super.getSelectedValues();
+		SysFile[] vals = new SysFile[objs.length];
+		for(int i = 0; i < objs.length; ++i)
+			vals[i] = (SysFile) objs[i];
+		
+		return vals;
+	}
+	
+	public List<File> getSelectedFiles()
+	{
+		Object[] objs = super.getSelectedValues();
+		
+		ArrayList<File> files = new ArrayList<File>(objs.length);
+		for(Object o : objs)
 			files.add(((SysFile) o).getFile());
 		return files;
 	}
@@ -701,7 +716,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		{
 			if(isSelectionEmpty())
 				enabled = true;
-			else if(getSelectedValues().length == 1 && ((File) getSelectedValue()).isDirectory())
+			else if(getSelectedValues().length == 1 && getSelectedValue() instanceof SysFolder)
 				enabled = true;
 		}
 		
