@@ -24,7 +24,7 @@ import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
-import stencyl.ext.polydes.datastruct.utils.Lang;
+import stencyl.ext.polydes.datastruct.utils.DLang;
 import stencyl.sw.util.VerificationHelper;
 
 public class IntType extends BuiltinType<Integer>
@@ -94,7 +94,7 @@ public class IntType extends BuiltinType<Integer>
 		
 		//=== Editor
 		
-		DataList editorChoices = Lang.datalist(Types._String, "Plain", "Spinner", "Slider");
+		DataList editorChoices = DLang.datalist(Types._String, "Plain", "Spinner", "Slider");
 		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
 		editorChooser.setValue(e.editor.name());
 		//editorChooser listener later, after stepRow is added.

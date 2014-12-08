@@ -65,6 +65,7 @@ public class FileRenameDialog extends StencylDialog
 	 * Construct UI
 	\*-------------------------------------*/ 
 
+	@Override
 	public JComponent createContentPanel()
 	{
 		text = new JTextArea(1, 5);
@@ -81,16 +82,19 @@ public class FileRenameDialog extends StencylDialog
 		(
 			new DocumentListener()
 			{
+				@Override
 				public void insertUpdate(DocumentEvent e)
 				{
 					okButton.setEnabled(text.getDocument().getLength() > 0);
 				}
 				
+				@Override
 				public void removeUpdate(DocumentEvent e)
 				{
 					okButton.setEnabled(text.getDocument().getLength() > 0);
 				}
 				
+				@Override
 				public void changedUpdate(DocumentEvent e)
 				{
 					
@@ -106,6 +110,7 @@ public class FileRenameDialog extends StencylDialog
 		return p;
 	}
 
+	@Override
 	public JPanel createButtonPanel() 
 	{
 		okButton = new GroupButton(0);
@@ -115,6 +120,7 @@ public class FileRenameDialog extends StencylDialog
 		(
 			new AbstractAction(lang.get("globals.savechanges"))
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					result = text.getText();
@@ -127,6 +133,7 @@ public class FileRenameDialog extends StencylDialog
 		(
 			new AbstractAction(lang.get("globals.cancel")) 
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					cancel();
@@ -147,6 +154,7 @@ public class FileRenameDialog extends StencylDialog
 		return result;
 	}
 	
+	@Override
 	public void cancel()
 	{
 		result = null;

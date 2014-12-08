@@ -37,9 +37,9 @@ import javax.swing.event.ListSelectionListener;
 
 import stencyl.ext.polydes.extrasmanager.Main;
 import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
-import stencyl.ext.polydes.extrasmanager.app.darktree.DTreeSelectionListener;
-import stencyl.ext.polydes.extrasmanager.app.darktree.DTreeSelectionState;
-import stencyl.ext.polydes.extrasmanager.app.darktree.DarkTree;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
@@ -110,12 +110,14 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		new FileDrop(this, BorderFactory.createEmptyBorder(), true, new FileDrop.Listener()
 	    {
+			@Override
 			public void filesDropped(java.io.File[] files)
 	        {
 				FileOperations.copy(Arrays.asList(files));
 				FileOperations.paste(MainPage.get().getViewedFolder().getFile());
 	        }
 			
+			@Override
 			public void stringDropped(String s, String type){}
 	    });
 		
@@ -141,6 +143,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		(
 			new MouseAdapter()
 			{
+				@Override
 				public void mouseExited(MouseEvent e)
 				{
 					repaint();
@@ -173,6 +176,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		homeButton = createButton("home", 1, new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
@@ -181,6 +185,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		upButton = createButton("back_up", 3, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			if(model.currView == null || model.currView.getParent() == null || model.currView == Main.getModel().getRootBranch())
@@ -193,6 +198,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		copyButton = createButton("copy", 1, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			FileOperations.copy(getSelectedFiles());
@@ -201,6 +207,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		cutButton = createButton("cut", 2, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			FileOperations.cut(getSelectedFiles());
@@ -209,6 +216,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		pasteButton = createButton("paste", 3, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			File targetParent = null;
@@ -227,6 +235,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		editButton = createButton("edit", 1, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			for(SysFile o : getSelectedValues())
@@ -236,6 +245,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		renameButton = createButton("rename", 2, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			File primaryFile = getSelectedValue().getFile();
@@ -256,6 +266,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		previewButton = createButton("preview", 2, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			MainPage.get().setViewedFile(getSelectedValue());
@@ -264,6 +275,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		deleteButton = createButton("delete", 3, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			FileOperations.deleteFiles(getSelectedFiles());
@@ -274,6 +286,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		folderButton = createButton("folder", 1, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			FileOperations.createFolder(model.currView.getFile());
@@ -282,6 +295,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		addButton = createButton("add", 3, new ActionListener()
 		{
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			FileOperations.createFile(model.currView.getFile());
@@ -366,6 +380,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		registerKeyboardAction(new AbstractAction() 
 		{
+			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				doubleClicked();
@@ -374,6 +389,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		registerKeyboardAction(new AbstractAction() 
 		{
+			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				FileOperations.deleteFiles(getSelectedFiles());
@@ -382,6 +398,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		
 		registerKeyboardAction(new AbstractAction() 
 		{
+			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				FileOperations.deleteFiles(getSelectedFiles());
@@ -528,6 +545,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
         }
     }
 	
+	@Override
 	public void mousePressed(MouseEvent e) 
     {     
         int clickCount = e.getClickCount();
@@ -583,14 +601,17 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		listener.pickedItem(getSelectedValue());
 	}
 	
+	@Override
 	public void mouseClicked(MouseEvent e) 
     { 
     }
 	
+	@Override
 	public void mouseEntered(MouseEvent e) 
     { 
     }
 	
+	@Override
 	public void mouseExited(MouseEvent e) 
     { 
 		rolloverIndex = -1;
@@ -598,10 +619,12 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		repaint();
     }
 	
+	@Override
 	public void mouseReleased(MouseEvent e) 
     { 
     }
 	
+	@Override
 	public void mouseMoved(MouseEvent e)
 	{
 		mouseMoved(e.getPoint());
@@ -665,16 +688,19 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		}
 	}
 	
+	@Override
 	public void mouseDragged(MouseEvent e)
 	{
 		
 	}
 
+	@Override
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
 	}
 	
+	@Override
 	public Dimension getPreferredSize()
 	{
 		return new Dimension(super.getPreferredSize().width, super.getPreferredSize().height + getFixedCellHeight());

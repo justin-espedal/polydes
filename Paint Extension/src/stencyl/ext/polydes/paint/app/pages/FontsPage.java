@@ -2,7 +2,6 @@ package stencyl.ext.polydes.paint.app.pages;
 
 import stencyl.ext.polydes.paint.data.stores.Fonts;
 
-@SuppressWarnings("serial")
 public class FontsPage extends BitmapFontPage
 {
 	private static FontsPage _instance;
@@ -11,7 +10,7 @@ public class FontsPage extends BitmapFontPage
 	{
 		super(Fonts.get());
 		setListEditEnabled(true);
-		folderModel.setUniqueItemNames(true);
+		folderModel.setUniqueLeafNames(true);
 	}
 
 	public static FontsPage get()

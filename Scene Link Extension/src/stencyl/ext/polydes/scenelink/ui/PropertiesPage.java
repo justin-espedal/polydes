@@ -32,11 +32,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.PlainDocument;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+
+import stencyl.ext.polydes.common.comp.colors.ColorDisplay;
 import stencyl.ext.polydes.scenelink.data.DataModel;
 import stencyl.ext.polydes.scenelink.data.Link;
 import stencyl.ext.polydes.scenelink.data.ModelProperty;
 import stencyl.ext.polydes.scenelink.ui.Reflect.Property;
-import stencyl.ext.polydes.scenelink.ui.colors.ColorDisplay;
 import stencyl.ext.polydes.scenelink.ui.combos.ImageReferenceComboModel;
 import stencyl.ext.polydes.scenelink.util.FloatFilter;
 import stencyl.ext.polydes.scenelink.util.IntegerFilter;
@@ -44,8 +46,6 @@ import stencyl.sw.SW;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.UI;
 import stencyl.sw.util.dg.DialogPanel;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 
 public class PropertiesPage extends DialogPanel
@@ -69,7 +69,8 @@ public class PropertiesPage extends DialogPanel
         
 		w.addWindowListener(new WindowAdapter()
         {
-            public void windowClosed(WindowEvent e)
+            @Override
+			public void windowClosed(WindowEvent e)
             {
             	properties.dispose();
             }
@@ -77,6 +78,7 @@ public class PropertiesPage extends DialogPanel
 		
 		w.addWindowFocusListener(new WindowAdapter()
 		{
+			@Override
 			public void windowLostFocus(WindowEvent e)
 			{
 				if(e.getOppositeWindow() != null && e.getOppositeWindow().getOwner() == properties.window)
@@ -542,7 +544,7 @@ public class PropertiesPage extends DialogPanel
 		{
 			Object oldValue = readProperty(p);
 			
-			FieldUtils.writeField(model, p.name, value);
+			FieldUtils.writeField(model, p.name, value, true);
 			
 			if(DataModel.class.isInstance(model))
 				((DataModel) model).pcs.firePropertyChange(p.name, oldValue, value);

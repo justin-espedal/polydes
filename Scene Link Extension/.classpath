@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre-win"/>
 	<classpathentry kind="lib" path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar"/>
+	<classpathentry kind="lib" path="/Common/PolydesCommonCode.jar" sourcepath="/Common/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

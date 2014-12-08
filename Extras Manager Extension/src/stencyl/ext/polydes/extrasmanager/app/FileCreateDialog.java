@@ -84,6 +84,7 @@ public class FileCreateDialog extends StencylDialog
 	 * Construct UI
 	\*-------------------------------------*/ 
 
+	@Override
 	public JComponent createContentPanel()
 	{
 		selector = new JComboBox();
@@ -105,16 +106,19 @@ public class FileCreateDialog extends StencylDialog
 		(
 			new DocumentListener()
 			{
+				@Override
 				public void insertUpdate(DocumentEvent e)
 				{
 					okButton.setEnabled(text.getDocument().getLength() > 0);
 				}
 				
+				@Override
 				public void removeUpdate(DocumentEvent e)
 				{
 					okButton.setEnabled(text.getDocument().getLength() > 0);
 				}
 				
+				@Override
 				public void changedUpdate(DocumentEvent e)
 				{
 					
@@ -130,6 +134,7 @@ public class FileCreateDialog extends StencylDialog
 		return p;
 	}
 
+	@Override
 	public JPanel createButtonPanel() 
 	{
 		okButton = new GroupButton(0);
@@ -139,6 +144,7 @@ public class FileCreateDialog extends StencylDialog
 		(
 			new AbstractAction(lang.get("globals.savechanges"))
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					model = text.getText();
@@ -151,6 +157,7 @@ public class FileCreateDialog extends StencylDialog
 		(
 			new AbstractAction(lang.get("globals.cancel")) 
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					cancel();
@@ -171,6 +178,7 @@ public class FileCreateDialog extends StencylDialog
 		return model;
 	}
 	
+	@Override
 	public void cancel()
 	{
 		model = null;

@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
+import stencyl.ext.polydes.common.comp.MiniSplitPane;
 import stencyl.ext.polydes.datastruct.Prefs;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
-import stencyl.ext.polydes.datastruct.ui.MiniSplitPane;
 import stencyl.sw.SW;
 
 public class StructureDefinitionsWindow extends JDialog

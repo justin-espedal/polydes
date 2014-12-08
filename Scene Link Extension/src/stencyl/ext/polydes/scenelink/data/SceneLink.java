@@ -11,6 +11,7 @@ public class SceneLink extends Link
 		super(id);
 	}
 
+	@Override
 	public void open()
 	{
 		SceneModel model = Game.getGame().getScene(id);

@@ -23,6 +23,7 @@
 		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
 			<classpath>
 				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
 				<pathelement path="libs/imgscalr-lib-4.2.jar" />
 			</classpath>
 		</javac>
@@ -33,10 +34,11 @@
 				<exclude name="Resources.java" />
 			</fileset>
 		</copy>
-	
+		
 		<!-- Primary .jar export location -->
 		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
 			<zipgroupfileset dir="libs/" includes="*.jar" />
+			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
 		</jar>
 
 		<!-- Extra .jar locations to copy to -->

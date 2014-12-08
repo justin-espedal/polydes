@@ -46,6 +46,8 @@ public class Main extends BaseExtension
 	public ArrayList<DataTypeExtension> dataTypeExtensions;
 	public ArrayList<DataStructureExtension> dataStructureExtensions;
 	
+	private static boolean gameOpen;
+	
 	public static boolean forceUpdateData = false;
 	
 	/*
@@ -154,6 +156,9 @@ public class Main extends BaseExtension
 	@Override
 	public void onGameSave(Game game)
 	{
+		if(!gameOpen)
+			return;
+		
 		try
 		{
 			StructureDefinitions.get().saveChanges();
@@ -220,6 +225,8 @@ public class Main extends BaseExtension
 	@Override
 	public void onGameOpened(Game game)
 	{
+		gameOpen = true;
+		
 		extFolder = openFolder(Locations.getGameLocation(game) + "extras" + File.separator + dataFolderName + File.separator);
 		defsFolder = openFolder(extFolder, "defs" + File.separator);
 		dataFolder = openFolder(extFolder, "data" + File.separator);
@@ -285,6 +292,8 @@ public class Main extends BaseExtension
 		Images.dispose();
 		Structures.dispose();
 		Blocks.dispose();
+		
+		gameOpen = false;
 	}
 	
 	@Override

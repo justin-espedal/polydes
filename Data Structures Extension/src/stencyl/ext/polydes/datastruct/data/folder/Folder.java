@@ -5,10 +5,13 @@ import java.util.HashSet;
 
 import javax.swing.JPanel;
 
-import stencyl.ext.polydes.datastruct.utils.Lang;
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.BranchListener;
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.util.Lang;
 
 
-public class Folder extends DataItem
+public class Folder extends DataItem implements Branch<DataItem>
 {
 	public static FolderPolicy DEFAULT_POLICY;
 	static
@@ -22,8 +25,8 @@ public class Folder extends DataItem
 	}
 	protected FolderPolicy policy;
 	
-	protected ArrayList<FolderListener> fListeners;
-	private ArrayList<DataItem> items;
+	protected ArrayList<BranchListener<DataItem>> fListeners;
+	private ArrayList<Leaf<DataItem>> items;
 	private HashSet<String> itemNames;
 	
 	public Folder(String name)
@@ -53,35 +56,39 @@ public class Folder extends DataItem
 	public Folder(String name, EditableObject object)
 	{
 		super(name);
-		fListeners = new ArrayList<FolderListener>();
-		items = new ArrayList<DataItem>();
+		fListeners = new ArrayList<BranchListener<DataItem>>();
+		items = new ArrayList<Leaf<DataItem>>();
 		itemNames = new HashSet<String>();
 		policy = null;
 		this.object = object;
 	}
 	
-	public void addFolderListener(FolderListener l)
+	@Override
+	public void addFolderListener(BranchListener<DataItem> l)
 	{
 		fListeners.add(l);
 	}
 	
-	public void removeFolderListener(FolderListener l)
+	@Override
+	public void removeFolderListener(BranchListener<DataItem> l)
 	{
 		fListeners.remove(l);
 	}
 	
-	public void addItem(DataItem item)
+	@Override
+	public void addItem(Leaf<DataItem> item)
 	{
 		addItem(item, items.size());
 	}
 	
-	public void addItem(DataItem item, int position)
+	@Override
+	public void addItem(Leaf<DataItem> item, int position)
 	{
 		items.add(position, item);
 		itemNames.add(item.getName());
 		if(item.getParent() != this)
 			item.setParent(this, false);
-		for(FolderListener l : fListeners) {l.folderItemAdded(this, item);}
+		for(BranchListener<DataItem> l : fListeners) {l.branchLeafAdded(this, item, position);}
 		if(item instanceof Folder && ((Folder) item).policy == null)
 			((Folder) item).setPolicy(policy);
 		
@@ -91,7 +98,7 @@ public class Folder extends DataItem
 	public void setPolicy(FolderPolicy policy)
 	{
 		this.policy = policy;
-		for(DataItem item : items)
+		for(Leaf<DataItem> item : items)
 		{
 			if(item instanceof Folder && ((Folder) item).policy == null)
 				((Folder) item).setPolicy(policy);
@@ -103,14 +110,16 @@ public class Folder extends DataItem
 		return policy;
 	}
 	
-	public ArrayList<DataItem> getItems()
+	@Override
+	public ArrayList<Leaf<DataItem>> getItems()
 	{
 		return items;
 	}
 	
-	public DataItem getItemByName(String name)
+	@Override
+	public Leaf<DataItem> getItemByName(String name)
 	{
-		for(DataItem item : items)
+		for(Leaf<DataItem> item : items)
 		{
 			if(item.getName().equals(name))
 				return item;
@@ -119,7 +128,8 @@ public class Folder extends DataItem
 		return null;
 	}
 	
-	public DataItem getItemAt(int position)
+	@Override
+	public Leaf<DataItem> getItemAt(int position)
 	{
 		if(position < 0 || position >= items.size())
 			return null;
@@ -127,55 +137,59 @@ public class Folder extends DataItem
 		return items.get(position);
 	}
 	
-	public int indexOfItem(DataItem item)
+	@Override
+	public int indexOfItem(Leaf<DataItem> item)
 	{
 		return items.indexOf(item);
 	}
 	
-	public void removeItem(DataItem item)
+	@Override
+	public void removeItem(Leaf<DataItem> item)
 	{
 		if(Lang.or(policy, DEFAULT_POLICY).duplicateItemNamesAllowed || itemNames.contains(item.getName()))
 		{
+			int pos = item.getParent().indexOfItem(item);
 			items.remove(item);
-			item.parent = null;
+			item.setParent(null, false);
 			itemNames.remove(item.getName());
-			for(FolderListener l : fListeners) {l.folderItemRemoved(this, item);}
+			for(BranchListener<DataItem> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
 			
 			setDirty(true);
 		}
 	}
 	
 	//This is currently never called.
-	public void moveItem(DataItem item, int position)
-	{
-		int curPos = items.indexOf(item);
-		if(curPos < position)
-			--position;
-		if(curPos == position)
-			return;
-		
-		items.remove(item);
-		items.add(position, item);
-		for(FolderListener l : fListeners) {l.folderItemMoved(this, item, curPos);}
-		
-		setDirty(true);
-	}
+//	public void moveItem(DataItem item, int position)
+//	{
+//		int curPos = items.indexOf(item);
+//		if(curPos < position)
+//			--position;
+//		if(curPos == position)
+//			return;
+//		
+//		items.remove(item);
+//		items.add(position, item);
+//		for(FolderListener l : fListeners) {l.folderItemMoved(this, item, curPos);}
+//		
+//		setDirty(true);
+//	}
 	
-	public boolean hasItem(DataItem item)
+	@Override
+	public boolean hasItem(Leaf<DataItem> item)
 	{
 		return items.contains(item);
 	}
 	
 	public void unload()
 	{
-		for(DataItem item : items)
+		for(Leaf<DataItem> item : items)
 		{
 			if(item instanceof Folder)
 			{
 				((Folder) item).unload();
 			}
 		}
-		items = new ArrayList<DataItem>();
+		items = new ArrayList<Leaf<DataItem>>();
 		itemNames = new HashSet<String>();
 		super.setDirty(false);
 	}
@@ -186,10 +200,11 @@ public class Folder extends DataItem
 		super.setDirty(value);
 		
 		if(!value)
-			for(DataItem item : items)
-				item.setDirty(false);
+			for(Leaf<DataItem> item : items)
+				((DataItem) item).setDirty(false);
 	}
 
+	@Override
 	public void registerNameChange(String oldName, String newName)
 	{
 		itemNames.remove(oldName);
@@ -200,31 +215,37 @@ public class Folder extends DataItem
 	 | Folder Policies
 	\*================================================*/
 	
-	public final boolean canAcceptItem(DataItem item)
+	@Override
+	public final boolean canAcceptItem(Leaf<DataItem> item)
 	{
-		return Lang.or(policy, DEFAULT_POLICY).canAcceptItem(this, item);
+		return Lang.or(policy, DEFAULT_POLICY).canAcceptItem(this, (DataItem) item);
 	}
 	
+	@Override
 	public final boolean canCreateItemWithName(String itemName)
 	{
 		return Lang.or(policy, DEFAULT_POLICY).canCreateItemWithName(this, itemName);
 	}
 	
+	@Override
 	public final boolean isItemCreationEnabled()
 	{
 		return Lang.or(policy, DEFAULT_POLICY).itemCreationEnabled;
 	}
 	
+	@Override
 	public final boolean isFolderCreationEnabled()
 	{
 		return Lang.or(policy, DEFAULT_POLICY).folderCreationEnabled;
 	}
 	
+	@Override
 	public final boolean isItemRemovalEnabled()
 	{
 		return Lang.or(policy, DEFAULT_POLICY).itemRemovalEnabled;
 	}
 
+	@Override
 	public final boolean isItemEditingEnabled()
 	{
 		return Lang.or(policy, DEFAULT_POLICY).itemEditingEnabled;

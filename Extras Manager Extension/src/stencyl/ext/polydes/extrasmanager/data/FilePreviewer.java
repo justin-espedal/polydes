@@ -151,6 +151,7 @@ public class FilePreviewer
 		{
 			homeButton = createButton("home", 1, new ActionListener()
 			{
+				@Override
 				public void actionPerformed(ActionEvent e)
 				{
 					MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
@@ -159,6 +160,7 @@ public class FilePreviewer
 			
 			upButton = createButton("back_up", 2, new ActionListener()
 			{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				MainPage.get().setViewedFile((SysFolder) previewFile.getParent());
@@ -167,6 +169,7 @@ public class FilePreviewer
 			
 			refreshButton = createButton("refresh", 3, new ActionListener()
 			{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				MainPage.get().setViewedFile(previewFile);
@@ -177,6 +180,7 @@ public class FilePreviewer
 			
 			backButton = createButton("back", 1, new ActionListener()
 			{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				FileListModel model = MainPage.get().getFlistmodel();
@@ -198,6 +202,7 @@ public class FilePreviewer
 			
 			forwardButton = createButton("forward", 3, new ActionListener()
 			{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				FileListModel model = MainPage.get().getFlistmodel();
@@ -221,6 +226,7 @@ public class FilePreviewer
 			
 			editButton = createButton("edit", 4, new ActionListener()
 			{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				FileEditor.edit(previewFile.getFile());

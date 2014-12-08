@@ -9,22 +9,23 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
 import stencyl.ext.polydes.dialog.app.MiniSplitPane;
-import stencyl.ext.polydes.dialog.app.tree.DTree;
-import stencyl.ext.polydes.dialog.app.tree.DTreeSelectionListener;
-import stencyl.ext.polydes.dialog.app.tree.DTreeSelectionState;
+import stencyl.ext.polydes.dialog.data.DataItem;
 import stencyl.ext.polydes.dialog.data.Folder;
-import stencyl.ext.polydes.dialog.data.FolderHierarchyModel;
 
-public class BasicPage extends JPanel implements DTreeSelectionListener
+public class BasicPage extends JPanel implements DTreeSelectionListener<DataItem>
 {
 	protected Boolean listEditEnabled;
 	
 	protected MiniSplitPane splitPane;
-	protected FolderHierarchyModel folderModel;
-	protected DTree tree;
+	protected HierarchyModel<DataItem> folderModel;
+	protected DarkTree<DataItem> tree;
 	
-	protected DTreeSelectionState selectionState;
+	protected DTreeSelectionState<DataItem> selectionState;
 	
 	protected BasicPage()
 	{
@@ -35,8 +36,8 @@ public class BasicPage extends JPanel implements DTreeSelectionListener
 	{
 		super(new BorderLayout());
 		
-		folderModel = new FolderHierarchyModel(rootFolder);
-		tree = folderModel.getTree();
+		folderModel = new HierarchyModel<DataItem>(rootFolder);
+		tree = new DarkTree<DataItem>(folderModel);
 		tree.addTreeListener(this);
 		
 		splitPane = new MiniSplitPane();
@@ -45,25 +46,9 @@ public class BasicPage extends JPanel implements DTreeSelectionListener
 		
 		add(splitPane);
 		
-		splitPane.setDividerLocation(DTree.DEF_WIDTH);
+		splitPane.setDividerLocation(DarkTree.DEF_WIDTH);
 		
-		new java.util.Timer().schedule(new java.util.TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				tree.refreshDisplay();
-			}
-		}, 10);
-		
-		new java.util.Timer().schedule(new java.util.TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				tree.refreshDisplay();
-			}
-		}, 100);
+		tree.forceRerender();
 	}
 	
 	public void setListEditEnabled(boolean value)
@@ -83,7 +68,7 @@ public class BasicPage extends JPanel implements DTreeSelectionListener
 	}
 	
 	@Override
-	public void setSelectionState(DTreeSelectionState state)
+	public void setSelectionState(DTreeSelectionState<DataItem> state)
 	{
 		this.selectionState = state;
 	}

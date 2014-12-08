@@ -12,5 +12,6 @@
 			<attribute name="javadoc_location" value="http://www.thebuzzmedia.com/downloads/software/imgscalr/javadoc"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Common/PolydesCommonCode.jar" sourcepath="/Common/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

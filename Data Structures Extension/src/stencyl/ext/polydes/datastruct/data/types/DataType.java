@@ -160,6 +160,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	
 	public abstract T copy(T t);
 	
+	@Override
 	public String toString()
 	{
 		return xml;

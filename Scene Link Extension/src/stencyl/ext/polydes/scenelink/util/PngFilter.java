@@ -20,6 +20,7 @@ public class PngFilter extends javax.swing.filechooser.FileFilter implements jav
 	}
 
 	// The description of this filter
+	@Override
 	public String getDescription()
 	{
 		return "Import PNG Image";

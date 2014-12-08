@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
 import stencyl.ext.polydes.datastruct.io.FolderInfo;
@@ -134,7 +135,7 @@ public class Structures
 		{
 			FolderInfo info = new FolderInfo();
 			
-			for(DataItem d : root.getItems())
+			for(Leaf<DataItem> d : root.getItems())
 			{
 				save(d, file);
 				info.addFilenameToOrder(d.getName());
@@ -146,7 +147,7 @@ public class Structures
 		root.setDirty(false);
 	}
 	
-	public void save(DataItem item, File file) throws IOException
+	public void save(Leaf<DataItem> item, File file) throws IOException
 	{
 		if(item instanceof Folder)
 		{
@@ -156,7 +157,7 @@ public class Structures
 			
 			FolderInfo info = new FolderInfo();
 			
-			for(DataItem d : ((Folder) item).getItems())
+			for(Leaf<DataItem> d : ((Folder) item).getItems())
 			{
 				save(d, saveDir);
 				info.addFilenameToOrder(d.getName());
@@ -170,7 +171,7 @@ public class Structures
 		}
 		else
 		{
-			Structure s = (Structure) item.getObject();
+			Structure s = (Structure) ((DataItem) item).getObject();
 			ArrayList<String> toWrite = new ArrayList<String>();
 			toWrite.add("struct_id=" + s.getID());
 			toWrite.add("struct_type=" + s.getDefname());

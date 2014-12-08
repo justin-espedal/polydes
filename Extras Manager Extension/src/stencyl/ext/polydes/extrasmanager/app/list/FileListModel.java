@@ -2,10 +2,10 @@ package stencyl.ext.polydes.extrasmanager.app.list;
 
 import javax.swing.DefaultListModel;
 
-import stencyl.ext.polydes.extrasmanager.data.folder.Branch;
-import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyModel;
-import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyRepresentation;
-import stencyl.ext.polydes.extrasmanager.data.folder.Leaf;
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.common.nodes.HierarchyRepresentation;
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 

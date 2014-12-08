@@ -1,0 +1,43 @@
+<!--
++==========================================================================
+| Common Code
++==========================================================================
+-->
+
+<project name="stencyl" basedir="." default="dist">
+	
+	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	
+	<!-- Support ant's "for" task -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="dist">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		
+		<javac source="1.5" target="1.5" destdir="build" debug="on">
+			<src path="src/" />
+			<classpath>
+				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+			</classpath>
+		</javac>
+		
+		<!-- Include extra resources -->
+		<copy toDir="build/stencyl/ext/polydes/common/res">
+			<fileset dir="src/stencyl/ext/polydes/common/res">
+				<exclude name="ResourceLoader.java" />
+			</fileset>
+		</copy>
+		
+		<!-- Primary .jar export location -->
+		<jar destfile="PolydesCommonCode.jar" basedir="build" />
+			<!--<zipgroupfileset dir="libs" includes = "*.jar" />
+		</jar>-->
+		
+	</target>
+
+</project>

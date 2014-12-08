@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
@@ -285,13 +286,14 @@ public class XML
 	public static void writeDefinition(Document doc, Element root, StructureDefinition def)
 	{
 		root.setAttribute("classname", def.getClassname());
-		for(DataItem n : def.guiRoot.getItems())
+		for(Leaf<DataItem> n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}
 	
-	public static void writeNode(Document doc, Element parent, DataItem gui)
+	public static void writeNode(Document doc, Element parent, Leaf<DataItem> guii)
 	{
 		Element e = null;
+		DataItem gui = (DataItem) guii;
 		
 		if(gui instanceof Folder)
 		{
@@ -309,7 +311,7 @@ public class XML
 				e = doc.createElement("if");
 				e.setAttribute("condition", StringEscapeUtils.escapeXml10(((StructureCondition) gui.getObject()).getText()));
 			}
-			for(DataItem n : ((Folder) gui).getItems())
+			for(Leaf<DataItem> n : ((Folder) gui).getItems())
 				writeNode(doc, e, n);
 		}
 		else

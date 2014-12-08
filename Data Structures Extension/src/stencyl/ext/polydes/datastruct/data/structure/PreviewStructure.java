@@ -1,13 +1,14 @@
 package stencyl.ext.polydes.datastruct.data.structure;
 
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureEditor;
 
 public class PreviewStructure extends Structure
 {
-	private FolderHierarchyModel model;
+	private HierarchyModel<DataItem> model;
 	
-	public PreviewStructure(StructureDefinition template, FolderHierarchyModel model)
+	public PreviewStructure(StructureDefinition template, HierarchyModel<DataItem> model)
 	{
 		super(-1, template.getName(), template);
 		this.model = model;

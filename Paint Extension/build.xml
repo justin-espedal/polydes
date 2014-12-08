@@ -24,6 +24,7 @@
 			<!--<classpath refid="stencyl-libs" />-->
 			<classpath>
 				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
 			</classpath>
 		</javac>
 		
@@ -40,7 +41,9 @@
 		</copy>
 	
 		<!-- Primary .jar export location -->
-		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build" />
+		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
+			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
+		</jar>
 		
 		<!-- Extra .jar locations to copy to -->
 		<for param="file">

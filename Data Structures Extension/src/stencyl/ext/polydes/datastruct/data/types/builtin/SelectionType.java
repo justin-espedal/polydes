@@ -25,7 +25,7 @@ import stencyl.ext.polydes.datastruct.ui.objeditors.StructureObjectPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
-import stencyl.ext.polydes.datastruct.utils.Lang;
+import stencyl.ext.polydes.datastruct.utils.DLang;
 import stencyl.ext.polydes.datastruct.utils.ListElementArrays;
 
 public class SelectionType extends BuiltinType<String>
@@ -87,7 +87,7 @@ public class SelectionType extends BuiltinType<String>
 		
 		//=== Editor
 		
-		DataList editorChoices = Lang.datalist(Types._String, "Dropdown", "RadioButtons"/*, "Grid", "Cycle"*/);
+		DataList editorChoices = DLang.datalist(Types._String, "Dropdown", "RadioButtons"/*, "Grid", "Cycle"*/);
 		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
 		editorChooser.setValue(e.editor.name());
 		editorChooser.addListener(new UpdateListener()

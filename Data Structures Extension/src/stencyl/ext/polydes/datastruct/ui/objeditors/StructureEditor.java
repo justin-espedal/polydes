@@ -8,8 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
@@ -27,7 +27,7 @@ public class StructureEditor extends JPanel
 		this(structure, null);
 	}
 	
-	public StructureEditor(Structure structure, FolderHierarchyModel model)
+	public StructureEditor(Structure structure, HierarchyModel<DataItem> model)
 	{
 		super(new BorderLayout());
 		

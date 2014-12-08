@@ -10,9 +10,9 @@ import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.TreePath;
 
+import stencyl.ext.polydes.common.comp.MiniSplitPane;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
 import stencyl.ext.polydes.extrasmanager.Main;
-import stencyl.ext.polydes.extrasmanager.app.MiniSplitPane;
-import stencyl.ext.polydes.extrasmanager.app.darktree.DarkTree;
 import stencyl.ext.polydes.extrasmanager.app.list.FileList;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;

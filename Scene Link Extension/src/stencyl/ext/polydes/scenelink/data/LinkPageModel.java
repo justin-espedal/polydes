@@ -180,6 +180,7 @@ public class LinkPageModel extends DataModel
 		return links;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return name;

@@ -88,6 +88,7 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 		setFont(Fonts.getNormalFont());
 	}
 
+	@Override
 	public Component getListCellRendererComponent
 	(
 		JList list,

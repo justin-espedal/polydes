@@ -17,6 +17,7 @@ public class Main extends BaseExtension
 	 * Avoid doing anything time-intensive in here, or it will
 	 * slow down launch.
 	 */
+	@Override
 	public void onStartup()
 	{
 		super.onStartup();
@@ -44,6 +45,7 @@ public class Main extends BaseExtension
 	 * 
 	 * A good way to handle this is to make your extension a singleton.
 	 */
+	@Override
 	public void onActivate()
 	{
 		System.out.println("SampleExtension : Activated");
@@ -54,6 +56,7 @@ public class Main extends BaseExtension
 	 *  
 	 * Usually used to save things out.
 	 */
+	@Override
 	public void onDestroy()
 	{
 		System.out.println("SampleExtension : Destroyed");
@@ -62,6 +65,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is saved.
 	 */
+	@Override
 	public void onGameSave(Game game)
 	{
 		System.out.println("SampleExtension : Saved");
@@ -70,6 +74,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is opened.
 	 */
+	@Override
 	public void onGameOpened(Game game)
 	{
 		System.out.println("SampleExtension : Opened");
@@ -78,6 +83,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is closed.
 	 */
+	@Override
 	public void onGameClosed(Game game)
 	{
 		System.out.println("SampleExtension : Closed");
@@ -88,6 +94,7 @@ public class Main extends BaseExtension
 	 * 
 	 * You need to provide the form. We wrap it in a dialog.
 	 */
+	@Override
 	public OptionsPanel onOptions()
 	{
 		System.out.println("SampleExtension : Options");
@@ -104,6 +111,7 @@ public class Main extends BaseExtension
 			 * We provide a simple way to construct forms without
 			 * knowing Swing (Java's GUI library).
 			 */
+			@Override
 			public void init()
 			{
 				startForm();
@@ -123,6 +131,7 @@ public class Main extends BaseExtension
 			 * Use this to save the form data out.
 			 * All you need to do is place the properties into preferences.
 			 */
+			@Override
 			public void onPressedOK()
 			{
 				properties.put("name", text.getText());
@@ -145,6 +154,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when the extension is first installed.
 	 */
+	@Override
 	public void onInstall()
 	{
 		System.out.println("SampleExtension : Install");
@@ -155,6 +165,7 @@ public class Main extends BaseExtension
 	 * 
 	 * Clean up files.
 	 */
+	@Override
 	public void onUninstall()
 	{
 		System.out.println("SampleExtension : Uninstall");

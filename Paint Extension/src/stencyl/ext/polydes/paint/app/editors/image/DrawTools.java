@@ -35,7 +35,6 @@ import stencyl.ext.polydes.paint.res.Resources;
  * Toolbar for image editing.
  */
 
-@SuppressWarnings("serial")
 public class DrawTools extends JPanel implements KeyListener
 {
 	public static Color BACKGROUND = Color.WHITE;
@@ -212,6 +211,7 @@ public class DrawTools extends JPanel implements KeyListener
 			});
 		}
 		
+		@Override
 		public void paintComponent(Graphics g)
 		{
 			super.paintComponent(g);

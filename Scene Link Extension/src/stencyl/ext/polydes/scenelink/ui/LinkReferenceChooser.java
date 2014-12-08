@@ -127,6 +127,7 @@ public class LinkReferenceChooser extends JWindow
 		(
 			new KeyAdapter()
 			{
+				@Override
 				public void keyPressed(KeyEvent e)
 				{
 					if(e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -139,7 +140,8 @@ public class LinkReferenceChooser extends JWindow
 		
 		field.getTextField().registerKeyboardAction(new AbstractAction() 
 		{
-            public void actionPerformed(ActionEvent e) 
+            @Override
+			public void actionPerformed(ActionEvent e) 
             {
             	resourceList.requestFocus();
             }
@@ -147,7 +149,8 @@ public class LinkReferenceChooser extends JWindow
 		
 		field.getTextField().registerKeyboardAction(new AbstractAction() 
 		{
-            public void actionPerformed(ActionEvent e) 
+            @Override
+			public void actionPerformed(ActionEvent e) 
             {
             	resourceList.requestFocus();
             }
@@ -155,7 +158,8 @@ public class LinkReferenceChooser extends JWindow
 		
 		field.getTextField().registerKeyboardAction(new AbstractAction() 
 		{
-            public void actionPerformed(ActionEvent e) 
+            @Override
+			public void actionPerformed(ActionEvent e) 
             {
             	selectLinkRef();
             }
@@ -163,7 +167,8 @@ public class LinkReferenceChooser extends JWindow
 		
 		resourceList.registerKeyboardAction(new AbstractAction() 
 		{
-            public void actionPerformed(ActionEvent e) 
+            @Override
+			public void actionPerformed(ActionEvent e) 
             {
             	selectLinkRef();
             }
@@ -190,6 +195,7 @@ public class LinkReferenceChooser extends JWindow
         chooser = new JComboBox(new ScenePageChooserModel());
 		chooser.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				String s = "" + chooser.getSelectedItem();
@@ -285,6 +291,7 @@ public class LinkReferenceChooser extends JWindow
 			this.type = type;
 		}
 		
+		@Override
 		public String toString()
 		{
 			return name;
@@ -293,11 +300,13 @@ public class LinkReferenceChooser extends JWindow
 	
 	static class ScenePageChooserModel extends DefaultComboBoxModel
 	{
+		@Override
 		public Object getElementAt(int index)
 		{
 			return index == 0 ? "Scene" : "Page";
 		}
 		
+		@Override
 		public int getSize()
 		{
 			return 2;
@@ -363,6 +372,7 @@ public class LinkReferenceChooser extends JWindow
 			setOpaque(true);
 		}
 
+		@Override
 		public Component getListCellRendererComponent
 		(
 			JList list,
@@ -386,6 +396,7 @@ public class LinkReferenceChooser extends JWindow
 		}
 	}
 	
+	@Override
 	public void dispose()
 	{
 		removeAll();

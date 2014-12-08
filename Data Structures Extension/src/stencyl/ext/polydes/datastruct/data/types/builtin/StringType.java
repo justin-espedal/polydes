@@ -16,7 +16,7 @@ import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
-import stencyl.ext.polydes.datastruct.utils.Lang;
+import stencyl.ext.polydes.datastruct.utils.DLang;
 
 public class StringType extends BuiltinType<String>
 {
@@ -64,7 +64,7 @@ public class StringType extends BuiltinType<String>
 		
 		//=== Editor
 		
-		DataList editorChoices = Lang.datalist(Types._String, "SingleLine", "Expanding"/*, "Grid", "Cycle"*/);
+		DataList editorChoices = DLang.datalist(Types._String, "SingleLine", "Expanding"/*, "Grid", "Cycle"*/);
 		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
 		editorChooser.setValue(e.editor.name());
 		editorChooser.addListener(new UpdateListener()

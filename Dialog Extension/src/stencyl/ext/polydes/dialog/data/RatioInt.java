@@ -29,6 +29,12 @@ public class RatioInt
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		return get().hashCode();
+	}
+	
+	@Override
 	public String toString()
 	{
 		return data;

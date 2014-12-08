@@ -3,8 +3,8 @@ package stencyl.ext.polydes.paint.app.editors.image.tools;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import stencyl.ext.polydes.common.comp.colors.ColorDisplay;
 import stencyl.ext.polydes.paint.app.editors.image.DrawArea;
-import stencyl.ext.polydes.paint.app.editors.image.colors.ColorDisplay;
 
 public class Pick implements Tool
 {
@@ -27,7 +27,7 @@ public class Pick implements Tool
 	{
 		area.currentRGB = area.img.getRGB(x, y);
 		area.currentColor = new Color(area.currentRGB, true);
-		display.color = area.currentColor;
+		display.setColor(area.currentColor);
 		display.repaint();
 	}
 
@@ -36,7 +36,7 @@ public class Pick implements Tool
 	{
 		area.currentRGB = area.img.getRGB(x, y);
 		area.currentColor = new Color(area.currentRGB, true);
-		display.color = area.currentColor;
+		display.setColor(area.currentColor);
 		display.repaint();
 	}
 

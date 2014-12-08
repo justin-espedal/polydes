@@ -2,34 +2,43 @@ package stencyl.ext.polydes.paint.data;
 
 import java.util.ArrayList;
 
-public class DataItem
+import javax.swing.ImageIcon;
+
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.nodes.LeafListener;
+
+public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 {
-	protected ArrayList<DataItemListener> listeners;
-	protected Folder parent;
+	protected ArrayList<LeafListener<DataItem>> listeners;
+	protected Branch<DataItem> parent;
 	protected String name;
 	protected Object contents;
 	protected boolean modified;
 	
 	public DataItem(String name)
 	{
-		listeners = new ArrayList<DataItemListener>();
+		listeners = new ArrayList<LeafListener<DataItem>>();
 		parent = null;
 		this.name = name;
 		contents = null;
 		modified = false;
 	}
 	
-	public void addListener(DataItemListener l)
+	@Override
+	public void addListener(LeafListener<DataItem> l)
 	{
 		listeners.add(l);
 	}
 	
-	public void removeListener(DataItemListener l)
+	@Override
+	public void removeListener(LeafListener<DataItem> l)
 	{
 		listeners.remove(l);
 	}
 	
-	public void setParent(Folder parent)
+	@Override
+	public void setParent(Branch<DataItem> parent, boolean addToParent)
 	{
 		if(this.parent == parent)
 			return;
@@ -38,23 +47,26 @@ public class DataItem
 			this.parent.removeItem(this);
 		
 		this.parent = parent;
-		parent.addItem(this);
+		if(addToParent)
+			parent.addItem(this);
 		
 		setDirty();
 	}
 	
-	public Folder getParent()
+	@Override
+	public Branch<DataItem> getParent()
 	{
 		return parent;
 	}
 	
+	@Override
 	public void setName(String name)
 	{
 		if(this.name != name)
 		{
 			String oldName = this.name;
 			this.name = name;
-			for(DataItemListener l : listeners) {l.dataItemNameChanged(this, oldName);}
+			for(LeafListener<DataItem> l : listeners) {l.leafNameChanged(this, oldName);}
 			
 			if(parent != null)
 				parent.registerNameChange(oldName, name);
@@ -63,6 +75,7 @@ public class DataItem
 		}
 	}
 	
+	@Override
 	public String getName()
 	{
 		return name;
@@ -80,6 +93,7 @@ public class DataItem
 		return contents;
 	}
 	
+	@Override
 	public boolean isDirty()
 	{
 		return modified;
@@ -97,17 +111,39 @@ public class DataItem
 			setDirty(true);
 	}
 	
-	private void setDirty(boolean value)
+	public void setDirty(boolean value)
 	{
 		modified = value;
-		for(DataItemListener l : listeners) {l.dataItemStateChanged(this);}
+		for(LeafListener<DataItem> l : listeners) {l.leafStateChanged(this);}
 		
 		if(modified && parent != null && !parent.isDirty())
-			parent.setDirty();
+			((Folder) parent).setDirty();
 	}
 	
+	@Override
 	public String toString()
 	{
-		return name + (isDirty() ? "*" : "" );
+		return name;
+	}
+	
+	@Override
+	public boolean canEditName()
+	{
+		return true;
+	}
+	
+	@Override
+	public ImageIcon getIcon()
+	{
+		return null;
+	}
+	
+	@Override
+	public int compareTo(DataItem item)
+	{
+		if(item == null)
+			return 0;
+		
+		return getName().compareTo(item.getName());
 	}
 }

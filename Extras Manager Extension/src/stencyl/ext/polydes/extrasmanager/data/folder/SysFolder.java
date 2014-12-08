@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.BranchListener;
+import stencyl.ext.polydes.common.nodes.Leaf;
+
 public class SysFolder extends SysFile implements Branch<SysFile>
 {
 	private ArrayList<BranchListener<SysFile>> flisteners;

@@ -81,16 +81,19 @@ class ImageSelection implements Transferable
 		this.image = image;
 	}
 
+	@Override
 	public DataFlavor[] getTransferDataFlavors()
 	{
 		return new DataFlavor[] { DataFlavor.imageFlavor };
 	}
 
+	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor)
 	{
 		return flavor.equals(DataFlavor.imageFlavor);
 	}
 
+	@Override
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException
 	{
 		if (flavor.equals(DataFlavor.imageFlavor))

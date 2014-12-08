@@ -10,6 +10,7 @@ public class PageLink extends Link
 		super(id);
 	}
 
+	@Override
 	public void open()
 	{
 		MainPage.get().switchToPage(id);

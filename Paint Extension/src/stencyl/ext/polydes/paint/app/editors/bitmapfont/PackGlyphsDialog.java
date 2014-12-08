@@ -20,7 +20,6 @@ import stencyl.sw.util.comp.ButtonBarFactory;
 import stencyl.sw.util.comp.GroupButton;
 import stencyl.sw.util.dg.StencylDialog;
 
-@SuppressWarnings("serial")
 public final class PackGlyphsDialog extends StencylDialog
 {
 	/*-------------------------------------*\
@@ -81,11 +80,13 @@ public final class PackGlyphsDialog extends StencylDialog
 		return result;
 	}
 	
+	@Override
 	public JComponent createContentPanel()
 	{
 		return panel = new PackGlyphsPanel(font, area, okButton);
 	}
 	
+	@Override
 	public JPanel createButtonPanel() 
 	{
 		okButton = new GroupButton(0);
@@ -95,7 +96,8 @@ public final class PackGlyphsDialog extends StencylDialog
         (
         	new AbstractAction(lang.get("globals.ok"))
         	{
-	            public void actionPerformed(ActionEvent e) 
+	            @Override
+				public void actionPerformed(ActionEvent e) 
 	            {
 	            	if(panel.verify())
 	            	{
@@ -111,7 +113,8 @@ public final class PackGlyphsDialog extends StencylDialog
         (
         	new AbstractAction(lang.get("globals.cancel")) 
 	        {
-	            public void actionPerformed(ActionEvent e) 
+	            @Override
+				public void actionPerformed(ActionEvent e) 
 	            {
 	            	cancel();
 	            }
@@ -126,12 +129,14 @@ public final class PackGlyphsDialog extends StencylDialog
 		); 
     }
 	
+	@Override
 	public void cancel()
 	{
 		result = JOptionPane.CANCEL_OPTION;
         setVisible(false);
 	}
 	
+	@Override
 	public void dispose()
 	{
 		removeAll();

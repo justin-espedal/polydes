@@ -2,6 +2,7 @@ package stencyl.ext.polydes.dialog.data.stores;
 
 import java.io.File;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.dialog.data.DataItem;
 import stencyl.ext.polydes.dialog.data.Folder;
 import stencyl.ext.polydes.dialog.data.TextSource;
@@ -27,6 +28,7 @@ public class Dialog extends TextStore
 		return _instance;
 	}
 	
+	@Override
 	public void load(File file)
 	{
 		TextFolder root = Text.readSectionedText(file, "#");
@@ -52,25 +54,26 @@ public class Dialog extends TextStore
 		}
 	}
 	
+	@Override
 	public void saveChanges(File file)
 	{
 		updateItem(this);
 		if(isDirty())
 		{
 			TextFolder toWrite = new TextFolder("root");
-			for(DataItem item : getItems())
+			for(Leaf<DataItem> item : getItems())
 				save(item, toWrite);
 			Text.writeSectionedText(file, toWrite, "#");
 		}
 		setClean();
 	}
 	
-	public void save(DataItem item, TextFolder f)
+	public void save(Leaf<DataItem> item, TextFolder f)
 	{
 		if(item instanceof Folder)
 		{
 			TextFolder newFolder = new TextFolder(item.getName());
-			for(DataItem d : ((Folder) item).getItems())
+			for(Leaf<DataItem> d : ((Folder) item).getItems())
 				save(d, newFolder);
 			f.add(newFolder);
 		}

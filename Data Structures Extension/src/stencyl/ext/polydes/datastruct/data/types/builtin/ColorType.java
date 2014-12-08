@@ -7,12 +7,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 
+import stencyl.ext.polydes.common.comp.colors.ColorDisplay;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.ExtraProperties;
 import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.data.types.UpdateListener;
-import stencyl.ext.polydes.datastruct.ui.comp.colors.ColorDisplay;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import stencyl.ext.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;

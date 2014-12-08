@@ -122,6 +122,7 @@ public abstract class PropertiesSheetStyle
 			return new RoundedLabel(text);
 		}
 		
+		@Override
 		public JLabel createDescriptionRow(String desc)
 		{
 			JLabel l = new JLabel();
@@ -131,6 +132,7 @@ public abstract class PropertiesSheetStyle
 			return l;
 		}
 		
+		@Override
 		public void setDescription(JLabel label, String desc)
 		{
 			label.setText(String.format("<html>%s<html>", desc));
@@ -163,6 +165,7 @@ public abstract class PropertiesSheetStyle
 			hintgap = 5;
 		}
 		
+		@Override
 		public RoundedLabel createRoundedLabel(String text)
 		{
 			RoundedLabel label = new RoundedLabel(text);
@@ -171,6 +174,7 @@ public abstract class PropertiesSheetStyle
 			return label;
 		}
 		
+		@Override
 		public JLabel createDescriptionRow(String desc)
 		{
 			JLabel l = new JLabel();
@@ -180,6 +184,7 @@ public abstract class PropertiesSheetStyle
 			return l;
 		}
 		
+		@Override
 		public void setDescription(JLabel label, String desc)
 		{
 			label.setText(String.format("<html>%s<html>", desc));

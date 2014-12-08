@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -13,19 +16,24 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.ui.darktree.DTreeNodeCreator;
+import stencyl.ext.polydes.common.ui.darktree.SelectionType;
+import stencyl.ext.polydes.common.util.PopupUtil.PopupItem;
 import stencyl.ext.polydes.dialog.app.StatusBar;
 import stencyl.ext.polydes.dialog.app.editors.DataItemEditor;
 import stencyl.ext.polydes.dialog.app.editors.EditorFactory;
 import stencyl.ext.polydes.dialog.app.editors.text.BasicHighlighter;
 import stencyl.ext.polydes.dialog.app.editors.text.Highlighter;
 import stencyl.ext.polydes.dialog.app.editors.text.TextArea;
-import stencyl.ext.polydes.dialog.app.tree.SelectionType;
+import stencyl.ext.polydes.dialog.data.DataItem;
 import stencyl.ext.polydes.dialog.data.Folder;
 import stencyl.ext.polydes.dialog.data.LinkedDataItem;
+import stencyl.ext.polydes.dialog.data.TextSource;
 import stencyl.ext.polydes.dialog.res.Resources;
 import stencyl.sw.util.UI;
 
-public class SourcePage<T extends LinkedDataItem> extends BasicPage
+public class SourcePage<T extends LinkedDataItem> extends BasicPage implements DTreeNodeCreator<DataItem>
 {
 	private Class<T> cls;
 	
@@ -104,6 +112,8 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage
 		
 		currView = folderPage;
 		editPane.add(currView, BorderLayout.CENTER);
+		
+		tree.setNodeCreator(this);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -162,5 +172,44 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage
 		
 		revalidate();
 		repaint();
+	}
+	
+	/*================================================*\
+	 | Tree Node Creator
+	\*================================================*/
+	
+	private List<PopupItem> creatableNodeList = Arrays.asList(new PopupItem("Dialog Chunk", null, null));
+	
+	@Override
+	public Collection<PopupItem> getCreatableNodeList()
+	{
+		return creatableNodeList;
+	}
+
+	@Override
+	public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
+	{
+		if(selected.text.equals("Folder"))
+			return new Folder(nodeName);
+		
+		return new TextSource(nodeName);
+	}
+
+	@Override
+	public void editNode(Leaf<DataItem> dataItem)
+	{
+		
+	}
+
+	@Override
+	public void nodeRemoved(Leaf<DataItem> toRemove)
+	{
+		
+	}
+
+	@Override
+	public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
+	{
+		return true;
 	}
 }

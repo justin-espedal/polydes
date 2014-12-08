@@ -25,6 +25,7 @@
 			<src path="target/generated-sources/" />
 			<classpath>
 				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
 				<pathelement path="libs/tablelayout.jar" />
 				<pathelement path="libs/antlr-runtime-4.4.jar" />
 			</classpath>
@@ -40,6 +41,7 @@
 		<!-- Primary .jar export location -->
 		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build" >
 			<zipgroupfileset dir="libs" includes = "*.jar" />
+			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
 		</jar>
 
 		<!-- Extra .jar locations to copy to -->

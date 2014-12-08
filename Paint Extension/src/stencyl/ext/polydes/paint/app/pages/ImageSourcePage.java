@@ -1,12 +1,11 @@
 package stencyl.ext.polydes.paint.app.pages;
 
+import stencyl.ext.polydes.common.ui.darktree.SelectionType;
 import stencyl.ext.polydes.paint.app.editors.image.DrawArea;
 import stencyl.ext.polydes.paint.app.editors.image.ImageEditPane;
-import stencyl.ext.polydes.paint.app.tree.SelectionType;
 import stencyl.ext.polydes.paint.data.Folder;
 import stencyl.ext.polydes.paint.data.ImageSource;
 
-@SuppressWarnings("serial")
 public class ImageSourcePage extends BasicPage
 {
 	private ImageEditPane editorPane;

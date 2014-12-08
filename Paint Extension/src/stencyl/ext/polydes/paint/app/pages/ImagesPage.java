@@ -2,7 +2,6 @@ package stencyl.ext.polydes.paint.app.pages;
 
 import stencyl.ext.polydes.paint.data.stores.Images;
 
-@SuppressWarnings("serial")
 public class ImagesPage extends ImageSourcePage
 {
 	private static ImagesPage _instance;
@@ -12,7 +11,7 @@ public class ImagesPage extends ImageSourcePage
 		super(Images.get());
 		
 		setListEditEnabled(true);
-		folderModel.setUniqueItemNames(true);
+		folderModel.setUniqueLeafNames(true);
 	}
 	
 	public static ImagesPage get()

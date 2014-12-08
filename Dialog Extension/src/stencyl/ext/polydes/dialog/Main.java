@@ -55,6 +55,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 * 
 	 * Avoid doing anything time-intensive in here, or it will slow down launch.
 	 */
+	@Override
 	public void onStartup()
 	{
 		icon = Resources.loadIcon("icon.png");
@@ -116,17 +117,20 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 * 
 	 * A good way to handle this is to make your extension a singleton.
 	 */
+	@Override
 	public void onActivate()
 	{
 		print("DialogExtension : Activated");
 	}
 
+	@Override
 	public JPanel onGameCenterActivate()
 	{
 		if (dialogExtension == null)
 		{
 			SwingUtilities.invokeLater(new Runnable()
 			{
+				@Override
 				public void run()
 				{
 					showMessageDialog(
@@ -153,6 +157,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 * 
 	 * Usually used to save things out.
 	 */
+	@Override
 	public void onDestroy()
 	{
 		print("DialogExtension : Destroyed");
@@ -164,6 +169,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	/*
 	 * Happens when a game is saved.
 	 */
+	@Override
 	public void onGameSave(Game game)
 	{
 		if (dialogExtension == null)
@@ -178,6 +184,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	/*
 	 * Happens when the user runs, previews or exports the game.
 	 */
+	@Override
 	public void onGameBuild(Game game)
 	{
 		onGameSave(game);
@@ -186,6 +193,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	/*
 	 * Happens when a game is opened.
 	 */
+	@Override
 	public void onGameOpened(Game game)
 	{
 		dialogExtension = null;
@@ -266,6 +274,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	/*
 	 * Happens when a game is closed.
 	 */
+	@Override
 	public void onGameClosed(Game game)
 	{
 		super.onGameClosed(game);
@@ -287,6 +296,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 * 
 	 * You need to provide the form. We wrap it in a dialog.
 	 */
+	@Override
 	@SuppressWarnings("serial")
 	public OptionsPanel onOptions()
 	{
@@ -298,6 +308,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 			 * We provide a simple way to construct forms without knowing Swing
 			 * (Java's GUI library).
 			 */
+			@Override
 			public void init()
 			{
 				startForm();
@@ -309,6 +320,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 			 * Use this to save the form data out. All you need to do is place
 			 * the properties into preferences.
 			 */
+			@Override
 			public void onPressedOK()
 			{
 				System.out
@@ -319,6 +331,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 			 * Happens whenever the user presses cancel or clicks the "x" in the
 			 * corner
 			 */
+			@Override
 			public void onPressedCancel()
 			{
 				System.out
@@ -328,6 +341,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 			/*
 			 * Happens whenever the user brings this options panel up
 			 */
+			@Override
 			public void onShown()
 			{
 				System.out.println("DialogExtension : OptionsPanel : onShown");
@@ -338,6 +352,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	/*
 	 * Happens when the extension is first installed.
 	 */
+	@Override
 	public void onInstall()
 	{
 		print("DialogExtension : Install");
@@ -348,6 +363,7 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	 * 
 	 * Clean up files.
 	 */
+	@Override
 	public void onUninstall()
 	{
 		print("DialogExtension : Uninstall");

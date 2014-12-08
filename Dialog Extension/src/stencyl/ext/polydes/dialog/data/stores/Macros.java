@@ -2,6 +2,7 @@ package stencyl.ext.polydes.dialog.data.stores;
 
 import java.io.File;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.dialog.data.DataItem;
 import stencyl.ext.polydes.dialog.data.LinkedDataItem;
 import stencyl.ext.polydes.dialog.data.TextSource;
@@ -24,6 +25,7 @@ public class Macros extends TextStore
 		return _instance;
 	}
 	
+	@Override
 	public void load(File file)
 	{
 		TextSource info = new TextSource("-Info-");
@@ -43,7 +45,7 @@ public class Macros extends TextStore
 				info.addLine(line);
 		}
 		
-		for(DataItem item : getItems())
+		for(Leaf<DataItem> item : getItems())
 		{
 			((TextSource) item).trimLeadingTailingNewlines();
 		}
@@ -51,9 +53,10 @@ public class Macros extends TextStore
 		setClean();
 	}
 	
+	@Override
 	public void saveChanges(File file)
 	{
-		for(DataItem item : getItems())
+		for(Leaf<DataItem> item : getItems())
 		{
 			if(item.isDirty())
 			{
@@ -67,7 +70,7 @@ public class Macros extends TextStore
 		if(isDirty())
 		{
 			Text.startWriting(file);
-			for(DataItem item : getItems())
+			for(Leaf<DataItem> item : getItems())
 			{
 				for(String line : ((TextSource) item).getLines())
 					Text.writeLine(file, line);

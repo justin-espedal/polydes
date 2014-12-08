@@ -15,17 +15,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import stencyl.ext.polydes.paint.app.StatusBar;
-import stencyl.ext.polydes.paint.app.editors.image.colors.ColorDialog;
-import stencyl.ext.polydes.paint.app.editors.image.colors.ColorDisplay;
+import stencyl.ext.polydes.common.comp.StatusBar;
+import stencyl.ext.polydes.common.comp.colors.ColorDialog;
+import stencyl.ext.polydes.common.comp.colors.ColorDisplay;
 import stencyl.ext.polydes.paint.app.editors.image.tools.Hand;
 import stencyl.ext.polydes.paint.app.editors.image.tools.Pick;
 import stencyl.ext.polydes.paint.app.editors.image.tools.Select;
 import stencyl.ext.polydes.paint.app.editors.image.tools.ToolOptions;
 import stencyl.sw.util.UI;
 
-@SuppressWarnings("serial")
 public class ImageEditPane extends JPanel
 {
 	public static Color WRAPPER_BACKGROUND = new Color(0x797F88);
@@ -61,10 +62,10 @@ public class ImageEditPane extends JPanel
 		sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
 		sidebar.add(toolbar);
 		sidebar.add(Box.createRigidArea(new Dimension(20, 15)));
-		sidebar.add(colorDisplay = new ColorDisplay(15, 15));
+		sidebar.add(colorDisplay = new ColorDisplay(15, 15, Color.BLACK, null));
 		sidebar.add(Box.createRigidArea(new Dimension(20, 15)));
 		
-		colorDialog = new ColorDialog(colorDisplay);
+		colorDialog = new ColorDialog(colorDisplay, null);
 		colorDialog.setVisible(false);
 		
 		colorDisplay.addMouseListener(new MouseAdapter()
@@ -76,9 +77,11 @@ public class ImageEditPane extends JPanel
 				Point p = (Point) e.getPoint().clone();
 				SwingUtilities.convertPointToScreen(p, (Component) e.getSource());
 				colorDialog.setLocation(p.x, p.y);
-				colorDialog.setDisplayColor(colorDisplay.color);
+				colorDialog.setDisplayColor(colorDisplay.getColor());
 			}
 		});
+		
+		colorDialog.addChangeListener(colorUpdater);
 		
 		blankOptionsBar = new ToolOptions();
 		optionsBar = blankOptionsBar;
@@ -129,11 +132,21 @@ public class ImageEditPane extends JPanel
 		toolbar.getTool(Hand.class).setArea(currentEditor);
 		
 		installListeners(currentEditor);
-		
-		colorDialog.setDrawArea(currentEditor);
-		
 		wrapper.add(currentEditor);
 	}
+	
+	ChangeListener colorUpdater = new ChangeListener()
+	{
+		@Override
+		public void stateChanged(ChangeEvent e)
+		{
+			if(currentEditor != null)
+			{
+				currentEditor.currentColor = colorDisplay.getColor();
+				currentEditor.currentRGB = colorDisplay.getColor().getRGB();
+			}
+		}
+	};
 	
 	public void installListeners(DrawArea area)
 	{

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import stencyl.ext.polydes.datastruct.ui.tree.DTree;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
 import stencyl.sw.util.VerificationHelper;
 
 public class Prefs
@@ -54,7 +54,7 @@ public class Prefs
 		setDefaultProperty(DEFPAGE_Y, -1);
 		setDefaultProperty(DEFPAGE_WIDTH, 640);
 		setDefaultProperty(DEFPAGE_HEIGHT, 480);
-		setDefaultProperty(DEFPAGE_SIDEWIDTH, DTree.DEF_WIDTH);
+		setDefaultProperty(DEFPAGE_SIDEWIDTH, DarkTree.DEF_WIDTH);
 		setDefaultProperty(DEFPAGE_SIDEDL, 150);
 	}
 	

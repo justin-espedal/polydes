@@ -81,11 +81,13 @@ public class SnappingDialog extends JDialog
 			update();
 		}
 		
+		@Override
 		public void componentHidden(ComponentEvent e)
 		{
 			
 		};
 		
+		@Override
 		public void componentShown(ComponentEvent e)
 		{
 			

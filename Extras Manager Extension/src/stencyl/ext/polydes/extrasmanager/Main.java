@@ -10,10 +10,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import stencyl.core.lib.Game;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
 import stencyl.ext.polydes.extrasmanager.app.MainEditor;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
 import stencyl.ext.polydes.extrasmanager.data.FileOpHierarchyModel;
-import stencyl.ext.polydes.extrasmanager.data.folder.HierarchyModel;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
@@ -33,7 +33,9 @@ public class Main extends BaseExtension
 	private static HashMap<String, BaseExtension> folderOwners = new HashMap<String, BaseExtension>();
 	
 	private static HierarchyModel<SysFile> model;
-
+	
+	private static boolean gameOpen;
+	
 	public static boolean requestFolderOwnership(BaseExtension ext, String folderName)
 	{
 		System.out.println(ext.getClassname() + " requesting ownership of " + folderName);
@@ -66,6 +68,7 @@ public class Main extends BaseExtension
 	 * 
 	 * Avoid doing anything time-intensive in here, or it will slow down launch.
 	 */
+	@Override
 	public void onStartup()
 	{
 		icon = Resources.loadIcon("icon.png");
@@ -75,8 +78,6 @@ public class Main extends BaseExtension
 			Loader.readLocalDictionary(loc, properties);
 		
 		_instance = this;
-
-		icon = Resources.loadIcon("icon.png");
 		
 		name = "Extras Manager Extension";
 		description = "Manage extra data files.";
@@ -103,11 +104,13 @@ public class Main extends BaseExtension
 	 * 
 	 * A good way to handle this is to make your extension a singleton.
 	 */
+	@Override
 	public void onActivate()
 	{
 		
 	}
 
+	@Override
 	public JPanel onGameCenterActivate()
 	{
 		return MainEditor.get();
@@ -118,6 +121,7 @@ public class Main extends BaseExtension
 	 * 
 	 * Usually used to save things out.
 	 */
+	@Override
 	public void onDestroy()
 	{
 		
@@ -126,14 +130,17 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is saved.
 	 */
+	@Override
 	public void onGameSave(Game game)
 	{
-		MainEditor.get().gameSaved();
+		if(gameOpen)
+			MainEditor.get().gameSaved();
 	}
 
 	/*
 	 * Happens when the user runs, previews or exports the game.
 	 */
+	@Override
 	public void onGameBuild(Game game)
 	{
 		onGameSave(game);
@@ -142,8 +149,11 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is opened.
 	 */
+	@Override
 	public void onGameOpened(Game game)
 	{
+		gameOpen = true;
+		
 		gameDir = Locations.getGameLocation(game);
 		extrasDir = gameDir + "extras" + File.separator;
 		File extrasFile = new File(extrasDir);
@@ -207,6 +217,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when a game is closed.
 	 */
+	@Override
 	public void onGameClosed(Game game)
 	{
 		super.onGameClosed(game);
@@ -219,6 +230,8 @@ public class Main extends BaseExtension
 		extrasDir = "";
 		
 		MainEditor.disposePages();
+		
+		gameOpen = false;
 	}
 
 	/*
@@ -226,6 +239,7 @@ public class Main extends BaseExtension
 	 * 
 	 * You need to provide the form. We wrap it in a dialog.
 	 */
+	@Override
 	@SuppressWarnings("serial")
 	public OptionsPanel onOptions()
 	{
@@ -240,6 +254,7 @@ public class Main extends BaseExtension
 			 * We provide a simple way to construct forms without knowing Swing
 			 * (Java's GUI library).
 			 */
+			@Override
 			public void init()
 			{
 				String[] data;
@@ -282,6 +297,7 @@ public class Main extends BaseExtension
 			 * Use this to save the form data out. All you need to do is place
 			 * the properties into preferences.
 			 */
+			@Override
 			public void onPressedOK()
 			{
 				saveData(textPath + "\n" + imagePath);
@@ -291,6 +307,7 @@ public class Main extends BaseExtension
 			 * Happens whenever the user presses cancel or clicks the "x" in the
 			 * corner
 			 */
+			@Override
 			public void onPressedCancel()
 			{
 				
@@ -299,6 +316,7 @@ public class Main extends BaseExtension
 			/*
 			 * Happens whenever the user brings this options panel up
 			 */
+			@Override
 			public void onShown()
 			{
 				
@@ -309,6 +327,7 @@ public class Main extends BaseExtension
 	/*
 	 * Happens when the extension is first installed.
 	 */
+	@Override
 	public void onInstall()
 	{
 		
@@ -319,6 +338,7 @@ public class Main extends BaseExtension
 	 * 
 	 * Clean up files.
 	 */
+	@Override
 	public void onUninstall()
 	{
 		

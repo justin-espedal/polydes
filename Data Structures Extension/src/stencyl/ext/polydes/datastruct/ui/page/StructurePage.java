@@ -15,29 +15,30 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import stencyl.ext.polydes.common.comp.StatusBar;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
+import stencyl.ext.polydes.common.ui.darktree.DefaultNodeCreator;
+import stencyl.ext.polydes.common.ui.darktree.SelectionType;
+import stencyl.ext.polydes.common.util.PopupUtil.PopupItem;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
 import stencyl.ext.polydes.datastruct.data.structure.StructureFolder;
 import stencyl.ext.polydes.datastruct.data.structure.Structures;
 import stencyl.ext.polydes.datastruct.res.Resources;
-import stencyl.ext.polydes.datastruct.ui.StatusBar;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.list.ListUtils;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureEditor;
-import stencyl.ext.polydes.datastruct.ui.tree.DTree;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionListener;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionState;
-import stencyl.ext.polydes.datastruct.ui.tree.DefaultNodeCreator;
-import stencyl.ext.polydes.datastruct.ui.tree.SelectionType;
-import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
 import stencyl.sw.SW;
 import stencyl.sw.util.UI;
 
-public class StructurePage extends JPanel implements DTreeSelectionListener
+public class StructurePage extends JPanel implements DTreeSelectionListener<DataItem>
 {
 	private static StructurePage _instance;
 	
@@ -45,10 +46,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 	
 	private Boolean listEditEnabled;
 	
-	private FolderHierarchyModel folderModel;
-	private DTree tree;
+	private HierarchyModel<DataItem> folderModel;
+	private DarkTree<DataItem> tree;
 	
-	private DTreeSelectionState selectionState;
+	private DTreeSelectionState<DataItem> selectionState;
 	
 	private JScrollPane multiScroller;
 	private JPanel multiPage;
@@ -65,8 +66,8 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 	{
 		super(new BorderLayout());
 		
-		folderModel = new FolderHierarchyModel(rootFolder);
-		tree = new DTree(folderModel);
+		folderModel = new HierarchyModel<DataItem>(rootFolder);
+		tree = new DarkTree<DataItem>(folderModel);
 		tree.addTreeListener(this);
 		tree.expandLevel(1);
 		
@@ -122,10 +123,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 		add(currView, BorderLayout.CENTER);
 		
 		setListEditEnabled(true);
-		folderModel.setUniqueItemNames(true);
+		folderModel.setUniqueLeafNames(true);
 		
 		tree.enablePropertiesButton();
-		tree.setNodeCreator(new DefaultNodeCreator()
+		tree.setNodeCreator(new DefaultNodeCreator<DataItem>()
 		{
 			//For our purposes here, the object these folders point to is a type limiter.
 			
@@ -144,7 +145,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 			}
 			
 			@Override
-			public Object createNode(PopupItem selected, String nodeName)
+			public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
 			{
 				if(selected.text.equals("Folder"))
 					return new StructureFolder(nodeName);
@@ -159,10 +160,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 			}
 			
 			@Override
-			public boolean attemptRemove(List<DataItem> toRemove)
+			public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
 			{
 				int numStructuresToRemove = 0;
-				for(DataItem item : toRemove)
+				for(Leaf<DataItem> item : toRemove)
 					if(!(item instanceof Folder))
 						++numStructuresToRemove;
 				
@@ -179,12 +180,11 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 			}
 			
 			@Override
-			public void nodeRemoved(DataItem toRemove)
+			public void nodeRemoved(Leaf<DataItem> toRemove)
 			{
-				System.out.println("REMOVED NODE " + toRemove);
-				if(toRemove.getObject() instanceof Structure)
+				if(((DataItem) toRemove).getObject() instanceof Structure)
 				{
-					Structure s = (Structure) toRemove.getObject();
+					Structure s = (Structure) ((DataItem) toRemove).getObject();
 					Structures.structures.get(s.getTemplate()).remove(s);
 					Structures.structuresByID.remove(s.getID());
 					s.dispose();
@@ -192,7 +192,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 			}
 			
 			@Override
-			public void editNode(DataItem toEdit)
+			public void editNode(Leaf<DataItem> toEdit)
 			{
 				if(!(toEdit instanceof StructureFolder))
 					return;
@@ -237,7 +237,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 		return _instance;
 	}
 	
-	public FolderHierarchyModel getFolderModel()
+	public HierarchyModel<DataItem> getFolderModel()
 	{
 		return folderModel;
 	}
@@ -316,7 +316,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener
 	}
 	
 	@Override
-	public void setSelectionState(DTreeSelectionState state)
+	public void setSelectionState(DTreeSelectionState<DataItem> state)
 	{
 		this.selectionState = state;
 	}

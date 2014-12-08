@@ -108,11 +108,13 @@ public class FileListIcon implements Icon
 		}
 	}
 
+	@Override
 	public int getIconHeight() 
 	{
 		return DEFAULT_HEIGHT;
 	}
 
+	@Override
 	public int getIconWidth() 
 	{
 		return DEFAULT_WIDTH;
@@ -190,6 +192,7 @@ public class FileListIcon implements Icon
 		return tempImg;
 	}
 
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) 
 	{
 		int width = DEFAULT_WIDTH;

@@ -32,6 +32,16 @@ public class RatioPoint
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((x == null) ? 0 : x.hashCode());
+		result = prime * result + ((y == null) ? 0 : y.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object o)
 	{
 		if(!(o instanceof RatioPoint))
@@ -40,6 +50,7 @@ public class RatioPoint
 		RatioPoint p = (RatioPoint) o;
 		return (p.x.equals(x) && p.y.equals(y));
 	}
+	
 	
 	@Override
 	public String toString()

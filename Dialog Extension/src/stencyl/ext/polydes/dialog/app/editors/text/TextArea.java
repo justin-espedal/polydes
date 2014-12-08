@@ -290,6 +290,7 @@ public class TextArea extends DataItemEditor
 	
 	private boolean expandAllowed;
 
+	@Override
 	public void allowExpandVertical(boolean value)
 	{
 		expandAllowed = value;

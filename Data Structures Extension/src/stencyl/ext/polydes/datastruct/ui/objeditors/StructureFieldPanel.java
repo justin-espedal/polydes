@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
+import stencyl.ext.polydes.common.util.Lang;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.structure.StructureField;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
@@ -18,7 +19,6 @@ import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.VarNameFilter;
-import stencyl.ext.polydes.datastruct.utils.Lang;
 
 public class StructureFieldPanel extends StructureObjectPanel
 {

@@ -16,28 +16,29 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import stencyl.ext.polydes.common.comp.MiniSplitPane;
+import stencyl.ext.polydes.common.comp.StatusBar;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
+import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
+import stencyl.ext.polydes.common.ui.darktree.DefaultNodeCreator;
+import stencyl.ext.polydes.common.ui.darktree.SelectionType;
+import stencyl.ext.polydes.common.util.PopupUtil.PopupItem;
 import stencyl.ext.polydes.datastruct.Prefs;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.EditableObject;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTable;
 import stencyl.ext.polydes.datastruct.data.structure.StructureTabset;
 import stencyl.ext.polydes.datastruct.data.structure.Structures;
-import stencyl.ext.polydes.datastruct.ui.MiniSplitPane;
-import stencyl.ext.polydes.datastruct.ui.StatusBar;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.list.ListUtils;
 import stencyl.ext.polydes.datastruct.ui.objeditors.PreviewableEditor;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
-import stencyl.ext.polydes.datastruct.ui.tree.DTree;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionListener;
-import stencyl.ext.polydes.datastruct.ui.tree.DTreeSelectionState;
-import stencyl.ext.polydes.datastruct.ui.tree.DefaultNodeCreator;
-import stencyl.ext.polydes.datastruct.ui.tree.SelectionType;
-import stencyl.ext.polydes.datastruct.ui.utils.PopupUtil.PopupItem;
 import stencyl.ext.polydes.datastruct.ui.utils.SnappingDialog;
 import stencyl.sw.util.UI;
 
@@ -48,20 +49,20 @@ public class StructureDefinitionPage extends JPanel
 	public MiniSplitPane splitPane;
 	private JPanel emptySidebarBottom;
 	
-	private FolderHierarchyModel definitionsfm;
+	private HierarchyModel<DataItem> definitionsfm;
 	
-	private DTree definitionTree;
-	private DTree editorTree;
+	private DarkTree<DataItem> definitionTree;
+	private DarkTree<DataItem> editorTree;
 	private JComponent definitionTreeView;
 	
-	private DTreeSelectionState selectionState;
+	private DTreeSelectionState<DataItem> selectionState;
 	
 	protected JScrollPane scroller;
 	protected JPanel page;
 	
 	private StructureDefinitionEditor editor;
 	
-	private DTreeSelectionListener definitionStateListener = new DTreeSelectionListener()
+	private DTreeSelectionListener<DataItem> definitionStateListener = new DTreeSelectionListener<DataItem>()
 	{
 		@Override
 		public void selectionStateChanged()
@@ -102,18 +103,18 @@ public class StructureDefinitionPage extends JPanel
 		}
 		
 		@Override
-		public void setSelectionState(DTreeSelectionState state)
+		public void setSelectionState(DTreeSelectionState<DataItem> state)
 		{
 			selectionState = state;
 		}
 	};
 	
-	private DTreeSelectionState editorState;
+	private DTreeSelectionState<DataItem> editorState;
 	
-	private DTreeSelectionListener editorStateListener = new DTreeSelectionListener()
+	private DTreeSelectionListener<DataItem> editorStateListener = new DTreeSelectionListener<DataItem>()
 	{
 		@Override
-		public void setSelectionState(DTreeSelectionState state)
+		public void setSelectionState(DTreeSelectionState<DataItem> state)
 		{
 			editorState = state;
 		}
@@ -168,7 +169,8 @@ public class StructureDefinitionPage extends JPanel
 		{
 			StructureDefinitionsWindow.get().getPropsWindow().removeComponentListener(this);
 			if(editorTree != null)
-				editorTree.getTree().getSelectionModel().clearSelection();
+				if(editorTree.getTree() != null)
+					editorTree.getTree().getSelectionModel().clearSelection();
 		}
 	};
 	
@@ -184,8 +186,8 @@ public class StructureDefinitionPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		definitionsfm = new FolderHierarchyModel(StructureDefinitions.root);
-		definitionTree = new DTree(definitionsfm);
+		definitionsfm = new HierarchyModel<DataItem>(StructureDefinitions.root);
+		definitionTree = new DarkTree<DataItem>(definitionsfm);
 		definitionTree.setNamingEditingAllowed(false);
 		definitionTree.addTreeListener(definitionStateListener);
 		definitionTree.expand((Folder) StructureDefinitions.root.getItemByName("My Structures"));
@@ -207,9 +209,9 @@ public class StructureDefinitionPage extends JPanel
 		
 		definitionTree.setListEditEnabled(true);
 		definitionTree.enablePropertiesButton();
-		definitionsfm.setUniqueItemNames(true);
+		definitionsfm.setUniqueLeafNames(true);
 		
-		definitionTree.setNodeCreator(new DefaultNodeCreator()
+		definitionTree.setNodeCreator(new DefaultNodeCreator<DataItem>()
 		{
 			@Override
 			public Collection<PopupItem> getCreatableNodeList()
@@ -218,7 +220,7 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public Object createNode(PopupItem item, String nodeName)
+			public Leaf<DataItem> createNode(PopupItem item, String nodeName)
 			{
 				if(item.text.equals("Folder"))
 					return new Folder(nodeName);
@@ -235,26 +237,26 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public void editNode(DataItem toEdit)
+			public void editNode(Leaf<DataItem> toEdit)
 			{
 				if(toEdit instanceof Folder)
 					return;
 				
-				if(!(toEdit.getObject() instanceof StructureDefinition))
+				if(!(((DataItem) toEdit).getObject() instanceof StructureDefinition))
 					return;
 				
 				CreateStructureDefinitionDialog dg = new CreateStructureDefinitionDialog();
-				dg.setDefinition((StructureDefinition) toEdit.getObject());
+				dg.setDefinition((StructureDefinition) ((DataItem) toEdit).getObject());
 				dg.dispose();
 				definitionTree.repaint();
 			}
 			
 			@Override
-			public boolean attemptRemove(List<DataItem> toRemove)
+			public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
 			{
-				if(toRemove.size() > 0 && toRemove.get(0).getObject() instanceof StructureDefinition)
+				if(toRemove.size() > 0 && ((DataItem) toRemove.get(0)).getObject() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) toRemove.get(0).getObject();
+					StructureDefinition def = (StructureDefinition) ((DataItem) toRemove.get(0)).getObject();
 					int result =
 						UI.showYesCancelPrompt(
 							"Remove Structure Definition",
@@ -268,11 +270,11 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public void nodeRemoved(DataItem toRemove)
+			public void nodeRemoved(Leaf<DataItem> toRemove)
 			{
-				if(toRemove.getObject() instanceof StructureDefinition)
+				if(((DataItem) toRemove).getObject() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) toRemove.getObject();
+					StructureDefinition def = (StructureDefinition) ((DataItem) toRemove).getObject();
 					def.remove();
 				}
 			}

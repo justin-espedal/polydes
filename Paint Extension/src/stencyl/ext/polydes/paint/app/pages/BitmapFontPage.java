@@ -1,12 +1,11 @@
 package stencyl.ext.polydes.paint.app.pages;
 
+import stencyl.ext.polydes.common.ui.darktree.SelectionType;
 import stencyl.ext.polydes.paint.app.editors.bitmapfont.BMFontEditPane;
 import stencyl.ext.polydes.paint.app.editors.bitmapfont.FontDrawArea;
-import stencyl.ext.polydes.paint.app.tree.SelectionType;
 import stencyl.ext.polydes.paint.data.BitmapFont;
 import stencyl.ext.polydes.paint.data.Folder;
 
-@SuppressWarnings("serial")
 public class BitmapFontPage extends BasicPage
 {
 	private BMFontEditPane editorPane;

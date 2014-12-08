@@ -2,6 +2,7 @@ package stencyl.ext.polydes.paint.data.stores;
 
 import java.io.File;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.paint.data.BitmapFont;
 import stencyl.ext.polydes.paint.data.DataItem;
 import stencyl.ext.polydes.paint.data.Folder;
@@ -38,7 +39,7 @@ public abstract class FontStore extends Folder
 	{
 		updateItem(this);
 		
-		for(DataItem item : getItems())
+		for(Leaf<DataItem> item : getItems())
 		{
 			System.out.println(item.getName() + ", " + item.isDirty());
 			
@@ -53,7 +54,7 @@ public abstract class FontStore extends Folder
 		setClean();
 	}
 	
-	private void updateItem(DataItem item)
+	private void updateItem(Leaf<DataItem> item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -65,7 +66,7 @@ public abstract class FontStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}

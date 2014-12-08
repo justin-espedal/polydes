@@ -62,11 +62,13 @@ public class ImageReferenceComboModel extends DefaultComboBoxModel
 		super.setSelectedItem(o);
 	}
 	
+	@Override
 	public Object getElementAt(int index)
 	{
 		return imageNames[index];
 	}
 	
+	@Override
 	public int getSize()
 	{
 		if(size != imageNames.length)

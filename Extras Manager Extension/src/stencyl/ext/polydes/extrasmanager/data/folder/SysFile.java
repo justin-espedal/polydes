@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.Leaf;
+import stencyl.ext.polydes.common.nodes.LeafListener;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
 
 public class SysFile implements Leaf<SysFile>

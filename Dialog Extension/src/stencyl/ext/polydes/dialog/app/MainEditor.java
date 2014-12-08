@@ -21,7 +21,6 @@ import stencyl.ext.polydes.dialog.app.pages.MacrosPage;
 import stencyl.ext.polydes.dialog.res.Resources;
 import stencyl.sw.lnf.Theme;
 
-@SuppressWarnings("serial")
 public class MainEditor extends JPanel
 {
 	private static MainEditor _instance;
@@ -97,6 +96,7 @@ public class MainEditor extends JPanel
 	{
 		JToggleButton button = new JToggleButton()
 		{
+			@Override
 			public void paintComponent(Graphics g)
 			{
 				if(!isSelected())
@@ -139,6 +139,7 @@ public class MainEditor extends JPanel
 		(
 			new AbstractAction(name, icon)
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					switchToPage(e.getActionCommand());

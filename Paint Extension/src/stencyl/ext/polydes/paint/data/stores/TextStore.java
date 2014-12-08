@@ -3,6 +3,7 @@ package stencyl.ext.polydes.paint.data.stores;
 import java.io.File;
 import java.util.Stack;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.paint.data.DataItem;
 import stencyl.ext.polydes.paint.data.Folder;
 import stencyl.ext.polydes.paint.data.LinkedDataItem;
@@ -61,13 +62,13 @@ public abstract class TextStore extends Folder
 		setClean();
 	}
 	
-	private void trimItem(DataItem item)
+	private void trimItem(Leaf<DataItem> item)
 	{
 		if(item instanceof TextSource)
 			((TextSource) item).trimLeadingTailingNewlines();
 		else if(item instanceof Folder)
 		{
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
 			{
 				trimItem(curItem);
 			}
@@ -81,7 +82,7 @@ public abstract class TextStore extends Folder
 		if(isDirty())
 		{
 			Text.startWriting(file);
-			for(DataItem item : getItems())
+			for(Leaf<DataItem> item : getItems())
 			{
 				writeItem(item, file, titleMarker, folderStartMarker, folderEndMarker);
 			}
@@ -91,7 +92,7 @@ public abstract class TextStore extends Folder
 		setClean();
 	}
 	
-	private void updateItem(DataItem item)
+	private void updateItem(Leaf<DataItem> item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -103,20 +104,20 @@ public abstract class TextStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}
 		}
 	}
 	
-	private void writeItem(DataItem item, File file, String titleMarker, String folderStartMarker, String folderEndMarker)
+	private void writeItem(Leaf<DataItem> item, File file, String titleMarker, String folderStartMarker, String folderEndMarker)
 	{
 		if(item instanceof Folder)
 		{
 			Text.writeLine(file, folderStartMarker + item.getName());
 			
-			for(DataItem currItem : ((Folder) item).getItems())
+			for(Leaf<DataItem> currItem : ((Folder) item).getItems())
 			{
 				writeItem(currItem, file, titleMarker, folderStartMarker, folderEndMarker);
 			}

@@ -8,10 +8,10 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.extrasmanager.Main;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
 import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
-import stencyl.ext.polydes.extrasmanager.data.folder.Leaf;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 

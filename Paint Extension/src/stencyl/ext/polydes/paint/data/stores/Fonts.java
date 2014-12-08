@@ -19,11 +19,13 @@ public class Fonts extends FontStore
 		return _instance;
 	}
 	
+	@Override
 	public void load(File file)
 	{
 		super.fontsLoad(file);
 	}
 	
+	@Override
 	public void saveChanges(File file)
 	{
 		super.fontsSave(file);

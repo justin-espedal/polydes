@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
 import stencyl.ext.polydes.datastruct.data.folder.FolderPolicy;
@@ -185,7 +186,7 @@ public class StructureDefinitions
 				FileUtils.deleteDirectory(temp);
 				temp.mkdirs();
 				
-				for(DataItem d : dsfolder.getItems())
+				for(Leaf<DataItem> d : dsfolder.getItems())
 					save(d, temp);
 				
 				FileUtils.deleteDirectory(fsfolder);
@@ -196,7 +197,7 @@ public class StructureDefinitions
 		root.setDirty(false);
 	}
 	
-	public void save(DataItem item, File file) throws IOException
+	public void save(Leaf<DataItem> item, File file) throws IOException
 	{
 		if(item instanceof Folder)
 		{
@@ -204,12 +205,12 @@ public class StructureDefinitions
 			if(!saveDir.exists())
 				saveDir.mkdirs();
 			
-			for(DataItem d : ((Folder) item).getItems())
+			for(Leaf<DataItem> d : ((Folder) item).getItems())
 				save(d, saveDir);
 		}
 		else
 		{
-			StructureDefinition def = (StructureDefinition) item.getObject();
+			StructureDefinition def = (StructureDefinition) ((DataItem) item).getObject();
 			
 			Document doc = FileHelper.newDocument();
 			Element e = doc.createElement("structure");

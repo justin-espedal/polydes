@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import stencyl.core.lib.io.read.ActorTypeReader.ListElement;
+import stencyl.ext.polydes.common.util.Lang;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
@@ -37,7 +38,6 @@ import stencyl.ext.polydes.datastruct.data.types.builtin.DynamicType.DynamicEdit
 import stencyl.ext.polydes.datastruct.ui.MiniDialog;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
-import stencyl.ext.polydes.datastruct.utils.Lang;
 import stencyl.sw.actions.Actions;
 import stencyl.sw.actions.SAction;
 import stencyl.sw.lnf.Theme;

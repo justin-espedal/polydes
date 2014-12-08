@@ -2,6 +2,7 @@ package stencyl.ext.polydes.dialog.data.stores;
 
 import java.io.File;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.dialog.data.DataItem;
 import stencyl.ext.polydes.dialog.data.Folder;
 import stencyl.ext.polydes.dialog.data.LinkedDataItem;
@@ -16,7 +17,7 @@ public abstract class TextStore extends Folder
 	public abstract void load(File file);
 	public abstract void saveChanges(File file);
 	
-	public void updateItem(DataItem item)
+	public void updateItem(Leaf<DataItem> item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -28,7 +29,7 @@ public abstract class TextStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}

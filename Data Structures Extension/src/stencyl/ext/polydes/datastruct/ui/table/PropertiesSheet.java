@@ -20,10 +20,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import stencyl.ext.polydes.common.nodes.Branch;
+import stencyl.ext.polydes.common.nodes.HierarchyModel;
+import stencyl.ext.polydes.common.nodes.HierarchyRepresentation;
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.folder.Folder;
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyModel;
-import stencyl.ext.polydes.datastruct.data.folder.FolderHierarchyRepresentation;
 import stencyl.ext.polydes.datastruct.data.structure.Structure;
 import stencyl.ext.polydes.datastruct.data.structure.StructureField;
 import stencyl.ext.polydes.datastruct.data.structure.StructureHeader;
@@ -40,7 +42,7 @@ import stencyl.ext.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
 import stencyl.sw.util.comp.RoundedLabel;
 
-public class PropertiesSheet extends JPanel implements FolderHierarchyRepresentation
+public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem>
 {
 	public void addDataItem(Folder parent, DataItem n, int i)
 	{
@@ -94,7 +96,7 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	private Card getFirstCardParent(DataItem n)
 	{
 		while(!((n.getObject() instanceof StructureTab) || (n.getObject() instanceof StructureCondition)))
-			n = n.getParent();
+			n = (DataItem) n.getParent();
 		
 		if(n.getObject() instanceof StructureTab)
 			return (Card) guiMap.get(n);
@@ -105,7 +107,7 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	private Deck getFirstDeckParent(DataItem n)
 	{
 		while(!(n.getObject() instanceof StructureTabset))
-			n = n.getParent();
+			n = (DataItem) n.getParent();
 		
 		return getDeck((RowGroup) guiMap.get(n));
 	}
@@ -130,12 +132,12 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	{
 		if(list == null)
 			list = new ArrayList<StructureField>();
-		for(DataItem n2 : n.getItems())
+		for(Leaf<DataItem> n2 : n.getItems())
 		{
 			if(n2 instanceof Folder)
 				allDescendentFields(list, (Folder) n2);
-			if(n2.getObject() instanceof StructureField)
-				list.add((StructureField) n2.getObject());
+			if(((DataItem) n2).getObject() instanceof StructureField)
+				list.add((StructureField) ((DataItem) n2).getObject());
 		}
 		return list;
 	}
@@ -294,7 +296,7 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	/**
 	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, FolderHierarchyModel folderModel)
+	public PropertiesSheet(Structure model, HierarchyModel<DataItem> folderModel)
 	{
 		this(model, folderModel, PropertiesSheetStyle.DARK);
 	}
@@ -304,7 +306,7 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	/**
 	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, FolderHierarchyModel folderModel, PropertiesSheetStyle style)
+	public PropertiesSheet(Structure model, HierarchyModel<DataItem> folderModel, PropertiesSheetStyle style)
 	{
 		root = new Table(style);
 		this.style = style;
@@ -595,34 +597,36 @@ public class PropertiesSheet extends JPanel implements FolderHierarchyRepresenta
 	\*================================================*/
 	
 	@Override
-	public void dataItemStateChanged(DataItem source)
+	public void leafStateChanged(Leaf<DataItem> source)
 	{
 		
 	}
-
+	
 	@Override
-	public void dataItemNameChanged(DataItem source, String oldName)
+	public void leafNameChanged(Leaf<DataItem> source, String oldName)
 	{
 		
 	}
-
+	
 	@Override
-	public void itemAdded(Folder folder, DataItem item, int position)
+	public void itemAdded(Branch<DataItem> folder, Leaf<DataItem> item,
+			int position)
 	{
-		addDataItem(folder, item, position);
+		addDataItem((Folder) folder, (DataItem) item, position);
 	}
 
 	@Override
-	public void itemRemoved(DataItem item)
+	public void itemRemoved(Branch<DataItem> folder, Leaf<DataItem> item,
+			int oldPosition)
 	{
-		removeDataItem(item);
+		removeDataItem((DataItem) item);
 	}
 	
 	public void buildSheetFromFolder(Folder folder)
 	{
 		for(int i = 0; i < folder.getItems().size(); ++i)
 		{
-			DataItem d = folder.getItemAt(i);
+			DataItem d = (DataItem) folder.getItemAt(i);
 			addDataItem(folder, d, i);
 			if(d instanceof Folder)
 				buildSheetFromFolder((Folder) d); 

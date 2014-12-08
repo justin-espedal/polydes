@@ -13,7 +13,7 @@ public class DialogPage extends SourcePage<TextSource>
 		super(TextSource.class, Dialog.get());
 		
 		setListEditEnabled(true);
-		folderModel.setUniqueItemNames(true);
+		folderModel.setUniqueLeafNames(true);
 		textAreaHighlighter = new DialogHighlighter();
 	}
 

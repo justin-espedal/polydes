@@ -11,12 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import stencyl.ext.polydes.datastruct.ui.MiniSplitPane;
+import stencyl.ext.polydes.common.comp.MiniSplitPane;
+import stencyl.ext.polydes.common.ui.darktree.DarkTree;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.page.StructureDefinitionPage;
 import stencyl.ext.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import stencyl.ext.polydes.datastruct.ui.page.StructurePage;
-import stencyl.ext.polydes.datastruct.ui.tree.DTree;
 
 public class MainPage extends JPanel
 {
@@ -51,7 +51,7 @@ public class MainPage extends JPanel
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setLeftComponent(createSidebar());
 		splitPane.setRightComponent(pageView = new JPanel(new BorderLayout()));
-		splitPane.setDividerLocation(DTree.DEF_WIDTH);
+		splitPane.setDividerLocation(DarkTree.DEF_WIDTH);
 		
 		pageView.add(StructurePage.get(), BorderLayout.CENTER);
 	}

@@ -24,7 +24,6 @@ import stencyl.sw.util.comp.text.AutoVerifyField;
 import stencyl.sw.util.comp.text.FieldVerifier;
 import stencyl.sw.util.dg.DialogPanel;
 
-@SuppressWarnings("serial")
 public final class PackGlyphsPanel extends JPanel implements ActionListener, FieldVerifier
 {    
 	/*-------------------------------------*\
@@ -340,6 +339,7 @@ public final class PackGlyphsPanel extends JPanel implements ActionListener, Fie
 		return avf;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		JComboBox box = (JComboBox) e.getSource();
@@ -410,6 +410,7 @@ public final class PackGlyphsPanel extends JPanel implements ActionListener, Fie
 		return ok;
 	}
 	
+	@Override
 	public boolean verifyText(JTextField field, String text)
 	{
 		boolean result = false;

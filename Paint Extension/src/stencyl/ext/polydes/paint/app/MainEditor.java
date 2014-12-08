@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
-import stencyl.ext.polydes.paint.app.editors.text.TextArea;
+import stencyl.ext.polydes.common.comp.StatusBar;
 import stencyl.ext.polydes.paint.app.pages.FontsPage;
 import stencyl.ext.polydes.paint.app.pages.ImagesPage;
 import stencyl.ext.polydes.paint.res.Resources;
@@ -45,7 +45,7 @@ public class MainEditor extends JPanel
 		add(createVerticalButtonBar(), BorderLayout.WEST);
 		
 		blank = new JPanel(new BorderLayout());
-		blank.setBackground(TextArea.TEXT_EDITOR_COLOR);
+		blank.setBackground(new Color(43, 43, 43));
 		blank.add(StatusBar.createStatusBar(), BorderLayout.SOUTH);
 		
 		currentPage = blank;
@@ -96,6 +96,7 @@ public class MainEditor extends JPanel
 	{
 		JToggleButton button = new JToggleButton()
 		{
+			@Override
 			public void paintComponent(Graphics g)
 			{
 				if(!isSelected())
@@ -138,6 +139,7 @@ public class MainEditor extends JPanel
 		(
 			new AbstractAction(name, icon)
 			{
+				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
 					switchToPage(e.getActionCommand());

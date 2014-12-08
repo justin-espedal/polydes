@@ -40,6 +40,7 @@ public class BitmapGlyph
 		r2.height = Math.max(Math.max(font.base, font.lineHeight), yoffset + height);
 	}
 	
+	@Override
 	public String toString()
 	{
 		return ""+Character.toChars(id)[0];

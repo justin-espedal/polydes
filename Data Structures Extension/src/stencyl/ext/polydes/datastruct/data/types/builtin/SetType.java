@@ -38,7 +38,7 @@ import stencyl.ext.polydes.datastruct.ui.objeditors.StructureObjectPanel;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheet;
 import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.Layout;
-import stencyl.ext.polydes.datastruct.utils.Lang;
+import stencyl.ext.polydes.datastruct.utils.DLang;
 
 public class SetType extends BuiltinType<DataSet>
 {
@@ -177,7 +177,7 @@ public class SetType extends BuiltinType<DataSet>
 		
 		//=== Source Type
 		
-		DataList sourceTypeChoices = Lang.datalist(Types._String, "Structure", "Resource", "Custom");
+		DataList sourceTypeChoices = DLang.datalist(Types._String, "Structure", "Resource", "Custom");
 		final DataEditor<String> sourceTypeChooser = new DropdownSelectionEditor(sourceTypeChoices);
 		sourceTypeChooser.setValue(e.sourceType.name());
 		//sourceTypeChooser listener later, after dataSourceRow and customSourceRow are added.

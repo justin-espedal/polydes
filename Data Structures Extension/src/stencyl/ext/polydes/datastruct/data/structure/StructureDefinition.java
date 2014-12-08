@@ -331,6 +331,7 @@ public class StructureDefinition extends EditableObject
 	
 	private boolean savedDefinitionDirtyState;
 	
+	@Override
 	public void disposeEditor()
 	{
 		if(editor != null)
