@@ -7,53 +7,24 @@
 <project name="stencyl" basedir="." default="dist">
 	
 	<property name="name" value="PaintExtension" />
-	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	<property name="pkg" value="stencyl/ext/polydes/paint" />
 	
-	<!-- Support ant's "for" task -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
+	<include file="../Common/build.xml" as="common" />
 	
 	<target name="dist">
-		<delete dir="build" />
-		<mkdir dir="build" />
 		
-		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
-			<!--<classpath refid="stencyl-libs" />-->
-			<classpath>
-				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-			</classpath>
-		</javac>
-		
-		<!-- Include extra resources -->
-		<copy toDir="build/stencyl/ext/polydes/paint/res">
-			<fileset dir="src/stencyl/ext/polydes/paint/res">
-				<exclude name="Resources.java" />
-			</fileset>
-		</copy>
-		<copy toDir="build/stencyl/ext/polydes/paint/defaults">
-			<fileset dir="src/stencyl/ext/polydes/paint/defaults">
-				<exclude name="Defaults.java" />
-			</fileset>
-		</copy>
-	
-		<!-- Primary .jar export location -->
-		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
-			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-		</jar>
-		
-		<!-- Extra .jar locations to copy to -->
-		<for param="file">
-			<path>
-				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/${name}.jar"/>
-			</path>
-			<sequential>
-				<copy file="${swworkdir}/extensions/${name}.jar" tofile="@{file}" />
-			</sequential>
-		</for>
+		<antcall>
+			
+			<target name="common.compile" />
+			
+			<target name="common.copy-common-resources" />
+			<target name="common.copy-resources" />
+			<target name="common.copy-defaults" />
+			
+			<target name="common.makejar" />
+			<target name="common.copyjar" />
+			
+		</antcall>
 		
 	</target>
 

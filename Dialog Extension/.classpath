@@ -9,6 +9,6 @@
 			<attribute name="javadoc_location" value="file:/J:/Java/docs/tablelayout/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Common/PolydesCommonCode.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

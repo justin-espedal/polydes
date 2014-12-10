@@ -7,52 +7,27 @@
 <project name="stencyl" basedir="." default="dist">
 	
 	<property name="name" value="DataStructuresExtension" />
-	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	<property name="pkg" value="stencyl/ext/polydes/datastruct" />
 	
-	<!-- Support ant's "for" task -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
+	<include file="../Common/build.xml" as="common" />
 	
 	<target name="dist">
-		<delete dir="build" />
-		<mkdir dir="build" />
 		
-		<javac source="1.5" target="1.5" destdir="build" debug="on">
-			<src path="src/" />
-			<src path="target/generated-sources/" />
-			<classpath>
-				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-				<pathelement path="libs/tablelayout.jar" />
-				<pathelement path="libs/antlr-runtime-4.4.jar" />
-			</classpath>
-		</javac>
+		<var name="srcpath" value="${srcpath}:./target/generated-sources" />
+		<var name="usinglibs" value="true" />
 		
-		<!-- Include extra resources -->
-		<copy toDir="build/stencyl/ext/polydes/datastruct/res">
-			<fileset dir="src/stencyl/ext/polydes/datastruct/res">
-				<exclude name="Resources.java" />
-			</fileset>
-		</copy>
+		<antcall>
+			
+			<target name="common.compile" />
+			
+			<target name="common.copy-common-resources" />
+			<target name="common.copy-resources" />
+			
+			<target name="common.makejar" />
+			<target name="common.copyjar" />
+			
+		</antcall>
 		
-		<!-- Primary .jar export location -->
-		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build" >
-			<zipgroupfileset dir="libs" includes = "*.jar" />
-			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-		</jar>
-
-		<!-- Extra .jar locations to copy to -->
-		<for param="file">
-			<path>
-				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/${name}.jar"/>
-			</path>
-			<sequential>
-				<copy file="${swworkdir}/extensions/${name}.jar" tofile="@{file}" />
-			</sequential>
-		</for>
 	</target>
 
 </project>

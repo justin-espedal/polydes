@@ -7,49 +7,25 @@
 <project name="stencyl" basedir="." default="dist">
 	
 	<property name="name" value="ExtrasManagerExtension" />
-	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	<property name="pkg" value="stencyl/ext/polydes/extrasmanager" />
 	
-	<!-- Support ant's "for" task -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
+	<include file="../Common/build.xml" as="common" />
 	
 	<target name="dist">
-		<delete dir="build" />
-		<mkdir dir="build" />
 		
-		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
-			<classpath>
-				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-				<pathelement path="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-				<pathelement path="libs/imgscalr-lib-4.2.jar" />
-			</classpath>
-		</javac>
+		<var name="usinglibs" value="true" />
 		
-		<!-- Include extra resources -->
-		<copy toDir="build/stencyl/ext/polydes/extrasmanager/res">
-			<fileset dir="src/stencyl/ext/polydes/extrasmanager/res">
-				<exclude name="Resources.java" />
-			</fileset>
-		</copy>
-		
-		<!-- Primary .jar export location -->
-		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build">
-			<zipgroupfileset dir="libs/" includes="*.jar" />
-			<zipfileset src="C:/Common/polydes/Common/PolydesCommonCode.jar" />
-		</jar>
-
-		<!-- Extra .jar locations to copy to -->
-		<for param="file">
-			<path>
-				<pathelement path="J:/Cloud/Dropbox/Public/Extensions/${name}.jar"/>
-			</path>
-			<sequential>
-				<copy file="${swworkdir}/extensions/${name}.jar" tofile="@{file}" />
-			</sequential>
-		</for>
+		<antcall>
+			
+			<target name="common.compile" />
+			
+			<target name="common.copy-common-resources" />
+			<target name="common.copy-resources" />
+			
+			<target name="common.makejar" />
+			<target name="common.copyjar" />
+			
+		</antcall>
 		
 	</target>
 

@@ -1,0 +1,37 @@
+<!--
++==========================================================================
+| Ant Helper
++==========================================================================
+-->
+
+<project name="polydes-ant-helper" basedir=".">
+	
+	<dirname property="ant-helper.base" file="${ant.file.polydes-ant-helper}"/>
+	
+	<!-- Support ant's "for" and "var" tasks -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement path="${ant-helper.base}/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- Only set a var on the first pass -->
+	<macrodef name="set-var-if-unset">
+		<attribute name="name" />
+		<attribute name="value" />
+		<sequential>
+			<if>
+				<or>
+					<equals arg1="${{@{name}}" arg2="" />
+					<not>
+						<isset property="@{name}"/>
+					</not>
+				</or>
+				<then>
+					<var name="@{name}" value="@{value}" />
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+	
+</project>

@@ -4,40 +4,121 @@
 +==========================================================================
 -->
 
-<project name="stencyl" basedir="." default="dist">
+<project name="polydes-common" basedir=".">
 	
-	<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks/" />
+	<!-- Set these properties to match your own setup -->
 	
-	<!-- Support ant's "for" task -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement path="J:/Java/libs/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
-	
-	<target name="dist">
-		<delete dir="build" />
-		<mkdir dir="build" />
+		<property name="swjar" value="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
+		<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks" />
 		
-		<javac source="1.5" target="1.5" destdir="build" debug="on">
-			<src path="src/" />
-			<classpath>
-				<pathelement path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-			</classpath>
-		</javac>
+		<!-- If this is removed, blank out the copyjar task below -->
+		<property name="copytodir" value="J:/Cloud/Dropbox/Public/Extensions" />
+	
+	<!-- /properties to set -->
+	
+	<include file="tools/ant-helper.xml"/>
 		
-		<!-- Include extra resources -->
-		<copy toDir="build/stencyl/ext/polydes/common/res">
-			<fileset dir="src/stencyl/ext/polydes/common/res">
+	<dirname property="common.base" file="${ant.file.polydes-common}"/>
+	<property name="common.src" value="${common.base}/src" />
+	<property name="common.pkg" value="stencyl/ext/polydes/common" />
+	<property name="extensiondir" value="${swworkdir}/extensions" />
+	
+	<var name="this.src" value="./src" />
+	<var name="this.build" value="./build" />
+	<var name="this.lib" value="./libs" />
+	<var name="this.pkg" value="${pkg}" />
+	<var name="this.name" value="${name}" />
+	
+	<!--
+		srcpath and clspath are first set when this script is included.
+		They can then be set by the caller with <var name=".." value=".." />.
+		They will be ignored the second time they're evaluated (when <antcall> is used).
+	-->
+	<set-var-if-unset name="srcpath" value="${this.src}:${common.src}" />
+	<set-var-if-unset name="clspath" value="${swjar}" />
+	<set-var-if-unset name="usinglibs" value="false" />
+	
+	<path id="compile.libs">
+		<fileset dir="${this.lib}" includes="*.jar" />
+	</path>
+	
+	<!-- Compilation -->
+	
+	<target name="compile" >
+		<delete dir="${this.build}" />
+		<mkdir dir="${this.build}" />
+		
+		<echo message="Compiling sources -> ${srcpath}" />
+		<echo message="Using classpath -> ${clspath}" />
+		
+		<if>
+			<equals arg1="${usinglibs}" arg2="true" />
+			<then>
+				<javac source="1.5" target="1.5" srcdir="${srcpath}" destdir="${this.build}" debug="on">
+					<classpath>
+						<pathelement path="${clspath}" />
+						<path refid="compile.libs"/>
+					</classpath>
+				</javac>
+			</then>
+		 	<else>
+		 		<javac source="1.5" target="1.5" srcdir="${srcpath}" classpath="${clspath}" destdir="${this.build}" debug="on" />
+			</else>
+		</if>
+		
+	</target>
+	
+	<!-- Copying resources -->
+	
+	<target name="copy-common-resources">
+		<copy toDir="${this.build}/${common.pkg}/res">
+			<fileset dir="${common.src}/${common.pkg}/res">
 				<exclude name="ResourceLoader.java" />
 			</fileset>
 		</copy>
-		
-		<!-- Primary .jar export location -->
-		<jar destfile="PolydesCommonCode.jar" basedir="build" />
-			<!--<zipgroupfileset dir="libs" includes = "*.jar" />
-		</jar>-->
-		
 	</target>
-
+	
+	<target name="copy-resources">
+		<copy toDir="${this.build}/${this.pkg}/res">
+			<fileset dir="${this.src}/${this.pkg}/res">
+				<exclude name="Resources.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy-defaults">
+		<copy toDir="${this.build}/${this.pkg}/defaults">
+			<fileset dir="${this.src}/${this.pkg}/defaults">
+				<exclude name="Defaults.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Jar files -->
+	
+	<target name="makejar">
+		<if>
+			<equals arg1="${usinglibs}" arg2="true" />
+			<then>
+				<jar destfile="${extensiondir}/${name}.jar" basedir="${this.build}">
+					<zipgroupfileset dir="${this.lib}/" includes="*.jar" />
+				</jar>
+			</then>
+		 	<else>
+		 		<jar destfile="${extensiondir}/${name}.jar" basedir="${this.build}" />
+			</else>
+		</if>
+	</target>
+	
+	<target name="copyjar">
+		<for param="file">
+			<path>
+				<pathelement path="${copytodir}/${name}.jar"/>
+			</path>
+			<sequential>
+				<copy file="${extensiondir}/${name}.jar" tofile="@{file}" />
+			</sequential>
+		</for>
+	</target>
+	
 </project>
