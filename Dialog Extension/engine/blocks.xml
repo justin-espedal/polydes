@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <!--
 
@@ -54,24 +54,24 @@ If you wish to use a dropdown, look at the example below for syntax.
 		</fields>
 	</block>
 
-	<block tag="display-dialog5" spec="show text %0" code='Dialog.globalCall(~, "base", this, "");' type="action" color="gray" returns="void">
+	<block tag="display-dialog5" spec="show text as %0" code='Dialog.globalCall(~, "base", this, "");' type="action" color="gray" returns="void">
 		<fields>
 			<text order="0"></text>
 		</fields>
 	</block>
-	<block tag="display-dialog6" spec="show text %0 and trigger event %1 upon completion" code='Dialog.globalCall(~, "base", this, ~);' type="action" color="gray" returns="void">
-		<fields>
-			<text order="0"></text>
-			<text order="1"></text>
-		</fields>
-	</block>
-	<block tag="display-dialog7" spec="show text %0 with style %1" code='Dialog.globalCall(~, ~, this, "");' type="action" color="gray" returns="void">
+	<block tag="display-dialog6" spec="show text as %0 and trigger event %1 upon completion" code='Dialog.globalCall(~, "base", this, ~);' type="action" color="gray" returns="void">
 		<fields>
 			<text order="0"></text>
 			<text order="1"></text>
 		</fields>
 	</block>
-	<block tag="display-dialog8" spec="show text %0 with style %1 and trigger event %2 upon completion" code='Dialog.globalCall(~, ~, this, ~);' type="action" color="gray" returns="void">
+	<block tag="display-dialog7" spec="show text as %0 with style %1" code='Dialog.globalCall(~, ~, this, "");' type="action" color="gray" returns="void">
+		<fields>
+			<text order="0"></text>
+			<text order="1"></text>
+		</fields>
+	</block>
+	<block tag="display-dialog8" spec="show text as %0 with style %1 and trigger event %2 upon completion" code='Dialog.globalCall(~, ~, this, ~);' type="action" color="gray" returns="void">
 		<fields>
 			<text order="0"></text>
 			<text order="1"></text>
