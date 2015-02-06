@@ -314,11 +314,11 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 
 		else if (e.getActionCommand().equals(lang.get("list.remove")))
 		{
-			int result = UI.showYesNoPrompt(lang.get("globals.confirmdelete",
+			UI.Choice result = UI.showYesNoPrompt(lang.get("globals.confirmdelete",
 					new String[] { getSelected() }), "", lang
 					.get("globals.remove"), lang.get("globals.noremove"));
 
-			if (UI.choseYes(result))
+			if (result == UI.Choice.YES)
 			{
 				model.remove(list.getSelectedIndex());
 				((DefaultListModel) list.getModel()).remove(list

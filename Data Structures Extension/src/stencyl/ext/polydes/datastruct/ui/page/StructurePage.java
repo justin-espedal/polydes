@@ -169,14 +169,14 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 				
 				String plural = (numStructuresToRemove > 1 ? "s" : "");
 				
-				int result =
+				UI.Choice result =
 					UI.showYesCancelPrompt(
 						"Remove Selected Structure" + plural,
 						"Are you sure you want to remove " + numStructuresToRemove +  " structure" + plural + "?",
 						"Remove", "Cancel"
 					);
 				
-				return UI.choseYes(result);
+				return result == UI.Choice.YES;
 			}
 			
 			@Override

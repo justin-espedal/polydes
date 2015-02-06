@@ -257,14 +257,14 @@ public class StructureDefinitionPage extends JPanel
 				if(toRemove.size() > 0 && ((DataItem) toRemove.get(0)).getObject() instanceof StructureDefinition)
 				{
 					StructureDefinition def = (StructureDefinition) ((DataItem) toRemove.get(0)).getObject();
-					int result =
+					UI.Choice result =
 						UI.showYesCancelPrompt(
 							"Remove Structure Definition",
 							"Are you sure you want to remove this structure definition? (Will delete " + Structures.structures.get(def).size() + " structures)",
 							"Remove", "Cancel"
 						);
 					
-					return UI.choseYes(result);
+					return result == UI.Choice.YES;
 				}
 				return false;
 			}

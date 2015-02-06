@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.apache.commons.io.FileUtils;
 
 import stencyl.ext.polydes.extrasmanager.app.FileCreateDialog;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
 import stencyl.sw.SW;
 import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.UI;
 import stencyl.sw.util.dg.YesNoQuestionDialog;
 
 //TODO: Move this to IO and move interface stuff to somewhere in app.
@@ -150,7 +149,7 @@ public class FileOperations
 	public static void deleteFiles(List<File> files)
 	{
 		YesNoQuestionDialog dg = new YesNoQuestionDialog("Delete Files", "Are you sure you want to delete the selected files?", "", new String[] {"Yes", "No"}, true);
-		if(dg.getResult() == JOptionPane.YES_OPTION)
+		if(dg.getResult() == UI.Choice.YES)
 		{
 			for(Object o : files)
 				FileHelper.delete((File) o);
