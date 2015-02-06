@@ -1,0 +1,32 @@
+<!--
++==========================================================================
+| New StencylWorks Extension
++==========================================================================
+-->
+
+<project name="stencyl" basedir="." default="dist">
+	
+	<property name="name" value="PointsExtension" />
+	<property name="pkg" value="stencyl/ext/polydes/points" />
+	
+	<include file="../Common/build.xml" as="common" />
+	
+	<target name="dist">
+		
+		<var name="usinglibs" value="false" />
+		
+		<antcall>
+			
+			<target name="common.compile" />
+			
+			<target name="common.copy-common-resources" />
+			<target name="common.copy-resources" />
+			
+			<target name="common.makejar" />
+			<target name="common.copyjar" />
+			
+		</antcall>
+		
+	</target>
+
+</project>
