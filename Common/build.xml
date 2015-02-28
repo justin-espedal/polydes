@@ -9,10 +9,10 @@
 	<!-- Set these properties to match your own setup -->
 	
 		<property name="swjar" value="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-		<property name="swworkdir" value="J:/Cloud/Dropbox/stencylworks" />
+		<property name="swworkdir" value="C:/Common/Dropbox/stencylworks" />
 		
 		<!-- If this is removed, blank out the copyjar task below -->
-		<property name="copytodir" value="J:/Cloud/Dropbox/Public/Extensions" />
+		<property name="copytodir" value="C:/Common/Dropbox/Public/Extensions" />
 	
 	<!-- /properties to set -->
 	

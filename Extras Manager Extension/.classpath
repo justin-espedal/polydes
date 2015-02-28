@@ -2,16 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre-win"/>
-	<classpathentry kind="lib" path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" sourcepath="/Stencyl/src/">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Stencyl/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="libs/imgscalr-lib-4.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.thebuzzmedia.com/downloads/software/imgscalr/javadoc"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
+	<classpathentry kind="var" path="SW_JAR"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -148,13 +148,17 @@ public class Folder extends DataItem implements Branch<DataItem>
 	{
 		if(Lang.or(policy, DEFAULT_POLICY).duplicateItemNamesAllowed || itemNames.contains(item.getName()))
 		{
-			int pos = item.getParent().indexOfItem(item);
-			items.remove(item);
-			item.setParent(null, false);
-			itemNames.remove(item.getName());
-			for(BranchListener<DataItem> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
+			int pos = indexOfItem(item);
 			
-			setDirty(true);
+			if(pos != -1)
+			{
+				items.remove(item);
+				item.setParent(null, false);
+				itemNames.remove(item.getName());
+				for(BranchListener<DataItem> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
+			
+				setDirty(true);
+			}
 		}
 	}
 	

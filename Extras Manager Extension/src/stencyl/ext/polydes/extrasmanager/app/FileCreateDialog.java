@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.extrasmanager.app;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -53,7 +52,6 @@ public class FileCreateDialog extends StencylDialog
 			owner, 
 			"Create New File", 
 			WIDTH, HEIGHT, 
-			new Color(80, 80, 80), 
 			false
 		);
 		

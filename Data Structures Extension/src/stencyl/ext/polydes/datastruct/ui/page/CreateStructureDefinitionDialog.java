@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.datastruct.ui.page;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -60,7 +59,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	
 	public CreateStructureDefinitionDialog()
 	{
-		super(StructureDefinitionsWindow.get(), "Create New Structure", 450, 370, new Color(80, 80, 80), true);
+		super(StructureDefinitionsWindow.get(), "Create New Structure", 450, 370, true, true, true);
 	}
 	
 	@Override
@@ -68,7 +67,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	{
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(Theme.LIGHT_BG_COLOR);
-		panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Theme.DIALOG_BORDER));
 		
 		DialogPanel dp = new DialogPanel(Theme.LIGHT_BG_COLOR);
 		

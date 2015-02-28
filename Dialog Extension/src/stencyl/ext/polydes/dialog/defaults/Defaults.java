@@ -10,10 +10,12 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import stencyl.sw.util.debug.Debug;
+import org.apache.log4j.Logger;
 
 public class Defaults
 {
+	private static final Logger log = Logger.getLogger(Defaults.class);
+	
 	private static Defaults _instance;
 
 	private Defaults()
@@ -72,7 +74,7 @@ public class Defaults
 
 		catch (Exception e)
 		{
-			Debug.error(e);
+			log.error(e.getMessage(), e);
 		}
 
 		BufferedImage bi = new BufferedImage(icon.getIconWidth(),

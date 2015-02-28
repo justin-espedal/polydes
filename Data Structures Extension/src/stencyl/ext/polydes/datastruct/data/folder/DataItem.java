@@ -51,7 +51,11 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 			return;
 		
 		if(this.parent != null)
-			this.parent.removeItem(this);
+		{
+			Branch<DataItem> oldParent = this.parent;
+			this.parent = null;
+			oldParent.removeItem(this);
+		}
 		
 		this.parent = parent;
 		if(addToParent)

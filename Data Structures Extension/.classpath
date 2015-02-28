@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="target/generated-sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre-win"/>
-	<classpathentry kind="lib" path="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" sourcepath="/Stencyl/src/"/>
 	<classpathentry kind="lib" path="libs/antlr-runtime-4.4.jar" sourcepath="J:/Java/libs/antlr4-4.4/runtime/Java/src">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.antlr.org/api/Java/"/>
@@ -15,5 +14,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
+	<classpathentry kind="var" path="SW_JAR"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

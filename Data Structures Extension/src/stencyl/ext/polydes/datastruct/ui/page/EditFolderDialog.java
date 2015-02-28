@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.datastruct.ui.page;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,7 +10,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -37,14 +35,9 @@ public class EditFolderDialog extends StencylDialog
 	
 	JButton okButton;
 	
-	public EditFolderDialog(JDialog parent)
-	{
-		super(parent, "Edit Folder", 350, 200, new Color(80, 80, 80), true);
-	}
-	
 	public EditFolderDialog(JFrame parent)
 	{
-		super(parent, "Edit Folder", 350, 200, new Color(80, 80, 80), true);
+		super(parent, "Edit Folder", 350, 200, true);
 	}
 	
 	@Override
@@ -52,7 +45,7 @@ public class EditFolderDialog extends StencylDialog
 	{
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(Theme.LIGHT_BG_COLOR);
-		panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Theme.BORDER_COLOR));
 		
 		DialogPanel dp = new DialogPanel(Theme.LIGHT_BG_COLOR);
 		

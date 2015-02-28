@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.paint.app.editors.bitmapfont;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
@@ -55,7 +54,7 @@ public final class PackGlyphsDialog extends StencylDialog
 	
 	private PackGlyphsDialog(BitmapFont font, FontDrawArea area, JFrame parent)
 	{
-		super(parent, "Pack Glyphs", WIDTH, HEIGHT, new Color(80, 80, 80), false);
+		super(parent, "Pack Glyphs", WIDTH, HEIGHT, false);
 		
 		this.font = font;
 		this.area = area;

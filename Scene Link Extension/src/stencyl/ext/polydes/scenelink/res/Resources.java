@@ -13,14 +13,15 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-
+import org.apache.log4j.Logger;
 
 import stencyl.ext.polydes.scenelink.Main;
 import stencyl.ext.polydes.scenelink.ui.combos.ImageReferenceComboModel;
-import stencyl.sw.util.debug.Debug;
 
 public class Resources
 {
+	private static final Logger log = Logger.getLogger(Resources.class);
+	
 	private static Resources _instance;
 	private static ArrayList<String> resourceNames;
 	private static HashMap<String, ImageIcon> iconCache = new HashMap<String, ImageIcon>();
@@ -117,7 +118,7 @@ public class Resources
 
 			catch (Exception e)
 			{
-				Debug.error(e);
+				log.error(e.getMessage(), e);
 			}
 
 			return new ImageIcon();

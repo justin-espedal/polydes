@@ -216,7 +216,7 @@ public class StructureDefinitions
 			Element e = doc.createElement("structure");
 			XML.writeDefinition(doc, e, def);
 			doc.appendChild(e);
-			FileHelper.writeXMLToFile(doc, new File(file, def.getName() + ".xml").getAbsolutePath());
+			FileHelper.writeXMLToFile(doc, new File(file, def.getName() + ".xml"));
 			if(def.getIconImg() != null)
 				ImageIO.write(def.getIconImg(), "png", new File(file, def.getName() + ".png"));
 			if(!def.customCode.isEmpty())

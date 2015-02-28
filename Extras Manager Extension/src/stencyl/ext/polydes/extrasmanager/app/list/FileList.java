@@ -35,11 +35,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import stencyl.ext.polydes.extrasmanager.Main;
-import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
+import org.apache.log4j.Logger;
+
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
 import stencyl.ext.polydes.common.ui.darktree.DarkTree;
+import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
 import stencyl.ext.polydes.extrasmanager.data.FileEditor;
@@ -56,7 +58,6 @@ import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.comp.GroupButton;
-import stencyl.sw.util.debug.Debug;
 
 import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.list.QuickListFilterField;
@@ -64,6 +65,8 @@ import com.jidesoft.swing.PaintPanel;
 
 public class FileList extends JList implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {
+	private static final Logger log = Logger.getLogger(FileList.class);
+	
 	public static final int H_PADDING = 40;
 	public static final int V_PADDING = 56;
 	
@@ -582,7 +585,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
             	
             	catch(AWTException ae) 
             	{
-            		Debug.log(ae);
+            		log.info(ae);
             	}
             }	
         }

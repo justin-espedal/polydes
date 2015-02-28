@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.extrasmanager.app;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -50,7 +49,6 @@ public class FileRenameDialog extends StencylDialog
 			owner, 
 			"Rename File", 
 			WIDTH, HEIGHT, 
-			new Color(80, 80, 80), 
 			false
 		);
 		

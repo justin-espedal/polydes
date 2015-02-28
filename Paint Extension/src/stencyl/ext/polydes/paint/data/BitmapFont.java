@@ -16,7 +16,6 @@ import org.w3c.dom.NodeList;
 import stencyl.core.api.Reference;
 import stencyl.core.lib.Resource;
 import stencyl.core.lib.io.AbstractReader;
-import stencyl.core.lib.io.IOHelper;
 import stencyl.sw.util.FileHelper;
 
 //http://www.angelcode.com/products/bmfont/doc/file_format.html
@@ -75,7 +74,7 @@ public class BitmapFont extends LinkedDataItem
 		Element root;
 		try
 		{
-			root = IOHelper.readXMLFromFile(loc);
+			root = FileHelper.readXMLFromFile(loc).getDocumentElement();
 		}
 		catch (IOException e3)
 		{
@@ -270,7 +269,7 @@ public class BitmapFont extends LinkedDataItem
 			
 			document.appendChild(root);
 		
-			FileHelper.writeXMLToFile(document, loc.getAbsolutePath());
+			FileHelper.writeXMLToFile(document, loc);
 		}
 		catch (IOException e)
 		{

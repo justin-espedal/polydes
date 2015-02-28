@@ -1,7 +1,6 @@
 package stencyl.ext.polydes.datastruct.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -25,7 +24,7 @@ public class MiniDialog extends StencylDialog
 	
 	public MiniDialog(JComponent content, String title, int width, int height)
 	{
-		super(SW.get(), title, width, height, new Color(60, 60, 60), false, false);
+		super(SW.get(), title, width, height, false, false);
 
 		if(!Util.isMacOSX())
 		{

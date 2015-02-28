@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Stencyl/dist/sw.jar"/>
+	<classpathentry kind="var" path="SW_JAR"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

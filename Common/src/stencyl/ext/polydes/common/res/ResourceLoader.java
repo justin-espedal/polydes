@@ -5,10 +5,12 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
-import stencyl.sw.util.debug.Debug;
+import org.apache.log4j.Logger;
 
 public class ResourceLoader
 {
+	private static final Logger log = Logger.getLogger(ResourceLoader.class);
+	
 	private static ResourceLoader _instance;
 	private static HashMap<String, ImageIcon> iconCache = new HashMap<String, ImageIcon>();
 
@@ -42,7 +44,7 @@ public class ResourceLoader
 
 			catch (Exception e)
 			{
-				Debug.error(e);
+				log.error(e.getMessage(), e);
 			}
 
 			return new ImageIcon();
