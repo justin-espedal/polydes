@@ -25,7 +25,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import stencyl.core.lib.io.read.ActorTypeReader.ListElement;
 import stencyl.ext.polydes.common.util.Lang;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
@@ -334,8 +333,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 					list.getSelectedIndex() - 1);
 			Object curr = list.getModel().getElementAt(list.getSelectedIndex());
 
-			model.set(list.getSelectedIndex(), (ListElement) above);
-			model.set(list.getSelectedIndex() - 1, (ListElement) curr);
+			model.set(list.getSelectedIndex(), above);
+			model.set(list.getSelectedIndex() - 1, curr);
 
 			((DefaultListModel) list.getModel()).setElementAt(above,
 					list.getSelectedIndex());
@@ -353,8 +352,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 					list.getSelectedIndex() + 1);
 			Object curr = list.getModel().getElementAt(list.getSelectedIndex());
 
-			model.set(list.getSelectedIndex(), (ListElement) below);
-			model.set(list.getSelectedIndex() + 1, (ListElement) curr);
+			model.set(list.getSelectedIndex(), below);
+			model.set(list.getSelectedIndex() + 1, curr);
 
 			((DefaultListModel) list.getModel()).setElementAt(below,
 					list.getSelectedIndex());
