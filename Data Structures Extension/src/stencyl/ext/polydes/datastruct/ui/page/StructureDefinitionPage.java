@@ -283,7 +283,7 @@ public class StructureDefinitionPage extends JPanel
 		emptySidebarBottom = new JPanel(new BorderLayout());
 		emptySidebarBottom.setBackground(UIConsts.SIDEBAR_COLOR);
 		
-		int initDivLoc = Prefs.get(Prefs.DEFPAGE_SIDEWIDTH);
+		int initDivLoc = Prefs.<Integer>get(Prefs.DEFPAGE_SIDEWIDTH);
 		
 		splitPane.setTopComponent(definitionTreeView = ListUtils.addHeader(definitionTree, "Object"));
 		splitPane.setBottomComponent(emptySidebarBottom);

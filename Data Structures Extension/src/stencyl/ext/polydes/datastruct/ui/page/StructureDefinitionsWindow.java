@@ -130,12 +130,12 @@ public class StructureDefinitionsWindow extends JDialog
 	{
 		initialized = true;
 		
-		int x = Prefs.get(Prefs.DEFPAGE_X);
-		int y = Prefs.get(Prefs.DEFPAGE_Y);
-		int w = Prefs.get(Prefs.DEFPAGE_WIDTH);
-		int h = Prefs.get(Prefs.DEFPAGE_HEIGHT);
+		int x = Prefs.<Integer>get(Prefs.DEFPAGE_X);
+		int y = Prefs.<Integer>get(Prefs.DEFPAGE_Y);
+		int w = Prefs.<Integer>get(Prefs.DEFPAGE_WIDTH);
+		int h = Prefs.<Integer>get(Prefs.DEFPAGE_HEIGHT);
 		
-		int dl = Prefs.get(Prefs.DEFPAGE_SIDEDL);
+		int dl = Prefs.<Integer>get(Prefs.DEFPAGE_SIDEDL);
 		
 		splitPane.setLeftComponent(StructureDefinitionPage.get().getSidebar());
 		splitPane.setRightComponent(StructureDefinitionPage.get());
