@@ -1,12 +1,18 @@
 /**
  * @author Justin Espedal
  */
+import com.stencyl.behavior.Script;
 import com.stencyl.models.Sound;
+import com.stencyl.Data;
 
 class TypingScripts extends DialogExtension
 {
 	public var typeSound:Sound;
 	public var stopTypeSound:Bool;
+	public var typeSoundDelay = 0;
+	public var curSoundDelay = 0;
+	public var typeSoundArray:Array<Dynamic>;
+	public var storedTypeSound:Array<Dynamic>;
 	
 	public function new(dg:DialogBox)
 	{
@@ -16,25 +22,33 @@ class TypingScripts extends DialogExtension
 		
 		typeSound = null;
 		stopTypeSound = false;
+		typeSoundDelay = style.characterSkipSFX;
 		
 		cmds =
 		[
 			"font"=>typefont,
 			"color"=>typecolor,
 			"typespeed"=>typespeed,
-			"typesound"=>setTypeSound
+			"typesound"=>setTypeSound,
+			"soundskip"=>setTypeSoundSkip
 		];
 		
 		addCallback(Dialog.WHEN_CREATED, function():Void
 		{
-			typeSound = style.defaultTypeSound;
+			//typeSound = style.defaultTypeSound;
+			typeSoundArray = style.defaultRandomTypeSounds;
+			storedTypeSound = typeSoundArray;
 		});
 		addCallback(Dialog.WHEN_CHAR_TYPED, function():Void
 		{
-			if(!stopTypeSound && dg.msg[dg.typeIndex] != " ")
+			if(!stopTypeSound && (style.playTypeSoundOnSpaces || dg.msg[dg.typeIndex] != " "))
 			{
-				if(typeSound != null)
-					s.playSound(typeSound);
+				typeSound = cast Data.get().resourceMap.get(typeSoundArray[Std.random(typeSoundArray.length)]);
+				if(typeSound != null && curSoundDelay-- == 0)
+				{
+					Script.playSound(typeSound);
+					curSoundDelay = typeSoundDelay;
+				}
 			}
 		});
 	}
@@ -57,8 +71,25 @@ class TypingScripts extends DialogExtension
 	public function setTypeSound(sound:Dynamic):Void
 	{
 		if(sound == "none")
-			typeSound = null;
+			typeSoundArray = new Array<Dynamic>();
 		else
-			typeSound = Util.sound(sound);
+		{
+			if(Std.is(sound, String))
+			{
+				typeSoundArray = new Array<Dynamic>();
+				typeSoundArray.push(sound);
+				storedTypeSound = typeSoundArray;
+			}
+			else if(Std.is(sound, Array))
+			{
+				typeSoundArray = sound;
+				storedTypeSound = typeSoundArray;
+			}
+		}
+	}
+
+	public function setTypeSoundSkip(numToSkip:Int):Void
+	{
+		typeSoundDelay = numToSkip;
 	}
 }

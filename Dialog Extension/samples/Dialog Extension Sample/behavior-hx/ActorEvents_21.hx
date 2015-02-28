@@ -4,6 +4,7 @@ import com.stencyl.graphics.G;
 import com.stencyl.graphics.BitmapWrapper;
 
 import com.stencyl.behavior.Script;
+import com.stencyl.behavior.Script.*;
 import com.stencyl.behavior.ActorScript;
 import com.stencyl.behavior.SceneScript;
 import com.stencyl.behavior.TimedTask;
@@ -24,15 +25,15 @@ import com.stencyl.Input;
 import com.stencyl.Key;
 import com.stencyl.utils.Utils;
 
-import nme.ui.Mouse;
-import nme.display.Graphics;
-import nme.display.BlendMode;
-import nme.display.BitmapData;
-import nme.display.Bitmap;
-import nme.events.Event;
-import nme.events.KeyboardEvent;
-import nme.events.TouchEvent;
-import nme.net.URLLoader;
+import openfl.ui.Mouse;
+import openfl.display.Graphics;
+import openfl.display.BlendMode;
+import openfl.display.BitmapData;
+import openfl.display.Bitmap;
+import openfl.events.Event;
+import openfl.events.KeyboardEvent;
+import openfl.events.TouchEvent;
+import openfl.net.URLLoader;
 
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
@@ -71,9 +72,9 @@ class ActorEvents_21 extends ActorScript
 {          	
 	
  
- 	public function new(dummy:Int, actor:Actor, engine:Engine)
+ 	public function new(dummy:Int, actor:Actor, dummy2:Engine)
 	{
-		super(actor, engine);	
+		super(actor);
 		
 	}
 	

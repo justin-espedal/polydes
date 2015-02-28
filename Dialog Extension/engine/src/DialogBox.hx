@@ -495,6 +495,8 @@ class DialogBox
 	
 	public function update():Void
 	{
+		if(msg == null)
+			return;
 		if(!paused && typeIndex < msg.length - 1)
 		{
 			if(stepTimer > 0)
@@ -634,8 +636,6 @@ private class DialogLine
 	{
 		pos.x += x;
 		pos.y += y;
-
-		trace("move by " + x + ", " + y);
 
 		for(handle in drawHandledChars)
 		{

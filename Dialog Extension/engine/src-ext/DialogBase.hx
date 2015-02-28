@@ -1,6 +1,7 @@
 /**
  * @author Justin Espedal
  */
+import com.stencyl.behavior.Script;
 import com.stencyl.models.Sound;
 
 class DialogBase extends DialogExtension
@@ -46,14 +47,14 @@ class DialogBase extends DialogExtension
 				messageBegan = true;
 				var snd:Sound = style.msgStartSound;
 				if(snd != null)
-					s.playSound(snd);
+					Script.playSound(snd);
 			}
 			
-			s.setGameAttribute(style.controlAttribute, true);
+			Script.setGameAttribute(style.controlAttribute, true);
 		});
 		addCallback(Dialog.WHEN_MESSAGE_ENDS, function():Void
 		{
-			s.setGameAttribute(style.controlAttribute, false);
+			Script.setGameAttribute(style.controlAttribute, false);
 			messageBegan = false;
 		});
 		addCallback(Dialog.ALWAYS, function():Void
@@ -84,7 +85,7 @@ class DialogBase extends DialogExtension
 		
 		var snd:Sound = style.endSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 		
 		window.tweenCompleteNotify.push(function():Void
 		{
@@ -98,7 +99,7 @@ class DialogBase extends DialogExtension
 		dg.clearMessage();
 		var snd:Sound = style.clearSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 	}
 	
 	public function close():Void
@@ -106,7 +107,7 @@ class DialogBase extends DialogExtension
 		dg.closeMessage();
 		var snd:Sound = style.closeSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 	}
 
 	public function dgGo(toCall:String):Void

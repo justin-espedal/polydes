@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<palette>
+	<category title="Dialog" color="lblue">
+
+		<section title="Dialog">
+
+			<header title="Show dialog chunk" />
+			<block tag="display-dialog" />
+			<block tag="display-dialog2" />
+			<block tag="display-dialog3" />
+			<block tag="display-dialog4" />
+			
+			<header title="Show text as dialog" />
+			<block tag="display-dialog5" />
+			<block tag="display-dialog6" />
+			<block tag="display-dialog7" />
+			<block tag="display-dialog8" />
+			
+		</section>
+
+	</category>
+</palette>

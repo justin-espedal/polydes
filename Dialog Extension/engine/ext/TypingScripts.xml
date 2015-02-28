@@ -13,8 +13,13 @@
 		<cmd name="typesound">
 			<arg name="sound" type="Sound" />
 		</cmd>
+		<cmd name="soundskip">
+			<arg name="numToSkip" type="Dynamic" />
+		</cmd>
 	</cmds>
 	<prefs>
-		<pref name="defaultTypeSound" type="Sound" label="Default Type Sound" />
+		<pref name="defaultRandomTypeSounds" type="Array" label="Default Random Type Sounds" />
+		<pref name="characterSkipSFX" type="Int" label="Number of characters to skip for playing Type Sound." />
+		<pref name="playTypeSoundOnSpaces" type="Boolean" label="Play Type Sound On Spaces" />
 	</prefs>
 </extension>

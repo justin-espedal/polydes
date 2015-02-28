@@ -6,10 +6,10 @@
     <actor adamp="0.0" ascale="true" atlasID="0" bodytype="2" continuous="true" desc="" eventsnippetid="5" fixedrot="false" fric="0.2" gid="3" id="34" ignoreg="false" inertia="1.0" ldamp="0.0" mass="1.0" name="Controls" oid="-1" pausable="true" physicsMode="0" rest="0.0" shared="false" sprite="35" static="false">
         <snippets>
             <s enabled="true" id="6">
+                <prop id="2147483647" list="0" val="thisactor"/>
                 <prop id="1" list="0" val=""/>
                 <prop id="2" list="0" val="No Control"/>
                 <prop id="3" list="0" val="false"/>
-                <prop id="2147483647" list="0" val="thisactor"/>
             </s>
         </snippets>
     </actor>

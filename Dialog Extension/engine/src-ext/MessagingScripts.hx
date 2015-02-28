@@ -1,6 +1,8 @@
 /**
  * @author Justin Espedal
  */
+import com.stencyl.behavior.Script;
+
 class MessagingScripts extends DialogExtension
 {
 	public var attributes:Map<String, Dynamic>;
@@ -30,11 +32,11 @@ class MessagingScripts extends DialogExtension
 		switch("" + args[0])
 		{
 			case "game":
-				s.setGameAttribute("" + args[1], args[2]);
+				Script.setGameAttribute("" + args[1], args[2]);
 			case "dialog":
 				attributes.set("" + args[1], args[2]);
 			case "scenebhv":
-				s.setValueForScene("" + args[1], "" + args[2], args[3]);
+				Script.setValueForScene("" + args[1], "" + args[2], args[3]);
 			case "actorbhv":
 				GlobalActorID.get("" + args[1]).setValue("" + args[2], "" + args[3], args[4]);
 			case "actor":
@@ -47,11 +49,11 @@ class MessagingScripts extends DialogExtension
 		switch("" + source[0])
 		{
 			case "game":
-				return s.getGameAttribute("" + source[1]);
+				return Script.getGameAttribute("" + source[1]);
 			case "dialog":
 				return attributes.get("" + source[1]);
 			case "scenebhv":
-				return s.getValueForScene("" + source[1], "" + source[2]);
+				return Script.getValueForScene("" + source[1], "" + source[2]);
 			case "actorbhv":
 				return GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]);
 			case "actor":
@@ -66,11 +68,11 @@ class MessagingScripts extends DialogExtension
 		switch("" + source[0])
 		{
 			case "game":
-				toShow = "" + s.getGameAttribute("" + source[1]);
+				toShow = "" + Script.getGameAttribute("" + source[1]);
 			case "dialog":
 				toShow = "" + attributes.get("" + source[1]);
 			case "scenebhv":
-				toShow = "" + s.getValueForScene("" + source[1], "" + source[2]);
+				toShow = "" + Script.getValueForScene("" + source[1], "" + source[2]);
 			case "actorbhv":
 				toShow = "" + GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]);
 			case "actor":
@@ -84,11 +86,11 @@ class MessagingScripts extends DialogExtension
 		switch("" + source[0])
 		{
 			case "game":
-				s.getGameAttribute("" + source[1]).push(source[2]);
+				Script.getGameAttribute("" + source[1]).push(source[2]);
 			case "dialog":
 				attributes.get("" + source[1]).push(source[2]);
 			case "scenebhv":
-				s.getValueForScene("" + source[1], "" + source[2]).push(source[3]);
+				Script.getValueForScene("" + source[1], "" + source[2]).push(source[3]);
 			case "actorbhv":
 				GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]).push(source[4]);
 			case "actor":
@@ -101,11 +103,11 @@ class MessagingScripts extends DialogExtension
 		switch("" + source[0])
 		{
 			case "game":
-				s.getGameAttribute("" + source[1]).remove(source[2]);
+				Script.getGameAttribute("" + source[1]).remove(source[2]);
 			case "dialog":
 				attributes.get("" + source[1]).remove(source[2]);
 			case "scenebhv":
-				s.getValueForScene("" + source[1], "" + source[2]).remove(source[3]);
+				Script.getValueForScene("" + source[1], "" + source[2]).remove(source[3]);
 			case "actorbhv":
 				GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]).remove(source[4]);
 			case "actor":
@@ -115,7 +117,7 @@ class MessagingScripts extends DialogExtension
 	
 	public function messagescene(behaviorName:String, messageName:String, args:Array<Dynamic>):Void
 	{
-		s.sayToScene(behaviorName, messageName, args);
+		Script.sayToScene(behaviorName, messageName, args);
 	}
 	
 	public function messageactor(actorname:String, behaviorName:String, messageName:String, args:Array<Dynamic>):Void

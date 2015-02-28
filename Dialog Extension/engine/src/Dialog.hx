@@ -49,7 +49,6 @@ class Dialog
 	];
 	
 	public static var activeDialogBox:DialogBox = null;
-	public static var scriptReference:Script;
 	public static var graphicsReference:G;
 	
 	public static var dialogBoxes:Array<DialogBox>;
@@ -339,7 +338,6 @@ class Dialog
 	
 	public function loadScene(state:Engine):Void
 	{
-		scriptReference = new Script(state);
 		graphicsReference = state.g;
 	}
 	

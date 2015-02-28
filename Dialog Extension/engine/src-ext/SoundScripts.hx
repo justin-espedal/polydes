@@ -24,31 +24,31 @@ class SoundScripts extends DialogExtension
 	
 	public function playsound(sound:String):Void
 	{
-		s.playSound(Util.sound(sound));
+		Script.playSound(Util.sound(sound));
 	}
 	
 	public function loopsound(sound:String):Void
 	{
-		s.loopSound(Util.sound(sound));
+		Script.loopSound(Util.sound(sound));
 	}
 	
 	public function stopsound():Void
 	{
-		s.stopAllSounds();
+		Script.stopAllSounds();
 	}
 	
 	public function playchan(sound:String, channel:Int):Void
 	{
-		s.playSoundOnChannel(Util.sound(sound), channel);
+		Script.playSoundOnChannel(Util.sound(sound), channel);
 	}
 	
 	public function loopchan(sound:String, channel:Int):Void
 	{
-		s.loopSoundOnChannel(Util.sound(sound), channel);
+		Script.loopSoundOnChannel(Util.sound(sound), channel);
 	}
 	
 	public function stopchan(channel:Int):Void
 	{
-		s.stopSoundOnChannel(channel);
+		Script.stopSoundOnChannel(channel);
 	}
 }

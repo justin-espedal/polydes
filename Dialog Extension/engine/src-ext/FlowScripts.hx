@@ -5,6 +5,7 @@ import com.stencyl.models.Actor;
 import com.stencyl.models.Sound;
 import com.stencyl.behavior.Script;
 import com.stencyl.Engine;
+import com.stencyl.Input;
 
 class FlowScripts extends DialogExtension
 {
@@ -55,9 +56,9 @@ class FlowScripts extends DialogExtension
 				switch("" + source[0])
 				{
 					case "game":
-						done = (s.getGameAttribute("" + source[1]) == source[2]);
+						done = (Script.getGameAttribute("" + source[1]) == source[2]);
 					case "scenebhv":
-						done = (s.getValueForScene("" + source[1], "" + source[2]) ==  source[3]);
+						done = (Script.getValueForScene("" + source[1], "" + source[2]) ==  source[3]);
 					case "actorbhv":
 						done = (GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]) ==  source[4]);
 					case "actor":
@@ -79,11 +80,11 @@ class FlowScripts extends DialogExtension
 						waitElapsed = 0;
 						var snd:Sound = style.waitingSound;
 						if(snd != null)
-							s.playSound(snd);
+							Script.playSound(snd);
 					}
 				}
 
-				if(s.isKeyPressed(style.advanceDialogButton) || skipLevel(2))
+				if(Input.pressed(style.advanceDialogButton) || skipLevel(2))
 				{
 					dg.paused = false;
 					pointer.end();
@@ -100,7 +101,7 @@ class FlowScripts extends DialogExtension
 					{
 						var snd:Sound = style.inputSound;
 						if(snd != null)
-							s.playSound(snd);
+							Script.playSound(snd);
 					}
 				}
 			}
@@ -136,7 +137,7 @@ class FlowScripts extends DialogExtension
 		{
 			var snd:Sound = style.waitingSound;
 			if(snd != null)
-				s.playSound(snd);
+				Script.playSound(snd);
 		}
 	}
 	

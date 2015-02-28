@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <pack>
-    <snippet attachedevent="true" class="scripts.SceneEvents_0" classname="scripts.SceneEvents_0" desc="Scene Specific Events" description="Scene Specific Events" design="true" drawOrder="0" id="1" language="" name="SceneEvents_0" oid="-1" package="scripts." sceneid="0" scenespecific="true" shared="false" type="scene">
+    <snippet attachedevent="true" class="scripts.SceneEvents_0" classname="scripts.SceneEvents_0" desc="Scene Specific Events" description="Scene Specific Events" design="true" drawOrder="0" id="1" name="SceneEvents_0" oid="-1" package="scripts." sceneid="0" scenespecific="true" shared="false" type="scene">
         <boolean default="false" defaultValue="false" desc="" dropdown="" fullname="Already Started" hidden="false" id="1" name="_AlreadyStarted" order="0"/>
         <blocks/>
         <events>
@@ -8,7 +8,7 @@
             <event displayName="Keyboard" enabled="true" id="2" name="event-key-press-release" order="3" repeats="true"/>
         </events>
     </snippet>
-    <snippet attachedevent="true" class="scripts.ActorEvents_17" classname="scripts.ActorEvents_17" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="3" language="" name="ActorEvents_17" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
+    <snippet attachedevent="true" class="scripts.ActorEvents_17" classname="scripts.ActorEvents_17" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="3" name="ActorEvents_17" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
         <number default="0.0" defaultValue="0.0" desc="" dropdown="" fullname="Opacity" hidden="false" id="1" name="_Opacity" order="0"/>
         <blocks/>
         <events>
@@ -16,19 +16,19 @@
             <event displayName="Created" enabled="true" id="2" name="init" order="1" repeats="true"/>
         </events>
     </snippet>
-    <snippet attachedevent="true" class="scripts.ActorEvents_21" classname="scripts.ActorEvents_21" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="4" language="" name="ActorEvents_21" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
+    <snippet attachedevent="true" class="scripts.ActorEvents_21" classname="scripts.ActorEvents_21" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="4" name="ActorEvents_21" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
         <blocks/>
         <events/>
     </snippet>
-    <snippet attachedevent="true" class="scripts.ActorEvents_34" classname="scripts.ActorEvents_34" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="5" language="" name="ActorEvents_34" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
+    <snippet attachedevent="true" class="scripts.ActorEvents_34" classname="scripts.ActorEvents_34" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="5" name="ActorEvents_34" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
         <blocks/>
         <events/>
     </snippet>
-    <snippet attachedevent="false" class="scripts.Design_6_6_TouchControl" classname="scripts.Design_6_6_TouchControl" desc="" description="" design="true" drawOrder="0" id="6" language="" name="Touch Control" oid="-1" package="scripts" scenespecific="false" shared="false" type="actor">
+    <snippet attachedevent="false" class="scripts.Design_6_6_TouchControl" classname="scripts.Design_6_6_TouchControl" desc="" description="" design="true" drawOrder="0" id="6" name="Touch Control" oid="-1" package="scripts" scenespecific="false" shared="false" type="actor">
+        <actor default="thisactor" defaultValue="thisactor" desc="" dropdown="" fullname="Actor" hidden="true" id="2147483647" name="actor" order="0"/>
         <text default="" defaultValue="" desc="" dropdown="" fullname="control" hidden="false" id="1" name="_control" order="1"/>
         <control default="" defaultValue="" desc="" dropdown="" fullname="ctrl" hidden="true" id="2" name="_ctrl" order="2"/>
         <boolean default="false" defaultValue="false" desc="" dropdown="" fullname="down" hidden="true" id="3" name="_down" order="3"/>
-        <actor default="thisactor" defaultValue="thisactor" desc="" dropdown="" fullname="Actor" hidden="true" id="2147483647" name="actor" order="0"/>
         <blocks/>
         <events>
             <event displayName="Created" enabled="true" id="1" name="init" order="1" repeats="true"/>
@@ -37,13 +37,13 @@
             <event displayName="Click" enabled="true" id="4" name="event-mouse-press-release" order="3" repeats="true"/>
         </events>
     </snippet>
-    <snippet attachedevent="false" class="scripts.Design_7_7_SceneSwitcher" classname="scripts.Design_7_7_SceneSwitcher" desc="" description="" design="true" drawOrder="0" id="7" language="" name="Scene Switcher" oid="-1" package="scripts" scenespecific="false" shared="false" type="scene">
+    <snippet attachedevent="false" class="scripts.Design_7_7_SceneSwitcher" classname="scripts.Design_7_7_SceneSwitcher" desc="" description="" design="true" drawOrder="0" id="7" name="Scene Switcher" oid="-1" package="scripts" scenespecific="false" shared="false" type="scene">
         <blocks/>
         <events>
             <event displayName="gotoScene" enabled="true" id="1" name="event-custom-code" order="1" repeats="true"/>
         </events>
     </snippet>
-    <snippet attachedevent="true" class="scripts.SceneEvents_1" classname="scripts.SceneEvents_1" desc="Scene Specific Events" description="Scene Specific Events" design="true" drawOrder="0" id="8" language="" name="SceneEvents_1" oid="-1" package="scripts." sceneid="1" scenespecific="true" shared="false" type="scene">
+    <snippet attachedevent="true" class="scripts.SceneEvents_1" classname="scripts.SceneEvents_1" desc="Scene Specific Events" description="Scene Specific Events" design="true" drawOrder="0" id="8" name="SceneEvents_1" oid="-1" package="scripts." sceneid="1" scenespecific="true" shared="false" type="scene">
         <blocks/>
         <events/>
     </snippet>

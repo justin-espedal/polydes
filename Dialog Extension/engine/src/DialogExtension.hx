@@ -9,7 +9,6 @@ import scripts.ds.dialog.Style;
 class DialogExtension
 {
 	public var dg:DialogBox;
-	public var s:Script;
 	public var g:G;
 	
 	public var name:String;
@@ -24,7 +23,6 @@ class DialogExtension
 	private function new(dg:DialogBox)
 	{
 		this.dg = dg;
-		s = Dialog.scriptReference;
 		g = Dialog.graphicsReference;
 		style = dg.style;
 		

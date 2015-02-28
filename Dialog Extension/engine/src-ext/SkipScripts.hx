@@ -1,7 +1,10 @@
 /**
  * @author Justin Espedal
  */
+import com.stencyl.behavior.Script;
 import com.stencyl.models.Sound;
+import com.stencyl.Input;
+import com.stencyl.Data;
 
 class SkipScripts extends DialogExtension
 {
@@ -9,7 +12,7 @@ class SkipScripts extends DialogExtension
 
 	public var msgSkippable:Bool;
 	public var curSkipLevel:Int;
-	public var soundTimer:Int;
+	public var soundTimer:Float;
 	public var restoreSpeedTo:Float;
 	
 	public var typingScript:TypingScripts;
@@ -42,13 +45,19 @@ class SkipScripts extends DialogExtension
 		{
 			if(msgSkippable)
 			{
-				if(s.isKeyPressed(style.instantButton))
+				// Make the zoom/fast sound play immediately
+				if(Input.pressed(style.fastButton) || Input.pressed(style.zoomButton))
+				{
+					soundTimer = Math.max(style.fastSoundInterval, style.zoomSoundInterval);
+				}
+
+				if(Input.pressed(style.instantButton))
 				{
 					var snd:Sound = style.instantSound;
 					if(snd != null)
-						s.playSound(snd);
+						Script.playSound(snd);
 				}
-				if(s.isKeyDown(style.instantButton))
+				if(Input.check(style.instantButton))
 				{
 					setTypingScriptSounds(null);
 					
@@ -64,7 +73,7 @@ class SkipScripts extends DialogExtension
 					
 					dg.stepTimer = dg.typeDelay = 0;
 				}
-				else if(s.isKeyDown(style.zoomButton))
+				else if(Input.check(style.zoomButton))
 				{
 					if(style.zoomSoundInterval > 0)
 					{
@@ -74,9 +83,9 @@ class SkipScripts extends DialogExtension
 						if(soundTimer >= style.zoomSoundInterval && !(dg.paused))
 						{
 							soundTimer = 0;
-							var snd:Sound = style.zoomSound;
+							var snd:Sound = cast Data.get().resourceMap.get(style.zoomSound[Std.random(style.zoomSound.length)]);
 							if(snd != null)
-								s.playSound(snd);
+								Script.playSound(snd);
 						}
 					}
 					else 
@@ -94,19 +103,20 @@ class SkipScripts extends DialogExtension
 					
 					dg.msgTypeSpeed = style.zoomSpeed;
 				}
-				else if(s.isKeyDown(style.fastButton))
+				else if(Input.check(style.fastButton))
 				{
 					if(style.fastSoundInterval > 0)
+
 					{
 						setTypingScriptSounds(null);
 						
 						soundTimer += 10;
-						if(soundTimer >= style.fastSoundInterval && !(dg.paused))
+						if(!(dg.typeDelay > style.fastSpeed*1000) && soundTimer >= style.fastSoundInterval && !(dg.paused))
 						{
 							soundTimer = 0;
-							var snd:Sound = style.fastSound;
+							var snd:Sound = cast Data.get().resourceMap.get(style.fastSound[Std.random(style.fastSound.length)]);
 							if(snd != null)
-								s.playSound(snd);
+								Script.playSound(snd);
 						}
 					}
 					else
@@ -128,9 +138,10 @@ class SkipScripts extends DialogExtension
 					
 					dg.msgTypeSpeed = restoreSpeedTo;
 					
-					setTypingScriptSounds(style.defaultTypeSound);
+					setTypingScriptSounds(typingScript.storedTypeSound);
 					
 					curSkipLevel = 0;
+
 				}
 			}
 			else if(curSkipLevel != 0)
@@ -138,7 +149,7 @@ class SkipScripts extends DialogExtension
 				curSkipLevel = 0;
 				
 				dg.msgTypeSpeed = restoreSpeedTo;
-				setTypingScriptSounds(style.defaultTypeSound);
+				setTypingScriptSounds(typingScript.storedTypeSound);
 			}
 		});
 	}
@@ -154,9 +165,18 @@ class SkipScripts extends DialogExtension
 		curSkipLevel = 0;
 	}
 
-	private function setTypingScriptSounds(sound:Sound):Void
+	private function setTypingScriptSounds(sound:Dynamic):Void
 	{
 		if(TypingScripts != null)
-			typingScript.typeSound = sound;
+		{
+			if(sound != null)
+			{
+				typingScript.typeSoundArray = sound;
+			}
+			else
+			{
+				typingScript.typeSoundArray = new Array<Dynamic>();
+			}
+		}
 	}
 }

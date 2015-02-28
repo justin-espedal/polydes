@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="scripts.ds.dialog.TweenTemplate">
-    <field editor="Plain" hint="duration of tween in milliseconds" label="Duration" name="duration" step="1" type="Int"/>
+    <field default="1" editor="Plain" hint="duration of tween in milliseconds" label="Duration" name="duration" step="1" type="Int"/>
     <field label="Position Start" name="positionStart" optional="true" type="RatioPoint"/>
     <field label="Position Stop" name="positionStop" optional="true" type="RatioPoint"/>
     <field label="Scale Start" name="scaleStart" optional="true" type="Point"/>
     <field label="Scale Stop" name="scaleStop" optional="true" type="Point"/>
-    <field editor="Plain" label="Opacity Start" name="opacityStart" optional="true" step="0.01" type="Float"/>
-    <field editor="Plain" label="Opacity Stop" name="opacityStop" optional="true" step="0.01" type="Float"/>
+    <field default="0.0" editor="Plain" label="Opacity Start" name="opacityStart" optional="true" step="0.01" type="Float"/>
+    <field default="0.0" editor="Plain" label="Opacity Stop" name="opacityStop" optional="true" step="0.01" type="Float"/>
 </structure>

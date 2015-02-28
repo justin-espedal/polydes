@@ -1,7 +1,9 @@
 /**
  * @author Justin Espedal
  */
+import com.stencyl.behavior.Script;
 import com.stencyl.models.Sound;
+import com.stencyl.Input;
 
 import nme.display.BitmapData;
 import nme.geom.Point;
@@ -78,7 +80,7 @@ class DialogOptions extends DialogExtension
 			
 			if(scrolling == 0)
 			{
-				if(s.isKeyDown("up") || s.isKeyDown("left"))
+				if(Input.check("up") || Input.check("left"))
 				{
 					downElapsed = 0;
 					upElapsed += 10;
@@ -88,7 +90,7 @@ class DialogOptions extends DialogExtension
 						scrolling = -1;
 					}
 				}
-				else if(s.isKeyDown("down") || s.isKeyDown("right"))
+				else if(Input.check("down") || Input.check("right"))
 				{
 					upElapsed = 0;
 					downElapsed += 10;
@@ -105,9 +107,9 @@ class DialogOptions extends DialogExtension
 			}
 			else
 			{
-				if(scrolling == -1 && !(s.isKeyDown("up") || s.isKeyDown("left")))
+				if(scrolling == -1 && !(Input.check("up") || Input.check("left")))
 					scrolling = 0;
-				else if(scrolling == 1 && !(s.isKeyDown("down") || s.isKeyDown("right")))
+				else if(scrolling == 1 && !(Input.check("down") || Input.check("right")))
 					scrolling = 0;
 				else
 				{
@@ -122,16 +124,16 @@ class DialogOptions extends DialogExtension
 			
 			if(scrolling == 0)
 			{
-				if(s.isKeyPressed("up") || s.isKeyPressed("left"))
+				if(Input.pressed("up") || Input.pressed("left"))
 				{
 					moveSelection(-1);
 				}
-				else if(s.isKeyPressed("down") || s.isKeyPressed("right"))
+				else if(Input.pressed("down") || Input.pressed("right"))
 				{
 					moveSelection(1);
 				}
 			}
-			if(s.isKeyPressed(style.optSelectButton))
+			if(Input.pressed(style.optSelectButton))
 			{
 				targetSelected();
 			}
@@ -243,7 +245,7 @@ class DialogOptions extends DialogExtension
 		
 		var snd:Sound = style.optAppearSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 	}
 	
 	public function setCoords():Void
@@ -290,7 +292,7 @@ class DialogOptions extends DialogExtension
 		
 		var snd:Sound = style.optChangeSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 	}
 
 	private function tweenSelection():Void
@@ -325,7 +327,7 @@ class DialogOptions extends DialogExtension
 		
 		var snd:Sound = style.optConfirmSound;
 		if(snd != null)
-			s.playSound(snd);
+			Script.playSound(snd);
 		
 		window.tweenCompleteNotify.push(function():Void
 		{

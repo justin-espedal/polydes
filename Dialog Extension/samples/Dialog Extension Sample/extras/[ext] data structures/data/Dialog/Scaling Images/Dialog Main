@@ -4,4 +4,4 @@ image=Dialog Main Window
 origin=[0,0]
 type=Stretch Image
 part=Whole Image
-border=
+border=[0,0]
