@@ -29,8 +29,7 @@
 		
 		<zip destfile="release/Dialog Extension Sample.stencyl" basedir="samples/Dialog Extension Sample" />
 		
-		<copy file="docs/Getting Started.txt" tofile="release/Getting Started.txt" />
-		<copy file="docs/Command Reference.rtf" tofile="release/Command Reference.rtf" />
+		<echo message="[InternetShortcut]\nURL=http://dialog.justin.espedaladventures.com/guides/index.php?f=getting_started" file="release/Installation and Getting Started Guide.url" />
 		
 		<zip destfile="release/Dialog Extension.zip" basedir="release" />
 		
