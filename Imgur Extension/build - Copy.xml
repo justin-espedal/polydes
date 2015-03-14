@@ -1,0 +1,45 @@
+<!--
++==========================================================================
+| Extension Build File
++==========================================================================
+| YOU MUST DO THESE TWO THINGS FIRST!
+|
+| 1) name = Classname of the main class for the extension
+| 2) swworkdir = Absolute path to StencylWorks workspace directory.
+| 
+| The location of this directory can be found in Preferences > Workspace
+| If it's "Stencylworks Installation Directory", it's just the path to
+| StencylWorks itself. If it's something else, it's that path + /stencylworks/.
+|
+| (If you don't know what this path is, ask how on the forums!)
++==========================================================================
+| dist - Builds a JAR file for the extension and drops it into the
+| StencylWorks extension directory.
++==========================================================================
+-->
+
+<project name="stencyl" basedir="." default="dist">
+	
+	<property name="name" value="SampleExtension" />
+	<property name="swworkdir" value="/Users/jon/Desktop/stencylworks/" />
+	
+	<target name="dist">
+		<delete dir="build" />
+		<mkdir dir="build" />
+	
+		<javac source="1.5" target="1.5" srcdir="src/" destdir="build" debug="on">
+			<classpath>
+				<pathelement path="${swworkdir}/sw.jar" />
+			</classpath>
+		</javac>
+		
+		<copy toDir="build">
+			<fileset dir=".">
+				<include name="icon.png" />
+			</fileset>
+		</copy>
+	
+		<jar destfile="${swworkdir}/extensions/${name}.jar" basedir="build" />
+	</target>
+
+</project>
