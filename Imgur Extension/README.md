@@ -7,7 +7,7 @@ Enjoy!
 Version History
 
 Initial Beta release; v0.5- 3/29/14
--- (later same day) Bug-fix
+- (later same day) Bug-fix
 - upload anonymously
 - authorize access to user account process
 - upload to user account
@@ -43,12 +43,3 @@ Uploading
 - Send to Imgur anonymously : this uploads the image anonymously (warning: at this time you will not have access to delete this image, or get the URL again later)
 - Send to Imgur account : this uploads to your Imgur account. This button will not be enabled if you have not performed the authorization steps already.
 - Copy URL to Clipboard : this copies the image URL to the system clipboard for easy use.
-
-Version History
-
-Initial Beta release; v0.5- 3/29/14
--- (later same day) Bug-fix
-- upload anonymously
-- authorize access to user account process
-- upload to user account
-- other minor initial features for ease of use (copy/paste, etc)
