@@ -10,3 +10,5 @@ Collection of open source Stencyl extensions.
 [Extras] (http://community.stencyl.com/index.php/topic,30830.0.html)
 
 [Scene Link] (http://community.stencyl.com/index.php/topic,33821.0.html)
+
+[Imgur Extension] (http://community.stencyl.com/index.php/topic,30685.0.html)
