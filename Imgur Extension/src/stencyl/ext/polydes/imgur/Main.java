@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,20 +32,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import pulpcore.util.Base64;
 import stencyl.core.lib.Game;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.util.FileHelper;
 
 public class Main extends BaseExtension
 {
@@ -54,17 +50,24 @@ public class Main extends BaseExtension
 
 	BufferedImage image;
 	
-	// Get this from api.imgur.com for your own version of the 'app'
-	String IMGUR_CLIENT_ID = "notarealvalue";
+	// Get these from api.imgur.com for your own version of the 'app'
+	private static final String IMGUR_CLIENT_ID = "notarealvalue";
+	private static final String IMGUR_CLIENT_SECRET = "alsonotarealvalue";
 	
-	// Get this from api.imgur.com for your own version of the 'app'
-	String IMGUR_CLIENT_SECRET = "alsonotarealvalue";
+	// temporary access for 1 hour on uploads
+	private static String IMGUR_ACCESS_TOKEN;
 	
-	String IMGUR_ACCESS_TOKEN; // temporary access for 1 hour on uploads
-	String IMGUR_REFRESH_TOKEN; // permits us to re-access account later
-	long expirationTime; // tells us when the access token expires
-	Boolean didUserAuth; // if this is not true, we can only do anonymous
-	String userImgurPIN; // provided by the user during the auth process
+	// permits us to re-access account later
+	private static String IMGUR_REFRESH_TOKEN;
+	
+	// tells us when the access token expires
+	private static long expirationTime;
+	
+	// if this is not true, we can only do anonymous
+	private static Boolean didUserAuth;
+	
+	// provided by the user during the auth process
+//	private static String userImgurPIN;
 
 	/*
 	 * Happens when StencylWorks launches.
@@ -76,7 +79,7 @@ public class Main extends BaseExtension
 	{
 		super.onStartup();
 
-		System.out.println("ImgurExtension : Started StencylWorks");
+		log.info("ImgurExtension : Started StencylWorks");
 		
 		name = "Imgur Extension";
 		description = "Upload toolset screenshots directly to Imgur.";
@@ -96,11 +99,11 @@ public class Main extends BaseExtension
 		}
 		catch(NullPointerException ex)
 		{
-			log.warn("Couldn't load Imgur extension properties.");
+			log.warn("Couldn't load Imgur extension properties (Unset).");
 		}
 		catch(NumberFormatException ex)
 		{
-			log.warn("Couldn't load Imgur extension properties.");
+			log.warn("Couldn't load Imgur extension properties (Bad number format).");
 		}
 	}
 
@@ -114,7 +117,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onActivate()
 	{
-		System.out.println("ImgurExtension : Activated");
+		log.info("ImgurExtension : Activated");
 	}
 
 	@Override
@@ -131,7 +134,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onDestroy()
 	{
-		System.out.println("ImgurExtension : Destroyed");
+		log.info("ImgurExtension : Destroyed");
 	}
 
 	/*
@@ -140,7 +143,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onGameSave(Game game)
 	{
-		System.out.println("ImgurExtension : Saved");
+		log.info("ImgurExtension : Saved");
 	}
 
 	/*
@@ -149,7 +152,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onGameOpened(Game game)
 	{
-		System.out.println("ImgurExtension : Opened");
+		log.info("ImgurExtension : Opened");
 	}
 
 	/*
@@ -160,7 +163,7 @@ public class Main extends BaseExtension
 	{
 		super.onGameClosed(game);
 
-		System.out.println("ImgurExtension : Closed");
+		log.info("ImgurExtension : Closed");
 	}
 
 	/*
@@ -171,24 +174,23 @@ public class Main extends BaseExtension
 	@Override
 	public OptionsPanel onOptions()
 	{
-		System.out.println("ImgurExtension : Options");
 		log.info("Imgur Extension: Options");
 
 		return new OptionsPanel()
 		{
-			// JTextField text;
+//			JTextField text;
 			JCheckBox check;
-			// JComboBox dropdown;
-			// JButton authButton;
+//			JComboBox dropdown;
+//			JButton authButton;
 			JTextField pin;
 			JPanel pinPanel;
-			// JButton pasteButton;
-			// JButton pinButton;
+//			JButton pasteButton;
+//			JButton pinButton;
 			JLabel status;
 			URL authURL;
 
-			// JButton deauthButton;
-			// JButton printAuthButton;
+//			JButton deauthButton;
+//			JButton printAuthButton;
 
 			/*
 			 * Construct the form.
@@ -212,7 +214,7 @@ public class Main extends BaseExtension
 					log.info("Forming URL for Auth failed: " + e1.getMessage());
 				}
 				startForm();
-				// log.info("Building Options Panel");
+//				log.info("Building Options Panel");
 				/*** AUTHORIZATION header of Options Panel ***/
 				addHeader("Authorization");
 				JButton authButton = new JButton("Open Browser");
@@ -371,8 +373,7 @@ public class Main extends BaseExtension
 			 */
 			public String getClipboardContents()
 			{
-				Clipboard clipboard = Toolkit.getDefaultToolkit()
-						.getSystemClipboard();
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				Transferable clipData = clipboard.getContents(clipboard);
 				if (clipData != null)
 				{
@@ -407,19 +408,19 @@ public class Main extends BaseExtension
 
 				log.info("Connecting and sending Imgur PIN...");
 				URL pinURL = new URL(IMGUR_POST_URI);
-				// log.info("URL made, building connection");
+//				log.info("URL made, building connection");
 				URLConnection conn = pinURL.openConnection();
 				conn.setDoOutput(true);
 				conn.setDoInput(true);
 				conn.setUseCaches(false);
 				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				// log.info("pinToTokens: attempting connection");
+//				log.info("pinToTokens: attempting connection");
 				conn.connect();
 
 				String data;
 				try
 				{
-					// log.info("pinToTokens: encoding URL");
+//					log.info("pinToTokens: encoding URL");
 					data = URLEncoder.encode("client_id", "UTF-8") + "="
 							+ URLEncoder.encode(IMGUR_CLIENT_ID, "UTF-8") + "&"
 							+ URLEncoder.encode("client_secret", "UTF-8") + "="
@@ -435,7 +436,7 @@ public class Main extends BaseExtension
 					log.info("pinToTokens: Encoding error: " + e.getMessage());
 					data = "Encoding failed!";
 				}
-				// log.info(data);
+//				log.info(data);
 				OutputStreamWriter wr = new OutputStreamWriter(
 						conn.getOutputStream());
 				wr.write(data);
@@ -448,12 +449,12 @@ public class Main extends BaseExtension
 				String line;
 				while ((line = in.readLine()) != null)
 				{
-					System.out.println(line);
+					log.info(line);
 					// copy the response before we lose our temporary sting "line"
 					str = new String(line);
 				}
 				in.close();
-				// log.info(str);
+//				log.info(str);
 				
 				// JSON parsing always fails, so just get the stupid token substring from the string myself. Total hack :P
 				IMGUR_ACCESS_TOKEN = str.substring(17, 57); 
@@ -469,7 +470,7 @@ public class Main extends BaseExtension
 				expirationTime = (calendar.getTimeInMillis() + 3600000);
 				properties.put("expiration", expirationTime);
 				
-				// log.info("Expiration: " + calendar.getTimeInMillis() + " | " + expirationTime);
+//				log.info("Expiration: " + calendar.getTimeInMillis() + " | " + expirationTime);
 
 			}
 
@@ -487,7 +488,7 @@ public class Main extends BaseExtension
 				properties.put("access", IMGUR_ACCESS_TOKEN);
 				properties.put("refresh", IMGUR_REFRESH_TOKEN);
 				properties.put("expiration", expirationTime);
-				// log.info("Closing panel, refresh token saved as: " +
+//				log.info("Closing panel, refresh token saved as: " +
 				// properties.get("refresh"));
 			}
 
@@ -498,7 +499,7 @@ public class Main extends BaseExtension
 			@Override
 			public void onPressedCancel()
 			{
-				System.out.println("ImgurExtension : OptionsPanel : onPressedCancel");
+				log.info("ImgurExtension : OptionsPanel : onPressedCancel");
 			}
 
 			/*
@@ -507,7 +508,7 @@ public class Main extends BaseExtension
 			@Override
 			public void onShown()
 			{
-				System.out.println("ImgurExtension : OptionsPanel : onShown");
+				log.info("ImgurExtension : OptionsPanel : onShown");
 			}
 		};
 	}
@@ -520,7 +521,7 @@ public class Main extends BaseExtension
 		{
 			try
 			{
-				// log.info("openWebpage(URI)");
+//				log.info("openWebpage(URI)");
 				desktop.browse(uri);
 			}
 			catch (Exception e)
@@ -534,7 +535,7 @@ public class Main extends BaseExtension
 	{
 		try
 		{
-			// log.info("openWebpage(URL)");
+//			log.info("openWebpage(URL)");
 			openWebpage(url.toURI());
 		}
 		catch (URISyntaxException e)
@@ -579,7 +580,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onInstall()
 	{
-		System.out.println("ImgurExtension : Install");
+		log.info("ImgurExtension : Install");
 	}
 
 	/*
@@ -590,7 +591,7 @@ public class Main extends BaseExtension
 	@Override
 	public void onUninstall()
 	{
-		System.out.println("ImgurExtension : Uninstall");
+		log.info("ImgurExtension : Uninstall");
 	}
 
 	class saveFrame extends JFrame implements ActionListener
@@ -609,8 +610,8 @@ public class Main extends BaseExtension
 		saveFrame()
 		{
 			super("Imgur Extension");
-			// log.info("Building the JFrame for the extension.");
-			// JPanel urlPanel = new JPanel();
+//			log.info("Building the JFrame for the extension.");
+//			JPanel urlPanel = new JPanel();
 			urlLabel = new JLabel("Image URL:");
 			urlTextField = new JTextField("You must upload your image first to get the URL.", 60);
 			urlTextField.setEditable(false);
@@ -628,9 +629,9 @@ public class Main extends BaseExtension
 			copyButton.setEnabled(false);
 			copyButton.setActionCommand("copy");
 			statusLabel = new JLabel("Ready to upload");
-			// refreshButton = new JButton("Refresh Token");
-			// refreshButton.setActionCommand("refresh");
-			// refreshButton.setEnabled(true);
+//			refreshButton = new JButton("Refresh Token");
+//			refreshButton.setActionCommand("refresh");
+//			refreshButton.setEnabled(true);
 
 			setLayout(new GridLayout(0, 1));
 			add(urlLabel);
@@ -638,8 +639,8 @@ public class Main extends BaseExtension
 			buttonPanel.add(anonButton);
 			buttonPanel.add(sendButton); // TODO: disable this when not authed already
 			buttonPanel.add(copyButton);
-			// buttonPanel.add(refreshButton);
-			// add(urlPanel);
+//			buttonPanel.add(refreshButton);
+//			add(urlPanel);
 			add(buttonPanel);
 			add(statusLabel);
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -647,8 +648,8 @@ public class Main extends BaseExtension
 			anonButton.addActionListener(this);
 			sendButton.addActionListener(this);
 			copyButton.addActionListener(this);
-			// refreshButton.addActionListener(this);
-			// log.info("Building done.");
+//			refreshButton.addActionListener(this);
+//			log.info("Building done.");
 
 		}
 
@@ -669,7 +670,7 @@ public class Main extends BaseExtension
 			if (e.getActionCommand().equals("anon")) 
 			{
 				// the "send anonymously" button was pressed
-				// log.info("actionPerformed: sendToImgur happening");
+//				log.info("actionPerformed: sendToImgur happening");
 				
 				// send the image and get URL back
 				String strTemp = sendToImgur(true);
@@ -684,7 +685,7 @@ public class Main extends BaseExtension
 			if (e.getActionCommand().equals("send"))
 			{
 				// The "send as user" button was pressed
-				// log.info("actionPerformed: sendToImgur happening");
+//				log.info("actionPerformed: sendToImgur happening");
 				
 				// send the image and get the URL back...
 				String strTemp = sendToImgur(false);
@@ -723,9 +724,9 @@ public class Main extends BaseExtension
 
 			try
 			{
-				// log.info("Opening BAOS");
+//				log.info("Opening BAOS");
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				// log.info("Writing image...");
+//				log.info("Writing image...");
 				ImageIO.write(image, "PNG", baos);
 				byte[] bytes = baos.toByteArray();
 
@@ -773,7 +774,7 @@ public class Main extends BaseExtension
 				String line;
 				while ((line = in.readLine()) != null)
 				{
-					System.out.println(line);
+					log.info(line);
 					
 					// copy the XML response before we lose our temporary sting "line"
 					strURL = new String(line);
@@ -801,18 +802,18 @@ public class Main extends BaseExtension
 
 			log.info("Connecting to update access token...");
 			URL pinURL = new URL(IMGUR_POST_URI);
-			// log.info("refreshToken: New URL made");
+//			log.info("refreshToken: New URL made");
 			URLConnection conn = pinURL.openConnection();
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			conn.setUseCaches(false);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			conn.connect();
-			// log.info("refreshToken: Connected.");
+//			log.info("refreshToken: Connected.");
 			String data;
 			try
 			{
-				// log.info("refreshToken: encoding URL");
+//				log.info("refreshToken: encoding URL");
 				data = URLEncoder.encode("refresh_token", "UTF-8") + "="
 						+ URLEncoder.encode(IMGUR_REFRESH_TOKEN, "UTF-8") + "&"
 						+ URLEncoder.encode("client_id", "UTF-8") + "="
@@ -828,7 +829,7 @@ public class Main extends BaseExtension
 				log.info("refreshToken: Encoding error: " + e.getMessage());
 				data = "Encoding failed!";
 			}
-			// log.info(data);
+//			log.info(data);
 			OutputStreamWriter wr = new OutputStreamWriter(
 					conn.getOutputStream());
 			wr.write(data);
@@ -841,12 +842,12 @@ public class Main extends BaseExtension
 			String line;
 			while ((line = in.readLine()) != null)
 			{
-				System.out.println(line);
+				log.info(line);
 				// copy the response before we lose our temporary sting "line"
 				str = new String(line);
 			}
 			in.close();
-			// log.info(str);
+//			log.info(str);
 			
 			/*
 			 * JSON parsing always fails, so just get the stupid token
@@ -861,47 +862,31 @@ public class Main extends BaseExtension
 			//add 1 hour to current time for expiration of the access token
 			expirationTime = (calendar.getTimeInMillis() + 3600000);
 			properties.put("expiration", expirationTime);
-			// log.info("Expiration: " + calendar.getTimeInMillis() + " | " +
-			// expirationTime);
+//			log.info("Expiration: " + calendar.getTimeInMillis() + " | " + expirationTime);
 		}
 
-		// returns a link text from a String containing XML data
+		/**
+		 * returns a link text from a String containing XML data
+		 */
 		private String getElement(String xml, String element)
 		{
-			// the smart thing to do would be to make this
-			// "getWhatever(String xmlString, String property)"
-			Document doc;
-			Element elem;
-			// just in case the parsing fails to produce a URL
-			String returnElem = "No element.";
-			
 			try
 			{
 				log.info("getElement: parsing XML");
-				// parse the string into a Document
-				doc = loadXMLFromString(xml);
-				// get the root element
-				elem = doc.getDocumentElement();
-				// get the children of the root element
-				NodeList nl = elem.getChildNodes();
-				Node an;
-				/*
-				 * Check them all;
-				 * 
-				 * TODO: replace with a simpler function to call
-				 * a specific node name rather than loop?
-				 */
-				for (int i = 0; i < nl.getLength(); i++) 
+				
+				Document doc = FileHelper.readXMLFromString(xml);
+				Element elem = doc.getDocumentElement();
+				NodeList nl = elem.getElementsByTagName(element);
+				
+				if(nl.getLength() > 0)
 				{
-					an = nl.item(i);
-					// log.info(an.toString());
-					if (an.getNodeName() == element)
-					{
-						returnElem = an.getTextContent();
-					}
+//					log.info(nl.item(0).getTextContent());
+					return nl.item(0).getTextContent();
 				}
-				// log.info(returnElem);
-				return returnElem;
+				else
+				{
+					return "No element.";
+				}
 			}
 			catch (Exception e)
 			{
@@ -909,18 +894,6 @@ public class Main extends BaseExtension
 				return xml; // return whatever came in if it was bad
 			}
 
-		}
-
-		// turns a String containing XML into a Document object
-		public Document loadXMLFromString(String xml) throws Exception
-		{
-			// log.info("loadXMLFromString: building document");
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			InputSource is = new InputSource(new StringReader(xml));
-			// log.info("loadXMLFromString: returning document");
-			return builder.parse(is);
 		}
 	}
 
