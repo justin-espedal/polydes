@@ -5,6 +5,8 @@ To create your own version of this, you will need to go to http://api.imgur.com 
 Enjoy!
 
 #### Version History
+Released as part of the Polydes collection 3/14/15
+- Updated to work with current Stencyl versions
 
 Initial Beta release; v0.5- 3/29/14
 - (later same day) Bug-fix
@@ -42,7 +44,7 @@ This will permit you to both upload and save a local copy of your image if desir
 
 #### Uploading
 
-	Whenever you press the Camera button to capture a screenshot in Stencyl, the Imgur extension is triggered. A small window will appear in the top left of your screen.
+Whenever you press the Camera button to capture a screenshot in Stencyl, the Imgur extension is triggered. A small window will appear in the top left of your screen.
 
 - Send to Imgur anonymously : this uploads the image anonymously (warning: at this time you will not have access to delete this image, or get the URL again later)
 - Send to Imgur account : this uploads to your Imgur account. This button will not be enabled if you have not performed the authorization steps already.
