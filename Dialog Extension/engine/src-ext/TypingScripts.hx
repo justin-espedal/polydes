@@ -43,7 +43,8 @@ class TypingScripts extends DialogExtension
 		{
 			if(!stopTypeSound && (style.playTypeSoundOnSpaces || dg.msg[dg.typeIndex] != " "))
 			{
-				typeSound = cast Data.get().resourceMap.get(typeSoundArray[Std.random(typeSoundArray.length)]);
+				if(typeSoundArray.length > 0)
+					typeSound = cast Data.get().resourceMap.get(typeSoundArray[Std.random(typeSoundArray.length)]);
 				if(typeSound != null && curSoundDelay-- == 0)
 				{
 					Script.playSound(typeSound);
