@@ -23,8 +23,33 @@ class MessagingScripts extends DialogExtension
 			"messagescene"=>messagescene,
 			"messageactor"=>messageactor,
 			"addtolist"=>addtolist,
-			"removefromlist"=>removefromlist
+			"removefromlist"=>removefromlist,
+			"show"=>show,
+
+			"say"=>say,
+			"set"=>set,
+			"get"=>get,
+			"listset"=>listset,
+			"listget"=>listget
 		];
+	}
+
+	public function analyzeAttr(source:Array<Dynamic>):Dynamic
+	{
+		switch("" + source[0])
+		{
+			case "game":
+				return Script.getGameAttribute("" + source[1]);
+			case "dialog":
+				return attributes.get("" + source[1]);
+			case "scenebhv":
+				return Script.getValueForScene("" + source[1], "" + source[2]);
+			case "actorbhv":
+				return GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]);
+			case "actor":
+				return GlobalActorID.get("" + source[1]).getActorValue("" + source[2]);
+		}
+		return null;
 	}
 
 	public function setattr(args:Array<Dynamic>):Void
@@ -46,73 +71,58 @@ class MessagingScripts extends DialogExtension
 	
 	public function getattr(source:Array<Dynamic>):Dynamic
 	{
-		switch("" + source[0])
-		{
-			case "game":
-				return Script.getGameAttribute("" + source[1]);
-			case "dialog":
-				return attributes.get("" + source[1]);
-			case "scenebhv":
-				return Script.getValueForScene("" + source[1], "" + source[2]);
-			case "actorbhv":
-				return GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]);
-			case "actor":
-				return GlobalActorID.get("" + source[1]).getActorValue("" + source[2]);
-		}
-		return null;
+		return analyzeAttr(source);
 	}
 	
 	public function showattr(source:Array<Dynamic>):Void
 	{
-		var toShow:String = "";
-		switch("" + source[0])
-		{
-			case "game":
-				toShow = "" + Script.getGameAttribute("" + source[1]);
-			case "dialog":
-				toShow = "" + attributes.get("" + source[1]);
-			case "scenebhv":
-				toShow = "" + Script.getValueForScene("" + source[1], "" + source[2]);
-			case "actorbhv":
-				toShow = "" + GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]);
-			case "actor":
-				toShow = "" + GlobalActorID.get("" + source[1]).getActorValue("" + source[2]);
-		}
-		dg.insertMessage(toShow);
+		show(analyzeAttr(source));
+	}
+
+	public function show(object:Dynamic):Void
+	{
+		dg.insertMessage("" + object);
 	}
 
 	public function addtolist(source:Array<Dynamic>):Void
 	{
-		switch("" + source[0])
-		{
-			case "game":
-				Script.getGameAttribute("" + source[1]).push(source[2]);
-			case "dialog":
-				attributes.get("" + source[1]).push(source[2]);
-			case "scenebhv":
-				Script.getValueForScene("" + source[1], "" + source[2]).push(source[3]);
-			case "actorbhv":
-				GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]).push(source[4]);
-			case "actor":
-				GlobalActorID.get("" + source[1]).getActorValue("" + source[2]).push(source[3]);
-		}
+		analyzeAttr(source).push(source.pop());
 	}
 
 	public function removefromlist(source:Array<Dynamic>):Void
 	{
-		switch("" + source[0])
-		{
-			case "game":
-				Script.getGameAttribute("" + source[1]).remove(source[2]);
-			case "dialog":
-				attributes.get("" + source[1]).remove(source[2]);
-			case "scenebhv":
-				Script.getValueForScene("" + source[1], "" + source[2]).remove(source[3]);
-			case "actorbhv":
-				GlobalActorID.get("" + source[1]).getValue("" + source[2], "" + source[3]).remove(source[4]);
-			case "actor":
-				GlobalActorID.get("" + source[1]).getActorValue("" + source[2]).remove(source[3]);
-		}
+		analyzeAttr(source).remove(source.pop());
+	}
+
+	public function listset(source:Array<Dynamic>, index:Int, value:Dynamic):Void
+	{
+		source[index] = value;
+	}
+
+	public function listget(source:Array<Dynamic>, index:Int):Dynamic
+	{
+		return source[index];
+	}
+
+	public function code(expr:String):Dynamic
+	{
+		//TODO
+		return null;
+	}
+
+	public function say(object:Dynamic, message:String, args:Array<Dynamic>):Dynamic
+	{
+		return Reflect.callMethod(object, Reflect.field(object, message), args);
+	}
+
+	public function set(object:Dynamic, field:String, value:Dynamic):Void
+	{
+		Reflect.setField(object, field, value);
+	}
+
+	public function get(object:Dynamic, field:String):Dynamic
+	{
+		return Reflect.field(object, field);
 	}
 	
 	public function messagescene(behaviorName:String, messageName:String, args:Array<Dynamic>):Void
