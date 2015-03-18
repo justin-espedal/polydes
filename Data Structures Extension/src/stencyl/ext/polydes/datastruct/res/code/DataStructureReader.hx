@@ -48,7 +48,15 @@ class DataStructureReader
 			{
 				if(key == null || key == "")
 					continue;
-				Reflect.setProperty(data, key, StringData.read(map.get(key), data.getTypeInfo(key)));
+				try
+				{
+					Reflect.setProperty(data, key, StringData.read(map.get(key), data.getTypeInfo(key)));
+				}
+				catch(e:Dynamic)
+				{
+					trace("Warning: Couldn't load data.");
+					trace("- " + fname + "::" + key);
+				}
 			}
 			
 			DataStructures.nameMap.set(data.name, data);
