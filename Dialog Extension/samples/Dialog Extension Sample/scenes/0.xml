@@ -13,10 +13,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="up"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -24,10 +24,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="down"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -35,10 +35,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="enter"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -46,10 +46,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="z"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -57,10 +57,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="x"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -68,10 +68,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="c"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>
@@ -79,10 +79,10 @@
             <snippets>
                 <s enabled="true" id="5"/>
                 <s enabled="true" id="6">
-                    <prop id="2147483647" list="0" val="thisactor"/>
                     <prop id="1" list="0" val="v"/>
                     <prop id="2" list="0" val="No Control"/>
                     <prop id="3" list="0" val="false"/>
+                    <prop id="2147483647" list="0" val="thisactor"/>
                 </s>
             </snippets>
         </actor>

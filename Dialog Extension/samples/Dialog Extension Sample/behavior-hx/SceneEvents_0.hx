@@ -74,12 +74,16 @@ class SceneEvents_0 extends SceneScript
 	
 public var _AlreadyStarted:Bool;
 
+public var _controls:Array<Dynamic>;
+
  
  	public function new(dummy:Int, dummy2:Engine)
 	{
 		super();
 		nameMap.set("Already Started", "_AlreadyStarted");
 _AlreadyStarted = false;
+nameMap.set("controls", "_controls");
+_controls = [];
 
 	}
 	
@@ -89,6 +93,48 @@ _AlreadyStarted = false;
 /* ======================== When Creating ========================= */
         _AlreadyStarted = false;
 propertyChanged("_AlreadyStarted", _AlreadyStarted);
+    
+/* ======================== When Creating ========================= */
+        #if (windows || linux || mac)
+            Input.enableJoystick();
+            Input.mapJoystickButton("0, 0", "z");
+            Input.mapJoystickButton("0, 1", "x");
+            Input.mapJoystickButton("0, 2", "c");
+            Input.mapJoystickButton("0, 3", "v");
+            Input.mapJoystickButton("0, up hat", "up");
+            Input.mapJoystickButton("0, down hat", "down");
+            Input.mapJoystickButton("0, left hat", "left");
+            Input.mapJoystickButton("0, right hat", "right");
+            Input.mapJoystickButton("0, 4", "enter");
+#end
+    
+/* ======================== When Creating ========================= */
+        #if mobile
+            _controls = new Array<Dynamic>();
+propertyChanged("_controls", _controls);
+            for(actorOfType in getActorsOfType(getActorType(34)))
+{
+if(actorOfType != null && !actorOfType.dead && !actorOfType.recycled){
+                _controls.push(actorOfType);
+}
+}
+
+#end
+    
+/* ======================== When Updating ========================= */
+addWhenUpdatedListener(null, function(elapsedTime:Float, list:Array<Dynamic>):Void
+{
+if(wrapper.enabled)
+{
+        #if mobile
+            for(item in cast(_controls, Array<Dynamic>))
+{
+                item.say("Touch Control", "_customEvent_" + "checkInput");
+}
+
+#end
+}
+});
     
 /* =========================== Keyboard =========================== */
 addKeyStateListener("enter", function(pressed:Bool, released:Bool, list:Array<Dynamic>):Void

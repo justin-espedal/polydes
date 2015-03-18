@@ -475,6 +475,7 @@ class DialogBox
 			return null;
 		}
 		else
+			//TODO: is this correct? The first argument isn't the proper object to be calling on.
 			return Reflect.callMethod(cmds.get(tag.name), cmds.get(tag.name), tag.argArray);
 	}
 	

@@ -76,17 +76,37 @@ public var _control:String;
 public var _ctrl:String;
 
 public var _down:Bool;
+    
+/* ========================= Custom Event ========================= */
+public function _customEvent_checkInput():Void
+{
+        if((_down && isMouseReleased()))
+{
+            simulateKeyRelease(_ctrl);
+            _down = false;
+propertyChanged("_down", _down);
+}
+
+        if(actor.isMousePressed())
+{
+            simulateKeyPress(_ctrl);
+            _down = true;
+propertyChanged("_down", _down);
+}
+
+}
+
 
  
  	public function new(dummy:Int, actor:Actor, dummy2:Engine)
 	{
 		super(actor);
-		nameMap.set("Actor", "actor");
-nameMap.set("control", "_control");
+		nameMap.set("control", "_control");
 _control = "";
 nameMap.set("ctrl", "_ctrl");
 nameMap.set("down", "_down");
 _down = false;
+nameMap.set("Actor", "actor");
 
 	}
 	
@@ -103,43 +123,6 @@ propertyChanged("_down", _down);
             recycleActor(actor);
 }
 
-    
-/* =========================== On Actor =========================== */
-addMouseOverActorListener(actor, function(mouseState:Int, list:Array<Dynamic>):Void
-{
-if(wrapper.enabled && 3 == mouseState)
-{
-        simulateKeyPress(_ctrl);
-        _down = true;
-propertyChanged("_down", _down);
-}
-});
-    
-/* ============================ Click ============================= */
-addMouseReleasedListener(function(list:Array<Dynamic>):Void
-{
-if(wrapper.enabled)
-{
-        if(_down)
-{
-            _down = false;
-propertyChanged("_down", _down);
-            simulateKeyRelease(_ctrl);
-}
-
-}
-});
-    
-/* =========================== On Actor =========================== */
-addMouseOverActorListener(actor, function(mouseState:Int, list:Array<Dynamic>):Void
-{
-if(wrapper.enabled && 5 == mouseState)
-{
-        simulateKeyRelease(_ctrl);
-        _down = false;
-propertyChanged("_down", _down);
-}
-});
 
 	}	      	
 	

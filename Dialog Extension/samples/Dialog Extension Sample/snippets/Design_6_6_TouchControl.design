@@ -31,56 +31,44 @@
         </init>
     </group>
     <group eventID="1" id="-1"/>
-    <group eventID="2" id="0">
-        <event-mouse-enter-exit-actor comment="false" x="15" y="15">
-            <group eventID="2" id="-1">
-                <simulate-key comment="false" x="26" y="42">
-                    <int id="0" val="0"/>
-                    <get-val-6-2 comment="false" id="1" x="0" y="0"/>
-                </simulate-key>
-                <set-val-6-3 comment="false" x="26" y="74">
-                    <true comment="false" id="0" x="0" y="0"/>
-                </set-val-6-3>
-            </group>
-            <ACTOR eid="this" id="0"/>
-            <int id="1" val="2"/>
-        </event-mouse-enter-exit-actor>
-    </group>
-    <group eventID="2" id="-1"/>
-    <group eventID="3" id="0">
-        <event-mouse-enter-exit-actor comment="false" x="15" y="15">
-            <group eventID="3" id="-1">
-                <simulate-key comment="false" x="26" y="42">
-                    <int id="0" val="1"/>
-                    <get-val-6-2 comment="false" id="1" x="0" y="0"/>
-                </simulate-key>
-                <set-val-6-3 comment="false" x="26" y="74">
-                    <false comment="false" id="0" x="0" y="0"/>
-                </set-val-6-3>
-            </group>
-            <ACTOR eid="this" id="0"/>
-            <int id="1" val="4"/>
-        </event-mouse-enter-exit-actor>
-    </group>
-    <group eventID="3" id="-1"/>
-    <group eventID="4" id="0">
-        <event-mouse-press-release comment="false" x="15" y="15">
-            <group eventID="4" id="-1">
-                <if comment="false" x="26" y="42">
-                    <group eventID="4" id="-1">
-                        <set-val-6-3 comment="false" x="37" y="67">
-                            <false comment="false" id="0" x="0" y="0"/>
-                        </set-val-6-3>
-                        <simulate-key comment="false" x="37" y="92">
+    <group eventID="5" id="0">
+        <event-custom comment="false" x="15" y="15">
+            <group eventID="5" id="-1">
+                <if comment="false" x="26" y="40">
+                    <group eventID="5" id="-1">
+                        <simulate-key comment="false" x="37" y="78">
                             <int id="0" val="1"/>
                             <get-val-6-2 comment="false" id="1" x="0" y="0"/>
                         </simulate-key>
+                        <set-val-6-3 comment="false" x="37" y="110">
+                            <false comment="false" id="0" x="0" y="0"/>
+                        </set-val-6-3>
                     </group>
-                    <get-val-6-3 comment="false" id="0" x="0" y="0"/>
+                    <and comment="false" id="0" x="0" y="0">
+                        <get-val-6-3 comment="false" id="0" x="0" y="0"/>
+                        <mousestate comment="false" id="1" x="0" y="0">
+                            <int id="0" val="2"/>
+                        </mousestate>
+                    </and>
+                </if>
+                <if comment="false" x="26" y="147">
+                    <group eventID="5" id="-1">
+                        <simulate-key comment="false" x="37" y="180">
+                            <int id="0" val="0"/>
+                            <get-val-6-2 comment="false" id="1" x="0" y="0"/>
+                        </simulate-key>
+                        <set-val-6-3 comment="false" x="37" y="212">
+                            <true comment="false" id="0" x="0" y="0"/>
+                        </set-val-6-3>
+                    </group>
+                    <amousestate comment="false" id="0" x="0" y="0">
+                        <ACTOR eid="this" id="0"/>
+                        <int id="1" val="1"/>
+                    </amousestate>
                 </if>
             </group>
-            <int id="0" val="1"/>
-        </event-mouse-press-release>
+            <int id="0" val="checkInput"/>
+        </event-custom>
     </group>
-    <group eventID="4" id="-1"/>
+    <group eventID="5" id="-1"/>
 </groups>

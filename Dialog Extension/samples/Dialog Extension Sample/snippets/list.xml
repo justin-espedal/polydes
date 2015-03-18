@@ -2,10 +2,18 @@
 <pack>
     <snippet attachedevent="true" class="scripts.SceneEvents_0" classname="scripts.SceneEvents_0" desc="Scene Specific Events" description="Scene Specific Events" design="true" drawOrder="0" id="1" name="SceneEvents_0" oid="-1" package="scripts." sceneid="0" scenespecific="true" shared="false" type="scene">
         <boolean default="false" defaultValue="false" desc="" dropdown="" fullname="Already Started" hidden="false" id="1" name="_AlreadyStarted" order="0"/>
+        <list default="list" defaultValue="list" desc="" dropdown="" fullname="controls" hidden="false" id="2" name="_controls" order="1"/>
         <blocks/>
         <events>
             <event displayName="Created" enabled="true" id="1" name="init" order="1" repeats="true"/>
-            <event displayName="Keyboard" enabled="true" id="2" name="event-key-press-release" order="3" repeats="true"/>
+            <event displayName="Keyboard" enabled="true" id="2" name="event-key-press-release" order="5" repeats="true"/>
+            <event displayName="Touch Control Update" enabled="true" id="3" name="step" order="4" repeats="true"/>
+            <event displayName="Debug Font Code" enabled="false" id="4" name="event-custom-code" order="7" repeats="true"/>
+            <event displayName="Debug Font Drawing" enabled="false" id="5" name="draw" order="10" repeats="true"/>
+            <event displayName="Profiling" enabled="false" id="6" name="init" order="6" repeats="true"/>
+            <event displayName="Debug Font Setup" enabled="false" id="7" name="init" order="9" repeats="true"/>
+            <event displayName="Gamepad Setup" enabled="true" id="8" name="init" order="2" repeats="true"/>
+            <event displayName="Touch Control Setup" enabled="true" id="9" name="init" order="3" repeats="true"/>
         </events>
     </snippet>
     <snippet attachedevent="true" class="scripts.ActorEvents_17" classname="scripts.ActorEvents_17" desc="Actor Specific Events" description="Actor Specific Events" design="true" drawOrder="0" id="3" name="ActorEvents_17" oid="-1" package="scripts." scenespecific="false" shared="false" type="actor">
@@ -25,16 +33,14 @@
         <events/>
     </snippet>
     <snippet attachedevent="false" class="scripts.Design_6_6_TouchControl" classname="scripts.Design_6_6_TouchControl" desc="" description="" design="true" drawOrder="0" id="6" name="Touch Control" oid="-1" package="scripts" scenespecific="false" shared="false" type="actor">
-        <actor default="thisactor" defaultValue="thisactor" desc="" dropdown="" fullname="Actor" hidden="true" id="2147483647" name="actor" order="0"/>
         <text default="" defaultValue="" desc="" dropdown="" fullname="control" hidden="false" id="1" name="_control" order="1"/>
         <control default="" defaultValue="" desc="" dropdown="" fullname="ctrl" hidden="true" id="2" name="_ctrl" order="2"/>
         <boolean default="false" defaultValue="false" desc="" dropdown="" fullname="down" hidden="true" id="3" name="_down" order="3"/>
+        <actor default="thisactor" defaultValue="thisactor" desc="" dropdown="" fullname="Actor" hidden="true" id="2147483647" name="actor" order="0"/>
         <blocks/>
         <events>
             <event displayName="Created" enabled="true" id="1" name="init" order="1" repeats="true"/>
-            <event displayName="On Actor" enabled="true" id="2" name="event-mouse-enter-exit-actor" order="2" repeats="true"/>
-            <event displayName="On Actor" enabled="true" id="3" name="event-mouse-enter-exit-actor" order="4" repeats="true"/>
-            <event displayName="Click" enabled="true" id="4" name="event-mouse-press-release" order="3" repeats="true"/>
+            <event displayName="checkInput" enabled="true" id="5" name="event-custom" order="3" repeats="true"/>
         </events>
     </snippet>
     <snippet attachedevent="false" class="scripts.Design_7_7_SceneSwitcher" classname="scripts.Design_7_7_SceneSwitcher" desc="" description="" design="true" drawOrder="0" id="7" name="Scene Switcher" oid="-1" package="scripts" scenespecific="false" shared="false" type="scene">

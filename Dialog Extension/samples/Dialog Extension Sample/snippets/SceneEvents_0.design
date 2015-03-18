@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <groups>
     <group eventID="1" id="0">
-        <init comment="false" x="15" y="15">
+        <init comment="false" x="17" y="13">
             <group eventID="1" id="-1">
-                <set-val-1-1 comment="false" x="26" y="40">
+                <set-val-1-1 comment="false" x="28" y="38">
                     <false comment="false" id="0" x="0" y="0"/>
                 </set-val-1-1>
             </group>
@@ -11,14 +11,14 @@
     </group>
     <group eventID="1" id="-1"/>
     <group eventID="2" id="0">
-        <event-key-press-release comment="false" x="15" y="15">
+        <event-key-press-release comment="false" x="19" y="16">
             <group eventID="2" id="-1">
-                <if comment="false" x="26" y="42">
+                <if comment="false" x="30" y="43">
                     <group eventID="2" id="-1">
-                        <set-val-1-1 comment="false" x="37" y="72">
+                        <set-val-1-1 comment="false" x="41" y="73">
                             <true comment="false" id="0" x="0" y="0"/>
                         </set-val-1-1>
-                        <display-dialog comment="false" x="37" y="97">
+                        <display-dialog comment="false" x="41" y="98">
                             <int id="0" val="Start"/>
                         </display-dialog>
                     </group>
@@ -26,9 +26,9 @@
                         <get-val-1-1 comment="false" id="0" x="0" y="0"/>
                     </not>
                 </if>
-                <else-if comment="false" x="26" y="129">
+                <else-if comment="false" x="30" y="130">
                     <group eventID="2" id="-1">
-                        <display-dialog comment="false" x="37" y="159">
+                        <display-dialog comment="false" x="41" y="160">
                             <int id="0" val="Welcome Back"/>
                         </display-dialog>
                     </group>
@@ -42,4 +42,169 @@
         </event-key-press-release>
     </group>
     <group eventID="2" id="-1"/>
+    <group eventID="3" id="0">
+        <step comment="false" x="15" y="16">
+            <group eventID="3" id="-1">
+                <do-on-platform comment="false" x="26" y="41">
+                    <group eventID="3" id="-1">
+                        <for-each comment="false" x="37" y="68">
+                            <group eventID="3" id="-1">
+                                <say comment="false" x="48" y="93">
+                                    <for-each-item comment="false" id="0" x="0" y="0"/>
+                                    <int id="1" val="Touch Control"/>
+                                    <int id="2" val="checkInput"/>
+                                </say>
+                            </group>
+                            <get-val-1-2 comment="false" id="0" x="0" y="0"/>
+                        </for-each>
+                    </group>
+                    <int id="0" val="6"/>
+                </do-on-platform>
+            </group>
+        </step>
+    </group>
+    <group eventID="3" id="-1"/>
+    <group eventID="4" id="0">
+        <event-custom-code comment="false" x="15" y="15">
+            <group eventID="4" id="-1">
+                <custom-code comment="false" x="26" y="40">
+                    <int id="0" val="var fontImg:BitmapData;"/>
+                </custom-code>
+            </group>
+        </event-custom-code>
+    </group>
+    <group eventID="4" id="-1"/>
+    <group eventID="5" id="0">
+        <draw comment="false" x="15" y="15">
+            <group eventID="5" id="-1">
+                <custom-code comment="false" x="26" y="40">
+                    <int id="0" val="g.drawImage(fontImg, 20, 20);"/>
+                </custom-code>
+            </group>
+        </draw>
+    </group>
+    <group eventID="5" id="-1"/>
+    <group eventID="6" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="6" id="-1">
+                <if comment="false" x="26" y="40">
+                    <group eventID="6" id="-1">
+                        <dolater comment="false" x="37" y="78">
+                            <group eventID="6" id="-1">
+                                <custom-code comment="false" x="48" y="105">
+                                    <int id="0" val="cpp.vm.Profiler.start(&amp;quot;&amp;quot;);"/>
+                                </custom-code>
+                            </group>
+                            <int id="0" val="5"/>
+                            <ACTOR eid="lastcreated" id="2"/>
+                        </dolater>
+                        <dolater comment="false" x="37" y="137">
+                            <group eventID="6" id="-1">
+                                <custom-code comment="false" x="48" y="164">
+                                    <int id="0" val="cpp.vm.Profiler.stop();"/>
+                                </custom-code>
+                            </group>
+                            <int id="0" val="25"/>
+                            <ACTOR eid="lastcreated" id="2"/>
+                        </dolater>
+                    </group>
+                    <or comment="false" id="0" x="0" y="0">
+                        <is-platform comment="false" id="0" x="0" y="0">
+                            <int id="0" val="2"/>
+                        </is-platform>
+                        <is-platform comment="false" id="1" x="0" y="0">
+                            <int id="0" val="6"/>
+                        </is-platform>
+                    </or>
+                </if>
+            </group>
+        </init>
+    </group>
+    <group eventID="6" id="-1"/>
+    <group eventID="7" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="7" id="-1">
+                <custom-code comment="false" x="26" y="40">
+                    <int id="0" val="var wagahai:Font = cast com.stencyl.Data.get().resourceMap.get(&amp;quot;Wagahai&amp;quot;);"/>
+                </custom-code>
+                <custom-code comment="false" x="26" y="60">
+                    <int id="0" val="fontImg = DialogFontInfo.get(wagahai).getDebugImg(300);"/>
+                </custom-code>
+            </group>
+        </init>
+    </group>
+    <group eventID="7" id="-1"/>
+    <group eventID="8" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="8" id="-1">
+                <do-on-platform comment="false" x="26" y="40">
+                    <group eventID="8" id="-1">
+                        <enable-gamepad comment="false" x="37" y="67"/>
+                        <map-gamepad-control comment="false" x="37" y="87">
+                            <int id="0" val="0, 0"/>
+                            <CONTROL eid="4" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="114">
+                            <int id="0" val="0, 1"/>
+                            <CONTROL eid="5" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="141">
+                            <int id="0" val="0, 2"/>
+                            <CONTROL eid="7" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="168">
+                            <int id="0" val="0, 3"/>
+                            <CONTROL eid="8" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="195">
+                            <int id="0" val="0, up hat"/>
+                            <CONTROL eid="0" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="222">
+                            <int id="0" val="0, down hat"/>
+                            <CONTROL eid="1" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="249">
+                            <int id="0" val="0, left hat"/>
+                            <CONTROL eid="2" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="276">
+                            <int id="0" val="0, right hat"/>
+                            <CONTROL eid="3" id="1"/>
+                        </map-gamepad-control>
+                        <map-gamepad-control comment="false" x="37" y="303">
+                            <int id="0" val="0, 4"/>
+                            <CONTROL eid="6" id="1"/>
+                        </map-gamepad-control>
+                    </group>
+                    <int id="0" val="2"/>
+                </do-on-platform>
+            </group>
+        </init>
+    </group>
+    <group eventID="8" id="-1"/>
+    <group eventID="9" id="0">
+        <init comment="false" x="15" y="15">
+            <group eventID="9" id="-1">
+                <do-on-platform comment="false" x="26" y="40">
+                    <group eventID="9" id="-1">
+                        <set-val-1-2 comment="false" x="37" y="67">
+                            <create-list comment="false" id="0" x="0" y="0"/>
+                        </set-val-1-2>
+                        <actors-of-type3 comment="false" x="37" y="92">
+                            <group eventID="9" id="-1">
+                                <add-list comment="false" x="48" y="124">
+                                    <get-val-1-2 comment="false" id="0" x="0" y="0"/>
+                                    <actor-of-type comment="false" id="1" x="0" y="0"/>
+                                </add-list>
+                            </group>
+                            <ACTORTYPE eid="34" id="0"/>
+                        </actors-of-type3>
+                    </group>
+                    <int id="0" val="6"/>
+                </do-on-platform>
+            </group>
+        </init>
+    </group>
+    <group eventID="9" id="-1"/>
 </groups>
