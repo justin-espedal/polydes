@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<source path="src" />
-	<source path="src-ext" />
 	<haxelib name="stencyl" />
-	<assets path="system_warning.png" rename="assets/dialog/images/system_warning.png" />
 </project>

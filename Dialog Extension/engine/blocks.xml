@@ -4,7 +4,7 @@
 	<block
 		tag="display-dialog"
 		spec="show dialog %0"
-		code='Dialog.cbCall(~, "base", this, "");'
+		code='dialog.core.Dialog.cbCall(~, "base", this, "");'
 		type="action"
 		color="gray"
 		returns="void">
@@ -16,7 +16,7 @@
 	<block
 		tag="display-dialog2"
 		spec="show dialog %0 and trigger event %1 upon completion"
-		code='Dialog.cbCall(~, "base", this, ~);'
+		code='dialog.core.Dialog.cbCall(~, "base", this, ~);'
 		type="action"
 		color="gray"
 		returns="void">
@@ -29,7 +29,7 @@
 	<block
 		tag="display-dialog3"
 		spec="show dialog %0 with style %1"
-		code='Dialog.cbCall(~, ~, this, "");'
+		code='dialog.core.Dialog.cbCall(~, ~, this, "");'
 		type="action"
 		color="gray"
 		returns="void">
@@ -42,7 +42,7 @@
 	<block
 		tag="display-dialog4"
 		spec="show dialog %0 with style %1 and trigger event %2 upon completion"
-		code='Dialog.cbCall(~, ~, this, ~);'
+		code='dialog.core.Dialog.cbCall(~, ~, this, ~);'
 		type="action"
 		color="gray"
 		returns="void">
@@ -52,11 +52,11 @@
 			<text order="2"></text>
 		</fields>
 	</block>
-		
+
 	<block
 		tag="display-dialog5"
 		spec="show text %0"
-		code='Dialog.globalCall(~, "base", this, "");'
+		code='dialog.core.Dialog.globalCall(~, "base", this, "");'
 		type="action"
 		color="gray"
 		returns="void">
@@ -68,7 +68,7 @@
 	<block
 		tag="display-dialog6"
 		spec="show text %0 and trigger event %1 upon completion"
-		code='Dialog.globalCall(~, "base", this, ~);'
+		code='dialog.core.Dialog.globalCall(~, "base", this, ~);'
 		type="action"
 		color="gray"
 		returns="void">
@@ -81,7 +81,7 @@
 	<block
 		tag="display-dialog7"
 		spec="show text %0 with style %1"
-		code='Dialog.globalCall(~, ~, this, "");'
+		code='dialog.core.Dialog.globalCall(~, ~, this, "");'
 		type="action"
 		color="gray"
 		returns="void">
@@ -94,7 +94,7 @@
 	<block
 		tag="display-dialog8"
 		spec="show text %0 with style %1 and trigger event %2 upon completion"
-		code='Dialog.globalCall(~, ~, this, ~);'
+		code='dialog.core.Dialog.globalCall(~, ~, this, ~);'
 		type="action"
 		color="gray"
 		returns="void">
@@ -104,5 +104,5 @@
 			<text order="2"></text>
 		</fields>
 	</block>
-			
+
 </blocks>

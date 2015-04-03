@@ -1,0 +1,19 @@
+-main dialog.unity.DialogSource
+--macro include('dialog.ext')
+
+-lib HUGS
+
+-cp src
+-cs "C:\Users\Justin\Documents\New Unity Project 2D\Assets"
+
+# -D unsafe
+-D no-compilation
+-D real-position
+-D unity
+
+-net-lib J:\Programs\Unity\Editor\Data\PlaybackEngines\windowsstandalonesupport\Managed\UnityEngine.dll
+-net-lib J:\Programs\Unity\Editor\Data\Managed\UnityEditor.dll
+--macro addGlobalMetadata('*','@:nativeGen')
+
+dialog.unity.Editor
+-cmd "move C:\Users\Justin\Documents\NewUni~1\Assets\src\dialog\unity\Editor.cs C:\Users\Justin\Documents\NewUni~1\Assets\Dialog\Editor\Editor.cs"

@@ -1,0 +1,36 @@
+-main ApplicationMain
+-lib openfl
+-lib lime
+-lib actuate
+-lib console
+-lib polygonal-ds
+-lib polygonal-printf
+-lib box2d
+-lib stencyl
+-cp C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\Source
+-cp C:\Common\Eclipse Workspace Windows\Stencyl\plaf\haxe\extensions\gestures
+-cp C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\Export\flash\haxe
+-cp src
+-D lime-openal
+-D tools=2.0.6
+-D flash-use-stage
+-D no-compilation
+-D lime-opengl
+-D openfl-flash
+-D lime-curl
+-D web
+--remap nme:openfl
+-D network-sandbox
+-D as3_native
+-D swf-directblit
+-swf-lib C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\mochi.swf
+-swf-lib C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\newgrounds.swf
+-swf-lib C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\cpmstar.swf
+-resource C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\Assets\graphics\preloader-bg.png@preloader-bg
+-swf-lib C:\Common\Dropbox\stencylworks\games-generated\Dialog Extension Sample\Export\flash\obj\assets.swf
+-swf-version 11
+-swf ..\Dialog Extension Sample.swf
+-swf-header 640:480:65:000000
+
+#-cmd "..\Dialog~1.swf"
+--no-output
