@@ -20,7 +20,7 @@ import javax.swing.ImageIcon;
 
 import stencyl.sw.app.lists.AbstractListIcon;
 import stencyl.sw.util.Loader;
-import stencyl.sw.util.gfx.GraphicsUtilities;
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class FileListIcon implements Icon 
 {
@@ -44,9 +44,9 @@ public class FileListIcon implements Icon
 	public int DEFAULT_HEIGHT;
 	public int TOP_PADDING = 15;
 	
-	private Color SELECTED_COLOR = new Color(220, 155, 55);
-	private Color BORDER_COLOR = new Color(50, 50, 50);
-	private Color ROLLOVER_COLOR = new Color(100, 170, 190);//SELECTED_COLOR.darker(); //new Color(100, 160, 190);
+	private final Color SELECTED_COLOR = new Color(220, 155, 55);
+	private final Color BORDER_COLOR = new Color(50, 50, 50);
+	private final Color ROLLOVER_COLOR = new Color(100, 170, 190);//SELECTED_COLOR.darker(); //new Color(100, 160, 190);
 	private static Color FILL_COLOR = Color.GRAY;
 	
 	public static final ImageIcon MY_ICON = Loader.loadIcon("res/libraries/upload.png");

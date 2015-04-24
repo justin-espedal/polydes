@@ -13,8 +13,6 @@ import javax.swing.JFileChooser;
 
 import org.apache.commons.io.FileUtils;
 
-
-
 import stencyl.ext.polydes.scenelink.Main;
 import stencyl.ext.polydes.scenelink.res.Resources;
 import stencyl.ext.polydes.scenelink.util.PngFilter;
@@ -22,13 +20,13 @@ import stencyl.sw.SW;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.filechooser.ImageFileView;
-import stencyl.sw.util.filechooser.ImagePreview;
+import stencyl.thirdparty.misc.comp.ImagePreview;
 
 public class ImageImportButton extends JButton implements ActionListener
 {
 	public static String lastImported = "";
 	
-	private ArrayList<ActionListener> listeners;
+	private final ArrayList<ActionListener> listeners;
 	
 	public ImageImportButton()
 	{

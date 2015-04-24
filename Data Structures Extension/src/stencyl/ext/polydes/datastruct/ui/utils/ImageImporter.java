@@ -13,7 +13,7 @@ import stencyl.sw.SW;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.filechooser.ImageFileView;
-import stencyl.sw.util.filechooser.ImagePreview;
+import stencyl.thirdparty.misc.comp.ImagePreview;
 
 public class ImageImporter implements ActionListener
 {

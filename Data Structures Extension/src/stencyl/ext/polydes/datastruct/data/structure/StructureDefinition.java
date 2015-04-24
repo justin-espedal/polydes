@@ -19,7 +19,7 @@ import stencyl.ext.polydes.datastruct.data.types.ExtrasMap;
 import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
 import stencyl.ext.polydes.datastruct.ui.page.StructurePage;
-import stencyl.sw.util.gfx.GraphicsUtilities;
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class StructureDefinition extends EditableObject
 {
@@ -33,7 +33,7 @@ public class StructureDefinition extends EditableObject
 	private String classname;
 	
 	public String customCode;
-	private LinkedHashMap<String, StructureField> fields;
+	private final LinkedHashMap<String, StructureField> fields;
 	public DataItem dref;
 	public Folder guiRoot; //this is passed in from elsewhere.
 	private StructureDefinitionEditor editor;
