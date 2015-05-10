@@ -111,14 +111,19 @@
 	</target>
 	
 	<target name="copyjar">
-		<for param="file">
-			<path>
-				<pathelement path="${copytodir}/${name}.jar"/>
-			</path>
-			<sequential>
-				<copy file="${extensiondir}/${name}.jar" tofile="@{file}" />
-			</sequential>
-		</for>
+		<if>
+			<not><equals arg1="${jenkins}" arg2="true" /></not>
+			<then>
+				<for param="file">
+					<path>
+						<pathelement path="${copytodir}/${name}.jar"/>
+					</path>
+					<sequential>
+						<copy file="${extensiondir}/${name}.jar" tofile="@{file}" />
+					</sequential>
+				</for>
+			</then>
+		</if>
 	</target>
 	
 </project>
