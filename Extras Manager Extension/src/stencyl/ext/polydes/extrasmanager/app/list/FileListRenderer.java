@@ -28,8 +28,8 @@ import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
-import stencyl.sw.util.gfx.GraphicsUtilities;
 import stencyl.sw.util.gfx.ImageUtil;
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class FileListRenderer extends JLabel implements ListCellRenderer 
 {
@@ -52,8 +52,8 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 	protected FileListIcon icon;
 	private Image cache;
 	
-	private int iconWidth;
-	private int iconHeight;
+	private final int iconWidth;
+	private final int iconHeight;
 	
 	protected int fontSize = 3;
 	

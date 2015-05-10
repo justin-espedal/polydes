@@ -42,7 +42,7 @@ import stencyl.ext.polydes.datastruct.data.types.Types;
 import stencyl.ext.polydes.datastruct.res.Resources;
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 import stencyl.ext.polydes.datastruct.ui.list.ListUtils;
-import stencyl.sw.util.gfx.GraphicsUtilities;
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class StructureDefinitionEditor extends JPanel
 {
@@ -66,7 +66,7 @@ public class StructureDefinitionEditor extends JPanel
 		return insertPosition;
 	}
 	
-	private Action createFieldAction = new AbstractAction()
+	private final Action createFieldAction = new AbstractAction()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -77,7 +77,7 @@ public class StructureDefinitionEditor extends JPanel
 		}
 	};
 	
-	private Action createHeaderAction = new AbstractAction()
+	private final Action createHeaderAction = new AbstractAction()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -88,7 +88,7 @@ public class StructureDefinitionEditor extends JPanel
 		}
 	};
 	
-	private Action createTabAction = new AbstractAction()
+	private final Action createTabAction = new AbstractAction()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -107,7 +107,7 @@ public class StructureDefinitionEditor extends JPanel
 		}
 	};
 	
-	private Action createConditionAction = new AbstractAction()
+	private final Action createConditionAction = new AbstractAction()
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)

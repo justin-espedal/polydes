@@ -6,12 +6,12 @@ import org.apache.log4j.Logger;
 
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.sw.editors.snippet.designer.AttributeType;
 import stencyl.sw.editors.snippet.designer.Block;
 import stencyl.sw.editors.snippet.designer.Block.BlockType;
 import stencyl.sw.editors.snippet.designer.BlockTheme;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
-import stencyl.sw.editors.snippet.designer.Definition.Type;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
 import stencyl.sw.editors.snippet.designer.codemap.CodeMap;
@@ -35,11 +35,11 @@ public class Blocks
 		(
 			Category.CUSTOM,
 			"ds-set-prop1",
-			new Type[] { Type.OBJECT, Type.TEXT, Type.OBJECT },
+			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT, AttributeType.OBJECT },
 			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.setField(~, ~, ~);"),
 			spec,
 			BlockType.ACTION,
-			Type.VOID
+			AttributeType.VOID
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -56,11 +56,11 @@ public class Blocks
 		(
 			Category.CUSTOM,
 			"ds-get-prop1",
-			new Type[] { Type.OBJECT, Type.TEXT },
+			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT },
 			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.field(~, ~)"),
 			spec,
 			BlockType.NORMAL,
-			Type.OBJECT
+			AttributeType.OBJECT
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -77,11 +77,11 @@ public class Blocks
 		(
 			Category.CUSTOM,
 			"ds-set-prop2",
-			new Type[] { Type.TEXT, Type.TEXT, Type.OBJECT },
+			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT, AttributeType.OBJECT },
 			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.setField(DataStructures.get(~), ~, ~);"),
 			spec,
 			BlockType.ACTION,
-			Type.VOID
+			AttributeType.VOID
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -98,11 +98,11 @@ public class Blocks
 		(
 			Category.CUSTOM,
 			"ds-get-prop2",
-			new Type[] { Type.TEXT, Type.TEXT },
+			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT },
 			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.field(DataStructures.get(~), ~)"),
 			spec,
 			BlockType.NORMAL,
-			Type.OBJECT
+			AttributeType.OBJECT
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -120,11 +120,11 @@ public class Blocks
 		(
 			Category.CUSTOM,
 			"ds-get-data",
-			new Type[] { Type.TEXT },
+			new AttributeType[] { AttributeType.TEXT },
 			new BasicCodeMap().setCode(CodeMap.HX, "DataStructures.get(~)"),
 			spec,
 			BlockType.NORMAL,
-			Type.OBJECT
+			AttributeType.OBJECT
 		);
 		
 		blockDef.guiTemplate = spec;

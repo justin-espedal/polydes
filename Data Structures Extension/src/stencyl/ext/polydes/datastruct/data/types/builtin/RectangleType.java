@@ -18,11 +18,11 @@ import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
 import stencyl.ext.polydes.datastruct.utils.StringData;
+import stencyl.sw.editors.snippet.designer.AttributeType;
 import stencyl.sw.editors.snippet.designer.Block.BlockType;
 import stencyl.sw.editors.snippet.designer.BlockTheme;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
-import stencyl.sw.editors.snippet.designer.Definition.Type;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
 import stencyl.sw.editors.snippet.designer.codemap.CodeMap;
@@ -76,11 +76,11 @@ public class RectangleType extends BuiltinType<Rectangle>
 		(
 			Category.CUSTOM,
 			"ds-rectangle-new",
-			new Type[] { Type.NUMBER, Type.NUMBER, Type.NUMBER, Type.NUMBER },
+			new AttributeType[] { AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER },
 			new BasicCodeMap().setCode(CodeMap.HX, "new nme.geom.Rectangle(~, ~, ~, ~)"),
 			spec,
 			BlockType.NORMAL,
-			Type.OBJECT
+			AttributeType.OBJECT
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -96,11 +96,11 @@ public class RectangleType extends BuiltinType<Rectangle>
 		(
 			Category.CUSTOM,
 			"ds-rectangle-set",
-			new Type[] { Type.OBJECT, Type.DROPDOWN, Type.NUMBER },
+			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN, AttributeType.NUMBER },
 			new BasicCodeMap().setCode(CodeMap.HX, "~.~ = ~;"),
 			spec,
 			BlockType.ACTION,
-			Type.VOID
+			AttributeType.VOID
 		);
 		
 		blockDef.guiTemplate = spec;
@@ -117,11 +117,11 @@ public class RectangleType extends BuiltinType<Rectangle>
 		(
 			Category.CUSTOM,
 			"ds-rectangle-get",
-			new Type[] { Type.OBJECT, Type.DROPDOWN },
+			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN },
 			new BasicCodeMap().setCode(CodeMap.HX, "~.~"),
 			spec,
 			BlockType.NORMAL,
-			Type.NUMBER
+			AttributeType.NUMBER
 		);
 		
 		blockDef.guiTemplate = spec;

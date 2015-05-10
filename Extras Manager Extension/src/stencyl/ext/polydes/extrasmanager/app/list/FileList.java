@@ -50,7 +50,6 @@ import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.ext.polydes.extrasmanager.io.FileOperations;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.SW;
-import stencyl.sw.app.doc.FileDrop;
 import stencyl.sw.app.lists.AbstractItemRenderer;
 import stencyl.sw.app.lists.AbstractList;
 import stencyl.sw.app.lists.ListListener;
@@ -58,6 +57,7 @@ import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.comp.GroupButton;
+import stencyl.thirdparty.misc.comp.FileDrop;
 
 import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.list.QuickListFilterField;
@@ -76,7 +76,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	protected int rolloverIndex = -1;
 	private ListListener listener;
 	
-	private boolean showPopup = true;
+	private final boolean showPopup = true;
 	
 	//---
 	
