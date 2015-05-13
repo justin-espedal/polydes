@@ -230,9 +230,10 @@ public class StructureDefinitionPage extends JPanel
 				StructureDefinition toCreate = dg.newDef;
 				dg.dispose();
 				
-				if(toCreate != null)
-					StructureDefinitions.addDefinition(toCreate);
+				if(toCreate == null)
+					return null;
 				
+				StructureDefinitions.addDefinition(toCreate);
 				return toCreate.dref;
 			}
 			
