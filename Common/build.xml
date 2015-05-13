@@ -21,13 +21,22 @@
 	<dirname property="common.base" file="${ant.file.polydes-common}"/>
 	<property name="common.src" value="${common.base}/src" />
 	<property name="common.pkg" value="stencyl/ext/polydes/common" />
-	<property name="extensiondir" value="${swworkdir}/extensions" />
 	
 	<var name="this.src" value="./src" />
 	<var name="this.build" value="./build" />
 	<var name="this.lib" value="./libs" />
 	<var name="this.pkg" value="${pkg}" />
 	<var name="this.name" value="${name}" />
+	
+	<if>
+		<equals arg1="${jenkins}" arg2="true" />
+		<then>
+			<var name="extensiondir" value="../dist" />
+		</then>
+		<else>
+			<var name="extensiondir" value="${swworkdir}/extensions" />
+		</else>
+	</if>
 	
 	<!--
 		srcpath and clspath are first set when this script is included.
