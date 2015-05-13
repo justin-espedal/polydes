@@ -216,7 +216,10 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		fieldData.clear();
 		enabledFields.clear();
 		disposeEditor();
-		Structures.structures.get(template).remove(this);
+		if(Structures.structures.containsKey(template))
+		{
+			Structures.structures.get(template).remove(this);
+		}
 		Structures.structuresByID.remove(getID());
 	}
 	
