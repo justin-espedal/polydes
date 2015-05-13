@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TreeSelectionEvent;
@@ -367,6 +369,11 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 					}
 				});
 				Point p = getMousePosition(true);
+				if(p == null)
+				{
+					p = MouseInfo.getPointerInfo().getLocation();
+					SwingUtilities.convertPointFromScreen(p, this);
+				}
 				menu.show(this, p.x, p.y);
 			}
 		}
