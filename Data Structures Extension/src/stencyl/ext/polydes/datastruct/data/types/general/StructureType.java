@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
@@ -33,6 +34,8 @@ import stencyl.ext.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureType extends DataType<Structure>
 {
+	private static final Logger log = Logger.getLogger(StructureType.class);
+	
 	public StructureDefinition def;
 	
 	public StructureType(StructureDefinition def)
@@ -107,10 +110,19 @@ public class StructureType extends DataType<Structure>
 		{
 			int id = Integer.parseInt(s);
 			Structure model = Structures.getStructure(id);
-			if(model.getTemplate() == def)
-				return model;
 			
-			return null;
+			if(model == null)
+			{
+				log.warn("Couldn't load structure with id " + s + ". It no longer exists.");
+				return null;
+			}
+			if(model.getTemplate() != def)
+			{
+				log.warn("Couldn't load structure with id " + s + " as type " + def.getName());
+				return null;
+			}
+			
+			return model;
 		}
 		catch(NumberFormatException ex)
 		{
