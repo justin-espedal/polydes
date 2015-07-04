@@ -16,7 +16,7 @@
                     <int id="2" val=".2"/>
                 </scene-change-through>
                 <code-long comment="false" x="26" y="97">
-                    <int id="0" val="for(dialogBox in Dialog.dialogBoxes)&#10;{&#10;&#9;dialogBox.endMessage();&#10;}"/>
+                    <int id="0" val="for(dialogBox in dg.core.Dialog.dialogBoxes)&#10;{&#10;&#9;dialogBox.endMessage();&#10;}"/>
                 </code-long>
                 <custom-code comment="false" x="26" y="257">
                     <int id="0" val="}"/>
