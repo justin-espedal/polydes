@@ -454,7 +454,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 		var i:Int = typeIndex;
 		if(msg[i] == " ")
 		{
-			tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.charSpacing;
+			tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.getStyle().charSpacing;
 			++i;
 		}
 		while(msg[i] != " ")
@@ -462,7 +462,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 			if(Std.is(msg[i], String))
 			{
 				tempMsgDisplay += Std.string(msg[i]);
-				tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.charSpacing;
+				tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.getStyle().charSpacing;
 			}
 			++i;
 			if(i > msg.length - 1)

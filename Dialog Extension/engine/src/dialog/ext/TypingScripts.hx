@@ -66,7 +66,7 @@ class TypingScripts extends DialogExtension
 		addCallback(Dialog.WHEN_CREATED, function():Void
 		{
 			//typeSound = style.defaultTypeSound;
-			typeSoundArray = style.defaultRandomTypeSounds;
+			typeSoundArray = [for(sound in style.defaultRandomTypeSounds) cast sound];
 			storedTypeSound = typeSoundArray;
 		});
 		addCallback(Dialog.WHEN_CHAR_TYPED, function():Void
