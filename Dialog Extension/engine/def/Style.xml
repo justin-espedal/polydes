@@ -13,6 +13,7 @@
             <field label="Message Start Sound" name="msgStartSound" type="Sound" optional="true"/>
             <field default="" editor="SingleLine" hint="Name of Game Attribute that will be set to &amp;quot;true&amp;quot; while Dialog is open." label="Control Attribute" name="controlAttribute" type="String"/>
             <field default="0" editor="Plain" hint="Pixels added between lines." label="Line Spacing" name="lineSpacing" step="1" type="Int"/>
+            <field default="0" editor="Plain" hint="Pixels added between characters." label="Character Spacing" name="charSpacing" step="1" type="Int"/>
             <field hint="Name of sound to play when &amp;lt;clear&amp;gt; is used." label="Clear Sound" name="clearSound" type="Sound" optional="true"/>
             <field hint="Name of sound to play when &amp;lt;close&amp;gt; is used." label="Close Sound" name="closeSound" type="Sound" optional="true"/>
             <field hint="Name of sound to play when &amp;lt;end&amp;gt; is used." label="End Sound" name="endSound" type="Sound" optional="true"/>

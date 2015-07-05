@@ -75,7 +75,7 @@ class Design_7_7_SceneSwitcher extends SceneScript
 /* ========================= Custom Code ========================== */
         public function gotoScene(sceneName:String):Void {
         switchScene(GameModel.get().scenes.get(getIDForScene(sceneName)).getID(), null, createCrossfadeTransition(.2));
-        for(dialogBox in dg.core.Dialog.dialogBoxes)
+        for(dialogBox in dialog.core.Dialog.dialogBoxes)
 {
 	dialogBox.endMessage();
 }
