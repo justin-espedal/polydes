@@ -37,7 +37,7 @@
                     </not>
                 </else-if>
             </group>
-            <CONTROL eid="6" id="0"/>
+            <control eid="6" id="0"/>
             <int id="1" val="0"/>
         </event-key-press-release>
     </group>
@@ -142,39 +142,39 @@
                         <enable-gamepad comment="false" x="37" y="67"/>
                         <map-gamepad-control comment="false" x="37" y="87">
                             <int id="0" val="0, 0"/>
-                            <CONTROL eid="4" id="1"/>
+                            <control eid="4" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="114">
                             <int id="0" val="0, 1"/>
-                            <CONTROL eid="5" id="1"/>
+                            <control eid="5" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="141">
                             <int id="0" val="0, 2"/>
-                            <CONTROL eid="7" id="1"/>
+                            <control eid="7" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="168">
                             <int id="0" val="0, 3"/>
-                            <CONTROL eid="8" id="1"/>
+                            <control eid="8" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="195">
                             <int id="0" val="0, up hat"/>
-                            <CONTROL eid="0" id="1"/>
+                            <control eid="0" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="222">
                             <int id="0" val="0, down hat"/>
-                            <CONTROL eid="1" id="1"/>
+                            <control eid="1" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="249">
                             <int id="0" val="0, left hat"/>
-                            <CONTROL eid="2" id="1"/>
+                            <control eid="2" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="276">
                             <int id="0" val="0, right hat"/>
-                            <CONTROL eid="3" id="1"/>
+                            <control eid="3" id="1"/>
                         </map-gamepad-control>
                         <map-gamepad-control comment="false" x="37" y="303">
                             <int id="0" val="0, 4"/>
-                            <CONTROL eid="6" id="1"/>
+                            <control eid="6" id="1"/>
                         </map-gamepad-control>
                     </group>
                     <int id="0" val="2"/>
@@ -198,7 +198,7 @@
                                     <actor-of-type comment="false" id="1" x="0" y="0"/>
                                 </add-list>
                             </group>
-                            <ACTORTYPE eid="34" id="0"/>
+                            <actortype eid="34" id="0"/>
                         </actors-of-type3>
                     </group>
                     <int id="0" val="6"/>

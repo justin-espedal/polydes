@@ -28,6 +28,11 @@ class SkipScripts extends DialogExtension
 
 	private var typingScript:TypingScripts;
 
+	#if stencyl
+	public var fastSound:Array<Sound>;
+	public var zoomSound:Array<Sound>;
+	#end
+
 	#if unity
 	private var style:SkipScripts;
 
@@ -76,6 +81,11 @@ class SkipScripts extends DialogExtension
 		{
 			msgSkippable = style.skippableDefault;
 			typingScript = cast(dg.getExt("Typing Scripts"), TypingScripts);
+
+			#if stencyl
+			fastSound = [for(sound in style.fastSound) Std.is(sound, String) ? Util.sound(sound) : sound];
+			zoomSound = [for(sound in style.zoomSound) Std.is(sound, String) ? Util.sound(sound) : sound];
+			#end
 		});
 		addCallback(Dialog.ALWAYS, function():Void
 		{
@@ -119,13 +129,13 @@ class SkipScripts extends DialogExtension
 						if(soundTimer >= style.zoomSoundInterval && !(dg.paused))
 						{
 							soundTimer = 0;
-							var snd:Sound = style.zoomSound[Std.random(style.zoomSound.length)];
+							var snd:Sound = randomSound(zoomSound);
 							if(snd != null)
 								Script.playSound(snd);
 						}
 					}
 					else
-						setTypingScriptSounds(style.zoomSound);
+						setTypingScriptSounds(zoomSound);
 
 					if((curSkipLevel == 1 && dg.msgTypeSpeed != style.fastSpeed) ||
 					   (curSkipLevel == 2 && dg.msgTypeSpeed != style.zoomSpeed) ||
@@ -142,7 +152,6 @@ class SkipScripts extends DialogExtension
 				else if(Input.check(style.fastButton))
 				{
 					if(style.fastSoundInterval > 0)
-
 					{
 						setTypingScriptSounds(null);
 
@@ -150,13 +159,13 @@ class SkipScripts extends DialogExtension
 						if(!(dg.typeDelay > style.fastSpeed*1000) && soundTimer >= style.fastSoundInterval && !(dg.paused))
 						{
 							soundTimer = 0;
-							var snd:Sound = style.fastSound[Std.random(style.fastSound.length)];
+							var snd:Sound = randomSound(fastSound);
 							if(snd != null)
 								Script.playSound(snd);
 						}
 					}
 					else
-						setTypingScriptSounds(style.fastSound);
+						setTypingScriptSounds(fastSound);
 
 					if((curSkipLevel == 1 && dg.msgTypeSpeed != style.fastSpeed) ||
 					   (curSkipLevel == 2 && dg.msgTypeSpeed != style.zoomSpeed) ||
@@ -214,6 +223,14 @@ class SkipScripts extends DialogExtension
 				typingScript.setTypeSoundArray([]);
 			}
 		}
+	}
+
+	private function randomSound(sounds:Array<Sound>):Null<Sound>
+	{
+		if(sounds.length == 0)
+			return null;
+
+		return sounds[Std.random(sounds.length)];
 	}
 
 	// Member acess

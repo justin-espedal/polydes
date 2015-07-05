@@ -55,22 +55,21 @@ class DialogStyle
 
 		for(curClass in extensionClasses)
 		{
-			curExt = Type.createInstance(curClass, [dg]);
+			curExt = Type.createInstance(curClass, []);
 			extensions.push(curExt);
-			extensionMap.set(curExt.name, curExt);
 		}
 
 		#elseif unity
 
 		extensions = style.extensions;
 
+		#end
+		
 		for(ext in extensions)
 		{
 			ext.setup(dg);
 			extensionMap.set(ext.name, ext);
 		}
-
-		#end
 
 		cmds = new Map<String, Dynamic>();
 		for(curExtension in this.extensions)
