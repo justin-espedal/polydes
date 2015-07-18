@@ -645,6 +645,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	@Override
 	public void editingCanceled(ChangeEvent e)
 	{
+		
 	}
 
 	@Override

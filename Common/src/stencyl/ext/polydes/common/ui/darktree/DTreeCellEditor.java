@@ -1,6 +1,8 @@
 package stencyl.ext.polydes.common.ui.darktree;
 
 import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -17,7 +19,7 @@ import javax.swing.tree.TreeCellEditor;
 import stencyl.ext.polydes.common.nodes.Branch;
 import stencyl.ext.polydes.common.nodes.Leaf;
 
-public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyListener, DocumentListener
+public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyListener, DocumentListener, FocusListener
 {
 	private DarkTree<T> dtree;
 	
@@ -37,6 +39,7 @@ public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyLi
 		input = new InlineTreeInput(dtree);
 		input.addKeyListener(this);
 		input.getDocument().addDocumentListener(this);
+		input.addFocusListener(this);
 		listeners = new ArrayList<CellEditorListener>();
 		this.dtree = dtree;
 	}
@@ -227,5 +230,17 @@ public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyLi
 	public void selectText()
 	{
 		input.selectAll();
+	}
+
+	@Override
+	public void focusGained(FocusEvent e)
+	{
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e)
+	{
+		cancelCellEditing();
 	}
 }

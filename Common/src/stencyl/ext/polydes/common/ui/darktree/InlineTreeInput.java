@@ -83,6 +83,7 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 			@Override
 			public void focusLost(FocusEvent e)
 			{
+				dispatchEvent(e);
 			}
 		});
 
