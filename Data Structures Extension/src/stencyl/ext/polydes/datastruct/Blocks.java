@@ -14,10 +14,9 @@ import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
-import stencyl.sw.editors.snippet.designer.codemap.CodeMap;
+import stencyl.sw.editors.snippet.designer.dropdown.CodeConverter;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData.DropdownConverter;
-import stencyl.sw.editors.snippet.designer.dropdown.JavaConverter;
 
 public class Blocks
 {
@@ -36,7 +35,7 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-set-prop1",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT, AttributeType.OBJECT },
-			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.setField(~, ~, ~);"),
+			new BasicCodeMap().setCode("Reflect.setField(~, ~, ~);"),
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -57,7 +56,7 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-get-prop1",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT },
-			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.field(~, ~)"),
+			new BasicCodeMap().setCode("Reflect.field(~, ~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -78,7 +77,7 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-set-prop2",
 			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT, AttributeType.OBJECT },
-			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.setField(DataStructures.get(~), ~, ~);"),
+			new BasicCodeMap().setCode("Reflect.setField(DataStructures.get(~), ~, ~);"),
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -99,7 +98,7 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-get-prop2",
 			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT },
-			new BasicCodeMap().setCode(CodeMap.HX, "Reflect.field(DataStructures.get(~), ~)"),
+			new BasicCodeMap().setCode("Reflect.field(DataStructures.get(~), ~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -121,7 +120,7 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-get-data",
 			new AttributeType[] { AttributeType.TEXT },
-			new BasicCodeMap().setCode(CodeMap.HX, "DataStructures.get(~)"),
+			new BasicCodeMap().setCode("DataStructures.get(~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -165,10 +164,10 @@ public class Blocks
 					return phrases;
 				}
 			},
-			new JavaConverter()
+			new CodeConverter()
 			{
 				@Override
-				public String toJava(int dropdownID, Block b, int index, Object o, String language)
+				public String toCode(int dropdownID, Block b, int index, Object o)
 				{
 					try
 					{

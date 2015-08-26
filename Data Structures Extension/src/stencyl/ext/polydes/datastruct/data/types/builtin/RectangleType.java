@@ -25,7 +25,6 @@ import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
-import stencyl.sw.editors.snippet.designer.codemap.CodeMap;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData;
 
 public class RectangleType extends BuiltinType<Rectangle>
@@ -77,7 +76,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			Category.CUSTOM,
 			"ds-rectangle-new",
 			new AttributeType[] { AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER },
-			new BasicCodeMap().setCode(CodeMap.HX, "new nme.geom.Rectangle(~, ~, ~, ~)"),
+			new BasicCodeMap().setCode("new nme.geom.Rectangle(~, ~, ~, ~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -97,7 +96,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			Category.CUSTOM,
 			"ds-rectangle-set",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN, AttributeType.NUMBER },
-			new BasicCodeMap().setCode(CodeMap.HX, "~.~ = ~;"),
+			new BasicCodeMap().setCode("~.~ = ~;"),
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -118,7 +117,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			Category.CUSTOM,
 			"ds-rectangle-get",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN },
-			new BasicCodeMap().setCode(CodeMap.HX, "~.~"),
+			new BasicCodeMap().setCode("~.~"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.NUMBER

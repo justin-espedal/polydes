@@ -25,7 +25,6 @@ import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
-import stencyl.sw.editors.snippet.designer.codemap.CodeMap;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData;
 
 public class PointType extends BuiltinType<Point>
@@ -79,7 +78,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-new",
 			new AttributeType[] { AttributeType.NUMBER, AttributeType.NUMBER },
-			new BasicCodeMap().setCode(CodeMap.HX, "new nme.geom.Point(~, ~)"),
+			new BasicCodeMap().setCode("new nme.geom.Point(~, ~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -99,7 +98,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-set",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN, AttributeType.NUMBER },
-			new BasicCodeMap().setCode(CodeMap.HX, "~.~ = ~;"),
+			new BasicCodeMap().setCode("~.~ = ~;"),
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -120,7 +119,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-get",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN },
-			new BasicCodeMap().setCode(CodeMap.HX, "~.~"),
+			new BasicCodeMap().setCode("~.~"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.NUMBER
