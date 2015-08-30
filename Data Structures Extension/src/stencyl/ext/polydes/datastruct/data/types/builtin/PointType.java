@@ -78,7 +78,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-new",
 			new AttributeType[] { AttributeType.NUMBER, AttributeType.NUMBER },
-			new BasicCodeMap().setCode("new nme.geom.Point(~, ~)"),
+			new BasicCodeMap("new nme.geom.Point(~, ~)"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -98,7 +98,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-set",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN, AttributeType.NUMBER },
-			new BasicCodeMap().setCode("~.~ = ~;"),
+			new BasicCodeMap("~.~ = ~;"),
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -119,7 +119,7 @@ public class PointType extends BuiltinType<Point>
 			Category.CUSTOM,
 			"ds-point-get",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN },
-			new BasicCodeMap().setCode("~.~"),
+			new BasicCodeMap("~.~"),
 			spec,
 			BlockType.NORMAL,
 			AttributeType.NUMBER
