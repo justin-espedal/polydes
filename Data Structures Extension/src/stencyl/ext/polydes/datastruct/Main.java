@@ -199,6 +199,12 @@ public class Main extends BaseExtension
 		File out = new File(Locations.getPath(Locations.getHXProjectDir(game), "Assets", "data"), "MyDataStructures.txt");
 		Text.writeLines(out, HXGenerator.generateFileList());
 		
+		Prefs.save();
+	}
+	
+	@Override
+	public void onGameBuild(Game game)
+	{
 		write("scripts.ds.DataStructure", HXGenerator.generateDataStructure());
 		write("scripts.DataStructures", HXGenerator.generateAccessFile());
 		write("scripts.ds.DataStructureReader", HXGenerator.generateReader());
@@ -209,8 +215,6 @@ public class Main extends BaseExtension
 			if(lines != null)
 				write(type.haxeType, lines);
 		}
-		
-		Prefs.save();
 	}
 	
 	private void write(String path, List<String> lines)
