@@ -6,14 +6,23 @@ import org.apache.log4j.Logger;
 
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.data.types.Types;
+import stencyl.sw.editors.snippet.designer.AbstractField;
 import stencyl.sw.editors.snippet.designer.AttributeType;
 import stencyl.sw.editors.snippet.designer.Block;
 import stencyl.sw.editors.snippet.designer.Block.BlockType;
+import stencyl.sw.editors.snippet.designer.BlockField;
+import stencyl.sw.editors.snippet.designer.BlockFieldOverride;
 import stencyl.sw.editors.snippet.designer.BlockTheme;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
 import stencyl.sw.editors.snippet.designer.codebuilder.CodeBuilder;
+import stencyl.sw.editors.snippet.designer.codebuilder.CodeElement;
+import stencyl.sw.editors.snippet.designer.codebuilder.DesignModeCodeBuilder;
+import stencyl.sw.editors.snippet.designer.codebuilder.SpecialCodeElement;
+import stencyl.sw.editors.snippet.designer.codebuilder.XMLCodeBuilder;
+import stencyl.sw.editors.snippet.designer.codebuilder.xml.XMLElement;
+import stencyl.sw.editors.snippet.designer.codebuilder.xml.XMLElement.XMLInt;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
 import stencyl.sw.editors.snippet.designer.dropdown.CodeConverter;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData;
@@ -31,12 +40,72 @@ public class Blocks
 		
 		String spec = "set %1 for %0 to %2";
 		
+		final CodeElement arg = SpecialCodeElement.TILDE;
+		final CodeElement codeArg = new CodeElement()
+		{
+			@Override
+			public void toCode(CodeBuilder builder)
+			{
+				if(builder instanceof DesignModeCodeBuilder)
+				{
+					AbstractField child = ((DesignModeCodeBuilder) builder).getCurrentField();
+					
+					if (child instanceof BlockFieldOverride && ((BlockFieldOverride) child).isOverridden())
+					{
+						BlockField c = ((BlockFieldOverride) child).getBlockField();
+						
+						if (c.hasNested())
+						{
+							builder.error();
+						}
+						else
+						{
+							builder.append(c.getFieldValue());
+						}
+					}
+					else
+					{
+						builder.error();
+					}
+				}
+				else if(builder instanceof XMLCodeBuilder)
+				{
+					XMLElement child = ((XMLCodeBuilder) builder).getCurrentField();
+					
+					if (child != null)
+					{
+						if(child instanceof XMLInt)
+						{
+							builder.append(((XMLInt) child).val);
+						}
+						else
+						{
+							builder.error();
+						}
+					}
+					else
+					{
+						builder.error();
+					}
+				}
+				
+				builder.nextField();
+			}
+		};
+		
 		Definition blockDef = new Definition
 		(
 			Category.CUSTOM,
 			"ds-set-prop1",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT, AttributeType.OBJECT },
-			new BasicCodeMap("Reflect.setField(~, ~, ~);"),
+			new CodeElement()
+			{
+				@Override
+				public void toCode(CodeBuilder builder)
+				{
+					builder.append(arg, ".", codeArg, " = ", arg, ";");
+				}
+			},
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -57,7 +126,14 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-get-prop1",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.TEXT },
-			new BasicCodeMap("Reflect.field(~, ~)"),
+			new CodeElement()
+			{
+				@Override
+				public void toCode(CodeBuilder builder)
+				{
+					builder.append(arg, ".", codeArg);
+				}
+			},
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -78,7 +154,14 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-set-prop2",
 			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT, AttributeType.OBJECT },
-			new BasicCodeMap("Reflect.setField(DataStructures.get(~), ~, ~);"),
+			new CodeElement()
+			{
+				@Override
+				public void toCode(CodeBuilder builder)
+				{
+					builder.append("DataStructures.get(", arg, ").", codeArg, " = ", arg, ";");
+				}
+			},
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -99,7 +182,14 @@ public class Blocks
 			Category.CUSTOM,
 			"ds-get-prop2",
 			new AttributeType[] { AttributeType.TEXT, AttributeType.TEXT },
-			new BasicCodeMap("Reflect.field(DataStructures.get(~), ~)"),
+			new CodeElement()
+			{
+				@Override
+				public void toCode(CodeBuilder builder)
+				{
+					builder.append("DataStructures.get(", arg, ".", codeArg);
+				}
+			},
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
