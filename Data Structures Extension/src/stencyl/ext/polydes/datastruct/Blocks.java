@@ -106,6 +106,7 @@ public class Blocks
 					builder.append(arg, ".", codeArg, " = ", arg, ";");
 				}
 			},
+			null,
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -134,6 +135,7 @@ public class Blocks
 					builder.append(arg, ".", codeArg);
 				}
 			},
+			null,
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -162,6 +164,7 @@ public class Blocks
 					builder.append("DataStructures.get(", arg, ").", codeArg, " = ", arg, ";");
 				}
 			},
+			null,
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -190,6 +193,7 @@ public class Blocks
 					builder.append("DataStructures.get(", arg, ".", codeArg);
 				}
 			},
+			null,
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -212,6 +216,7 @@ public class Blocks
 			"ds-get-data",
 			new AttributeType[] { AttributeType.TEXT },
 			new BasicCodeMap("DataStructures.get(~)"),
+			null,
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT

@@ -77,6 +77,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			"ds-rectangle-new",
 			new AttributeType[] { AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER, AttributeType.NUMBER },
 			new BasicCodeMap("new nme.geom.Rectangle(~, ~, ~, ~)"),
+			null,
 			spec,
 			BlockType.NORMAL,
 			AttributeType.OBJECT
@@ -97,6 +98,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			"ds-rectangle-set",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN, AttributeType.NUMBER },
 			new BasicCodeMap("~.~ = ~;"),
+			null,
 			spec,
 			BlockType.ACTION,
 			AttributeType.VOID
@@ -118,6 +120,7 @@ public class RectangleType extends BuiltinType<Rectangle>
 			"ds-rectangle-get",
 			new AttributeType[] { AttributeType.OBJECT, AttributeType.DROPDOWN },
 			new BasicCodeMap("~.~"),
+			null,
 			spec,
 			BlockType.NORMAL,
 			AttributeType.NUMBER
