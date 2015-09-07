@@ -8,7 +8,7 @@ import java.util.HashSet;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
+import stencyl.ext.polydes.common.collections.CollectionPredicate;
 import stencyl.ext.polydes.datastruct.data.core.Dynamic;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
 import stencyl.ext.polydes.datastruct.data.types.DataType;

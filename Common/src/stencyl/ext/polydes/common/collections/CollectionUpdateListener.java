@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.datastruct.data.core;
+package stencyl.ext.polydes.common.collections;
 
 public interface CollectionUpdateListener
 {

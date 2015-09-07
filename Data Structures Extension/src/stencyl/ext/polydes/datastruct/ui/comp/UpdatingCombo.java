@@ -10,9 +10,9 @@ import javax.swing.JComboBox;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import stencyl.ext.polydes.datastruct.data.core.CollectionObserver;
-import stencyl.ext.polydes.datastruct.data.core.CollectionPredicate;
-import stencyl.ext.polydes.datastruct.data.core.CollectionUpdateListener;
+import stencyl.ext.polydes.common.collections.CollectionObserver;
+import stencyl.ext.polydes.common.collections.CollectionPredicate;
+import stencyl.ext.polydes.common.collections.CollectionUpdateListener;
 
 /**
  * An UpdatingCombo automatically begins to observe the list it's passed.
@@ -39,7 +39,12 @@ public class UpdatingCombo<T> extends JComboBox
 		model.dispose();
 		model = null;
 	}
-
+	
+	public void setList(Collection<T> list)
+	{
+		model.setList(list);
+	}
+	
 	public void setFilter(CollectionPredicate<T> filter)
 	{
 		model.setFilter(filter);
@@ -61,6 +66,21 @@ class UpdatingModel<T> extends DefaultComboBoxModel implements CollectionUpdateL
 		observers.get(list).addListener(this);
 		this.list = list;
 		this.filter = filter;
+		listUpdated();
+	}
+	
+	/**
+	 * Completely refreshed with a new list. Previous filter is forgotten.
+	 */
+	public void setList(Collection<T> list)
+	{
+		dispose();
+		
+		if(!observers.containsKey(list))
+			observers.put(list, new CollectionObserver(list));
+		observers.get(list).addListener(this);
+		
+		this.list = list;
 		listUpdated();
 	}
 	
