@@ -19,11 +19,11 @@ import stencyl.ext.polydes.datastruct.ui.utils.DocumentAdapter;
 import stencyl.ext.polydes.datastruct.ui.utils.IntegerFilter;
 import stencyl.ext.polydes.datastruct.utils.StringData;
 import stencyl.sw.editors.snippet.designer.AttributeType;
-import stencyl.sw.editors.snippet.designer.Block.BlockType;
-import stencyl.sw.editors.snippet.designer.BlockTheme;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
+import stencyl.sw.editors.snippet.designer.block.Block.BlockType;
+import stencyl.sw.editors.snippet.designer.block.BlockTheme;
 import stencyl.sw.editors.snippet.designer.codemap.BasicCodeMap;
 import stencyl.sw.editors.snippet.designer.dropdown.DropdownData;
 

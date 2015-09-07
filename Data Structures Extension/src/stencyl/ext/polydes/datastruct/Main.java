@@ -26,8 +26,8 @@ import stencyl.ext.polydes.datastruct.io.Text;
 import stencyl.ext.polydes.datastruct.res.Resources;
 import stencyl.ext.polydes.datastruct.utils.DelayedInitialize;
 import stencyl.sw.app.ExtensionManager;
-import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definitions;
+import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.Loader;
@@ -301,13 +301,13 @@ public class Main extends BaseExtension
 	}
 	
 	@Override
-	public ArrayList<Definition> getDesignModeBlocks()
+	public DefinitionMap getDesignModeBlocks()
 	{
-		ArrayList<Definition> defs = new ArrayList<Definition>();
+		DefinitionMap defs = new DefinitionMap();
 		
 		for(String tag : Blocks.tagCache)
 		{
-			defs.add(Definitions.get().get(tag));
+			defs.put(tag, Definitions.get().get(tag));
 		}
 		
 		return defs;
