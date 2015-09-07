@@ -2,10 +2,8 @@ package stencyl.ext.polydes.datastruct;
 
 import java.util.HashMap;
 
-import org.apache.commons.lang3.StringUtils;
-
 import stencyl.ext.polydes.common.ui.darktree.DarkTree;
-import stencyl.sw.util.VerificationHelper;
+import stencyl.ext.polydes.common.util.CommonLoader;
 
 public class Prefs
 {
@@ -18,37 +16,13 @@ public class Prefs
 	
 	public static boolean initialized = false;
 	
-	public static HashMap<String, Object> props;
+	public static HashMap<String, Object> props = new HashMap<String, Object>();
 	
 	public static void loadProperties()
 	{
 		initialized = true;
 		
-		String data = Main.get().readInternalData();
-		if(data == null)
-			data = "";
-		props = new HashMap<String, Object>();
-		
-		for(String s : StringUtils.split(data, "\n"))
-		{
-			if(s.trim().isEmpty())
-				continue;
-			
-			int i = s.indexOf("=");
-			if(i == -1)
-				continue;
-			
-			String key = s.substring(0, i);
-			String value = s.substring(i + 1);
-			if(VerificationHelper.isInteger(value))
-				props.put(key, Integer.parseInt(value));
-			else if(VerificationHelper.isFloat(value))
-				props.put(key, Float.parseFloat(value));
-			else if(value.equals("true") || value.equals("false"))
-				props.put(key, value.equals("true"));
-			else
-				props.put(key, value);
-		}
+		CommonLoader.loadPropertiesForExtension(Main.get(), props);
 		
 		setDefaultProperty(DEFPAGE_X, -1);
 		setDefaultProperty(DEFPAGE_Y, -1);
