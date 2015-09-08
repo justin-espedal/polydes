@@ -1,10 +1,12 @@
 package stencyl.ext.polydes.datastruct.data.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.engine.sound.ISoundClip;
+import stencyl.ext.polydes.datastruct.Blocks;
 import stencyl.ext.polydes.datastruct.data.types.builtin.ArrayType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.BooleanType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.ColorType;
@@ -21,6 +23,7 @@ import stencyl.ext.polydes.datastruct.data.types.builtin.SetType;
 import stencyl.ext.polydes.datastruct.data.types.builtin.StringType;
 import stencyl.ext.polydes.datastruct.data.types.general.StencylResourceType;
 import stencyl.ext.polydes.datastruct.data.types.hidden.DataTypeType;
+import stencyl.ext.polydes.datastruct.utils.DelayedInitialize;
 import stencyl.sw.data.EditableBackground;
 import stencyl.sw.data.EditableFont;
 import stencyl.sw.data.EditableTileset;
@@ -28,6 +31,7 @@ import stencyl.sw.data.EditableTileset;
 public class Types
 {
 	public static HashMap<String, DataType<?>> typeFromXML = new LinkedHashMap<String, DataType<?>>();
+	public static ArrayList<DataType<?>> newTypes = new ArrayList<DataType<?>>();
 	
 	//===
 	
@@ -93,10 +97,34 @@ public class Types
 		String xml = type.xml;
 		
 		typeFromXML.put(xml, type);
+		
+		newTypes.add(type);
 	}
 	
 	public static void dispose()
 	{
 		typeFromXML.clear();
+	}
+
+	public static void initNewTypeFields()
+	{
+		for(DataType<?> type : typeFromXML.values())
+			DelayedInitialize.initPropPartial(type.xml, type, DelayedInitialize.CALL_FIELDS);
+	}
+
+	public static void initNewTypeMethods()
+	{
+		for(DataType<?> type : typeFromXML.values())
+			DelayedInitialize.initPropPartial(type.xml, type, DelayedInitialize.CALL_METHODS);
+	}
+
+	public static void finishInit()
+	{
+		DelayedInitialize.clearProps();
+		
+		for(DataType<?> type : newTypes)
+			Blocks.addDesignModeBlocks(type);
+		
+		newTypes.clear();
 	}
 }

@@ -16,6 +16,24 @@ import stencyl.ext.polydes.datastruct.io.Text;
 
 public class Structures
 {
+	public static class MissingStructureDefinitionException extends Exception
+	{
+		String name;
+		String type;
+		
+		public MissingStructureDefinitionException(String name, String type)
+		{
+			this.name = name;
+			this.type = type;
+		}
+		
+		@Override
+		public String getMessage()
+		{
+			return "Can't load structure " + name + ": missing definition \"" + type + "\"";
+		}
+	}
+	
 	private static int nextID = 0;
 	private static Structures _instance;
 	public static StructureFolder root;
@@ -44,7 +62,7 @@ public class Structures
 	
 	private HashMap<String, HashMap<String, String>> fmaps;
 	
-	public void load(File folder)
+	public void load(File folder) throws MissingStructureDefinitionException
 	{
 		fmaps = new HashMap<String, HashMap<String,String>>();
 		
@@ -68,7 +86,7 @@ public class Structures
 		fmaps = null;
 	}
 	
-	public void lightload(File file)
+	public void lightload(File file) throws MissingStructureDefinitionException
 	{
 		if(!file.exists())
 			return;
@@ -89,7 +107,13 @@ public class Structures
 			String type = map.remove("struct_type");
 			nextID = Math.max(nextID, id + 1);
 			
-			Structure model = new Structure(id, name, StructureDefinitions.defMap.get(type));
+			StructureDefinition template = StructureDefinitions.defMap.get(type);
+			if(template == null)
+			{
+				throw new MissingStructureDefinitionException(name, type);
+			}
+				
+			Structure model = new Structure(id, name, template);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
 		}

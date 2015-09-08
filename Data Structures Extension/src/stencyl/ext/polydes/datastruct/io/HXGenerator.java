@@ -20,9 +20,8 @@ public class HXGenerator
 	{
 		List<String> toWrite = new ArrayList<String>();
 		
-		if(Main.dataFolder != null)
-			for(File f : Main.dataFolder.listFiles())
-				addFile("", f, toWrite);
+		for(File f : Main.get().getExtrasFolder().listFiles())
+			addFile("", f, toWrite);
 		
 		return toWrite;
 	}

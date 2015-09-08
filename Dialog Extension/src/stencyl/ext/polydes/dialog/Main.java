@@ -1,19 +1,15 @@
 package stencyl.ext.polydes.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import javax.swing.Icon;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.commons.io.FileUtils;
 
 import stencyl.core.lib.Game;
+import stencyl.ext.polydes.common.ext.GameExtension;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.ext.DataStructureExtension;
 import stencyl.ext.polydes.datastruct.ext.DataTypeExtension;
@@ -21,29 +17,21 @@ import stencyl.ext.polydes.dialog.app.MainEditor;
 import stencyl.ext.polydes.dialog.data.stores.Dialog;
 import stencyl.ext.polydes.dialog.data.stores.Macros;
 import stencyl.ext.polydes.dialog.defaults.Defaults;
-import stencyl.ext.polydes.dialog.res.Resources;
 import stencyl.ext.polydes.dialog.types.DialogDataTypes;
+import stencyl.sw.SW;
 import stencyl.sw.app.ExtensionManager;
-import stencyl.sw.editors.game.advanced.EngineExtension;
+import stencyl.sw.editors.game.GameSettingsDialog;
 import stencyl.sw.editors.game.advanced.ExtensionInstance;
+import stencyl.sw.editors.snippet.designer.DefinitionParser;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
-public class Main extends BaseExtension implements DataTypeExtension, DataStructureExtension
+public class Main extends GameExtension implements DataTypeExtension, DataStructureExtension
 {
 	private static Main _instance;
-	
-	private static String dataFolderName = "[ext] dialog";
-	
-	private EngineExtension dialogExtension;
-	private String gameDir;
-	private String extrasDir;
-	private File extras;
-	private File dialogFile;
-	private File macrosFile;
 	
 	public static Main get()
 	{
@@ -58,56 +46,49 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	@Override
 	public void onStartup()
 	{
-		icon = Resources.loadIcon("icon.png");
-		classname = this.getClass().getName();
-		String loc = Locations.getExtensionPrefsLocation(classname);
-		if(new File(loc).exists())
-			Loader.readLocalDictionary(loc, properties);
-
+		super.onStartup();
+		
 		_instance = this;
 		
 		name = "Dialog Extension";
 		description = "Toolset side of the Dialog Extension.";
 		authorName = "Justin Espedal";
-		website = "http://dialog.justin.espedaladventures.com/";
-		internalVersion = 4;
-		version = "1.4.1";
+		website = "https://github.com/justin-espedal/polydes";
+		internalVersion = 5;
+		version = "1.6.0";
 
 		isInMenu = true;
 		menuName = "Dialog Extension";
 
 		isInGameCenter = true;
 		gameCenterName = "Dialog Extension";
-
-		dialogExtension = null;
-		gameDir = "";
 	}
 	
 	@Override
 	public void extensionsReady()
 	{
-		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
-		{
-			if(e.getClassname().equals("ExtrasManagerExtension"))
-			{
-				try
-				{
-					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
-				}
-				catch (NoSuchMethodException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (IllegalAccessException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (InvocationTargetException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}
+//		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
+//		{
+//			if(e.getClassname().equals("ExtrasManagerExtension"))
+//			{
+//				try
+//				{
+//					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
+//				}
+//				catch (NoSuchMethodException e1)
+//				{
+//					e1.printStackTrace();
+//				}
+//				catch (IllegalAccessException e1)
+//				{
+//					e1.printStackTrace();
+//				}
+//				catch (InvocationTargetException e1)
+//				{
+//					e1.printStackTrace();
+//				}
+//			}
+//		}
 	}
 	
 	/*
@@ -122,34 +103,165 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	{
 		print("DialogExtension : Activated");
 	}
-
+	
 	@Override
-	public JPanel onGameCenterActivate()
+	public boolean isInstalledForGame(Game game)
 	{
-		if (dialogExtension == null)
-		{
-			SwingUtilities.invokeLater(new Runnable()
+		GameExtension dsExt = findDataStructuresExtension();
+		boolean dsExtInstalled = dsExt.isActive() && dsExt.isInstalledForGame(game);
+		ExtensionInstance dgExt = findDialogEngineExtension();
+		boolean dgExtInstalled = dgExt != null && dgExt.isEnabled();
+		
+		return dgExtInstalled && dsExtInstalled &&
+			(
+				//v4 installation
+				new File(Locations.getGameLocation(game) + "extras/[ext] dialog").exists() ||
+				//v5+ installation
+				getExtrasFolder().exists()
+			);
+	}
+	
+	@Override
+	public void onInstalledForGame(Game game)
+	{
+		GameExtension dsExt = findDataStructuresExtension();
+		if(!dsExt.isActive())
+			dsExt.setActive(true);
+		if(!dsExt.isInstalledForGame(game))
+			dsExt.installForGame(game);
+		
+		if(findDialogEngineExtension() == null)
+			downloadDialogEngineExtension(new Runnable()
 			{
 				@Override
 				public void run()
 				{
-					showMessageDialog(
-						"Dialog Extension Isn't Enabled",
-						"The \"Dialog Extension\" Engine Extension is not yet enabled for this game."
-					);
+					engineExtensionReady();
 				}
 			});
-			return getBlankPanel();
-		}
 		else
-			return MainEditor.get();
+			engineExtensionReady();
 	}
-
-	public JPanel getBlankPanel()
+	
+	private void engineExtensionReady()
 	{
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBackground(new Color(62, 62, 62));
-		return panel;
+		ExtensionInstance dgExt = findDialogEngineExtension();
+		
+		if(!dgExt.isEnabled())
+			installEngineExtension(dgExt);
+		getExtrasFolder().mkdirs();
+		
+		loadDefaults();
+	}
+	
+	@Override
+	public void onUninstalledForGame(Game game)
+	{
+		FileHelper.delete(getExtrasFolder());
+		FileHelper.delete(getDataFolder());
+	}
+	
+	@Override
+	public void updateFromVersion(Game game, int fromVersion)
+	{
+		if(fromVersion <= 4)
+		{
+			File oldExtrasFolder = new File(Locations.getGameLocation(game) + "extras/[ext] dialog");
+			
+			File extrasFolder = getExtrasFolder();
+			extrasFolder.mkdirs();
+			
+			try
+			{
+				FileUtils.moveDirectory(oldExtrasFolder, extrasFolder);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private GameExtension findDataStructuresExtension()
+	{
+		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
+		{
+			if(e instanceof stencyl.ext.polydes.datastruct.Main)
+			{
+				return (GameExtension) e;
+			}
+		}
+		
+		return null;
+	}
+	
+	private ExtensionInstance findDialogEngineExtension()
+	{
+		for (ExtensionInstance ext : Game.getGame().extensions.values())
+		{
+			if (ext.getExtensionID().equals("dialog"))
+				return ext;
+		}
+		
+		return null;
+	}
+	
+	private void downloadDialogEngineExtension(final Runnable callback)
+	{
+		final File tempZip = new File(Locations.getGameExtensionsLocation(), "dialog.zip");
+		
+		FileHelper.downloadFile
+		(
+			"http://dialogextension.com/download/Dialog%20Extension%20Latest.zip",
+			"Dialog Engine Extension",
+			"Failed to download engine extension.",
+			tempZip,
+			LanguagePack.get(),
+			new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					FileHelper.unzip(tempZip, new File(Locations.getGameExtensionsLocation()));
+					FileHelper.delete(new File(Locations.getPath(Locations.getGameExtensionsLocation(),"__MACOSX")));
+					SW.get().getEngineExtensionManager().reload();
+					callback.run();
+				}
+			}
+		);
+	}
+	
+	private void installEngineExtension(ExtensionInstance ext)
+	{
+		ext.enable();
+		DefinitionParser.addDefinitionsForExtension(ext.getExtension());
+		GameSettingsDialog.reset();
+		showMessage("Dialog Engine Extension Installed", "Refresh any open behaviors in order to see Dialog Extension blocks.");
+	}
+	
+	private void loadDefaults()
+	{
+		File f;
+		try
+		{
+			f = new File(getExtrasFolder(), "images" + File.separator + "Default Window.png");
+			f.getParentFile().mkdirs();
+			FileHelper.writeToPNG(f.getAbsolutePath(), Defaults.loadImage("Default Window.png"));
+			
+			FileUtils.writeStringToFile(new File(getExtrasFolder(), "Default Style.style"), Defaults.load("Default Style.style"));
+			FileUtils.writeStringToFile(new File(getExtrasFolder(), "dialog.txt"), Defaults.load("dialog.txt"));
+			FileUtils.writeStringToFile(new File(getExtrasFolder(), "macros.txt"), Defaults.load("macros.txt"));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public JPanel getMainPage()
+	{
+		return MainEditor.get();
 	}
 
 	/*
@@ -161,134 +273,47 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	public void onDestroy()
 	{
 		print("DialogExtension : Destroyed");
-
-		if (dialogExtension == null)
-			return;
 	}
 
-	/*
-	 * Happens when a game is saved.
-	 */
-	@Override
-	public void onGameSave(Game game)
-	{
-		if (dialogExtension == null)
-			return;
-
-		Dialog.get().saveChanges(dialogFile);
-		Macros.get().saveChanges(macrosFile);
-		
-		MainEditor.get().gameSaved();
-	}
-
+	
 	/*
 	 * Happens when the user runs, previews or exports the game.
 	 */
 	@Override
 	public void onGameBuild(Game game)
 	{
-		onGameSave(game);
+		
 	}
-
-	/*
-	 * Happens when a game is opened.
-	 */
+	
 	@Override
-	public void onGameOpened(Game game)
+	public void onGameWithDataOpened(Game game)
 	{
-		dialogExtension = null;
-
-		for (ExtensionInstance ext : game.extensions.values())
-		{
-			if (ext.getExtensionID().equals("dialog"))
-			{
-				if (ext.isEnabled())
-				{
-					dialogExtension = ext.getExtension();
-					break;
-				}
-			}
-		}
+		Dialog.get().load(new File(getExtrasFolder(), "dialog.txt"));
+		Macros.get().load(new File(getExtrasFolder(), "macros.txt"));
 		
-		if (dialogExtension == null)
-			return;
-		
-		gameDir = Locations.getGameLocation(game);
-		extrasDir = gameDir + "extras" + File.separator + "[ext] dialog" + File.separator;
-		extras = new File(extrasDir);
-		
-		if (!extras.exists())
-		{
-			extras.mkdirs();
-			loadDefaults();
-		}
-		
-		dialogFile = getExtrasFile(extrasDir + "dialog.txt");
-		macrosFile = getExtrasFile(extrasDir + "macros.txt");
-		
-		Dialog.get().load(dialogFile);
-		Macros.get().load(macrosFile);
+		((stencyl.ext.polydes.datastruct.Main) findDataStructuresExtension()).addExtension(this);
 	}
 
-	private File getExtrasFile(String path)
-	{
-		File extrasFile = new File(path);
-		if (!extrasFile.exists())
-		{
-			try
-			{
-				FileHelper.writeStringToFile(path, Defaults.load(extrasFile.getName()));
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		return extrasFile;
-	}
-
-	private void loadDefaults()
-	{
-		File f;
-		try
-		{
-			f = new File(extrasDir + "images" + File.separator
-					+ "Default Window.png");
-			f.getParentFile().mkdirs();
-			if (!f.exists())
-				FileHelper.writeToPNG(f.getAbsolutePath(),
-						Defaults.loadImage("Default Window.png"));
-			
-			f = new File(extrasDir + "Default Style.style");
-			if (!f.exists())
-				FileHelper.writeStringToFile(f.getAbsolutePath(),
-						Defaults.load("Default Style.style"));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * Happens when a game is closed.
-	 */
 	@Override
-	public void onGameClosed(Game game)
+	public void onGameWithDataSaved(Game game)
 	{
-		super.onGameClosed(game);
-
-		if (dialogExtension == null)
-			return;
-
-		dialogExtension = null;
-		gameDir = "";
-
+		Dialog.get().saveChanges(new File(getExtrasFolder(), "dialog.txt"));
+		Macros.get().saveChanges(new File(getExtrasFolder(), "macros.txt"));
+		
+		MainEditor.get().gameSaved();
+	}
+	
+	@Override
+	public void onGameWithDataClosed(Game game)
+	{
 		Dialog.get().unload();
 		Macros.get().unload();
 
 		MainEditor.disposePages();
+		
+		stencyl.ext.polydes.datastruct.Main dsExt = (stencyl.ext.polydes.datastruct.Main) findDataStructuresExtension();
+		dsExt.dataStructureExtensions.remove(this);
+		dsExt.dataTypeExtensions.remove(this);
 	}
 
 	/*
@@ -302,49 +327,23 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	{
 		return new OptionsPanel()
 		{
-			/*
-			 * Construct the form.
-			 * 
-			 * We provide a simple way to construct forms without knowing Swing
-			 * (Java's GUI library).
-			 */
 			@Override
 			public void init()
 			{
-				startForm();
-				addHeader("Options");
-				endForm();
 			}
-
-			/*
-			 * Use this to save the form data out. All you need to do is place
-			 * the properties into preferences.
-			 */
 			@Override
 			public void onPressedOK()
 			{
-				System.out
-						.println("DialogExtension : OptionsPanel : onPressedOK");
 			}
 
-			/*
-			 * Happens whenever the user presses cancel or clicks the "x" in the
-			 * corner
-			 */
 			@Override
 			public void onPressedCancel()
 			{
-				System.out
-						.println("DialogExtension : OptionsPanel : onPressedCancel");
 			}
 
-			/*
-			 * Happens whenever the user brings this options panel up
-			 */
 			@Override
 			public void onShown()
 			{
-				System.out.println("DialogExtension : OptionsPanel : onShown");
 			}
 		};
 	}
@@ -372,12 +371,6 @@ public class Main extends BaseExtension implements DataTypeExtension, DataStruct
 	public void print(String s)
 	{
 		System.out.println(s);
-	}
-	
-	@Override
-	public Icon getIcon()
-	{
-		return super.getIcon();
 	}
 	
 	@Override

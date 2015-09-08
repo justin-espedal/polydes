@@ -10,6 +10,7 @@ import stencyl.sw.editors.snippet.designer.AttributeType;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definition.Category;
 import stencyl.sw.editors.snippet.designer.Definitions;
+import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
 import stencyl.sw.editors.snippet.designer.block.AbstractField;
 import stencyl.sw.editors.snippet.designer.block.Block;
 import stencyl.sw.editors.snippet.designer.block.Block.BlockType;
@@ -32,7 +33,7 @@ public class Blocks
 {
 	private static final Logger log = Logger.getLogger(Blocks.class);
 	
-	public static ArrayList<String> tagCache = new ArrayList<String>();
+	public static DefinitionMap tagCache = new DefinitionMap();
 	
 	public static void addDesignModeBlocks()
 	{
@@ -116,7 +117,7 @@ public class Blocks
 		blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
 		
 		Definitions.get().put(blockDef.tag, blockDef);
-		tagCache.add(blockDef.tag);
+		tagCache.put(blockDef.tag, blockDef);
 
 //		get [propname] for [object]					object.prop
 		
@@ -145,7 +146,7 @@ public class Blocks
 		blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
 		
 		Definitions.get().put(blockDef.tag, blockDef);
-		tagCache.add(blockDef.tag);
+		tagCache.put(blockDef.tag, blockDef);
 		
 //		set [propname] for [objectname] to [value]	DataStructures.get(objectname).propname = value;
 		
@@ -174,7 +175,7 @@ public class Blocks
 		blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
 		
 		Definitions.get().put(blockDef.tag, blockDef);
-		tagCache.add(blockDef.tag);
+		tagCache.put(blockDef.tag, blockDef);
 		
 //		get [propname] for [objectname]				DataStructures.get(objectname).propname
 		
@@ -203,7 +204,7 @@ public class Blocks
 		blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
 		
 		Definitions.get().put(blockDef.tag, blockDef);
-		tagCache.add(blockDef.tag);
+		tagCache.put(blockDef.tag, blockDef);
 		
 //		transformer setter: set insets for window to [(top, bottom, left, right)]
 //		transformer getter: top of [get insets for window]
@@ -226,18 +227,23 @@ public class Blocks
 		blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
 		
 		Definitions.get().put(blockDef.tag, blockDef);
-		tagCache.add(blockDef.tag);
+		tagCache.put(blockDef.tag, blockDef);
 		
 		for(DataType<?> type : Types.typeFromXML.values())
 		{
-			ArrayList<Definition> blocks = type.getBlocks();
-			if(blocks != null)
+			addDesignModeBlocks(type);
+		}
+	}
+	
+	public static void addDesignModeBlocks(DataType<?> type)
+	{
+		ArrayList<Definition> blocks = type.getBlocks();
+		if(blocks != null)
+		{
+			for(Definition def : blocks)
 			{
-				for(Definition def : blocks)
-				{
-					Definitions.get().put(def.tag, def);
-					tagCache.add(def.tag);
-				}
+				Definitions.get().put(def.tag, def);
+				tagCache.put(def.tag, def);
 			}
 		}
 	}
@@ -282,7 +288,7 @@ public class Blocks
 	
 	public static void dispose()
 	{
-		for(String tag : tagCache)
+		for(String tag : tagCache.keySet())
 			Definitions.get().remove(tag);
 		tagCache.clear();
 	}
