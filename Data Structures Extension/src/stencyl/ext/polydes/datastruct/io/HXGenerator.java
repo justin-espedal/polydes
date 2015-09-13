@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import stencyl.ext.polydes.datastruct.Main;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinition;
 import stencyl.ext.polydes.datastruct.data.structure.StructureDefinitions;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
@@ -16,11 +15,11 @@ import stencyl.ext.polydes.datastruct.res.Resources;
 
 public class HXGenerator
 {
-	public static List<String> generateFileList()
+	public static List<String> generateFileList(File dir)
 	{
 		List<String> toWrite = new ArrayList<String>();
 		
-		for(File f : Main.get().getExtrasFolder().listFiles())
+		for(File f : dir.listFiles())
 			addFile("", f, toWrite);
 		
 		return toWrite;

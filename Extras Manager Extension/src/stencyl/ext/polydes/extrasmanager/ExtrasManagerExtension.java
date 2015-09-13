@@ -18,17 +18,15 @@ import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 import stencyl.ext.polydes.extrasmanager.io.FileMonitor;
 import stencyl.ext.polydes.extrasmanager.io.FileOperations;
-import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
-public class Main extends BaseExtension
+public class ExtrasManagerExtension extends BaseExtension
 {
-	private static Main _instance;
+	private static ExtrasManagerExtension _instance;
 	public static HashSet<String> ownedFolderNames = new HashSet<String>();
 	private static HashMap<String, BaseExtension> folderOwners = new HashMap<String, BaseExtension>();
 	
@@ -38,7 +36,7 @@ public class Main extends BaseExtension
 	
 	public static boolean requestFolderOwnership(BaseExtension ext, String folderName)
 	{
-		System.out.println(ext.getClassname() + " requesting ownership of " + folderName);
+		System.out.println(ext.getManifest().id + " requesting ownership of " + folderName);
 		
 		if(ownedFolderNames.contains(folderName))
 			return false;
@@ -48,12 +46,10 @@ public class Main extends BaseExtension
 		return true;
 	}
 	
-	private static String dataFolderName = "[ext] extras manager";
-	
 	private String gameDir;
 	private String extrasDir;
 
-	public static Main get()
+	public static ExtrasManagerExtension get()
 	{
 		return _instance;
 	}
@@ -71,21 +67,10 @@ public class Main extends BaseExtension
 	@Override
 	public void onStartup()
 	{
-		icon = Resources.loadIcon("icon.png");
-		classname = this.getClass().getName();
-		String loc = Locations.getExtensionPrefsLocation(classname);
-		if(new File(loc).exists())
-			Loader.readLocalDictionary(loc, properties);
+		super.onStartup();
 		
 		_instance = this;
 		
-		name = "Extras Manager Extension";
-		description = "Manage extra data files.";
-		authorName = "Justin Espedal";
-		website = "http://dialog.justin.espedaladventures.com/";
-		internalVersion = 1;
-		version = "1.0.0";
-
 		isInMenu = true;
 		menuName = "Extras Manager";
 
@@ -94,7 +79,7 @@ public class Main extends BaseExtension
 
 		gameDir = "";
 		
-		requestFolderOwnership(this, dataFolderName);
+//		requestFolderOwnership(this, dataFolderName);
 	}
 
 	/*
@@ -155,7 +140,7 @@ public class Main extends BaseExtension
 		gameOpen = true;
 		
 		gameDir = Locations.getGameLocation(game);
-		extrasDir = gameDir + "extras" + File.separator;
+		extrasDir = gameDir + "extras/";
 		File extrasFile = new File(extrasDir);
 		
 		if(!extrasFile.exists())
@@ -171,7 +156,7 @@ public class Main extends BaseExtension
 				f.mkdir();
 		}
 		
-		File templatesFile = new File(new File(extrasFile, dataFolderName), "templates");
+		File templatesFile = new File(new File(Locations.getGameLocation(game) + "extras/" + getManifest().id), "templates");
 		
 		if(!templatesFile.exists())
 		{
@@ -181,11 +166,13 @@ public class Main extends BaseExtension
 		
 		FileOperations.templates = templatesFile.listFiles();
 		
+		String input = readData();
+		
 		String[] data;
-		if(readData().isEmpty())
+		if(input == null || input.isEmpty())
 			data = new String[] {"", ""};
 		else
-			data = readData().split("\n");
+			data = input.split("\n");
 		
 		String textPath = data[0];
 		String imagePath = data[1];

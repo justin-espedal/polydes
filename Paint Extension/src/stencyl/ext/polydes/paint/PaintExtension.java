@@ -4,38 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JPanel;
-
-import org.apache.commons.lang3.reflect.MethodUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.ext.polydes.paint.app.MainEditor;
 import stencyl.ext.polydes.paint.data.stores.Fonts;
 import stencyl.ext.polydes.paint.data.stores.Images;
 import stencyl.ext.polydes.paint.defaults.Defaults;
-import stencyl.ext.polydes.paint.res.Resources;
-import stencyl.sw.app.ExtensionManager;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 
-public class Main extends BaseExtension
+public class PaintExtension extends BaseExtension
 {
-	private static String dataFolderName = "[ext] paint";
-	
-	private static Main _instance;
+	private static PaintExtension _instance;
 
-	private String gameDir;
-	private String extrasDir;
 	private File extras;
 	private File fontsFile;
 	private File imagesFile;
 
-	public static Main get()
+	public static PaintExtension get()
 	{
 		return _instance;
 	}
@@ -48,55 +38,21 @@ public class Main extends BaseExtension
 	@Override
 	public void onStartup()
 	{
-		icon = Resources.loadIcon("icon.png");
-		classname = this.getClass().getName();
-		String loc = Locations.getExtensionPrefsLocation(classname);
-		if(new File(loc).exists())
-			Loader.readLocalDictionary(loc, properties);
+		super.onStartup();
 		
 		_instance = this;
-
-		name = "Paint Extension";
-		description = "Paint Extension.";
-		authorName = "Justin Espedal";
-		website = "http://dialog.justin.espedaladventures.com/";
-		internalVersion = 2;
-		version = "1.1.1";
 
 		isInMenu = true;
 		menuName = "Paint Extension";
 
 		isInGameCenter = true;
 		gameCenterName = "Paint Extension";
-
-		gameDir = "";
 	}
 	
 	@Override
 	public void extensionsReady()
 	{
-		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
-		{
-			if(e.getClassname().equals("ExtrasManagerExtension"))
-			{
-				try
-				{
-					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
-				}
-				catch (NoSuchMethodException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (IllegalAccessException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (InvocationTargetException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}
+//		ExtensionInterface.sendMessage("stencyl.ext.polydes.extrasmanager", "requestFolderOwnership", this, dataFolderName);
 	}
 
 	/*
@@ -163,15 +119,14 @@ public class Main extends BaseExtension
 	@Override
 	public void onGameOpened(Game game)
 	{
-		gameDir = Locations.getGameLocation(game);
-		extrasDir = gameDir + "extras" + File.separator + dataFolderName + File.separator;
-		extras = new File(extrasDir);
+		extras = new File(Locations.getGameLocation(game) + "extras/" + getManifest().id);
+		extras.mkdirs();
 		
 		if(extras.list().length == 0)
 			loadDefaults();
 		
-		fontsFile = new File(extrasDir + "fonts" + File.separator);
-		imagesFile = new File(extrasDir + "images" + File.separator);
+		fontsFile = new File(extras, "fonts");
+		imagesFile = new File(extras, "images");
 		
 		Fonts.get().load(fontsFile);
 		Images.get().load(imagesFile);
@@ -182,24 +137,23 @@ public class Main extends BaseExtension
 		File f;
 		try
 		{
-			f = new File(extrasDir + "fonts" + File.separator + "Default Font.fnt");
+			f = new File(extras, "fonts/Default Font.fnt");
 			f.getParentFile().mkdirs();
 			if (!f.exists())
 				FileHelper.writeStringToFile(f.getAbsolutePath(), Defaults.load("Default Font.fnt"));
 	
-			f = new File(extrasDir + "fonts" + File.separator + "Default Font.png");
+			f = new File(extras, "fonts/Default Font.png");
 			if (!f.exists())
 				FileHelper.writeToPNG(f.getAbsolutePath(),
 						Defaults.loadImage("Default Font.png"));
 	
-			f = new File(extrasDir + "images" + File.separator
-					+ "Default Window.png");
+			f = new File(extras, "images/Default Window.png");
 			f.getParentFile().mkdirs();
 			if (!f.exists())
 				FileHelper.writeToPNG(f.getAbsolutePath(),
 						Defaults.loadImage("Default Window.png"));
 	
-			f = new File(extrasDir + "images" + File.separator + "Pointer.png");
+			f = new File(extras, "images/Pointer.png");
 			if (!f.exists())
 				FileHelper.writeToPNG(f.getAbsolutePath(),
 						Defaults.loadImage("Pointer.png"));
@@ -217,8 +171,6 @@ public class Main extends BaseExtension
 	public void onGameClosed(Game game)
 	{
 		super.onGameClosed(game);
-
-		gameDir = "";
 
 		Fonts.get().unload();
 		Images.get().unload();

@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.StringUtils;
 
-import stencyl.ext.polydes.datastruct.Main;
+import stencyl.ext.polydes.datastruct.DataStructuresExtension;
 import stencyl.ext.polydes.datastruct.data.core.DataList;
 import stencyl.ext.polydes.datastruct.data.folder.DataItem;
 import stencyl.ext.polydes.datastruct.data.types.DataEditor;
@@ -57,7 +57,7 @@ public class ArrayType extends BuiltinType<DataList>
 		//backwards compatibility
 		if(!s.startsWith("["))
 		{
-			Main.forceUpdateData = true;
+			DataStructuresExtension.forceUpdateData = true;
 			
 			String[] strings = StringUtils.split(s, ",");
 			

@@ -33,7 +33,7 @@ import javax.swing.ListCellRenderer;
 
 import stencyl.core.lib.Game;
 import stencyl.core.lib.scene.SceneModel;
-import stencyl.ext.polydes.scenelink.Main;
+import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.data.Link;
 import stencyl.ext.polydes.scenelink.data.LinkPageModel;
 import stencyl.ext.polydes.scenelink.data.PageLink;
@@ -119,7 +119,7 @@ public class LinkReferenceChooser extends JWindow
 		field.setSearchingDelay(0);
 		
 		if(link instanceof PageLink)
-			resourceList = new ResourceList(field.getDisplayListModel(), Main.getPages());
+			resourceList = new ResourceList(field.getDisplayListModel(), SceneLinkExtension.getPages());
 		else
 			resourceList = new ResourceList(field.getDisplayListModel(), Game.getGame().getScenes());
 		
@@ -202,7 +202,7 @@ public class LinkReferenceChooser extends JWindow
 				if(s.equals("Scene"))
 					resourceList.refreshList(Game.getGame().getScenes());
 				else if(s.equals("Page"))
-					resourceList.refreshList(Main.getPages());
+					resourceList.refreshList(SceneLinkExtension.getPages());
 			}
 		});
 		chooser.setSelectedItem((link instanceof PageLink) ? "Page" : "Scene");

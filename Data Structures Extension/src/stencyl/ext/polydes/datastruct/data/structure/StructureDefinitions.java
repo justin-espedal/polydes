@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -255,6 +256,18 @@ public class StructureDefinitions
 			boolean sameRoot = (fromFolder.getPolicy() == this);
 			
 			return super.canAcceptItem(folder, item) && sameRoot;
+		}
+	}
+
+	public void removeFolder(File fsfolder)
+	{
+		for(Entry<Folder, File> f : baseFolders.entrySet())
+		{
+			if(f.getValue().equals(f))
+			{
+				root.removeItem(f.getKey());
+				baseFolders.remove(f.getKey());
+			}
 		}
 	}
 }

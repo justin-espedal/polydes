@@ -2,18 +2,11 @@ package stencyl.ext.polydes.scenelink;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
-
-import stencyl.core.lib.Game;
 import stencyl.ext.polydes.scenelink.data.LinkModel;
 import stencyl.ext.polydes.scenelink.data.LinkPageModel;
 import stencyl.ext.polydes.scenelink.io.XML;
@@ -21,18 +14,13 @@ import stencyl.ext.polydes.scenelink.res.Resources;
 import stencyl.ext.polydes.scenelink.ui.MainPage;
 import stencyl.ext.polydes.scenelink.ui.combos.PageComboModel;
 import stencyl.ext.polydes.scenelink.util.ColorUtil;
-import stencyl.sw.app.ExtensionManager;
-import stencyl.sw.ext.BaseExtension;
+import stencyl.sw.ext.GameExtension;
 import stencyl.sw.ext.OptionsPanel;
-import stencyl.sw.util.Loader;
+import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-public class Main extends BaseExtension
+public class SceneLinkExtension extends GameExtension
 {
-	private static String dataFolderName = "[ext] scene link";
-	//private static String mainFileName = "scenelink.xml";
-	
-	public static File dataFolder;
 	public static File pagesFolder;
 	public static File resourcesFolder;
 	
@@ -47,19 +35,8 @@ public class Main extends BaseExtension
 	@Override
 	public void onStartup()
 	{
-		icon = Resources.loadIcon("icon.png");
-		classname = this.getClass().getName();
-		String loc = Locations.getExtensionPrefsLocation(classname);
-		if(new File(loc).exists())
-			Loader.readLocalDictionary(loc, properties);
+		super.onStartup();
 		
-		name = "Scene Link Extension";
-		description = "View and access Scenes spatially.";
-		authorName = "Justin Espedal";
-		website = "http://dialog.justin.espedaladventures.com/";
-		internalVersion = 1;
-		version = "1.0.0";
-
 		isInMenu = true;
 		menuName = "Scene Link";
 
@@ -72,28 +49,7 @@ public class Main extends BaseExtension
 	@Override
 	public void extensionsReady()
 	{
-		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
-		{
-			if(e.getClassname().equals("ExtrasManagerExtension"))
-			{
-				try
-				{
-					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
-				}
-				catch (NoSuchMethodException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (IllegalAccessException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (InvocationTargetException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}
+//		ExtensionInterface.sendMessage("stencyl.ext.polydes.extrasmanager", "requestFolderOwnership", this, dataFolderName);
 	}
 	
 	/*
@@ -110,7 +66,7 @@ public class Main extends BaseExtension
 	}
 	
 	@Override
-	public JPanel onGameCenterActivate()
+	public JPanel getMainPage()
 	{
 		return MainPage.get();
 	}
@@ -130,15 +86,12 @@ public class Main extends BaseExtension
 	 * Happens when a game is saved.
 	 */
 	@Override
-	public void onGameSave(Game game)
+	public void onGameWithDataSaved()
 	{
-		if(pages != null)
+		for(LinkPageModel model : pages.values())
 		{
-			for(LinkPageModel model : pages.values())
-			{
-				String pageName = pagesFolder.getAbsolutePath() + File.separator + model.getId() + ".xml";
-				XML.wrObjectToFile(pageName, model);
-			}
+			String pageName = pagesFolder.getAbsolutePath() + File.separator + model.getId() + ".xml";
+			XML.wrObjectToFile(pageName, model);
 		}
 	}
 	
@@ -146,11 +99,10 @@ public class Main extends BaseExtension
 	 * Happens when a game is opened.
 	 */
 	@Override
-	public void onGameOpened(Game game)
+	public void onGameWithDataOpened()
 	{
-		dataFolder = openFolder(new File(Locations.getGameLocation(game) + "extras" + File.separator + dataFolderName + File.separator));
-		resourcesFolder = openFolder(new File(dataFolder, "resources" + File.separator));
-		pagesFolder = openFolder(new File(dataFolder, "pages" + File.separator));
+		resourcesFolder = openFolder(new File(getDataFolder(), "resources"));
+		pagesFolder = openFolder(new File(getDataFolder(), "pages"));
 		
 		Resources.loadResourceNames();
 		
@@ -179,10 +131,40 @@ public class Main extends BaseExtension
 	 * Happens when a game is closed.
 	 */
 	@Override
-	public void onGameClosed(Game game)
+	public void onGameWithDataClosed()
 	{
-		super.onGameClosed(game);
 		pages = null;
+	}
+	
+	@Override
+	public void onInstalledForGame()
+	{
+		if(detectOldInstall())
+			updateFromVersion(1);
+		
+	}
+	
+	private boolean detectOldInstall()
+	{
+		return new File(Locations.getGameLocation(getGame()) + "extras/[ext] scene link").exists();
+	}
+
+	@Override
+	public void onUninstalledForGame()
+	{
+		
+	}
+
+	@Override
+	public void updateFromVersion(int fromVersion)
+	{
+		if(fromVersion <= 1)
+		{
+			File oldExtrasFolder = new File(Locations.getGameLocation(getName()) + "extras/[ext] scene link");
+			
+			FileHelper.copyDirectory(oldExtrasFolder, getExtrasFolder());
+			FileHelper.delete(oldExtrasFolder);
+		}
 	}
 	
 	/*
@@ -193,58 +175,7 @@ public class Main extends BaseExtension
 	@Override
 	public OptionsPanel onOptions()
 	{
-		System.out.println("SampleExtension : Options");
-		
-		return new OptionsPanel()
-		{
-			JTextField text;
-			JCheckBox check;
-			JComboBox dropdown;
-			
-			/*
-			 * Construct the form.
-			 * 
-			 * We provide a simple way to construct forms without
-			 * knowing Swing (Java's GUI library).
-			 */
-			@Override
-			public void init()
-			{
-				startForm();
-				addHeader("Options");
-				text = addTextfield("Name:");
-				check = addCheckbox("Do you like chocolate?");
-				dropdown = addDropdown("Where are you from?", new String[] {"Americas", "Europe", "Asia", "Other"});
-				endForm();
-				
-				//Set the form's values
-				text.setText("" + properties.get("name"));
-				check.setSelected(Boolean.parseBoolean("" + properties.get("choc")));
-				dropdown.setSelectedItem(properties.get("loc"));
-			}
-			
-			/*
-			 * Use this to save the form data out.
-			 * All you need to do is place the properties into preferences.
-			 */
-			@Override
-			public void onPressedOK()
-			{
-				properties.put("name", text.getText());
-				properties.put("choc", check.isSelected());
-				properties.put("loc", dropdown.getSelectedItem());
-			}
-
-			@Override
-			public void onPressedCancel()
-			{
-			}
-
-			@Override
-			public void onShown()
-			{
-			}
-		};
+		return null;
 	}
 	
 	/*

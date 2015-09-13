@@ -359,7 +359,7 @@ public class FloatType extends BuiltinType<Float>
 		{
 			field = style.createTextField();
 			
-			final float decimalPlaces = or(e.decimalPlaces, 2);
+			int decimalPlaces = or(e.decimalPlaces, 2);
 			factor = (float) Math.pow(10, decimalPlaces);
 			
 			slider = new JSlider();

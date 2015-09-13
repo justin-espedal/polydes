@@ -31,7 +31,7 @@ import stencyl.sw.data.EditableTileset;
 public class Types
 {
 	public static HashMap<String, DataType<?>> typeFromXML = new LinkedHashMap<String, DataType<?>>();
-	public static ArrayList<DataType<?>> newTypes = new ArrayList<DataType<?>>();
+	public static ArrayList<DataType<?>> changedTypes = new ArrayList<DataType<?>>();
 	
 	//===
 	
@@ -92,13 +92,22 @@ public class Types
 		addType(type, false);
 	}
 	
+	public static void removeType(DataType<?> type)
+	{
+		String xml = type.xml;
+		
+		typeFromXML.remove(xml);
+		
+		changedTypes.add(type);
+	}
+	
 	public static void addType(DataType<?> type, boolean hidden)
 	{
 		String xml = type.xml;
 		
 		typeFromXML.put(xml, type);
 		
-		newTypes.add(type);
+		changedTypes.add(type);
 	}
 	
 	public static void dispose()
@@ -122,9 +131,17 @@ public class Types
 	{
 		DelayedInitialize.clearProps();
 		
-		for(DataType<?> type : newTypes)
+		for(DataType<?> type : changedTypes)
 			Blocks.addDesignModeBlocks(type);
 		
-		newTypes.clear();
+		changedTypes.clear();
+	}
+	
+	public static void finishRemove()
+	{
+		for(DataType<?> type : changedTypes)
+			Blocks.removeDesignModeBlocks(type);
+		
+		changedTypes.clear();
 	}
 }

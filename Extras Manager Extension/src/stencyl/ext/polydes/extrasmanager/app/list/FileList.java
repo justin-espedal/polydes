@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
 import stencyl.ext.polydes.common.ui.darktree.DarkTree;
-import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.ExtrasManagerExtension;
 import stencyl.ext.polydes.extrasmanager.app.FileRenameDialog;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 import stencyl.ext.polydes.extrasmanager.data.FileClipboard;
@@ -182,7 +182,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
+				MainPage.get().setViewedFile((SysFolder) ExtrasManagerExtension.getModel().getRootBranch());
 			}
 		});
 		
@@ -191,7 +191,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			if(model.currView == null || model.currView.getParent() == null || model.currView == Main.getModel().getRootBranch())
+			if(model.currView == null || model.currView.getParent() == null || model.currView == ExtrasManagerExtension.getModel().getRootBranch())
 				return;
 			MainPage.get().setViewedFile((SysFolder) model.currView.getParent());
 		}
@@ -334,7 +334,7 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 			@Override
 			public void viewUpdated(FileListModel src, SysFolder currView)
 			{
-				upButton.setEnabled(currView != Main.getModel().getRootBranch());
+				upButton.setEnabled(currView != ExtrasManagerExtension.getModel().getRootBranch());
 			}
 		});
 		

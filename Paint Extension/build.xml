@@ -6,10 +6,16 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="name" value="PaintExtension" />
 	<property name="pkg" value="stencyl/ext/polydes/paint" />
+	<property name="main" value="stencyl.ext.polydes.paint.PaintExtension" />
 	
-	<include file="../Common/build.xml" as="common" />
+	<property name="name" value="Paint Extension" />
+	<property name="description" value="Paint Extension." />
+	<property name="author" value="Justin Espedal" />
+	<property name="internalVersion" value="2" />
+	<property name="version" value="0.2.0" />
+	
+	<include file="../Common/build-helper.xml" as="common" />
 	
 	<target name="dist">
 		
@@ -17,7 +23,6 @@
 			
 			<target name="common.compile" />
 			
-			<target name="common.copy-common-resources" />
 			<target name="common.copy-resources" />
 			<target name="common.copy-defaults" />
 			

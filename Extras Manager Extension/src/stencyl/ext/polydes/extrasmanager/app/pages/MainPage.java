@@ -12,7 +12,7 @@ import javax.swing.tree.TreePath;
 
 import stencyl.ext.polydes.common.comp.MiniSplitPane;
 import stencyl.ext.polydes.common.ui.darktree.DarkTree;
-import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.ExtrasManagerExtension;
 import stencyl.ext.polydes.extrasmanager.app.list.FileList;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
@@ -90,13 +90,13 @@ public class MainPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		ftree = new DarkTree<SysFile>(Main.getModel());
+		ftree = new DarkTree<SysFile>(ExtrasManagerExtension.getModel());
 		ftree.getTree().setRootVisible(true);
 		ftree.disableButtonBar();
 		ftreescroller = UI.createScrollPane(ftree);
 		ftreescroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
-		flistmodel = new FileListModel(Main.getModel());
+		flistmodel = new FileListModel(ExtrasManagerExtension.getModel());
 		flistrenderer = new FileListRenderer(-1, -1);
 		flistlistener = new ListListener()
 		{

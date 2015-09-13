@@ -44,9 +44,9 @@ import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
 
-public class Main extends BaseExtension
+public class ImgurExtension extends BaseExtension
 {
-	private static final Logger log = Logger.getLogger(Main.class);
+	private static final Logger log = Logger.getLogger(ImgurExtension.class);
 
 	BufferedImage image;
 	
@@ -80,9 +80,6 @@ public class Main extends BaseExtension
 		super.onStartup();
 
 		log.info("ImgurExtension : Started StencylWorks");
-		
-		name = "Imgur Extension";
-		description = "Upload toolset screenshots directly to Imgur.";
 		
 		isInMenu = true;
 		menuName = "Imgur Extension";

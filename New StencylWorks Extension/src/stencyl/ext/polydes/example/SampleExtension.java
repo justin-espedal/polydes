@@ -5,11 +5,10 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import stencyl.core.lib.Game;
-import stencyl.ext.polydes.example.res.Resources;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
 
-public class Main extends BaseExtension
+public class SampleExtension extends BaseExtension
 {
 	/*
 	 * Happens when StencylWorks launches. 
@@ -21,15 +20,6 @@ public class Main extends BaseExtension
 	public void onStartup()
 	{
 		super.onStartup();
-
-		icon = Resources.loadIcon("icon.png");
-		
-		name = "Extension Name";
-		description = "Extension Description.";
-		authorName = "Author Name";
-		website = "http://example.com/";
-		internalVersion = 1;
-		version = "1.0.0";
 		
 		isInMenu = true;
 		menuName = "Extension Name";

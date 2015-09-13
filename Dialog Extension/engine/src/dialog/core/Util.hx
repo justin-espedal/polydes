@@ -78,7 +78,7 @@ class Util
 
 		#if stencyl
 
-		o =  Assets.getBitmapData("assets/data/[ext] dialog/images/"+ name +".png");
+		o =  Assets.getBitmapData("assets/data/stencyl.ext.polydes.dialog/images/"+ name +".png");
 
 		#elseif unity
 
@@ -101,12 +101,12 @@ class Util
 		#if stencyl
 
 		if(Engine.IMG_BASE == "1x")
-			o =  Assets.getBitmapData("assets/data/[ext] dialog/images/"+ name +".png");
+			o =  Assets.getBitmapData("assets/data/stencyl.ext.polydes.dialog/images/"+ name +".png");
 		else
 		{
-			var toReturn = Assets.getBitmapData("assets/data/[ext] dialog/images/"+ name + "@" + Engine.IMG_BASE + ".png");
+			var toReturn = Assets.getBitmapData("assets/data/stencyl.ext.polydes.dialog/images/"+ name + "@" + Engine.IMG_BASE + ".png");
 			if(toReturn == null)
-				toReturn = Assets.getBitmapData("assets/data/[ext] dialog/images/"+ name +".png").getScaled(Engine.SCALE, Engine.SCALE);
+				toReturn = Assets.getBitmapData("assets/data/stencyl.ext.polydes.dialog/images/"+ name +".png").getScaled(Engine.SCALE, Engine.SCALE);
 			o =  toReturn;
 		}
 
@@ -130,7 +130,7 @@ class Util
 
 		#if stencyl
 
-		o = Assets.getText("assets/data/[ext] dialog/"+ name);
+		o = Assets.getText("assets/data/stencyl.ext.polydes.dialog/"+ name);
 		if(o == null)
 			trace("Failed to load Resource: " + name);
 

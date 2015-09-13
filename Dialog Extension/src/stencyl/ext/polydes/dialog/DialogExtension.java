@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import org.apache.commons.io.FileUtils;
 
 import stencyl.core.lib.Game;
-import stencyl.ext.polydes.common.ext.GameExtension;
 import stencyl.ext.polydes.datastruct.data.types.DataType;
 import stencyl.ext.polydes.datastruct.ext.DataStructureExtension;
 import stencyl.ext.polydes.datastruct.ext.DataTypeExtension;
@@ -23,17 +22,18 @@ import stencyl.sw.app.ExtensionManager;
 import stencyl.sw.editors.game.GameSettingsDialog;
 import stencyl.sw.editors.game.advanced.ExtensionInstance;
 import stencyl.sw.editors.snippet.designer.DefinitionParser;
-import stencyl.sw.ext.BaseExtension;
+import stencyl.sw.ext.ExtensionWrapper;
+import stencyl.sw.ext.GameExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-public class Main extends GameExtension implements DataTypeExtension, DataStructureExtension
+public class DialogExtension extends GameExtension implements DataTypeExtension, DataStructureExtension
 {
-	private static Main _instance;
+	private static DialogExtension _instance;
 	
-	public static Main get()
+	public static DialogExtension get()
 	{
 		return _instance;
 	}
@@ -50,13 +50,6 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 		
 		_instance = this;
 		
-		name = "Dialog Extension";
-		description = "Toolset side of the Dialog Extension.";
-		authorName = "Justin Espedal";
-		website = "https://github.com/justin-espedal/polydes";
-		internalVersion = 5;
-		version = "1.6.0";
-
 		isInMenu = true;
 		menuName = "Dialog Extension";
 
@@ -67,28 +60,7 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 	@Override
 	public void extensionsReady()
 	{
-//		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
-//		{
-//			if(e.getClassname().equals("ExtrasManagerExtension"))
-//			{
-//				try
-//				{
-//					MethodUtils.invokeMethod(e, "requestFolderOwnership", this, dataFolderName);
-//				}
-//				catch (NoSuchMethodException e1)
-//				{
-//					e1.printStackTrace();
-//				}
-//				catch (IllegalAccessException e1)
-//				{
-//					e1.printStackTrace();
-//				}
-//				catch (InvocationTargetException e1)
-//				{
-//					e1.printStackTrace();
-//				}
-//			}
-//		}
+//		ExtensionInterface.sendMessage("stencyl.ext.polydes.extrasmanager", "requestFolderOwnership", this, getExtrasFolder());
 	}
 	
 	/*
@@ -105,30 +77,13 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 	}
 	
 	@Override
-	public boolean isInstalledForGame(Game game)
+	public void onInstalledForGame()
 	{
-		GameExtension dsExt = findDataStructuresExtension();
-		boolean dsExtInstalled = dsExt.isActive() && dsExt.isInstalledForGame(game);
-		ExtensionInstance dgExt = findDialogEngineExtension();
-		boolean dgExtInstalled = dgExt != null && dgExt.isEnabled();
+		ExtensionWrapper dsExtWrapper = ExtensionManager.get().getExtensions().get("stencyl.ext.polydes.datastruct");
+		GameExtension e = (GameExtension) dsExtWrapper.getExtension();
 		
-		return dgExtInstalled && dsExtInstalled &&
-			(
-				//v4 installation
-				new File(Locations.getGameLocation(game) + "extras/[ext] dialog").exists() ||
-				//v5+ installation
-				getExtrasFolder().exists()
-			);
-	}
-	
-	@Override
-	public void onInstalledForGame(Game game)
-	{
-		GameExtension dsExt = findDataStructuresExtension();
-		if(!dsExt.isActive())
-			dsExt.setActive(true);
-		if(!dsExt.isInstalledForGame(game))
-			dsExt.installForGame(game);
+		if(e.getGame() == null)
+			e.installForGame();
 		
 		if(findDialogEngineExtension() == null)
 			downloadDialogEngineExtension(new Runnable()
@@ -149,50 +104,35 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 		
 		if(!dgExt.isEnabled())
 			installEngineExtension(dgExt);
-		getExtrasFolder().mkdirs();
 		
-		loadDefaults();
+		if(detectOldInstall())
+			updateFromVersion(4);
+		else
+			loadDefaults();
+	}
+	
+	private boolean detectOldInstall()
+	{
+		return new File(Locations.getGameLocation(getGame()) + "extras/[ext] dialog").exists();
 	}
 	
 	@Override
-	public void onUninstalledForGame(Game game)
+	public void onUninstalledForGame()
 	{
 		FileHelper.delete(getExtrasFolder());
 		FileHelper.delete(getDataFolder());
 	}
 	
 	@Override
-	public void updateFromVersion(Game game, int fromVersion)
+	public void updateFromVersion(int fromVersion)
 	{
 		if(fromVersion <= 4)
 		{
-			File oldExtrasFolder = new File(Locations.getGameLocation(game) + "extras/[ext] dialog");
+			File oldExtrasFolder = new File(Locations.getGameLocation(getGame()) + "extras/[ext] dialog");
 			
-			File extrasFolder = getExtrasFolder();
-			extrasFolder.mkdirs();
-			
-			try
-			{
-				FileUtils.moveDirectory(oldExtrasFolder, extrasFolder);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			FileHelper.copyDirectory(oldExtrasFolder, getExtrasFolder());
+			FileHelper.delete(oldExtrasFolder);
 		}
-	}
-	
-	private GameExtension findDataStructuresExtension()
-	{
-		for(BaseExtension e : ExtensionManager.get().getExtensions().values())
-		{
-			if(e instanceof stencyl.ext.polydes.datastruct.Main)
-			{
-				return (GameExtension) e;
-			}
-		}
-		
-		return null;
 	}
 	
 	private ExtensionInstance findDialogEngineExtension()
@@ -236,7 +176,7 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 		ext.enable();
 		DefinitionParser.addDefinitionsForExtension(ext.getExtension());
 		GameSettingsDialog.reset();
-		showMessage("Dialog Engine Extension Installed", "Refresh any open behaviors in order to see Dialog Extension blocks.");
+//		showMessageDialog("Dialog Engine Extension Installed", "Refresh any open behaviors in order to see Dialog Extension blocks.");
 	}
 	
 	private void loadDefaults()
@@ -248,7 +188,6 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 			f.getParentFile().mkdirs();
 			FileHelper.writeToPNG(f.getAbsolutePath(), Defaults.loadImage("Default Window.png"));
 			
-			FileUtils.writeStringToFile(new File(getExtrasFolder(), "Default Style.style"), Defaults.load("Default Style.style"));
 			FileUtils.writeStringToFile(new File(getExtrasFolder(), "dialog.txt"), Defaults.load("dialog.txt"));
 			FileUtils.writeStringToFile(new File(getExtrasFolder(), "macros.txt"), Defaults.load("macros.txt"));
 		}
@@ -286,16 +225,14 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 	}
 	
 	@Override
-	public void onGameWithDataOpened(Game game)
+	public void onGameWithDataOpened()
 	{
 		Dialog.get().load(new File(getExtrasFolder(), "dialog.txt"));
 		Macros.get().load(new File(getExtrasFolder(), "macros.txt"));
-		
-		((stencyl.ext.polydes.datastruct.Main) findDataStructuresExtension()).addExtension(this);
 	}
 
 	@Override
-	public void onGameWithDataSaved(Game game)
+	public void onGameWithDataSaved()
 	{
 		Dialog.get().saveChanges(new File(getExtrasFolder(), "dialog.txt"));
 		Macros.get().saveChanges(new File(getExtrasFolder(), "macros.txt"));
@@ -304,16 +241,12 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 	}
 	
 	@Override
-	public void onGameWithDataClosed(Game game)
+	public void onGameWithDataClosed()
 	{
 		Dialog.get().unload();
 		Macros.get().unload();
 
 		MainEditor.disposePages();
-		
-		stencyl.ext.polydes.datastruct.Main dsExt = (stencyl.ext.polydes.datastruct.Main) findDataStructuresExtension();
-		dsExt.dataStructureExtensions.remove(this);
-		dsExt.dataTypeExtensions.remove(this);
 	}
 
 	/*
@@ -322,30 +255,9 @@ public class Main extends GameExtension implements DataTypeExtension, DataStruct
 	 * You need to provide the form. We wrap it in a dialog.
 	 */
 	@Override
-	@SuppressWarnings("serial")
 	public OptionsPanel onOptions()
 	{
-		return new OptionsPanel()
-		{
-			@Override
-			public void init()
-			{
-			}
-			@Override
-			public void onPressedOK()
-			{
-			}
-
-			@Override
-			public void onPressedCancel()
-			{
-			}
-
-			@Override
-			public void onShown()
-			{
-			}
-		};
+		return null;
 	}
 
 	/*

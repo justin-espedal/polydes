@@ -7,7 +7,7 @@ import javax.swing.DefaultComboBoxModel;
 import stencyl.ext.polydes.scenelink.res.Resources;
 
 
-public class ImageReferenceComboModel extends DefaultComboBoxModel
+public class ImageReferenceComboModel extends DefaultComboBoxModel<String>
 {
 	public static String[] imageNames = new String[0];
 	public static final String UNSELECTED = "no image";
@@ -63,7 +63,7 @@ public class ImageReferenceComboModel extends DefaultComboBoxModel
 	}
 	
 	@Override
-	public Object getElementAt(int index)
+	public String getElementAt(int index)
 	{
 		return imageNames[index];
 	}

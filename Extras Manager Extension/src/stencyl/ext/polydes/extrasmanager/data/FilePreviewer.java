@@ -19,7 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.ExtrasManagerExtension;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListModel;
 import stencyl.ext.polydes.extrasmanager.app.pages.MainPage;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
@@ -154,7 +154,7 @@ public class FilePreviewer
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					MainPage.get().setViewedFile((SysFolder) Main.getModel().getRootBranch());
+					MainPage.get().setViewedFile((SysFolder) ExtrasManagerExtension.getModel().getRootBranch());
 				}
 			});
 			

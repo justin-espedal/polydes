@@ -13,7 +13,7 @@ import javax.swing.JFileChooser;
 
 import org.apache.commons.io.FileUtils;
 
-import stencyl.ext.polydes.scenelink.Main;
+import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.res.Resources;
 import stencyl.ext.polydes.scenelink.util.PngFilter;
 import stencyl.sw.SW;
@@ -89,7 +89,7 @@ public class ImageImportButton extends JButton implements ActionListener
 				String name = f.getName();
 				String noext = name.substring(0, name.length() - 4);
 				String forcedlowercase = noext + ".png";
-				FileUtils.copyFile(f, new File(Main.resourcesFolder, forcedlowercase));
+				FileUtils.copyFile(f, new File(SceneLinkExtension.resourcesFolder, forcedlowercase));
 				Resources.loadResourceNames();
 				lastImported = noext;
 			}

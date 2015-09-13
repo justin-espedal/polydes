@@ -9,7 +9,7 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
 import stencyl.ext.polydes.common.nodes.Leaf;
-import stencyl.ext.polydes.extrasmanager.Main;
+import stencyl.ext.polydes.extrasmanager.ExtrasManagerExtension;
 import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
 import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
@@ -84,7 +84,7 @@ public class FileMonitor
 				SysFolder parent = getParentSysFolder(directory);
 				
 				//Ignore owned directories.
-				if(parent == Main.getModel().getRootBranch() && Main.ownedFolderNames.contains(directory.getName()))
+				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && ExtrasManagerExtension.ownedFolderNames.contains(directory.getName()))
 					return;
 				
 				parent.addItem(sysFile, parent.findInsertionIndex(sysFile.getName(), true));
@@ -99,7 +99,7 @@ public class FileMonitor
 				SysFolder parent = getParentSysFolder(directory);
 				
 				//Ignore owned directories.
-				if(parent == Main.getModel().getRootBranch() && Main.ownedFolderNames.contains(directory.getName()))
+				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && ExtrasManagerExtension.ownedFolderNames.contains(directory.getName()))
 					return;
 				
 				toRemove.getParent().removeItem(toRemove);
@@ -156,7 +156,7 @@ public class FileMonitor
 	{
 		for(File file : folder.getFile().listFiles())
 		{
-			if(isRoot && Main.ownedFolderNames.contains(file.getName()))
+			if(isRoot && ExtrasManagerExtension.ownedFolderNames.contains(file.getName()))
 				continue;
 			
 			Leaf<SysFile> sysFile = getSys(file);

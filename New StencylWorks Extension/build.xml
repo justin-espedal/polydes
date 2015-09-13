@@ -6,10 +6,17 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="name" value="SampleExtension" />
 	<property name="pkg" value="stencyl/ext/polydes/example" />
+	<property name="main" value="stencyl.ext.polydes.example.SampleExtension" />
 	
-	<include file="../Common/build.xml" as="common" />
+	<property name="name" value="Extension Name" />
+	<property name="description" value="Extension Description." />
+	<property name="author" value="Author Name" />
+	<property name="website" value="http://example.com" />
+	<property name="internalVersion" value="1" />
+	<property name="version" value="1.0" />
+	
+	<include file="../Common/build-helper.xml" as="common" />
 	
 	<target name="dist">
 		
@@ -19,7 +26,6 @@
 			
 			<target name="common.compile" />
 			
-			<target name="common.copy-common-resources" />
 			<target name="common.copy-resources" />
 			
 			<target name="common.makejar" />

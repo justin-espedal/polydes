@@ -21,7 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import stencyl.ext.polydes.scenelink.Main;
+import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.data.LinkPageModel;
 import stencyl.ext.polydes.scenelink.res.Resources;
 import stencyl.ext.polydes.scenelink.ui.combos.PageComboModel;
@@ -109,7 +109,7 @@ public class MainPage extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				LinkPageModel m = Main.generateNewModel();
+				LinkPageModel m = SceneLinkExtension.generateNewModel();
 				switchToPage(m.getId());
 			}
 		});
@@ -224,9 +224,9 @@ public class MainPage extends JPanel
 		
 		if(!pages.containsKey(id))
 		{
-			if(!Main.pages.containsKey(id))
+			if(!SceneLinkExtension.pages.containsKey(id))
 				return;
-			pages.put(id, new LinkPage(Main.pages.get(id)));
+			pages.put(id, new LinkPage(SceneLinkExtension.pages.get(id)));
 		}
 		if(properties != null)
 		{
@@ -234,7 +234,7 @@ public class MainPage extends JPanel
 			properties = null;
 		}
 		
-		currentPageModel = Main.pages.get(id);
+		currentPageModel = SceneLinkExtension.pages.get(id);
 		currentPage = pages.get(id);
 		
 		removeAll();
@@ -257,7 +257,7 @@ public class MainPage extends JPanel
 		scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 		
-		properties = PropertiesPage.generatePropertiesPage(Main.pages.get(id));
+		properties = PropertiesPage.generatePropertiesPage(SceneLinkExtension.pages.get(id));
 		JPanel propertiesWrapper = new JPanel(new BorderLayout());
 		propertiesWrapper.setBackground(Theme.LIGHT_BG_COLOR);
 		propertiesWrapper.add(properties, BorderLayout.NORTH);

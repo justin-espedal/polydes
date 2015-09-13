@@ -6,10 +6,16 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="name" value="DataStructuresExtension" />
 	<property name="pkg" value="stencyl/ext/polydes/datastruct" />
+	<property name="main" value="stencyl.ext.polydes.datastruct.DataStructuresExtension" />
 	
-	<include file="../Common/build.xml" as="common" />
+	<property name="name" value="Data Structures Extension" />
+	<property name="description" value="Create and Manage Data Structures." />
+	<property name="author" value="Justin Espedal" />
+	<property name="internalVersion" value="3" />
+	<property name="version" value="1.3.0" />
+	
+	<include file="../Common/build-helper.xml" as="common" />
 	
 	<target name="dist">
 		
@@ -20,7 +26,6 @@
 			
 			<target name="common.compile" />
 			
-			<target name="common.copy-common-resources" />
 			<target name="common.copy-resources" />
 			
 			<target name="common.makejar" />

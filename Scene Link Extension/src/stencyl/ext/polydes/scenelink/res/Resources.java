@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
-import stencyl.ext.polydes.scenelink.Main;
+import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.ui.combos.ImageReferenceComboModel;
 
 public class Resources
@@ -54,7 +54,7 @@ public class Resources
 		if(name.equals(""))
 			return null;
 		
-		File imgPath = new File(Main.resourcesFolder, name + ".png");
+		File imgPath = new File(SceneLinkExtension.resourcesFolder, name + ".png");
 		
 		try
 		{
@@ -138,7 +138,7 @@ public class Resources
 	public static void loadResourceNames()
 	{
 		resourceNames = new ArrayList<String>();
-		for(String s : Main.resourcesFolder.list())
+		for(String s : SceneLinkExtension.resourcesFolder.list())
 		{
 			if(s.endsWith(".png"))
 				s = s.substring(0, s.length() - 4);

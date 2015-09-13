@@ -6,10 +6,16 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="name" value="SceneLinkExtension" />
 	<property name="pkg" value="stencyl/ext/polydes/scenelink" />
+	<property name="main" value="stencyl.ext.polydes.scenelink.SceneLinkExtension" />
 	
-	<include file="../Common/build.xml" as="common" />
+	<property name="name" value="Scene Link Extension" />
+	<property name="description" value="View and access Scenes spatially." />
+	<property name="author" value="Justin Espedal" />
+	<property name="internalVersion" value="2" />
+	<property name="version" value="0.2.0" />
+	
+	<include file="../Common/build-helper.xml" as="common" />
 	
 	<target name="dist">
 		

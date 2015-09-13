@@ -292,4 +292,17 @@ public class Blocks
 			Definitions.get().remove(tag);
 		tagCache.clear();
 	}
+
+	public static void removeDesignModeBlocks(DataType<?> type)
+	{
+		ArrayList<Definition> blocks = type.getBlocks();
+		if(blocks != null)
+		{
+			for(Definition def : blocks)
+			{
+				Definitions.get().remove(def.tag);
+				tagCache.remove(def.tag);
+			}
+		}
+	}
 }

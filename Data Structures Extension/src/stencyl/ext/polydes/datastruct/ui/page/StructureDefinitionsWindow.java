@@ -95,13 +95,12 @@ public class StructureDefinitionsWindow extends JDialog
 	
 	private void closeWindow()
 	{
-		Prefs.set(Prefs.DEFPAGE_X, getX());
-		Prefs.set(Prefs.DEFPAGE_Y, getY());
-		Prefs.set(Prefs.DEFPAGE_WIDTH, getWidth());
-		Prefs.set(Prefs.DEFPAGE_HEIGHT, getHeight());
-		Prefs.set(Prefs.DEFPAGE_SIDEWIDTH, StructureDefinitionPage.get().splitPane.getDividerLocation());
-		Prefs.set(Prefs.DEFPAGE_SIDEDL, ((MiniSplitPane) StructureDefinitionPage.get().getSidebar()).getDividerLocation());
-		Prefs.save();
+		Prefs.DEFPAGE_X =  getX();
+		Prefs.DEFPAGE_Y = getY();
+		Prefs.DEFPAGE_WIDTH = getWidth();
+		Prefs.DEFPAGE_HEIGHT = getHeight();
+		Prefs.DEFPAGE_SIDEWIDTH = StructureDefinitionPage.get().splitPane.getDividerLocation();
+		Prefs.DEFPAGE_SIDEDL = ((MiniSplitPane) StructureDefinitionPage.get().getSidebar()).getDividerLocation();
 		
 		setVisible(false);
 		
@@ -130,18 +129,14 @@ public class StructureDefinitionsWindow extends JDialog
 	{
 		initialized = true;
 		
-		int x = Prefs.<Integer>get(Prefs.DEFPAGE_X);
-		int y = Prefs.<Integer>get(Prefs.DEFPAGE_Y);
-		int w = Prefs.<Integer>get(Prefs.DEFPAGE_WIDTH);
-		int h = Prefs.<Integer>get(Prefs.DEFPAGE_HEIGHT);
-		
-		int dl = Prefs.<Integer>get(Prefs.DEFPAGE_SIDEDL);
-		
 		splitPane.setLeftComponent(StructureDefinitionPage.get().getSidebar());
 		splitPane.setRightComponent(StructureDefinitionPage.get());
-		splitPane.setDividerLocation(dl);
+		splitPane.setDividerLocation(Prefs.DEFPAGE_SIDEDL);
 		
-		setSize(w, h);
+		setSize(Prefs.DEFPAGE_WIDTH, Prefs.DEFPAGE_HEIGHT);
+		
+		int x = Prefs.DEFPAGE_X;
+		int y = Prefs.DEFPAGE_Y;
 		
 		if(x == -1 || y == -1)
 			setLocationRelativeTo(SW.get());

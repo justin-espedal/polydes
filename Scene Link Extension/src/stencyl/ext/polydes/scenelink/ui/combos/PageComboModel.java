@@ -2,7 +2,7 @@ package stencyl.ext.polydes.scenelink.ui.combos;
 
 import javax.swing.DefaultComboBoxModel;
 
-import stencyl.ext.polydes.scenelink.Main;
+import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.data.LinkPageModel;
 
 
@@ -14,7 +14,7 @@ public class PageComboModel extends DefaultComboBoxModel
 	
 	public static void updatePages()
 	{
-		models = Main.getPages().toArray(new LinkPageModel[0]);
+		models = SceneLinkExtension.getPages().toArray(new LinkPageModel[0]);
 	}
 	
 	@Override
