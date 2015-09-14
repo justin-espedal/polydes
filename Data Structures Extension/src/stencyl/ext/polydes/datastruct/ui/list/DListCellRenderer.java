@@ -10,7 +10,7 @@ import javax.swing.ListCellRenderer;
 
 import stencyl.ext.polydes.datastruct.ui.UIConsts;
 
-public class DListCellRenderer extends JLabel implements ListCellRenderer
+public class DListCellRenderer extends JLabel implements ListCellRenderer<Object>
 {
 	public DListCellRenderer()
 	{
@@ -21,7 +21,7 @@ public class DListCellRenderer extends JLabel implements ListCellRenderer
 	}
 	
 	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+	public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
 	{
 		setText("" + value);
 		setBackground(isSelected ? UIConsts.TREE_SELECTION_COLOR : null);

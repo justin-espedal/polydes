@@ -93,7 +93,7 @@ public class SampleExtension extends BaseExtension
 		{
 			JTextField text;
 			JCheckBox check;
-			JComboBox dropdown;
+			JComboBox<?> dropdown;
 			
 			/*
 			 * Construct the form.

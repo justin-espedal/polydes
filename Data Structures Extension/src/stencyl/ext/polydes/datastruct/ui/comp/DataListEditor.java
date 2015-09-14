@@ -52,8 +52,8 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 {
 	private static final LanguagePack lang = LanguagePack.get();
 
-	private final DefaultListModel listModel;
-	private final JList list;
+	private final DefaultListModel<Object> listModel;
+	private final JList<Object> list;
 	private DataList model;
 	private final ArrayList<ActionListener> extraListeners;
 	private final DataListEditorRenderer renderer;
@@ -68,7 +68,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		setOpaque(false);
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
-		listModel = new DefaultListModel();
+		listModel = new DefaultListModel<Object>();
 		renderer = new DataListEditorRenderer();
 		setList(model);
 		
@@ -88,7 +88,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 
 		setLayout(new BorderLayout());
 
-		list = new JList(listModel);
+		list = new JList<Object>(listModel);
 		list.setBackground(Theme.LIGHT_BG_COLOR);
 		list.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		list.setForeground(Theme.TEXT_COLOR);
@@ -149,7 +149,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		}
 	}
 
-	private static final class DataListEditorRenderer extends JPanel implements ListCellRenderer
+	private static final class DataListEditorRenderer extends JPanel implements ListCellRenderer<Object>
 	{
 		DataList model;
 		JLabel l;
@@ -183,7 +183,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean isSelected, boolean cellHasFocus)
+		public Component getListCellRendererComponent(JList<? extends Object> list, Object value,	int index, boolean isSelected, boolean cellHasFocus)
 		{
 			if (isSelected)
 			{
@@ -209,7 +209,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		return model;
 	}
 
-	public JList getList()
+	public JList<Object> getList()
 	{
 		return list;
 	}

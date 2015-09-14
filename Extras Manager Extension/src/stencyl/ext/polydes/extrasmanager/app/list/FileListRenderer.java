@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.extrasmanager.data.Mime;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
@@ -31,7 +32,7 @@ import stencyl.sw.util.Locations;
 import stencyl.sw.util.gfx.ImageUtil;
 import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
-public class FileListRenderer extends JLabel implements ListCellRenderer 
+public class FileListRenderer extends JLabel implements ListCellRenderer<Leaf<SysFile>>
 {
 	public static final int MINI_SIZE = 16;
 	
@@ -91,8 +92,8 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 	@Override
 	public Component getListCellRendererComponent
 	(
-		JList list,
-		Object value,
+		JList<? extends Leaf<SysFile>> list,
+		Leaf<SysFile> value,
 		int index,
 		boolean isSelected,
 		boolean cellHasFocus
@@ -119,7 +120,7 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 			setIcon(img);
 		}
 		
-		setText(formatText(((SysFile) value).getName()));
+		setText(formatText(value.getName()));
 		
 		return this;
 	}
@@ -129,11 +130,8 @@ public class FileListRenderer extends JLabel implements ListCellRenderer
 		cache = null;
 	}
 	
-	public Image fetchIcon(Object value)
+	public Image fetchIcon(Leaf<SysFile> value)
 	{
-		if(!(value instanceof SysFile))
-			return null;
-		
 		SysFile file = (SysFile) value; 
 		
 		Image img = null;

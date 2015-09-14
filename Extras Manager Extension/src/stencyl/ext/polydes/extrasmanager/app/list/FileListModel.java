@@ -9,7 +9,7 @@ import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
 
-public class FileListModel extends DefaultListModel implements HierarchyRepresentation<SysFile> 
+public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements HierarchyRepresentation<SysFile> 
 {
 	HierarchyModel<SysFile> model;
 	public SysFolder currView;

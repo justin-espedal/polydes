@@ -6,7 +6,7 @@ import stencyl.ext.polydes.scenelink.SceneLinkExtension;
 import stencyl.ext.polydes.scenelink.data.LinkPageModel;
 
 
-public class PageComboModel extends DefaultComboBoxModel
+public class PageComboModel extends DefaultComboBoxModel<LinkPageModel>
 {
 	public static LinkPageModel[] models = new LinkPageModel[0];
 	
@@ -18,7 +18,7 @@ public class PageComboModel extends DefaultComboBoxModel
 	}
 	
 	@Override
-	public Object getElementAt(int index)
+	public LinkPageModel getElementAt(int index)
 	{
 		return models[index];
 	}

@@ -54,12 +54,12 @@ public class GridTable extends JPanel
 		repaint();
 	}
 	
-	public class NumberList extends JList
+	public class NumberList extends JList<Integer>
 	{
 		public NumberList(int i)
 		{
 			int count = i;
-			Object[] ints = new Object[i];
+			Integer[] ints = new Integer[i];
 			for(i = 0; i < count; ++i)
 			{
 				ints[i] = i;
@@ -83,12 +83,12 @@ public class GridTable extends JPanel
 		return fm.getHeight() - fm.getLeading();
 	}
 	
-	public class NumberListRenderer implements ListCellRenderer
+	public class NumberListRenderer implements ListCellRenderer<Integer>
 	{
 		NumberPaintPanel numberPaintPanel = new NumberPaintPanel();
 		
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+		public Component getListCellRendererComponent(JList<? extends Integer> list, Integer value, int index, boolean isSelected, boolean cellHasFocus)
 		{
 			numberPaintPanel.value = "" + value;
 			return numberPaintPanel;

@@ -190,7 +190,7 @@ public class DataStructuresExtension extends GameExtension
 	}
 	
 	@Override
-	public JPanel getMainPage()
+	public JPanel onGameCenterActivate()
 	{
 		return MainPage.get();
 	}

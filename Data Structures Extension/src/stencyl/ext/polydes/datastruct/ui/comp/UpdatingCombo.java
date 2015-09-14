@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import stencyl.ext.polydes.common.collections.CollectionObserver;
 import stencyl.ext.polydes.common.collections.CollectionPredicate;
 import stencyl.ext.polydes.common.collections.CollectionUpdateListener;
@@ -18,11 +16,10 @@ import stencyl.ext.polydes.common.collections.CollectionUpdateListener;
  * An UpdatingCombo automatically begins to observe the list it's passed.
  * When finished with an UpdatingCombo, it's important to call {@code dispose()} on it.
  */
-public class UpdatingCombo<T> extends JComboBox
+public class UpdatingCombo<T> extends JComboBox<T>
 {
 	UpdatingModel<T> model;
 	
-	@SuppressWarnings("unchecked")
 	public UpdatingCombo(Collection<T> list, CollectionPredicate<T> filter)
 	{
 		super(new UpdatingModel<T>(list, filter));
@@ -51,13 +48,13 @@ public class UpdatingCombo<T> extends JComboBox
 	}
 }
 
-class UpdatingModel<T> extends DefaultComboBoxModel implements CollectionUpdateListener
+class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpdateListener
 {
 	public static Map<Collection<?>, CollectionObserver> observers = new IdentityHashMap<Collection<?>, CollectionObserver>();
 	
 	private Collection<T> list;
 	private CollectionPredicate<T> filter;
-	private Object[] objects;
+	private ArrayList<T> objects;
 	
 	public UpdatingModel(Collection<T> list, CollectionPredicate<T> filter)
 	{
@@ -108,37 +105,35 @@ class UpdatingModel<T> extends DefaultComboBoxModel implements CollectionUpdateL
 			filteredList = filtered;
 		}
 		
-		objects = new Object[filteredList.size()];
-		int i = 0;
-		for(Object o : filteredList)
-			objects[i++] = o;
+		objects.ensureCapacity(filteredList.size());
+		objects.clear();
+		objects.addAll(filteredList);
 		
-		fireContentsChanged(this, 0, objects.length);
+		fireContentsChanged(this, 0, objects.size());
 	}
 	
 	@Override
-	public Object getElementAt(int index)
+	public T getElementAt(int index)
 	{
-		return objects[index];
+		return objects.get(index);
 	}
 	
 	@Override
 	public int getIndexOf(Object anObject)
 	{
-		return ArrayUtils.indexOf(objects, anObject);
+		return objects.indexOf(anObject);
 	}
 	
 	@Override
 	public int getSize()
 	{
-		return objects.length;
+		return objects.size();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public T getSelected()
 	{
-		Object o = getSelectedItem();
-		return o == null ? null : (T) o;
+		return (T) getSelectedItem();
 	}
 	
 	public void dispose()

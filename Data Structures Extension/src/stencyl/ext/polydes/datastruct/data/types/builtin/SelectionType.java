@@ -178,13 +178,13 @@ public class SelectionType extends BuiltinType<String>
 	
 	public static class DropdownSelectionEditor extends DataEditor<String>
 	{
-		JComboBox editor;
+		JComboBox<String> editor;
 		
 		public DropdownSelectionEditor(DataList options)
 		{
 			String[] optionStrings = ListElementArrays.toStrings(options);
 			
-			editor = new JComboBox(optionStrings);
+			editor = new JComboBox<String>(optionStrings);
 			
 			editor.addActionListener(new ActionListener()
 			{

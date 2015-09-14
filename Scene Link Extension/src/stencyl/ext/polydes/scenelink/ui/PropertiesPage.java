@@ -459,7 +459,7 @@ public class PropertiesPage extends DialogPanel
 
 	public JComponent createImageReferenceEditor(final Property p)
 	{
-		final JComboBox editor = new JComboBox(new ImageReferenceComboModel());
+		final JComboBox<String> editor = new JComboBox<String>(new ImageReferenceComboModel());
 		editor.setSelectedItem(readProperty(p));
 		editor.addActionListener(new ActionListener()
 		{

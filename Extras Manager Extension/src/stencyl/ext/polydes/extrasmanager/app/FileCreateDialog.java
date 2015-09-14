@@ -36,7 +36,7 @@ public class FileCreateDialog extends StencylDialog
 	
 	private String model;
 	private JPanel panel;
-	private JComboBox selector;
+	private JComboBox<FileRep> selector;
 	private JTextArea text;
 	
 	private AbstractButton okButton;	
@@ -85,7 +85,7 @@ public class FileCreateDialog extends StencylDialog
 	@Override
 	public JComponent createContentPanel()
 	{
-		selector = new JComboBox();
+		selector = new JComboBox<FileRep>();
 		for(File f : FileOperations.templates)
 			selector.addItem(new FileRep(f));
 		

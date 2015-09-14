@@ -43,7 +43,7 @@ public class MainPage extends JPanel
 	private JPanel absoluteWrapper = null;
 	private PropertiesPage properties = null;
 	
-	private JComboBox pageChooser = null;
+	private JComboBox<LinkPageModel> pageChooser = null;
 	private LinkPageModel currentPageModel = null;
 	private LinkPage currentPage = null;
 	
@@ -87,7 +87,7 @@ public class MainPage extends JPanel
 		
 		topBar.setLayout(new BoxLayout(topBar, BoxLayout.X_AXIS));
 		
-		pageChooser = new JComboBox(new PageComboModel());
+		pageChooser = new JComboBox<LinkPageModel>(new PageComboModel());
 		Dimension chooserSize = new Dimension(200, pageChooser.getPreferredSize().height);
 		pageChooser.setPreferredSize(chooserSize);
 		pageChooser.setMaximumSize(chooserSize);

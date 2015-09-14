@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
+import stencyl.ext.polydes.common.nodes.Leaf;
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionListener;
 import stencyl.ext.polydes.common.ui.darktree.DTreeSelectionState;
 import stencyl.ext.polydes.common.ui.darktree.DarkTree;
@@ -51,7 +52,6 @@ import stencyl.ext.polydes.extrasmanager.io.FileOperations;
 import stencyl.ext.polydes.extrasmanager.res.Resources;
 import stencyl.sw.SW;
 import stencyl.sw.app.lists.AbstractItemRenderer;
-import stencyl.sw.app.lists.AbstractList;
 import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
@@ -60,10 +60,9 @@ import stencyl.sw.util.comp.GroupButton;
 import stencyl.thirdparty.misc.comp.FileDrop;
 
 import com.explodingpixels.macwidgets.HudWidgetFactory;
-import com.jidesoft.list.QuickListFilterField;
 import com.jidesoft.swing.PaintPanel;
 
-public class FileList extends JList implements MouseListener, MouseMotionListener, FileClipboard.Listener
+public class FileList extends JList<Leaf<SysFile>> implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {
 	private static final Logger log = Logger.getLogger(FileList.class);
 	
@@ -102,9 +101,6 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	private JButton findButton;
 	*/
 	
-	protected AbstractList list;
-    protected QuickListFilterField searchField;
-    
 	//---
 	
 	public FileList(final FileListRenderer renderer, ListListener listener, final FileListModel model, final DarkTree<SysFile> tree)
@@ -718,20 +714,16 @@ public class FileList extends JList implements MouseListener, MouseMotionListene
 	@Override
 	public SysFile[] getSelectedValues()
 	{
-		Object[] objs = super.getSelectedValues();
-		SysFile[] vals = new SysFile[objs.length];
-		for(int i = 0; i < objs.length; ++i)
-			vals[i] = (SysFile) objs[i];
-		
-		return vals;
+		List<Leaf<SysFile>> selected = getSelectedValuesList();
+		return selected.toArray(new SysFile[selected.size()]);
 	}
 	
 	public List<File> getSelectedFiles()
 	{
-		Object[] objs = super.getSelectedValues();
+		List<Leaf<SysFile>> selected = getSelectedValuesList();
 		
-		ArrayList<File> files = new ArrayList<File>(objs.length);
-		for(Object o : objs)
+		ArrayList<File> files = new ArrayList<File>(selected.size());
+		for(Leaf<SysFile> o : selected)
 			files.add(((SysFile) o).getFile());
 		return files;
 	}

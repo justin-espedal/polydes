@@ -198,7 +198,7 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	}
 	
 	@Override
-	public JPanel getMainPage()
+	public JPanel onGameCenterActivate()
 	{
 		return MainEditor.get();
 	}

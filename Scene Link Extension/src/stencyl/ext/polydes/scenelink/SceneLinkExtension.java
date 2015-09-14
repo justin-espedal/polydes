@@ -66,7 +66,7 @@ public class SceneLinkExtension extends GameExtension
 	}
 	
 	@Override
-	public JPanel getMainPage()
+	public JPanel onGameCenterActivate()
 	{
 		return MainPage.get();
 	}
@@ -160,7 +160,7 @@ public class SceneLinkExtension extends GameExtension
 	{
 		if(fromVersion <= 1)
 		{
-			File oldExtrasFolder = new File(Locations.getGameLocation(getName()) + "extras/[ext] scene link");
+			File oldExtrasFolder = new File(Locations.getGameLocation(getGame()) + "extras/[ext] scene link");
 			
 			FileHelper.copyDirectory(oldExtrasFolder, getExtrasFolder());
 			FileHelper.delete(oldExtrasFolder);

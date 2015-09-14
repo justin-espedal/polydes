@@ -40,10 +40,10 @@ import stencyl.ext.polydes.scenelink.data.PageLink;
 import stencyl.sw.SW;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.UI;
+import stencyl.sw.util.comp.GenFilterableListModel;
+import stencyl.sw.util.comp.GenQuickListFilterField;
 import stencyl.sw.util.comp.RoundedPanel;
 
-import com.jidesoft.list.FilterableListModel;
-import com.jidesoft.list.QuickListFilterField;
 import com.jidesoft.swing.PaintPanel;
 
 
@@ -57,9 +57,9 @@ public class LinkReferenceChooser extends JWindow
 	private static final int HEIGHT = 480;
 	
 	private JPanel wrapper;	
-	private QuickListFilterField field;
+	private GenQuickListFilterField<Object> field;
 	
-	private JComboBox chooser;
+	private JComboBox<String> chooser;
 	
 	private ResourceList resourceList;
 	
@@ -105,7 +105,7 @@ public class LinkReferenceChooser extends JWindow
 		
 		//---
 		
-		field = new QuickListFilterField(new DefaultListModel());
+		field = new GenQuickListFilterField<Object>(new DefaultListModel<Object>());
 		field.setPreferredSize(new Dimension(1, 20));
 		field.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		field.setBackground(Color.WHITE);
@@ -119,9 +119,9 @@ public class LinkReferenceChooser extends JWindow
 		field.setSearchingDelay(0);
 		
 		if(link instanceof PageLink)
-			resourceList = new ResourceList(field.getDisplayListModel(), SceneLinkExtension.getPages());
+			resourceList = new ResourceList(field.getGenDisplayListModel(), SceneLinkExtension.getPages());
 		else
-			resourceList = new ResourceList(field.getDisplayListModel(), Game.getGame().getScenes());
+			resourceList = new ResourceList(field.getGenDisplayListModel(), Game.getGame().getScenes());
 		
 		field.addKeyListener
 		(
@@ -192,7 +192,7 @@ public class LinkReferenceChooser extends JWindow
         roundedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         roundedPanel.add(field, BorderLayout.CENTER);
         
-        chooser = new JComboBox(new ScenePageChooserModel());
+        chooser = new JComboBox<String>(new ScenePageChooserModel());
 		chooser.addActionListener(new ActionListener()
 		{
 			@Override
@@ -298,10 +298,10 @@ public class LinkReferenceChooser extends JWindow
 		}
 	}
 	
-	static class ScenePageChooserModel extends DefaultComboBoxModel
+	static class ScenePageChooserModel extends DefaultComboBoxModel<String>
 	{
 		@Override
-		public Object getElementAt(int index)
+		public String getElementAt(int index)
 		{
 			return index == 0 ? "Scene" : "Page";
 		}
@@ -313,11 +313,11 @@ public class LinkReferenceChooser extends JWindow
 		}
 	}
 	
-	class ResourceList extends JList
+	class ResourceList extends JList<Object>
 	{
 		CustomModel customModel;
 		
-		public ResourceList(FilterableListModel model, Collection<?> objects)
+		public ResourceList(GenFilterableListModel<Object> model, Collection<?> objects)
 		{
 			super(model);
 			
@@ -339,7 +339,7 @@ public class LinkReferenceChooser extends JWindow
 		}
 	}
 	
-	class CustomModel extends DefaultListModel
+	class CustomModel extends DefaultListModel<Object>
 	{
 		public CustomModel(Collection<?> objects)
 		{
@@ -357,7 +357,7 @@ public class LinkReferenceChooser extends JWindow
 		}
 	}
 	
-	class CustomRenderer extends JPanel implements ListCellRenderer 
+	class CustomRenderer extends JPanel implements ListCellRenderer<Object>
 	{
 		JLabel mainLabel;
 		
@@ -375,7 +375,7 @@ public class LinkReferenceChooser extends JWindow
 		@Override
 		public Component getListCellRendererComponent
 		(
-			JList list,
+			JList<? extends Object> list,
 			Object value,
 			int index,
 			boolean isSelected,
