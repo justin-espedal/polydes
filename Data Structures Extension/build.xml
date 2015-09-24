@@ -8,6 +8,7 @@
 	
 	<property name="pkg" value="stencyl/ext/polydes/datastruct" />
 	<property name="main" value="stencyl.ext.polydes.datastruct.DataStructuresExtension" />
+	<property name="type" value="game" />
 	
 	<property name="name" value="Data Structures Extension" />
 	<property name="description" value="Create and Manage Data Structures." />

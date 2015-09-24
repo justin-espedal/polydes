@@ -8,6 +8,7 @@
 	
 	<property name="pkg" value="stencyl/ext/polydes/dialog" />
 	<property name="main" value="stencyl.ext.polydes.dialog.DialogExtension" />
+	<property name="type" value="game" />
 	
 	<property name="dependsOn" value="stencyl.ext.polydes.datastruct-1.3" />
 	

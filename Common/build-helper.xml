@@ -62,6 +62,11 @@
 	<set-var-if-unset name="website" value="https://github.com/justin-espedal/polydes" />
 	<set-var-if-unset name="internalVersion" value="1" />
 	
+	<set-var-if-unset name="stencyl" value="b8670" />
+	<set-var-if-unset name="ree" value="JavaSE-1.8" />
+	<set-var-if-unset name="type" value="normal" />
+	<set-var-if-unset name="repository" value="http://www.polydes.com/repo" />
+	
 	<path id="compile.libs">
 		<fileset dir="${this.lib}" includes="*.jar" />
 	</path>
@@ -113,14 +118,19 @@
 			<manifest>
 				<attribute name="Extension-ID" value="${extensionID}" />
 				<attribute name="Extension-Main-Class" value="${main}" />
-				<attribute name="Extension-Dependencies" value="${depends}" />
 				<attribute name="Extension-Version" value="${version}" />
 				<attribute name="Extension-Icon" value="${pkg}/res/icon.png" />
+				
+				<attribute name="Extension-Dependencies" value="${depends}" />
+				<attribute name="Extension-RequiredStencyl" value="${stencyl}" />
+				<attribute name="Extension-RequiredExecutionEnvironment" value="${ree}" />
+				<attribute name="Extension-Type" value="${type}" />
 				
 				<attribute name="Extension-Name" value="${name}" />
 				<attribute name="Extension-Description" value="${description}" />
 				<attribute name="Extension-Author" value="${author}" />
 				<attribute name="Extension-Website" value="${website}" />
+				<attribute name="Extension-Repository" value="${repository}" />
 				<attribute name="Extension-Internal-Version" value="${internalVersion}" />
 				
 			</manifest>

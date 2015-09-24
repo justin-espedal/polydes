@@ -7,7 +7,7 @@
 <project name="stencyl" basedir="." default="dist">
 	
 	<property name="pkg" value="stencyl/ext/polydes/common" />
-	<property name="main" value="ignore" />
+	<property name="type" value="java_library" />
 	
 	<property name="version" value="1.0.0" />
 	
