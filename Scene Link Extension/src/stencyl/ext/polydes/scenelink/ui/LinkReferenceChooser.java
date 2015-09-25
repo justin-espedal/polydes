@@ -105,7 +105,14 @@ public class LinkReferenceChooser extends JWindow
 		
 		//---
 		
-		field = new GenQuickListFilterField<Object>(new DefaultListModel<Object>());
+		CustomModel cm = new CustomModel
+		(
+			link instanceof PageLink ?
+				SceneLinkExtension.getPages() :
+				Game.getGame().getScenes()
+		);
+		
+		field = new GenQuickListFilterField<Object>(cm);
 		field.setPreferredSize(new Dimension(1, 20));
 		field.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		field.setBackground(Color.WHITE);
@@ -118,10 +125,7 @@ public class LinkReferenceChooser extends JWindow
 		field.setFromStart(true);
 		field.setSearchingDelay(0);
 		
-		if(link instanceof PageLink)
-			resourceList = new ResourceList(field.getGenDisplayListModel(), SceneLinkExtension.getPages());
-		else
-			resourceList = new ResourceList(field.getGenDisplayListModel(), Game.getGame().getScenes());
+		resourceList = new ResourceList(field.getGenDisplayListModel(), cm);
 		
 		field.addKeyListener
 		(
@@ -317,13 +321,11 @@ public class LinkReferenceChooser extends JWindow
 	{
 		CustomModel customModel;
 		
-		public ResourceList(GenFilterableListModel<Object> model, Collection<?> objects)
+		public ResourceList(GenFilterableListModel<Object> model, CustomModel customModel)
 		{
 			super(model);
 			
-			customModel = new CustomModel(objects);
-			
-			model.setActualModel(customModel);
+			this.customModel = customModel;
 			
 			setCellRenderer(new CustomRenderer());
 			setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
