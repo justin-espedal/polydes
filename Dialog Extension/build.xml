@@ -29,8 +29,8 @@
 		
 		<antcall target="dist" />
 		
-		<copy file="${extensiondir}/${name}.jar" tofile="release/${name}.jar" />
-		<copy file="${extensiondir}/${dsjarname}" tofile="release/${dsjarname}" />
+		<copy file="${buildpath}/${name}.jar" tofile="release/${name}.jar" />
+		<copy file="${buildpath}/${dsjarname}" tofile="release/${dsjarname}" />
 		
 		<copy toDir="release/dialog">
 			<fileset dir="engine" />
@@ -46,7 +46,7 @@
 	
 	<target name="dist">
 		
-		<var name="clspath" value="${clspath}:${extensiondir}/${dsjarname}" />
+		<var name="clspath" value="${clspath}:${buildpath}/${dsjarname}" />
 		<var name="usinglibs" value="true" />
 		
 		<antcall>
