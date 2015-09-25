@@ -26,7 +26,6 @@
 			<target name="common.copy-resources" />
 			
 			<target name="common.makejar" />
-			<target name="common.copyjar" />
 			
 		</antcall>
 		

@@ -6,28 +6,37 @@
 
 <project name="polydes-common" basedir="." xmlns:if="ant:if" xmlns:unless="ant:unless">
 	
-	<!-- Set these properties to match your own setup -->
+	<!-- Set the following properties in build-helper.properties
 	
-		<property name="swjar" value="C:/Common/Eclipse Workspace Windows/Stencyl/dist/sw.jar" />
-		<property name="commonjar" value="C:/Common/Dropbox/stencylworks/extensions/stencyl.ext.polydes.common.jar" />
-		<property name="swworkdir" value="C:/Common/Dropbox/stencylworks" />
+		swjar=path/to/sw.jar
+		buildpath=path/to/stencylworks/extensions
 		
-		<!-- If this is removed, blank out the copyjar task below -->
-		<property name="copytodir" value="C:/Common/Dropbox/Public/Extensions" />
-	
-	<!-- /properties to set -->
+	-->
 	
 	<include file="tools/ant-helper.xml"/>
 	
 	<dirname property="common.base" file="${ant.file.polydes-common}"/>
+	
+	<if>
+		<not>
+			<available file="${common.base}/build-helper.properties" />
+		</not>
+		<then>
+			<fail message="No build-helper.properties file found." />
+		</then>
+	</if>
+	
+	<property file="${common.base}/build-helper.properties"/>
+	
 	<property name="common.src" value="${common.base}/src" />
 	<property name="common.pkg" value="stencyl/ext/polydes/common" />
+	<property name="commonjar" value="${buildpath}/stencyl.ext.polydes.common.jar" />
 	
 	<var name="this.src" value="./src" />
 	<var name="this.build" value="./build" />
 	<var name="this.lib" value="./libs" />
 	<var name="this.pkg" value="${pkg}" />
-	<set-var-if-unset name="version" value="1.0" />
+	<set-var-if-unset name="version" value="1.0.0" />
 	
 	<propertyregex property="extensionID"
 	               input="${pkg}"
@@ -36,16 +45,6 @@
 	               global="true" />
 	
 	<var name="jarname" value="${extensionID}" />
-	
-	<if>
-		<equals arg1="${jenkins}" arg2="true" />
-		<then>
-			<var name="extensiondir" value="../dist" />
-		</then>
-		<else>
-			<var name="extensiondir" value="${swworkdir}/extensions" />
-		</else>
-	</if>
 	
 	<!--
 		srcpath and clspath are first set when this script is included.
@@ -114,7 +113,7 @@
 		<var name="depends" value="stencyl.ext.polydes.common-1" />
 		<var name="depends" value="${depends},${dependsOn}" if:set="dependsOn" />
 		
-		<jar destfile="${extensiondir}/${jarname}.jar" basedir="${this.build}">
+		<jar destfile="${buildpath}/${jarname}.jar" basedir="${this.build}">
 			<manifest>
 				<attribute name="Extension-ID" value="${extensionID}" />
 				<attribute name="Extension-Main-Class" value="${main}" />
@@ -137,17 +136,6 @@
 			<zipgroupfileset dir="${this.lib}/" includes="*.jar" if:true="${usinglibs}" />
 		</jar>
 		
-	</target>
-	
-	<target name="copyjar">
-		<for param="file" unless:true="${jenkins}">
-			<path>
-				<pathelement path="${copytodir}/${jarname}.jar"/>
-			</path>
-			<sequential>
-				<copy file="${extensiondir}/${jarname}.jar" tofile="@{file}" />
-			</sequential>
-		</for>
 	</target>
 	
 </project>

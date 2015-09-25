@@ -27,7 +27,6 @@
 			<target name="common.copy-defaults" />
 			
 			<target name="common.makejar" />
-			<target name="common.copyjar" />
 			
 		</antcall>
 		
