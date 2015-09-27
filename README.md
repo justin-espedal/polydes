@@ -13,3 +13,7 @@ Collection of open source Stencyl extensions.
 [Scene Link] (http://community.stencyl.com/index.php/topic,33821.0.html)
 
 [Imgur Extension] (http://community.stencyl.com/index.php/topic,30685.0.html)
+
+[Website] (http://polydes.com/)
+
+Stencyl Extensions Repository: http://polydes.com/repo
