@@ -14,9 +14,9 @@
 	
 	<property name="name" value="Dialog Extension" />
 	<property name="description" value="Toolset side of the Dialog Extension." />
-	<property name="author" value="Justin Espedal" />
+	<property name="author" value="Justin &amp; Irock" />
 	<property name="internalVersion" value="5" />
-	<property name="version" value="1.6.0" />
+	<property name="version" value="1.6.1" />
 	
 	<property name="dsjarname" value="stencyl.ext.polydes.datastruct.jar" />
 	
