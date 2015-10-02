@@ -3,8 +3,6 @@ package stencyl.ext.polydes.extrasmanager;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,24 +25,10 @@ import stencyl.sw.util.Locations;
 public class ExtrasManagerExtension extends BaseExtension
 {
 	private static ExtrasManagerExtension _instance;
-	public static HashSet<String> ownedFolderNames = new HashSet<String>();
-	private static HashMap<String, BaseExtension> folderOwners = new HashMap<String, BaseExtension>();
 	
 	private static HierarchyModel<SysFile> model;
 	
 	private static boolean gameOpen;
-	
-	public static boolean requestFolderOwnership(BaseExtension ext, String folderName)
-	{
-		System.out.println(ext.getManifest().id + " requesting ownership of " + folderName);
-		
-		if(ownedFolderNames.contains(folderName))
-			return false;
-		
-		ownedFolderNames.add(folderName);
-		folderOwners.put(folderName, ext);
-		return true;
-	}
 	
 	private String gameDir;
 	private String extrasDir;
@@ -149,14 +133,7 @@ public class ExtrasManagerExtension extends BaseExtension
 		SysFolder rootFolder = FileMonitor.registerOnRoot(extrasFile);
 		model = new FileOpHierarchyModel(rootFolder);
 		
-		for(String s : ownedFolderNames)
-		{
-			File f = new File(extrasFile, s); 
-			if(!f.exists())
-				f.mkdir();
-		}
-		
-		File templatesFile = new File(new File(Locations.getGameLocation(game) + "extras/" + getManifest().id), "templates");
+		File templatesFile = new File(Locations.getExtensionGameDataLocation(game, getManifest().id), "templates");
 		
 		if(!templatesFile.exists())
 		{
@@ -329,10 +306,5 @@ public class ExtrasManagerExtension extends BaseExtension
 	public void onUninstall()
 	{
 		
-	}
-
-	public void print(String s)
-	{
-		System.out.println(s);
 	}
 }

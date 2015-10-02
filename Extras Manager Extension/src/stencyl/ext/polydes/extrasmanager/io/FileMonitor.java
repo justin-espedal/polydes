@@ -14,6 +14,7 @@ import stencyl.ext.polydes.extrasmanager.app.list.FileListRenderer;
 import stencyl.ext.polydes.extrasmanager.data.FilePreviewer;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFile;
 import stencyl.ext.polydes.extrasmanager.data.folder.SysFolder;
+import stencyl.sw.app.ExtensionManager;
 
 public class FileMonitor
 {
@@ -85,7 +86,7 @@ public class FileMonitor
 				SysFolder parent = getParentSysFolder(directory);
 				
 				//Ignore owned directories.
-				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && ExtrasManagerExtension.ownedFolderNames.contains(directory.getName()))
+				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && extensionExists(directory.getName()))
 					return;
 				
 				parent.addItem(sysFile, parent.findInsertionIndex(sysFile.getName(), true));
@@ -100,7 +101,7 @@ public class FileMonitor
 				SysFolder parent = getParentSysFolder(directory);
 				
 				//Ignore owned directories.
-				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && ExtrasManagerExtension.ownedFolderNames.contains(directory.getName()))
+				if(parent == ExtrasManagerExtension.getModel().getRootBranch() && extensionExists(directory.getName()))
 					return;
 				
 				toRemove.getParent().removeItem(toRemove);
@@ -143,6 +144,8 @@ public class FileMonitor
 		else
 			newFile = new SysFile(file);
 		
+		System.out.println(key + " is " + ((newFile instanceof SysFolder) ? "Folder" : "File"));
+		
 		fileCache.put(key, newFile);
 		return newFile;
 	}
@@ -157,7 +160,7 @@ public class FileMonitor
 	{
 		for(File file : folder.getFile().listFiles())
 		{
-			if(isRoot && ExtrasManagerExtension.ownedFolderNames.contains(file.getName()))
+			if(isRoot && extensionExists(file.getName()))
 				continue;
 			
 			Leaf<SysFile> sysFile = getSys(file);
@@ -165,6 +168,11 @@ public class FileMonitor
 			if(file.isDirectory())
 				readFolder((SysFolder) sysFile, false);
 		}
+	}
+	
+	private static boolean extensionExists(String name)
+	{
+		return ExtensionManager.get().getExtensions().containsKey(name);
 	}
 	
 	private static SysFile getSysFile(File file)
