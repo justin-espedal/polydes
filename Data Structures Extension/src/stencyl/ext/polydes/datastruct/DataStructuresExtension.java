@@ -409,6 +409,12 @@ public class DataStructuresExtension extends GameExtension
 	{
 		return null;
 	}
+	
+	@Override
+	protected boolean hasOptions()
+	{
+		return false;
+	}
 
 	@Override
 	public void onInstall()

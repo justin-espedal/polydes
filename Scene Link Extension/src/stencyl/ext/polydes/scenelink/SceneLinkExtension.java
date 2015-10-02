@@ -178,6 +178,12 @@ public class SceneLinkExtension extends GameExtension
 		return null;
 	}
 	
+	@Override
+	protected boolean hasOptions()
+	{
+		return false;
+	}
+	
 	/*
 	 * Happens when the extension is first installed.
 	 */

@@ -65,7 +65,6 @@ public class PaintExtension extends BaseExtension
 	@Override
 	public void onActivate()
 	{
-		print("DialogExtension : Activated");
 	}
 
 	@Override
@@ -89,7 +88,6 @@ public class PaintExtension extends BaseExtension
 	@Override
 	public void onDestroy()
 	{
-		print("DialogExtension : Destroyed");
 	}
 
 	/*
@@ -186,62 +184,21 @@ public class PaintExtension extends BaseExtension
 	@Override
 	public OptionsPanel onOptions()
 	{
-		return new OptionsPanel()
-		{
-			/*
-			 * Construct the form.
-			 * 
-			 * We provide a simple way to construct forms without knowing Swing
-			 * (Java's GUI library).
-			 */
-			@Override
-			public void init()
-			{
-				startForm();
-				addHeader("Options");
-				endForm();
-			}
-
-			/*
-			 * Use this to save the form data out. All you need to do is place
-			 * the properties into preferences.
-			 */
-			@Override
-			public void onPressedOK()
-			{
-				System.out
-						.println("DialogExtension : OptionsPanel : onPressedOK");
-			}
-
-			/*
-			 * Happens whenever the user presses cancel or clicks the "x" in the
-			 * corner
-			 */
-			@Override
-			public void onPressedCancel()
-			{
-				System.out
-						.println("DialogExtension : OptionsPanel : onPressedCancel");
-			}
-
-			/*
-			 * Happens whenever the user brings this options panel up
-			 */
-			@Override
-			public void onShown()
-			{
-				System.out.println("DialogExtension : OptionsPanel : onShown");
-			}
-		};
+		return null;
 	}
 
+	@Override
+	protected boolean hasOptions()
+	{
+		return false;
+	}
+	
 	/*
 	 * Happens when the extension is first installed.
 	 */
 	@Override
 	public void onInstall()
 	{
-		print("DialogExtension : Install");
 	}
 
 	/*
@@ -252,11 +209,5 @@ public class PaintExtension extends BaseExtension
 	@Override
 	public void onUninstall()
 	{
-		print("DialogExtension : Uninstall");
-	}
-
-	public void print(String s)
-	{
-		System.out.println(s);
 	}
 }

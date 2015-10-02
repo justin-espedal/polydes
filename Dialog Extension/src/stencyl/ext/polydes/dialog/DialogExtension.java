@@ -259,6 +259,12 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	{
 		return null;
 	}
+	
+	@Override
+	protected boolean hasOptions()
+	{
+		return false;
+	}
 
 	/*
 	 * Happens when the extension is first installed.
