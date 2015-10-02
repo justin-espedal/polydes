@@ -63,6 +63,7 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		observers.get(list).addListener(this);
 		this.list = list;
 		this.filter = filter;
+		objects = new ArrayList<T>();
 		listUpdated();
 	}
 	
@@ -105,7 +106,6 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 			filteredList = filtered;
 		}
 		
-		objects.ensureCapacity(filteredList.size());
 		objects.clear();
 		objects.addAll(filteredList);
 		

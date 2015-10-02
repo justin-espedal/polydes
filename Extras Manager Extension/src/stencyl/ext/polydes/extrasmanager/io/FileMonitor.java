@@ -59,7 +59,8 @@ public class FileMonitor
 				System.out.println("File deleted: " + file.getAbsolutePath());
 				
 				SysFile toRemove = getSysFile(file);
-				toRemove.getParent().removeItem(toRemove);
+				if(toRemove != null && toRemove.getParent() != null)
+					toRemove.getParent().removeItem(toRemove);
 				
 				FileListRenderer.clearThumbnail(file);
 				dispose(file);

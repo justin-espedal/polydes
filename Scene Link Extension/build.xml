@@ -8,6 +8,7 @@
 	
 	<property name="pkg" value="stencyl/ext/polydes/scenelink" />
 	<property name="main" value="stencyl.ext.polydes.scenelink.SceneLinkExtension" />
+	<property name="type" value="game" />
 	
 	<property name="name" value="Scene Link Extension" />
 	<property name="description" value="View and access Scenes spatially." />

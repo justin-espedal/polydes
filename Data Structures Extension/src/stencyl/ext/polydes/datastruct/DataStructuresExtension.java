@@ -293,7 +293,12 @@ public class DataStructuresExtension extends GameExtension
 	public void onInstalledForGame()
 	{
 		if(detectOldVersion())
-			updateFromVersion(2);			
+			updateFromVersion(2);
+		else
+		{
+			new File(getExtrasFolder(), "data").mkdirs();
+			new File(getDataFolder(), "defs").mkdirs();
+		}
 	}
 	
 	private boolean detectOldVersion()
