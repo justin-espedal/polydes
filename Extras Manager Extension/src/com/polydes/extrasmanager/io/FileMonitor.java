@@ -138,6 +138,8 @@ public class FileMonitor
 		String key = file.getAbsolutePath();
 		if(fileCache.containsKey(key))
 			return fileCache.get(key);
+		if(!file.exists())
+			return null;
 		
 		Leaf<SysFile> newFile;
 		if(file.isDirectory())
