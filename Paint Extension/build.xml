@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/paint" />
-	<property name="main" value="stencyl.ext.polydes.paint.PaintExtension" />
+	<property name="pkg" value="com/polydes/paint" />
+	<property name="main" value="com.polydes.paint.PaintExtension" />
 	
 	<property name="name" value="Paint Extension" />
 	<property name="description" value="Paint Extension." />

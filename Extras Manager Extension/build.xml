@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/extrasmanager" />
-	<property name="main" value="stencyl.ext.polydes.extrasmanager.ExtrasManagerExtension" />
+	<property name="pkg" value="com/polydes/extrasmanager" />
+	<property name="main" value="com.polydes.extrasmanager.ExtrasManagerExtension" />
 	
 	<property name="name" value="Extras Manager Extension" />
 	<property name="description" value="Manage extra data files." />

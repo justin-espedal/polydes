@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/scenelink" />
-	<property name="main" value="stencyl.ext.polydes.scenelink.SceneLinkExtension" />
+	<property name="pkg" value="com/polydes/scenelink" />
+	<property name="main" value="com.polydes.scenelink.SceneLinkExtension" />
 	<property name="type" value="game" />
 	
 	<property name="name" value="Scene Link Extension" />

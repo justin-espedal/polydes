@@ -29,8 +29,8 @@
 	<property file="${common.base}/build-helper.properties"/>
 	
 	<property name="common.src" value="${common.base}/src" />
-	<property name="common.pkg" value="stencyl/ext/polydes/common" />
-	<property name="commonjar" value="${buildpath}/stencyl.ext.polydes.common.jar" />
+	<property name="common.pkg" value="com/polydes/common" />
+	<property name="commonjar" value="${buildpath}/com.polydes.common.jar" />
 	
 	<var name="this.src" value="./src" />
 	<var name="this.build" value="./build" />
@@ -110,7 +110,7 @@
 	
 	<target name="makejar">
 		
-		<var name="depends" value="stencyl.ext.polydes.common-1" />
+		<var name="depends" value="com.polydes.common-1.0.0" />
 		<var name="depends" value="${depends},${dependsOn}" if:set="dependsOn" />
 		
 		<jar destfile="${buildpath}/${jarname}.jar" basedir="${this.build}">

@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/datastruct" />
-	<property name="main" value="stencyl.ext.polydes.datastruct.DataStructuresExtension" />
+	<property name="pkg" value="com/polydes/datastruct" />
+	<property name="main" value="com.polydes.datastruct.DataStructuresExtension" />
 	<property name="type" value="game" />
 	
 	<property name="name" value="Data Structures Extension" />

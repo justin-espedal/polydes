@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/imgur" />
-	<property name="main" value="stencyl.ext.polydes.imgur.ImgurExtension" />
+	<property name="pkg" value="com/polydes/imgur" />
+	<property name="main" value="com.polydes.imgur.ImgurExtension" />
 	
 	<property name="name" value="Imgur Extension" />
 	<property name="description" value="Upload toolset screenshots directly to Imgur." />

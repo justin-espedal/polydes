@@ -6,8 +6,8 @@
 
 <project name="stencyl" basedir="." default="dist">
 	
-	<property name="pkg" value="stencyl/ext/polydes/example" />
-	<property name="main" value="stencyl.ext.polydes.example.SampleExtension" />
+	<property name="pkg" value="com/polydes/example" />
+	<property name="main" value="com.polydes.example.SampleExtension" />
 	
 	<property name="name" value="Extension Name" />
 	<property name="description" value="Extension Description." />
