@@ -11,6 +11,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import stencyl.core.lib.Game;
+import stencyl.sw.SW;
+import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
+import stencyl.sw.ext.BaseExtension;
+import stencyl.sw.ext.GameExtension;
+import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.Locations;
+import stencyl.sw.util.NotifierHashMap;
+import stencyl.sw.util.NotifierHashMap.HashMapEvent;
+
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
@@ -23,17 +34,6 @@ import com.polydes.datastruct.ext.DataStructureExtension;
 import com.polydes.datastruct.ext.DataTypeExtension;
 import com.polydes.datastruct.io.HXGenerator;
 import com.polydes.datastruct.io.Text;
-
-import stencyl.core.lib.Game;
-import stencyl.sw.app.ExtensionManager;
-import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
-import stencyl.sw.ext.BaseExtension;
-import stencyl.sw.ext.GameExtension;
-import stencyl.sw.ext.OptionsPanel;
-import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Locations;
-import stencyl.sw.util.NotifierHashMap;
-import stencyl.sw.util.NotifierHashMap.HashMapEvent;
 
 public class DataStructuresExtension extends GameExtension
 {
@@ -77,8 +77,8 @@ public class DataStructuresExtension extends GameExtension
 		Prefs.DEFPAGE_SIDEWIDTH = readIntProp("defpage.sidewidth", DarkTree.DEF_WIDTH);
 		Prefs.DEFPAGE_SIDEDL = readIntProp("defpage.sidedl", 150);
 		
-		ExtensionManager.get().getActiveExtensions().addListener(extListener);
-		ExtensionManager.get().getActiveGameExtensions().addListener(gameExtListener);
+		SW.get().getExtensionManager().getActiveExtensions().addListener(extListener);
+		SW.get().getExtensionManager().getActiveGameExtensions().addListener(gameExtListener);
 		refreshExtensions();
 	}
 	
@@ -92,14 +92,14 @@ public class DataStructuresExtension extends GameExtension
 		dataTypeExtensions.clear();
 		dataStructureExtensions.clear();
 		
-		for(BaseExtension e : ExtensionManager.get().getActiveExtensions().values())
+		for(BaseExtension e : SW.get().getExtensionManager().getActiveExtensions().values())
 		{
 			if(e instanceof GameExtension)
 				continue;
 			
 			addExtension(e);
 		}
-		for(GameExtension e : ExtensionManager.get().getActiveGameExtensions().values())
+		for(GameExtension e : SW.get().getExtensionManager().getActiveGameExtensions().values())
 		{
 			addExtension(e);
 		}
@@ -210,8 +210,8 @@ public class DataStructuresExtension extends GameExtension
 		
 		super.onDestroy();
 		
-		ExtensionManager.get().getActiveExtensions().removeListener(extListener);
-		ExtensionManager.get().getActiveGameExtensions().removeListener(gameExtListener);
+		SW.get().getExtensionManager().getActiveExtensions().removeListener(extListener);
+		SW.get().getExtensionManager().getActiveGameExtensions().removeListener(gameExtListener);
 	}
 	
 	private static String sourceDir;
@@ -427,8 +427,8 @@ public class DataStructuresExtension extends GameExtension
 	@Override
 	public void onUninstall()
 	{
-		ExtensionManager.get().getActiveExtensions().removeListener(extListener);
-		ExtensionManager.get().getActiveGameExtensions().removeListener(gameExtListener);
+		SW.get().getExtensionManager().getActiveExtensions().removeListener(extListener);
+		SW.get().getExtensionManager().getActiveGameExtensions().removeListener(gameExtListener);
 	}
 
 	NotifierHashMap.Listener<BaseExtension> extListener = new NotifierHashMap.Listener<BaseExtension>()

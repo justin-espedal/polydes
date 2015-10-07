@@ -4,14 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
-import stencyl.sw.app.ExtensionManager;
+import stencyl.sw.SW;
 import stencyl.sw.ext.ExtensionWrapper;
 
 public class ExtensionInterface
 {
 	public static Object sendMessage(String extensionID, String message, Object... args)
 	{
-		ExtensionWrapper ext = ExtensionManager.get().getExtensions().get(extensionID);
+		ExtensionWrapper ext = SW.get().getExtensionManager().getExtensions().get(extensionID);
 		if(!ext.isActivated())
 		{
 			return null;

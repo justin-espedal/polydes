@@ -8,14 +8,14 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
+import stencyl.sw.SW;
+
 import com.polydes.common.nodes.Leaf;
 import com.polydes.extrasmanager.ExtrasManagerExtension;
 import com.polydes.extrasmanager.app.list.FileListRenderer;
 import com.polydes.extrasmanager.data.FilePreviewer;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
-
-import stencyl.sw.app.ExtensionManager;
 
 public class FileMonitor
 {
@@ -175,7 +175,7 @@ public class FileMonitor
 	
 	private static boolean extensionExists(String name)
 	{
-		return ExtensionManager.get().getExtensions().containsKey(name);
+		return SW.get().getExtensionManager().getExtensions().containsKey(name);
 	}
 	
 	private static SysFile getSysFile(File file)

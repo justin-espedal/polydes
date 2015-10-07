@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 
 import stencyl.core.lib.Game;
 import stencyl.sw.SW;
-import stencyl.sw.app.ExtensionManager;
 import stencyl.sw.editors.game.GameSettingsDialog;
 import stencyl.sw.editors.game.advanced.ExtensionInstance;
 import stencyl.sw.editors.snippet.designer.DefinitionParser;
@@ -80,7 +79,7 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onInstalledForGame()
 	{
-		ExtensionWrapper dsExtWrapper = ExtensionManager.get().getExtensions().get("com.polydes.datastruct");
+		ExtensionWrapper dsExtWrapper = SW.get().getExtensionManager().getExtensions().get("com.polydes.datastruct");
 		GameExtension e = (GameExtension) dsExtWrapper.getExtension();
 		
 		if(e.getGame() == null)
