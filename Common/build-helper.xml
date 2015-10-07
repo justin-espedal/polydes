@@ -61,8 +61,6 @@
 	<set-var-if-unset name="website" value="https://github.com/justin-espedal/polydes" />
 	<set-var-if-unset name="internalVersion" value="1" />
 	
-	<set-var-if-unset name="stencyl" value="b8670" />
-	<set-var-if-unset name="ree" value="JavaSE-1.8" />
 	<set-var-if-unset name="type" value="normal" />
 	<set-var-if-unset name="repository" value="http://www.polydes.com/repo" />
 	
@@ -121,8 +119,6 @@
 				<attribute name="Extension-Icon" value="${pkg}/res/icon.png" />
 				
 				<attribute name="Extension-Dependencies" value="${depends}" />
-				<attribute name="Extension-RequiredStencyl" value="${stencyl}" />
-				<attribute name="Extension-RequiredExecutionEnvironment" value="${ree}" />
 				<attribute name="Extension-Type" value="${type}" />
 				
 				<attribute name="Extension-Name" value="${name}" />

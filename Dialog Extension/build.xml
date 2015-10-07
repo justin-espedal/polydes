@@ -10,7 +10,7 @@
 	<property name="main" value="com.polydes.dialog.DialogExtension" />
 	<property name="type" value="game" />
 	
-	<property name="dependsOn" value="com.polydes.datastruct-1.3.0" />
+	<property name="dependsOn" value="com.polydes.datastruct-1.3.0,engine-com.polydes.dialog-1.5.0" />
 	
 	<property name="name" value="Dialog Extension" />
 	<property name="description" value="Toolset side of the Dialog Extension." />

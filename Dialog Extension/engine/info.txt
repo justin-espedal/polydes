@@ -1,6 +1,8 @@
 name=Dialog Extension
 description=The Dialog Extension
-author=Justin, Irock
+author=Justin & Irock
 website=http://dialog.justin.espedaladventures.com/
-version=1.5
+version=1.5.0
 compatibility=all
+dependencies=toolset-com.polydes.dialog-1.6.3
+repository=http://www.polydes.com/repo
