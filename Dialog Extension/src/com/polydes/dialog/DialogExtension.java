@@ -9,14 +9,8 @@ import javax.swing.JPanel;
 import org.apache.commons.io.FileUtils;
 
 import stencyl.core.lib.Game;
-import stencyl.sw.SW;
-import stencyl.sw.editors.game.GameSettingsDialog;
-import stencyl.sw.editors.game.advanced.ExtensionInstance;
-import stencyl.sw.editors.snippet.designer.DefinitionParser;
-import stencyl.sw.ext.ExtensionWrapper;
 import stencyl.sw.ext.GameExtension;
 import stencyl.sw.ext.OptionsPanel;
-import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
@@ -73,38 +67,11 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onActivate()
 	{
-		print("DialogExtension : Activated");
 	}
 	
 	@Override
 	public void onInstalledForGame()
 	{
-		ExtensionWrapper dsExtWrapper = SW.get().getExtensionManager().getExtensions().get("com.polydes.datastruct");
-		GameExtension e = (GameExtension) dsExtWrapper.getExtension();
-		
-		if(e.getGame() == null)
-			e.installForGame();
-		
-		if(findDialogEngineExtension() == null)
-			downloadDialogEngineExtension(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					engineExtensionReady();
-				}
-			});
-		else
-			engineExtensionReady();
-	}
-	
-	private void engineExtensionReady()
-	{
-		ExtensionInstance dgExt = findDialogEngineExtension();
-		
-		if(!dgExt.isEnabled())
-			installEngineExtension(dgExt);
-		
 		if(detectOldInstall())
 			updateFromVersion(4);
 		else
@@ -133,50 +100,6 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 			FileHelper.copyDirectory(oldExtrasFolder, getExtrasFolder());
 			FileHelper.delete(oldExtrasFolder);
 		}
-	}
-	
-	private ExtensionInstance findDialogEngineExtension()
-	{
-		for (ExtensionInstance ext : Game.getGame().extensions.values())
-		{
-			if (ext.getExtensionID().equals("dialog"))
-				return ext;
-		}
-		
-		return null;
-	}
-	
-	private void downloadDialogEngineExtension(final Runnable callback)
-	{
-		final File tempZip = new File(Locations.getGameExtensionsLocation(), "dialog.zip");
-		
-		FileHelper.downloadFile
-		(
-			"http://dialogextension.com/download/Dialog%20Extension%20Latest.zip",
-			"Dialog Engine Extension",
-			"Failed to download engine extension.",
-			tempZip,
-			LanguagePack.get(),
-			new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					FileHelper.unzip(tempZip, new File(Locations.getGameExtensionsLocation()));
-					FileHelper.delete(new File(Locations.getPath(Locations.getGameExtensionsLocation(),"__MACOSX")));
-					SW.get().getEngineExtensionManager().reload();
-					callback.run();
-				}
-			}
-		);
-	}
-	
-	private void installEngineExtension(ExtensionInstance ext)
-	{
-		ext.enable();
-		DefinitionParser.addDefinitionsForExtension(ext.getExtension());
-		GameSettingsDialog.reset();
-//		showMessageDialog("Dialog Engine Extension Installed", "Refresh any open behaviors in order to see Dialog Extension blocks.");
 	}
 	
 	private void loadDefaults()
@@ -211,7 +134,6 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onDestroy()
 	{
-		print("DialogExtension : Destroyed");
 	}
 
 	
@@ -272,7 +194,6 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onInstall()
 	{
-		print("DialogExtension : Install");
 	}
 
 	/*
@@ -283,18 +204,12 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onUninstall()
 	{
-		print("DialogExtension : Uninstall");
-	}
-
-	public void print(String s)
-	{
-		System.out.println(s);
 	}
 	
 	@Override
 	public File getDefinitionsFolder()
 	{
-		return new File(Locations.getGameExtensionLocation("dialog"), "def");
+		return new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "def");
 	}
 	
 	@Override

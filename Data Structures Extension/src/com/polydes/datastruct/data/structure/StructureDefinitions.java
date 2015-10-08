@@ -64,7 +64,7 @@ public class StructureDefinitions
 		Folder newFolder = new Folder(name);
 		newFolder.setPolicy(new UniqueRootPolicy());
 		baseFolders.put(newFolder, fsfolder);
-		for(File f : fsfolder.listFiles())
+		for(File f : FileHelper.listFiles(fsfolder))
 			load(f, newFolder);
 		root.addItem(newFolder);
 		root.setDirty(false);

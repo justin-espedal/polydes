@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 
-
 public class Images
 {
 	private static Images instance;
@@ -48,7 +47,10 @@ public class Images
 	
 	public static void dispose()
 	{
-		images.clear();
-		instance = null;
+		if(instance != null)
+		{
+			images.clear();
+			instance = null;
+		}
 	}
 }

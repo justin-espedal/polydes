@@ -77,7 +77,7 @@ class DataStructureReader
 
 	public static function getFileKeyValues(filename:String):Map<String,String>
 	{
-		var lines:Array<String> = getFileLines("stencyl.ext.polydes.datastruct/data/" + filename);
+		var lines:Array<String> = getFileLines("com.polydes.datastruct/data/" + filename);
 		var map:Map<String, String> = new Map<String, String>();
 		for(line in lines)
 		{
