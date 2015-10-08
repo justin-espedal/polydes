@@ -109,10 +109,12 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 		{
 			f = new File(getExtrasFolder(), "images" + File.separator + "Default Window.png");
 			f.getParentFile().mkdirs();
-			FileHelper.writeToPNG(f.getAbsolutePath(), Defaults.loadImage("Default Window.png"));
-			
-			FileUtils.writeStringToFile(new File(getExtrasFolder(), "dialog.txt"), Defaults.load("dialog.txt"));
-			FileUtils.writeStringToFile(new File(getExtrasFolder(), "macros.txt"), Defaults.load("macros.txt"));
+			if(!f.exists())
+				FileHelper.writeToPNG(f.getAbsolutePath(), Defaults.loadImage("Default Window.png"));
+			if(!new File(getExtrasFolder(), "dialog.txt").exists())
+				FileUtils.writeStringToFile(new File(getExtrasFolder(), "dialog.txt"), Defaults.load("dialog.txt"));
+			if(!new File(getExtrasFolder(), "macros.txt").exists())
+				FileUtils.writeStringToFile(new File(getExtrasFolder(), "macros.txt"), Defaults.load("macros.txt"));
 		}
 		catch (IOException e)
 		{
