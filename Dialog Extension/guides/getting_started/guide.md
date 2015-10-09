@@ -6,23 +6,29 @@ This extension is made of **three parts**:
 2. The Data Structures Extension. This is used as a backend to provide a user-friendly interface for editing dialog settings.
 3. The Dialog Engine Extension. This provides the code for drawing and executing your dialog scripts at runtime.
 
-The toolset extensions are `DialogExtension.jar` and `DataStructuresExtension.jar`. **Move** those to `[Your Stencyl Workspace]/extensions/`.
+The easiest way to install is to use Stencyl's built-in Extension Manager to install them all together.
 
-The engine extension is found in the `dialog` folder. **Move** that folder to `[Your Stencyl Workspace]/engine-extensions/`.
+1) Extensions > Get Extensions
 
-After moving the files, **restart Stencyl** if it's already open.
+![](img1.png)  
 
-##### Confirming the Installation
+2) Enable external repositories and add "http://www.polydes.com/repo"
 
-To confirm the toolset extensions have been installed, go to `Extensions > Extension Manager`. The `Dialog Extension` and `Data Structures` extensions should be listed there.
+![](img2.png)  
 
-To confirm the engine extension has been installed, **open a game** and go to `View > Game Settings > Extensions`. The `Dialog Extension` should be listed there.
+3) Install "Dialog Extension"
+
+![](img3.png)  
 
 ## How to Enable the Extension in Your Game
 
-After installing all three parts of the extension, open the game you wish to enable the extension for.
+1) Open a game and select "Dialog Extension" in the sidebar
 
-Go to `View > Game Settings > Extensions`. **Enable** the `Dialog Extension`, and **save and close** your game.
+![](img4.png)  
+
+2) Click in the center panel to enable it for that game
+
+![](img5.png)  
 
 ##### Optional Step:
 
