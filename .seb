@@ -32,7 +32,8 @@ var rebuildToolsetExtension = function():Void
 	var id=pkg.split("/").join(".");
 	var hash = getVersionProp("hash");
 	
-	ant();
+	if(ant().exitCode != 0)
+		return;
 	
 	var output = (hash != "") ?
 		git("log", "--format=%s", hash + '...HEAD', "--", ".").output :
