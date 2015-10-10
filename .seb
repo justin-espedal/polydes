@@ -1,0 +1,111 @@
+//SETUP
+
+var baseDir = dir();
+
+// HELPERS
+
+var getBuildProp = function(propertyName:String):String
+{
+	return grep("build.xml", 'property name="' + propertyName + '" value="(.*)"');
+};
+
+var getVersionProp = function(propertyName:String):String
+{
+	return grep(".version", propertyName + '=(.*)');
+};
+
+var getInfoProp = function(propertyName:String):String
+{
+	return grep("info.txt", propertyName + '=(.*)');
+};
+
+var removeEmpty = function(input:Array<String>):Array<String>
+{
+	return input.split("\n").filter(function(s) return s.length > 0).join("\n");
+};
+
+// OPERATIONS
+
+var rebuildToolsetExtension = function():Void
+{
+	var pkg=getBuildProp("pkg");
+	var id=pkg.split("/").join(".");
+	var hash = getVersionProp("hash");
+	
+	ant();
+	
+	var output = (hash != "") ?
+		git("log", "--format=%s", hash + '...HEAD', "--", ".").output :
+		"Initial Repository Version.";
+	File.saveContent(dir() + '/changes', removeEmpty(output));
+	
+	srm("add", Path.normalize(baseDir + '/dist/' + id + '.jar'), dir() + '/changes');
+	
+	var semver = getBuildProp("version");
+	var hash = git("log", "-1", "--format=%H").output;
+	File.saveContent(dir() + '/.version', 'semver=' + semver + '\nhash=' + hash);
+};
+
+var rebuildEngineExtension = function(id:String):Void
+{
+	var hash = getVersionProp("hash");
+	
+	var output = (hash != "") ?
+		git("log", "--format=%s", hash + '...HEAD', "--", ".").output :
+		"Initial Repository Version.";
+	File.saveContent(dir() + '/changes', removeEmpty(output));
+	
+	srm("add", dir(), dir() + '/changes', id);
+	
+	var semver = getInfoProp("version");
+	var hash = git("log", "-1", "--format=%H").output;
+	File.saveContent(dir() + '/.version', 'semver=' + semver + '\nhash=' + hash);
+};
+
+var conditionalToolsetBuild = function():Void
+{
+	var buildVersion = getBuildProp("version");
+	var cvString = getVersionProp("semver");
+	var cachedVersion = cvString != "" ? cvString : "0.0.0";
+	if(compareVersions(buildVersion, cachedVersion) > 0)
+		rebuildToolsetExtension();
+};
+
+var conditionalEngineBuild = function(id:String):Void
+{
+	var buildVersion = getInfoProp("version");
+	var cvString = getVersionProp("semver");
+	var cachedVersion = cvString != "" ? cvString : "0.0.0";
+	if(compareVersions(buildVersion, cachedVersion) > 0)
+		rebuildEngineExtension(id);
+};
+
+// BUILD TYPES
+
+var toolsetBuild = function(folder:String):Void
+{
+	cd(folder);
+	conditionalToolsetBuild();
+	cd("..");
+};
+
+var engineBuild = function(folder:String, id:String):Void
+{
+	cd(folder);
+	conditionalEngineBuild(id);
+	cd("..");
+};
+
+// MAIN BUILD INSTRUCTIONS
+
+git("pull");
+
+toolsetBuild("Common");
+toolsetBuild("Data Structures Extension");
+toolsetBuild("Dialog Extension");
+toolsetBuild("Extras Manager Extension");
+toolsetBuild("Imgur Extension");
+toolsetBuild("Paint Extension");
+toolsetBuild("Scene Link Extension");
+
+engineBuild("Dialog Extension/engine", "com.polydes.dialog");
