@@ -84,16 +84,18 @@ var conditionalEngineBuild = function(id:String):Void
 
 var toolsetBuild = function(folder:String):Void
 {
+	var prev = dir();
 	cd(folder);
 	conditionalToolsetBuild();
-	cd("..");
+	cd(prev);
 };
 
 var engineBuild = function(folder:String, id:String):Void
 {
+	var prev = dir();
 	cd(folder);
 	conditionalEngineBuild(id);
-	cd("..");
+	cd(prev);
 };
 
 // MAIN BUILD INSTRUCTIONS
