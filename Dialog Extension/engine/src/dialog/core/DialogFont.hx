@@ -49,7 +49,7 @@ class DialogFont
 		#end
 
 		if(!loadedFonts.exists(f))
-			loadedFonts.set(f, new DialogFont(DialogFontInfo.get(f), 0xFFFFFF));
+			loadedFonts.set(f, new DialogFont(DialogFontInfo.get(f), -1));
 
 		return loadedFonts.get(f);
 	}
@@ -65,6 +65,20 @@ class DialogFont
 		ct_temp = new ColorTransform();
 		if(color != -1)
 			ct_main.color = color;
+	}
+
+	public function setColor(color:Int)
+	{
+		if(this.color == color)
+			return;
+
+		this.color = color;
+		if(color == -1)
+			ct_main = new ColorTransform();
+		else
+			ct_main.color = color;
+		
+		chars = new Map<String, BitmapData>();
 	}
 
 	public function getScaledChar(c:String):BitmapData

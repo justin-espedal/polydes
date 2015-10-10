@@ -56,11 +56,11 @@ class Util
 
 		#if stencyl
 
-		o =  cast Data.get().resourceMap.get(name);
+		o = cast Data.get().resourceMap.get(name);
 
 		#elseif unity
 
-		o =  cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Font>(name)");
+		o = cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Font>(name)");
 
 		#end
 
@@ -78,11 +78,11 @@ class Util
 
 		#if stencyl
 
-		o =  Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name +".png");
+		o = Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name +".png");
 
 		#elseif unity
 
-		o =  cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Texture2D>(name)");
+		o = cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Texture2D>(name)");
 
 		#end
 
@@ -101,18 +101,18 @@ class Util
 		#if stencyl
 
 		if(Engine.IMG_BASE == "1x")
-			o =  Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name +".png");
+			o = Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name +".png");
 		else
 		{
 			var toReturn = Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name + "@" + Engine.IMG_BASE + ".png");
 			if(toReturn == null)
 				toReturn = Assets.getBitmapData("assets/data/com.polydes.dialog/images/"+ name +".png").getScaled(Engine.SCALE, Engine.SCALE);
-			o =  toReturn;
+			o = toReturn;
 		}
 
 		#elseif unity
 
-		o =  cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Texture2D>(name)");
+		o = cast untyped __cs__("global::UnityEngine.Resources.Load<global::UnityEngine.Texture2D>(name)");
 
 		#end
 

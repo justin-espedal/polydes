@@ -60,7 +60,8 @@ class TypingScripts extends DialogExtension
 			"color"=>typecolor,
 			"typespeed"=>typespeed,
 			"typesound"=>setTypeSound,
-			"soundskip"=>setTypeSoundSkip
+			"soundskip"=>setTypeSoundSkip,
+			"colorfont"=>colorFont
 		];
 
 		addCallback(Dialog.WHEN_CREATED, function():Void
@@ -121,6 +122,11 @@ class TypingScripts extends DialogExtension
 	public function setTypeSoundSkip(numToSkip:Int):Void
 	{
 		typeSoundDelay = numToSkip;
+	}
+
+	public function colorFont(fontName:String, fontColor:Int):Void
+	{
+		DialogFont.get(Util.font(fontName)).setColor(fontColor);
 	}
 
 	// Member access
