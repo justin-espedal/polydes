@@ -64,7 +64,7 @@
 	
 	<target name="engine">
 		
-		<copy toDir="${swworkdir}/engine-extensions/dialog">
+		<copy toDir="${enginebuildpath}/com.polydes.dialog">
 			<fileset dir="engine" />
 		</copy>
 		

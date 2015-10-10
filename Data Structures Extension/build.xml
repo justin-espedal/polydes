@@ -36,5 +36,13 @@
 		</antcall>
 		
 	</target>
+	
+	<target name="engine">
+		
+		<copy toDir="${enginebuildpath}/com.polydes.datastruct">
+			<fileset dir="engine" />
+		</copy>
+		
+	</target>
 
 </project>
