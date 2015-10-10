@@ -6,6 +6,8 @@ typedef AnimatedImage = dialog.legacy.AnimatedImage;
 
 #elseif stencyl
 
+import com.stencyl.Engine;
+
 import openfl.display.BitmapData;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -41,8 +43,9 @@ class AnimatedImage
 			loadedAnimations.set(animRef, BitmapDataUtil.getActorTypeAnimation(animRef.actor, animRef.anim));
 
 		anim = loadedAnimations.get(animRef);
-		width = Std.int(anim.imgWidth / anim.framesAcross);
-		height = Std.int(anim.imgHeight / anim.framesDown);
+		width = Std.int(anim.imgWidth * Engine.SCALE / anim.framesAcross);
+		height = Std.int(anim.imgHeight * Engine.SCALE / anim.framesDown);
+
 		repeats = anim.looping;
 		elapsed = 0;
 		curFrame = 0;
