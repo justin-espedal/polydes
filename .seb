@@ -108,4 +108,5 @@ toolsetBuild("Imgur Extension");
 toolsetBuild("Paint Extension");
 toolsetBuild("Scene Link Extension");
 
+engineBuild("Data Structures Extension/engine", "com.polydes.datastruct");
 engineBuild("Dialog Extension/engine", "com.polydes.dialog");
