@@ -1,36 +1,35 @@
 /**
  * @author Justin Espedal
  */
-package scripts.ds;
-
-import scripts.DataStructures;
+package com.polydes.datastruct;
 
 [IMPORTS]
+
 class DataStructureReader
 {
 	public static function readData():Void
 	{
 		var files:Array<String> = getFileLines("MyDataStructures.txt");
-		
+
 		var classmap:Map<String, Class<Dynamic>> = new Map<String, Class<Dynamic>>();
-[CLASSMAP]
-[DATATYPES]
+		[CLASSMAP]
+		[DATATYPES]
 		var fmaps:Map<String, Map<String, String>> = new Map<String, Map<String, String>>();
 		for(fname in files)
 		{
 			if(fname == "")
 				continue;
-			
+
 			var map:Map<String, String> = getFileKeyValues(fname);
 			fmaps.set(fname, map);
-			
+
 			var name:String = fname.split("/").pop();
 			var id:Int = Std.parseInt(map.get("struct_id"));
 			var type:String = map.get("struct_type");
 			map.remove("struct_type");
-			
+
 			var cls:Class<Dynamic> = classmap.get(type);
-			
+
 			var structure:Dynamic = Type.createInstance(cls, []);
 			structure.id = id;
 			structure.name = name;
@@ -40,7 +39,7 @@ class DataStructureReader
 		{
 			if(fname == "")
 				continue;
-			
+
 			var map:Map<String, String> = fmaps.get(fname);
 			var data:Dynamic = DataStructures.idMap.get(Std.parseInt(map.get("struct_id")));
 			map.remove("struct_id");
@@ -55,17 +54,17 @@ class DataStructureReader
 				catch(e:Dynamic)
 				{
 					trace("Warning: Couldn't load data.");
-					trace("- " + fname + "::" + key);
+					trace("- " + fname + "" + key);
 				}
 			}
-			
+
 			DataStructures.nameMap.set(data.name, data);
 		}
 	}
-	
+
 	public static function read(id:Int, path:String):Void
 	{
-		
+
 	}
 
 	public static var newlinePattern:EReg = ~/[\r\n]+/g;

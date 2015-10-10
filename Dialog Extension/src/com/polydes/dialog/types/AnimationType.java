@@ -2,6 +2,7 @@ package com.polydes.dialog.types;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -10,6 +11,7 @@ import javax.swing.JTextField;
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
+import stencyl.sw.util.Locations;
 
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
@@ -20,7 +22,6 @@ import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.utils.DocumentAdapter;
 import com.polydes.dialog.data.Animation;
 import com.polydes.dialog.io.Text;
-import com.polydes.dialog.res.Resources;
 
 public class AnimationType extends DataType<Animation>
 {
@@ -65,13 +66,14 @@ public class AnimationType extends DataType<Animation>
 	@Override
 	public List<String> generateHaxeClass()
 	{
-		return Text.readLines(Resources.getUrlStream("code/haxe/" + xml + ".hx"));
+		return null;
 	}
 
 	@Override
 	public List<String> generateHaxeReader()
 	{
-		return Text.readLines(Resources.getUrlStream("code/haxer/" + xml + ".hx"));
+		File f = new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types/" + xml + ".hx");
+		return Text.readLines(f);
 	}
 
 	@Override

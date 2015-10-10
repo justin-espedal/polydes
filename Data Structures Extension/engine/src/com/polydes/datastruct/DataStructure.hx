@@ -1,4 +1,4 @@
-package scripts.ds;
+package com.polydes.datastruct;
 
 class DataStructure
 {

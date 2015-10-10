@@ -7,11 +7,12 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import stencyl.sw.util.Locations;
+
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.res.Resources;
 
 public class HXGenerator
 {
@@ -40,14 +41,10 @@ public class HXGenerator
 		}
 	}
 	
-	public static List<String> generateDataStructure()
-	{
-		return Text.readLines(Resources.getUrlStream("code/DataStructure.hx"));
-	}
-	
 	public static List<String> generateReader()
 	{
-		String s = Text.readString(Resources.getUrlStream("code/DataStructureReader.hx"));
+		File f = new File(Locations.getGameExtensionLocation("com.polydes.datastruct"), "templates/DataStructureReader.hx");
+		String s = Text.readString(f);
 		
 		String imports = "";
 		String classmap = "";
@@ -70,14 +67,10 @@ public class HXGenerator
 		return lines;
 	}
 	
-	public static List<String> generateAccessFile()
-	{
-		return Text.readLines(Resources.getUrlStream("code/DataStructures.hx"));
-	}
-	
 	public static List<String> generateEncoder()
 	{
-		String s = Text.readString(Resources.getUrlStream("code/StringData.hx"));
+		File f = new File(Locations.getGameExtensionLocation("com.polydes.datastruct"), "templates/StringData.hx");
+		String s = Text.readString(f);
 		
 		String datareaders = "";
 		

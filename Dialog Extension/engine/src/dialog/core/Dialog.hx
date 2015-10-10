@@ -10,7 +10,7 @@ import com.stencyl.models.Resource;
 import com.stencyl.Data;
 import com.stencyl.Engine;
 
-import scripts.DataStructures;
+import com.polydes.datastruct.DataStructures;
 
 #elseif unity
 

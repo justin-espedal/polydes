@@ -1,26 +1,28 @@
 package [PACKAGE];
 
-class [CLASSNAME] extends scripts.ds.DataStructure
+class [CLASSNAME] extends com.polydes.datastruct.DataStructure
 {
 	public static var fieldMap = {
 		var m = new Map<String, String>();
-[FIELDMAP]		m;
+		[FIELDMAP]
+		m;
 	}
-	
+
 	public static var typeInfo = {
 		var m = new Map<String, String>();
-[TYPEINFO]		m;
+		[TYPEINFO]
+		m;
 	}
-	
+
 	public function getTypeInfo(field:String):String
 	{
 		return [CLASSNAME].typeInfo.get(field);
 	}
-	
-[VARIABLES]
+
+	[VARIABLES]
 	public function new()
 	{
 	}
 
-[CUSTOM]
+	[CUSTOM]
 }

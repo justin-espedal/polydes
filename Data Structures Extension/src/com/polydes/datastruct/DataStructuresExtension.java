@@ -276,10 +276,8 @@ public class DataStructuresExtension extends GameExtension
 	{
 		if(initialized)
 		{
-			write("scripts.ds.DataStructure", HXGenerator.generateDataStructure());
-			write("scripts.DataStructures", HXGenerator.generateAccessFile());
-			write("scripts.ds.DataStructureReader", HXGenerator.generateReader());
-			write("scripts.ds.StringData", HXGenerator.generateEncoder());
+			write("com.polydes.datastruct.DataStructureReader", HXGenerator.generateReader());
+			write("com.polydes.datastruct.StringData", HXGenerator.generateEncoder());
 			for(DataType<?> type : Types.typeFromXML.values())
 			{
 				List<String> lines = type.generateHaxeClass();

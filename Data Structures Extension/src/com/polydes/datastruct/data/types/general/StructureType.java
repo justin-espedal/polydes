@@ -2,6 +2,7 @@ package com.polydes.datastruct.data.types.general;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.swing.JComponent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import stencyl.sw.util.Locations;
 
 import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.datastruct.data.folder.DataItem;
@@ -26,7 +29,6 @@ import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
 import com.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
 import com.polydes.datastruct.io.Text;
-import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -47,7 +49,8 @@ public class StructureType extends DataType<Structure>
 	@Override
 	public List<String> generateHaxeClass()
 	{
-		String s = Text.readString(Resources.getUrlStream("code/Structure.hx"));
+		File file = new File(Locations.getGameExtensionLocation("com.polydes.datastruct"), "templates/Structure.hx");
+		String s = Text.readString(file);
 		
 		String fieldmap = "";
 		String variables = "";

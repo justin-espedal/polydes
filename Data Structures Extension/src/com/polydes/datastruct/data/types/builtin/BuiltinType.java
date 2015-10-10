@@ -1,10 +1,12 @@
 package com.polydes.datastruct.data.types.builtin;
 
+import java.io.File;
 import java.util.List;
+
+import stencyl.sw.util.Locations;
 
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.io.Text;
-import com.polydes.datastruct.res.Resources;
 
 public abstract class BuiltinType<T> extends DataType<T>
 {
@@ -22,7 +24,8 @@ public abstract class BuiltinType<T> extends DataType<T>
 	@Override
 	public List<String> generateHaxeReader()
 	{
-		return Text.readLines(Resources.getUrlStream("code/haxer/" + xml + ".hx"));
+		File f = new File(Locations.getGameExtensionLocation("com.polydes.datastruct"), "types/" + xml + ".hx");
+		return Text.readLines(f);
 	}
 	
 	@Override
