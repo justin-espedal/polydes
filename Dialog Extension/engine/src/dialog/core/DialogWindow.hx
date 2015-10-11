@@ -24,6 +24,9 @@ class DialogWindow
 	public var template:WindowTemplate;
 	public var img:ScalingImage;
 
+	//cache the image if scale != 1 and tweening is over
+	public var preScaledImg:BitmapData;
+	
 	public var position:IntPoint;
 	public var size:IntPoint;
 	public var tween:Null<WindowTween>;
@@ -92,6 +95,8 @@ class DialogWindow
 			var pos:IntPoint = new IntPoint(position.x + origin.x, position.y + origin.y);
 
 			this.tween = new WindowTween(img.image, pos, tween);
+
+			preScaledImg = null;
 		}
 		else
 		{
@@ -143,10 +148,16 @@ class DialogWindow
 
 			tweenCompleteNotify = new Array<Void->Void>();
 		}
+
+		if(Engine.SCALE != 1)
+			preScaledImg = img.image.getScaled(Engine.SCALE, Engine.SCALE);
 	}
 
 	public function draw():Void
 	{
-		G2.drawImage(img.image, position.x, position.y);
+		if(preScaledImg != null)
+			G2.drawImage(preScaledImg, position.x, position.y, false);
+		else
+			G2.drawImage(img.image, position.x, position.y);
 	}
 }
