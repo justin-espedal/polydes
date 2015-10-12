@@ -36,6 +36,7 @@ import com.polydes.datastruct.data.structure.StructureHeader;
 import com.polydes.datastruct.data.structure.StructureTab;
 import com.polydes.datastruct.data.structure.StructureTable;
 import com.polydes.datastruct.data.structure.StructureTabset;
+import com.polydes.datastruct.data.structure.StructureText;
 import com.polydes.datastruct.data.structure.cond.StructureCondition;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
@@ -86,6 +87,17 @@ public class StructureDefinitionEditor extends JPanel
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
 			tree.createNewItemFromFolder(headerItem, newNodeFolder, insertPosition);
+		}
+	};
+	
+	private final Action createTextAction = new AbstractAction()
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
+			tree.createNewItemFromFolder(textItem, newNodeFolder, insertPosition);
 		}
 	};
 	
@@ -185,6 +197,8 @@ public class StructureDefinitionEditor extends JPanel
 				}
 				else if(cls == StructureHeader.class)
 					return new DataItem(nodeName, new StructureHeader(nodeName));
+				else if(cls == StructureText.class)
+					return new DataItem(nodeName, new StructureText(nodeName, ""));
 				else if(cls == StructureCondition.class)
 				{
 					StructureCondition cond = new StructureCondition(def, "");
@@ -228,6 +242,7 @@ public class StructureDefinitionEditor extends JPanel
 		installAction(c, "H", "createHeader", createHeaderAction);
 		installAction(c, "T", "createTab", createTabAction);
 		installAction(c, "K", "createCondition", createConditionAction);
+		installAction(c, "D", "createText", createTextAction);
 	}
 	
 	private void uninstallActions(JComponent c)
@@ -236,6 +251,7 @@ public class StructureDefinitionEditor extends JPanel
 		uninstallAction(c, "H", "createHeader");
 		uninstallAction(c, "T", "createTab");
 		uninstallAction(c, "K", "createCondition");
+		uninstallAction(c, "D", "createText");
 	}
 	
 	private void installAction(JComponent c, String key, String name, Action action)
@@ -256,6 +272,7 @@ public class StructureDefinitionEditor extends JPanel
 	private static final PopupItem fieldItem;
 	private static final PopupItem headerItem;
 	private static final PopupItem conditionItem;
+	private static final PopupItem textItem;
 	static
 	{
 		
@@ -264,6 +281,7 @@ public class StructureDefinitionEditor extends JPanel
 		ImageIcon fieldIcon = thumb("field.png");
 		ImageIcon headerIcon = thumb("header.png");
 		ImageIcon conditionIcon = thumb("condition.png");
+		ImageIcon textIcon = thumb("text.png");
 		
 		ArrayList<PopupItem> items = new ArrayList<PopupItem>();
 		items.add(tabItem = new PopupItem("Tab", StructureTab.class, tabIcon));
@@ -274,12 +292,14 @@ public class StructureDefinitionEditor extends JPanel
 		items.add(headerItem = new PopupItem("Header", StructureHeader.class, headerIcon));
 		items.add(conditionItem = new PopupItem("Condition", StructureCondition.class, conditionIcon));
 		items.add(tabsetItem = new PopupItem("Tabset", StructureTabset.class, tabsetIcon));
+		items.add(textItem = new PopupItem("Text", StructureText.class, textIcon));
 		
 		childNodes.put(StructureTab.class, items);
 		childNodes.put(StructureField.class, items);
 		childNodes.put(StructureHeader.class, items);
 		childNodes.put(StructureCondition.class, items);
 		childNodes.put(StructureTable.class, items);
+		childNodes.put(StructureText.class, items);
 	}
 	
 	private static final ImageIcon thumb(String loc)

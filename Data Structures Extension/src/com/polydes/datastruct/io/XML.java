@@ -40,6 +40,7 @@ import com.polydes.datastruct.data.structure.StructureField;
 import com.polydes.datastruct.data.structure.StructureHeader;
 import com.polydes.datastruct.data.structure.StructureTab;
 import com.polydes.datastruct.data.structure.StructureTabset;
+import com.polydes.datastruct.data.structure.StructureText;
 import com.polydes.datastruct.data.structure.cond.StructureCondition;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtrasMap;
@@ -227,6 +228,12 @@ public class XML
 					DataItem headerNode = new DataItem(h.getLabel(), h);
 					gui.addItem(headerNode);
 				}
+				else if(e.getTagName().equals("text"))
+				{
+					StructureText t = new StructureText(XML.read(e, "label"), XML.read(e, "text"));
+					DataItem textNode = new DataItem(t.getLabel(), t);
+					gui.addItem(textNode);
+				}
 				else if(e.getTagName().equals("tabset"))
 				{
 					Folder tabsetNode = new Folder("Tabset", new StructureTabset());
@@ -321,6 +328,12 @@ public class XML
 			{
 				e = doc.createElement("header");
 				e.setAttribute("label", StringEscapeUtils.escapeXml10(((StructureHeader) gui.getObject()).getLabel()));
+			}
+			else if(gui.getObject() instanceof StructureText)
+			{
+				e = doc.createElement("text");
+				e.setAttribute("label", StringEscapeUtils.escapeXml10(((StructureText) gui.getObject()).getLabel()));
+				e.setAttribute("text", StringEscapeUtils.escapeXml10(((StructureText) gui.getObject()).getText()));
 			}
 			else if(gui.getObject() instanceof StructureField)
 			{

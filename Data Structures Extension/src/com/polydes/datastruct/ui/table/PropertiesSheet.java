@@ -31,6 +31,7 @@ import com.polydes.datastruct.data.structure.StructureField;
 import com.polydes.datastruct.data.structure.StructureHeader;
 import com.polydes.datastruct.data.structure.StructureTab;
 import com.polydes.datastruct.data.structure.StructureTabset;
+import com.polydes.datastruct.data.structure.StructureText;
 import com.polydes.datastruct.data.structure.cond.StructureCondition;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
@@ -237,6 +238,13 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 			group.add(null, style.createRoundedLabel("<html><b>" + h.getLabel() + "</b></html>"));
 			group.add(style.rowgap);
 		}
+		else if(data instanceof StructureText)
+		{
+			StructureText t = (StructureText) data;
+			
+			group.add(style.createLabel(t.getLabel()), style.createDescriptionRow(t.getText()));
+			group.add(style.rowgap);
+		}
 		else if(data instanceof StructureTabset)
 		{
 			final Deck newDeck = new Deck();
@@ -272,6 +280,13 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 			((Card) guiMap.get(n)).button.setText(((StructureTab) n.getObject()).getLabel());
 		else if(n.getObject() instanceof StructureHeader)
 			getHeader((RowGroup) guiMap.get(n)).setText(((StructureHeader) n.getObject()).getLabel());
+		else if(n.getObject() instanceof StructureText)
+		{
+			StructureText t = (StructureText) n.getObject();
+			Row r = ((RowGroup) guiMap.get(n)).rows[0];
+			((JLabel) r.components[0]).setText(t.getLabel());
+			((JLabel) r.components[1]).setText(t.getText());
+		}
 		else if(n.getObject() instanceof StructureCondition)
 		{
 			Card card = getConditionalCard((RowGroup) guiMap.get(n));
