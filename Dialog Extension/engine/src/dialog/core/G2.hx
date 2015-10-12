@@ -41,13 +41,7 @@ class G2
 		point.x = g.x + x;
 		point.y = g.y + y;
 
-		#if (js)
-		canvas.copyPixels(img, rect, point);
-		#end
-
-		#if (flash || cpp)
-
-  		mtx.identity();
+		mtx.identity();
  	 	mtx.translate(point.x, point.y);
 
  	 	if(g.alpha != 1)
@@ -69,8 +63,6 @@ class G2
 		g.graphics.beginBitmapFill(img, mtx);
  	 	g.graphics.drawRect(point.x, point.y, img.width, img.height);
 	 	g.graphics.endFill();
-
-		#end
 	}
 
 	private static function toARGB(rgb:Int, newAlpha:Int):Int

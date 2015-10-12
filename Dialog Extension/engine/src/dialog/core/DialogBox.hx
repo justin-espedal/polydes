@@ -70,7 +70,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 
 	public var msg:Array<Dynamic>; //id, <String||Object>
 	public var typeIndex:Int;
-	public var stepTimer:Int;
+	public var stepTimer:Int = 0;
 
 	#if stencyl
 	public function new(text:String, style:Style)
