@@ -1,8 +1,12 @@
 package com.polydes.common.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class Lang
 {
@@ -36,5 +40,39 @@ public class Lang
 		for(Object o : a)
 			set.add(o);
 		return set;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T,U> U[] map(T[] t, Class<U> c, Function<? super T, ? extends U> mapper)
+	{
+		U[] mapped = (U[]) Array.newInstance(c, t.length);
+		
+		for(int i = 0; i < t.length; ++i)
+			mapped[i] = mapper.apply(t[i]);
+		
+		return mapped;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T,U> U[] mapCA(Collection<T> t, Class<U> c, Function<? super T, ? extends U> mapper)
+	{
+		U[] mapped = (U[]) Array.newInstance(c, t.size());
+		
+		int i = 0;
+		for(T child : t)
+			mapped[i++] = mapper.apply(child);
+		
+		return mapped;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T,U> U[] mapi(T[] t, Class<U> c, BiFunction<Integer, ? super T, ? extends U> mapper)
+	{
+		U[] mapped = (U[]) Array.newInstance(c, t.length);
+		
+		for(int i = 0; i < t.length; ++i)
+			mapped[i] = mapper.apply(i, t[i]);
+		
+		return mapped;
 	}
 }

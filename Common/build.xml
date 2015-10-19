@@ -14,7 +14,7 @@
 	<property name="name" value="Common Extensions Library" />
 	<property name="description" value="Utilities for Stencyl Extensions." />
 	<property name="author" value="Justin Espedal" />
-	<property name="version" value="1.0.0" />
+	<property name="version" value="1.0.1" />
 	
 	<property name="clspath" value="${swjar}" />
 	

@@ -108,7 +108,7 @@
 	
 	<target name="makejar">
 		
-		<var name="depends" value="com.polydes.common-1.0.0" />
+		<var name="depends" value="com.polydes.common-1.0.1" />
 		<var name="depends" value="${depends},${dependsOn}" if:set="dependsOn" />
 		
 		<jar destfile="${buildpath}/${jarname}.jar" basedir="${this.build}">
