@@ -2,6 +2,7 @@ package dialog.ext;
 
 #if stencyl
 
+import com.stencyl.Engine;
 import com.stencyl.behavior.Script;
 
 #elseif unity
@@ -162,12 +163,18 @@ class MessagingScripts extends DialogExtension
 
 	public function messagescene(behaviorName:String, messageName:String, args:Array<Dynamic>):Void
 	{
-		Script.sayToScene(behaviorName, messageName, args);
+		if(behaviorName == "all")
+			Script.shoutToScene(messageName, args);
+		else
+			Script.sayToScene(behaviorName, messageName, args);
 	}
 
 	public function messageactor(actorname:String, behaviorName:String, messageName:String, args:Array<Dynamic>):Void
 	{
-		GlobalActorID.get(actorname).say(behaviorName, messageName, args);
+		if(behaviorName == "all")
+			GlobalActorID.get(actorname).shout(messageName, args);
+		else
+			GlobalActorID.get(actorname).say(behaviorName, messageName, args);
 	}
 
 	#elseif unity
