@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<type class="dialog.geom.Dimension" dependency="engine-com.polydes.dialog">
+	<fields>
+		<field name="width" type="Float" />
+		<field name="height" type="Float" />
+	</fields>
+</type>

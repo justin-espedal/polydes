@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<type class="dialog.core.Animation" dependency="engine-com.polydes.dialog">
+	
+	<fields>
+		<field name="type" type="com.stencyl.models.actor.ActorType" />
+		<field name="anim" type="String" />
+	</fields>
+
+</type>

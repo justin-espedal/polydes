@@ -1,4 +1,4 @@
-package scripts.ds.dialog;
+package dialog.geom;
 
 class RatioPoint
 {
@@ -25,5 +25,21 @@ class RatioPoint
 	public function toString():String
 	{
 		return "(" + xp + "% " + xv + ", " + yp + "% " + yv + ")";
+	}
+
+	public static function fromString(s:String):RatioPoint
+	{
+		if(s == "")
+			return new RatioPoint(0, 0, 0, 0);
+		
+		var sa:Array<String> = s.substring(1,s.length - 1).split(",");
+		
+		if(sa.length == 1)
+			sa.push("");
+		
+		var x:RatioInt = RatioInt.fromString(sa[0]);
+		var y:RatioInt = RatioInt.fromString(sa[1]);
+		
+		return new RatioPoint(x.v, x.p, y.v, y.p);
 	}
 }

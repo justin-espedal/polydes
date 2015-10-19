@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<type class="dialog.geom.Insets" dependency="engine-com.polydes.dialog">
+	<fields>
+		<field name="top" type="Float" />
+		<field name="right" type="Float" />
+		<field name="bottom" type="Float" />
+		<field name="left" type="Float" />
+	</fields>
+</type>

@@ -21,11 +21,12 @@ import com.polydes.dialog.app.MainEditor;
 import com.polydes.dialog.data.stores.Dialog;
 import com.polydes.dialog.data.stores.Macros;
 import com.polydes.dialog.defaults.Defaults;
-import com.polydes.dialog.types.DialogDataTypes;
 
 public class DialogExtension extends GameExtension implements DataTypeExtension, DataStructureExtension
 {
 	private static DialogExtension _instance;
+	
+	ArrayList<DataType<?>> types;
 	
 	public static DialogExtension get()
 	{
@@ -49,6 +50,8 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 
 		isInGameCenter = true;
 		gameCenterName = "Dialog Extension";
+		
+		types = DataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
 	}
 	
 	@Override
@@ -217,6 +220,6 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public ArrayList<DataType<?>> getDataTypes()
 	{
-		return DialogDataTypes.types;
+		return types;
 	}
 }

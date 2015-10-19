@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<type class="dialog.geom.RatioPoint" dependency="engine-com.polydes.dialog">
+	
+	<fields>
+		<field name="x" type="dialog.geom.RatioInt" />
+		<field name="y" type="dialog.geom.RatioInt" />
+	</fields>
+	
+	<haxereader expr="RatioPoint.fromString(s)" />
+
+</type>

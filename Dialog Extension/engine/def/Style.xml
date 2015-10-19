@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<structure classname="scripts.ds.dialog.Style">
+<structure classname="dialog.ds.Style">
     <tabset>
         <tab label="Basic Settings">
             <header label="Dialog Base"/>
-            <field label="Message Window" name="msgWindow" type="Window"/>
-            <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Boolean"/>
+            <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate"/>
+            <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Bool"/>
             <if condition="fitMsgToWindow == false">
-                <field hint="Position on screen of the message" label="Message Bounds" name="msgBounds" type="Rectangle"/>
+                <field hint="Position on screen of the message" label="Message Bounds" name="msgBounds" type="openfl.geom.Rectangle"/>
             </if>
-            <field label="Message Font" name="msgFont" type="Font"/>
+            <field label="Message Font" name="msgFont" type="com.stencyl.models.Font"/>
             <field default="0.0" editor="Plain" hint="Seconds between characters being typed. (0.05, 20 characters / second)" label="Message Type Speed" name="msgTypeSpeed" step="0.01" type="Float"/>
-            <field label="Message Start Sound" name="msgStartSound" type="Sound" optional="true"/>
+            <field label="Message Start Sound" name="msgStartSound" type="com.stencyl.models.Sound" optional="true"/>
             <field default="" editor="SingleLine" hint="Name of Game Attribute that will be set to &amp;quot;true&amp;quot; while Dialog is open." label="Control Attribute" name="controlAttribute" type="String"/>
             <field default="0" editor="Plain" hint="Pixels added between lines." label="Line Spacing" name="lineSpacing" step="1" type="Int"/>
             <field default="0" editor="Plain" hint="Pixels added between characters." label="Character Spacing" name="charSpacing" step="1" type="Int"/>
-            <field hint="Name of sound to play when &amp;lt;clear&amp;gt; is used." label="Clear Sound" name="clearSound" type="Sound" optional="true"/>
-            <field hint="Name of sound to play when &amp;lt;close&amp;gt; is used." label="Close Sound" name="closeSound" type="Sound" optional="true"/>
-            <field hint="Name of sound to play when &amp;lt;end&amp;gt; is used." label="End Sound" name="endSound" type="Sound" optional="true"/>
+            <field hint="Name of sound to play when &amp;lt;clear&amp;gt; is used." label="Clear Sound" name="clearSound" type="com.stencyl.models.Sound" optional="true"/>
+            <field hint="Name of sound to play when &amp;lt;close&amp;gt; is used." label="Close Sound" name="closeSound" type="com.stencyl.models.Sound" optional="true"/>
+            <field hint="Name of sound to play when &amp;lt;end&amp;gt; is used." label="End Sound" name="endSound" type="com.stencyl.models.Sound" optional="true"/>
         </tab>
         <tab label="Script Settings">
             <header label="Typing Scripts"/>
-            <field editor="Simple" genType="String" hint="A list of sounds to randomly pick from for each Type Sound." label="Default Random Type Sounds" name="defaultRandomTypeSounds" type="Array"/>
+            <field editor="Simple" genType="com.stencyl.models.Sound" hint="A list of sounds to randomly pick from for each Type Sound." label="Default Random Type Sounds" name="defaultRandomTypeSounds" type="Array"/>
             <field default="0" editor="Plain" hint="Number of characters to skip for playing Type Sound." label="Type Sound Character Skip" name="characterSkipSFX" step="1" type="Int"/>
-            <field default="false" label="Play Type Sound On Spaces" name="playTypeSoundOnSpaces" type="Boolean"/>
+            <field default="false" label="Play Type Sound On Spaces" name="playTypeSoundOnSpaces" type="Bool"/>
             <header label="Extra Glyphs"/>
             <field default="0" editor="Plain" hint="extra pixels counted for the width of a glyph." label="Padding" name="glyphPadding" step="1" type="Int"/>
             <header label="Character Scripts"/>
-            <field label="Namebox Window" name="nameboxWindow" type="Window"/>
-            <field label="Namebox Font" name="nameboxFont" type="Font"/>
+            <field label="Namebox Window" name="nameboxWindow" type="dialog.ds.WindowTemplate"/>
+            <field label="Namebox Font" name="nameboxFont" type="com.stencyl.models.Font"/>
             <field default="" editor="SingleLine" hint="To be added to the beginning of the face called for. &amp;quot;Face &amp;quot; will turn &amp;lt;face Lenny&amp;gt; into &amp;quot;Face Lenny.png&amp;quot;" label="Face Image prefix" name="faceImagePrefix" type="String"/>
-            <field default="" editor="Dropdown" label="Draw Face in Relation to" name="faceRelation" options="[Screen,Message Window]:String" type="Selection"/>
-            <field label="Face Image Origin" name="faceOrigin" type="RatioPoint"/>
-            <field label="Face Position" name="facePos" type="RatioPoint"/>
-            <field hint="Change the borders of the dialog message by the specified amounts if a face is shown." label="Face Message Offset" name="faceMsgOffset" type="Rectangle"/>
+            <field default="" editor="Dropdown" label="Draw Face in Relation to" name="faceRelation" options="[Screen,Message Window]:String" type="com.polydes.datastruct.Selection"/>
+            <field label="Face Image Origin" name="faceOrigin" type="dialog.geom.RatioPoint"/>
+            <field label="Face Position" name="facePos" type="dialog.geom.RatioPoint"/>
+            <field hint="Change the borders of the dialog message by the specified amounts if a face is shown." label="Face Message Offset" name="faceMsgOffset" type="dialog.geom.Insets"/>
             <header label="Skip Scripts"/>
             <field default="0.0" editor="Plain" hint="seconds between characters being typed for fast mode." label="Fast Speed" name="fastSpeed" step="0.01" type="Float"/>
-            <field label="Fast Button" name="fastButton" type="Control"/>
-            <field editor="Simple" genType="String" label="Fast Sound" name="fastSound" type="Array"/>
+            <field label="Fast Button" name="fastButton" type="com.polydes.datastruct.Control"/>
+            <field editor="Simple" genType="com.stencyl.models.Sound" label="Fast Sound" name="fastSound" type="Array"/>
             <field default="0" editor="Plain" hint="number of milliseconds between playback of the fast sound (0 makes the sound play when a character is typed.)" label="Fast Sound Interval" name="fastSoundInterval" step="1" type="Int"/>
             <field default="0.0" editor="Plain" hint="seconds between characters being typed for zoom mode." label="Zoom Speed" name="zoomSpeed" step="0.01" type="Float"/>
-            <field label="Zoom Button" name="zoomButton" type="Control"/>
-            <field editor="Simple" genType="String" label="Zoom Sound" name="zoomSound" type="Array"/>
+            <field label="Zoom Button" name="zoomButton" type="com.polydes.datastruct.Control"/>
+            <field editor="Simple" genType="com.stencyl.models.Sound" label="Zoom Sound" name="zoomSound" type="Array"/>
             <field default="0" editor="Plain" hint="number of milliseconds between playback of the zoom sound (0 makes the sound play when a character is typed.)" label="Zoom Sound Interval" name="zoomSoundInterval" step="1" type="Int"/>
-            <field label="Instant Button" name="instantButton" type="Control"/>
-            <field label="Instant Sound" name="instantSound" type="Sound" optional="true"/>
-            <field default="false" hint="whether these buttons have any effect by default." label="Skippable Default" name="skippableDefault" type="Boolean"/>
+            <field label="Instant Button" name="instantButton" type="com.polydes.datastruct.Control"/>
+            <field label="Instant Sound" name="instantSound" type="com.stencyl.models.Sound" optional="true"/>
+            <field default="false" hint="whether these buttons have any effect by default." label="Skippable Default" name="skippableDefault" type="Bool"/>
             <header label="Flow Scripts"/>
-            <field hint="Anim to display as the pointer when waiting for user input." label="Anim For Pointer" name="animForPointer" type="Animation"/>
-            <field hint="position to create pointer at." label="Pointer Position" name="pointerPos" type="RatioPoint"/>
-            <field label="Advance Dialog Button" name="advanceDialogButton" type="Control"/>
-            <field hint="name of Sound to play when pointer becomes visible" label="Waiting Sound" name="waitingSound" type="Sound" optional="true"/>
+            <field hint="Anim to display as the pointer when waiting for user input." label="Anim For Pointer" name="animForPointer" type="dialog.core.Animation"/>
+            <field hint="position to create pointer at." label="Pointer Position" name="pointerPos" type="dialog.geom.RatioPoint"/>
+            <field label="Advance Dialog Button" name="advanceDialogButton" type="com.polydes.datastruct.Control"/>
+            <field hint="name of Sound to play when pointer becomes visible" label="Waiting Sound" name="waitingSound" type="com.stencyl.models.Sound" optional="true"/>
             <field default="0" editor="Plain" hint="number of milliseconds between playback of the waiting sound" label="Waiting Sound Interval" name="waitingSoundInterval" step="1" type="Int"/>
-            <field hint="name of Sound to play when dialog is advanced" label="Input Sound" name="inputSound" type="Sound" optional="true"/>
+            <field hint="name of Sound to play when dialog is advanced" label="Input Sound" name="inputSound" type="com.stencyl.models.Sound" optional="true"/>
             <field editor="Standard" genType="String" hint="names of tags. If any of these tags is found next to the &amp;lt;but&amp;gt; tag, the input sound won&amp;apos;t be played when you advance the dialog. Used normally for if the other tag plays a sound that might conflict with the &amp;lt;but&amp;gt; sound." label="No Input Sound Tags" name="noInputSoundWithTags" type="Array"/>
         </tab>
         <tab label="Text Effects">
@@ -69,23 +69,23 @@
             <field default="0" editor="Plain" hint="milliseconds it takes the character to grow from start size to stop size." label="Grow Duration" name="g_duration" step="1" type="Int"/>
         </tab>
         <tab label="Dialog Options">
-            <field label="Window Name" name="optWindow" type="Window"/>
-            <field label="Window Font" name="optWindowFont" type="Font"/>
-            <field default="" editor="Dropdown" label="Cursor Type" name="optCursorType" options="[Use Image,Use Window]:String" type="Selection"/>
+            <field label="Window Name" name="optWindow" type="dialog.ds.WindowTemplate"/>
+            <field label="Window Font" name="optWindowFont" type="com.stencyl.models.Font"/>
+            <field default="" editor="Dropdown" label="Cursor Type" name="optCursorType" options="[Use Image,Use Window]:String" type="com.polydes.datastruct.Selection"/>
             <if condition="optCursorType == &amp;quot;Use Image&amp;quot;">
-                <field label="Cursor Image" name="optCursorImage" type="Image"/>
-                <field hint="x/y offset from top-left of the currently selected option." label="Cursor Offset" name="optCursorOffset" type="Point"/>
+                <field label="Cursor Image" name="optCursorImage" type="com.polydes.datastruct.ExtrasImage"/>
+                <field hint="x/y offset from top-left of the currently selected option." label="Cursor Offset" name="optCursorOffset" type="openfl.geom.Point"/>
             </if>
             <if condition="optCursorType == &amp;quot;Use Window&amp;quot;">
-                <field label="Cursor Window" name="optCursorWindow" type="Window"/>
+                <field label="Cursor Window" name="optCursorWindow" type="dialog.ds.WindowTemplate"/>
             </if>
-            <field default="" editor="Dropdown" label="Choice Layout" name="optChoiceLayout" options="[Horizontal,Vertical]:String" type="Selection"/>
-            <field hint="control used to confirm your selection." label="Select Choice Button" name="optSelectButton" type="Control"/>
+            <field default="" editor="Dropdown" label="Choice Layout" name="optChoiceLayout" options="[Horizontal,Vertical]:String" type="com.polydes.datastruct.Selection"/>
+            <field hint="control used to confirm your selection." label="Select Choice Button" name="optSelectButton" type="com.polydes.datastruct.Control"/>
             <field default="0" editor="Plain" hint="milliseconds after button is pressed before scrolling begins" label="Scroll Delay" name="optScrollWait" step="1" type="Int"/>
             <field default="0" editor="Plain" hint="milliseconds per movement of the selector when scrolling" label="Scroll Duration" name="optScrollDuration" step="1" type="Int"/>
-            <field hint="sound to play when options appear" label="Selection Appear Sound" name="optAppearSound" type="Sound" optional="true"/>
-            <field hint="sound to play when selector is moved" label="Selection Change Sound" name="optChangeSound" type="Sound" optional="true"/>
-            <field hint="sound to play when option selected" label="Selection Confirm Sound" name="optConfirmSound" type="Sound" optional="true"/>
+            <field hint="sound to play when options appear" label="Selection Appear Sound" name="optAppearSound" type="com.stencyl.models.Sound" optional="true"/>
+            <field hint="sound to play when selector is moved" label="Selection Change Sound" name="optChangeSound" type="com.stencyl.models.Sound" optional="true"/>
+            <field hint="sound to play when option selected" label="Selection Confirm Sound" name="optConfirmSound" type="com.stencyl.models.Sound" optional="true"/>
             <field default="0" editor="Plain" hint="pixels between each item" label="Item Padding" name="optItemPadding" step="1" type="Int"/>
             <field default="0" editor="Plain" hint="milliseconds to wait before allowing input" label="Inactive Time" name="optInactiveTime" step="1" type="Int"/>
         </tab>

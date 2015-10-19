@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<type class="openfl.geom.Rectangle" dependency="haxelib-openfl">
+	<fields>
+		<field name="x" type="Float" />
+		<field name="y" type="Float" />
+		<field name="width" type="Float" />
+		<field name="height" type="Float" />
+	</fields>
+</type>

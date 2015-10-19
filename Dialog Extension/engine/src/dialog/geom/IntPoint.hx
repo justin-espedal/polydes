@@ -1,4 +1,4 @@
-package dialog.core;
+package dialog.geom;
 
 class IntPoint
 {
