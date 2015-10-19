@@ -193,6 +193,38 @@ public class XML
 			return "";
 	}
 	
+	public static String readString(Element e, String name, String defaultValue)
+	{
+		if(e.hasAttribute(name))
+			return StringEscapeUtils.unescapeXml(e.getAttribute(name));
+		else
+			return defaultValue;
+	}
+	
+	public static int readInt(Element e, String name, int defaultValue)
+	{
+		if(e.hasAttribute(name))
+			return Integer.parseInt(e.getAttribute(name));
+		else
+			return defaultValue;
+	}
+	
+	public static float readFloat(Element e, String name, float defaultValue)
+	{
+		if(e.hasAttribute(name))
+			return Float.parseFloat(e.getAttribute(name));
+		else
+			return defaultValue;
+	}
+	
+	public static boolean readBoolean(Element e, String name, boolean defaultValue)
+	{
+		if(e.hasAttribute(name))
+			return Boolean.parseBoolean(e.getAttribute(name));
+		else
+			return defaultValue;
+	}
+	
 	public static void readDefinition(Element root, StructureDefinition model)
 	{
 		readFields(root, model, model.guiRoot);
@@ -340,7 +372,7 @@ public class XML
 				StructureField f = (StructureField) gui.getObject();
 				e = doc.createElement("field");
 				e.setAttribute("name", f.getVarname());
-				e.setAttribute("type", f.getType().xml);
+				e.setAttribute("type", f.getType().haxeType);
 				e.setAttribute("label", StringEscapeUtils.escapeXml10(f.getLabel()));
 				if(!f.getHint().isEmpty())
 					e.setAttribute("hint", StringEscapeUtils.escapeXml10(f.getHint()));

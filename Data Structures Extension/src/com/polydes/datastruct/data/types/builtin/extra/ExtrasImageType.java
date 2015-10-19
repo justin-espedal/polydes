@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.extra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +10,7 @@ import com.polydes.datastruct.data.core.Images;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
 import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
@@ -17,7 +18,7 @@ public class ExtrasImageType extends BuiltinType<ExtrasImage>
 {
 	public ExtrasImageType()
 	{
-		super(ExtrasImage.class, "nme.display.BitmapData", "IMAGE", "Image");
+		super(ExtrasImage.class, "com.polydes.datastruct.ExtrasImage", "IMAGE");
 	}
 
 	@Override

@@ -42,13 +42,13 @@ public class DataTypeType extends HiddenType<DataType>
 	@Override
 	public String toDisplayString(DataType data)
 	{
-		return data.xml;
+		return data.haxeType;
 	}
 
 	@Override
 	public String encode(DataType data)
 	{
-		return data.xml;
+		return data.haxeType;
 	}
 	
 	@Override

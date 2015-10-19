@@ -12,8 +12,8 @@ import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.StringType;
-import com.polydes.datastruct.data.types.builtin.BooleanType.BooleanEditor;
+import com.polydes.datastruct.data.types.builtin.basic.StringType;
+import com.polydes.datastruct.data.types.builtin.basic.BoolType.BooleanEditor;
 import com.polydes.datastruct.data.types.hidden.DataTypeType;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -115,7 +115,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 		
 		//=== Label
 		
-		labelEditor = new StringType.SingleLineStringEditor(style);
+		labelEditor = new StringType.SingleLineStringEditor(null, style);
 		labelEditor.setValue(field.getLabel());
 		labelEditor.addListener(new UpdateListener()
 		{
@@ -137,7 +137,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 		
 		//=== Hint
 		
-		hintEditor = new StringType.ExpandingStringEditor(style);
+		hintEditor = new StringType.ExpandingStringEditor(null, style);
 		hintEditor.setValue(field.getHint());
 		hintEditor.addListener(new UpdateListener()
 		{

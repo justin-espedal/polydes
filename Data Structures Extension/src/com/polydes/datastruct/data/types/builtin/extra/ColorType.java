@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.extra;
 
 import java.awt.Color;
 import java.awt.Window;
@@ -13,6 +13,7 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -22,7 +23,7 @@ public class ColorType extends BuiltinType<Color>
 {
 	public ColorType()
 	{
-		super(Color.class, "Int", "COLOR", "Color");
+		super(Color.class, "com.polydes.datastruct.Color", "COLOR");
 	}
 
 	@Override

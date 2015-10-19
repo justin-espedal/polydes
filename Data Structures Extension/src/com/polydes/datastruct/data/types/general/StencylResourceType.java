@@ -2,8 +2,6 @@ package com.polydes.datastruct.data.types.general;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -21,31 +19,11 @@ import stencyl.core.lib.Resource;
 
 public class StencylResourceType<T extends Resource> extends DataType<T>
 {
-	public StencylResourceType(Class<T> javaType, String haxeType, String stencylType, String xml)
+	public StencylResourceType(Class<T> javaType, String haxeType, String stencylType)
 	{
-		super(javaType, haxeType, stencylType, xml);
+		super(javaType, haxeType, stencylType);
 	}
 	
-	@Override
-	public List<String> generateHaxeClass()
-	{
-		return null;
-	}
-
-	@Override
-	public List<String> generateHaxeReader()
-	{
-		List<String> toReturn = new ArrayList<String>();
-		toReturn.add("\tpublic static function r" + xml + "(s:String):" + haxeType);
-		toReturn.add("\t{");
-		toReturn.add("\t\tif(s == \"\")");
-		toReturn.add("\t\t\treturn null;");
-		toReturn.add("\t\t");
-		toReturn.add("\t\treturn cast(Data.get().resources.get(Std.parseInt(s)), " + haxeType + ");");
-		toReturn.add("\t}");
-		return toReturn;
-	}
-
 	@Override
 	public DataEditor<T> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
 	{

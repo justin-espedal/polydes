@@ -306,6 +306,6 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 			StringUtils.isAlpha("" + text.charAt(0)) &&
 			/*!text.endsWith(" ") &&*/
 			/*!StringUtils.contains(text, "[ ]{2,}") &&*/
-			VerificationHelper.isAlphanumericUnderscore(text);
+			VerificationHelper.isAlphanumericUnderscoreSpace(text);
 	}
 }

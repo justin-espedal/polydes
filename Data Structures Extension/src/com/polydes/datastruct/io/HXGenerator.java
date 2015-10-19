@@ -60,29 +60,17 @@ public class HXGenerator
 		s = StringUtils.replace(s, "[CLASSMAP]", classmap, 1);
 		s = StringUtils.replace(s, "[DATATYPES]", datatypes, 1);
 		
-		ArrayList<String> lines = new ArrayList<String>();
-		for(String s2 : s.split(IOUtils.LINE_SEPARATOR_WINDOWS))
-			lines.add(s2);
-		
-		return lines;
-	}
-	
-	public static List<String> generateEncoder()
-	{
-		File f = new File(Locations.getGameExtensionLocation("com.polydes.datastruct"), "templates/StringData.hx");
-		String s = Text.readString(f);
-		
-		String datareaders = "";
+		String readers = "";
 		
 		for(DataType<?> type : Types.typeFromXML.values())
 		{
 			List<String> lines = type.generateHaxeReader();
 			if(lines != null)
-			for(String line : lines)
-				datareaders += line + IOUtils.LINE_SEPARATOR_WINDOWS;
+				for(String line : lines)
+					readers += line + IOUtils.LINE_SEPARATOR_WINDOWS;
 		}
 		
-		s = StringUtils.replace(s, "[DATAREADERS]", datareaders, 1);
+		s = StringUtils.replace(s, "[READERS]", readers, 1);
 		
 		ArrayList<String> lines = new ArrayList<String>();
 		for(String s2 : s.split(IOUtils.LINE_SEPARATOR_WINDOWS))

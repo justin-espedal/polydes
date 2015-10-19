@@ -71,16 +71,9 @@ public class StructureDefinition extends EditableObject
 		dref.setIcon(smallIcon);
 	}
 	
-	public void setName(String newName)
+	public void setName(String name)
 	{
-		String oldName = name;
-		name = newName;
-		
-		Types.typeFromXML.get(oldName).xml = newName;
-		Types.typeFromXML.put(newName, Types.typeFromXML.remove(oldName));
-		StructureDefinitions.defMap.put(newName, StructureDefinitions.defMap.remove(oldName));
-		
-		Structures.root.setDirty(true);
+		this.name = name;
 	}
 	
 	public String getName()
@@ -93,9 +86,16 @@ public class StructureDefinition extends EditableObject
 		return classname;
 	}
 
-	public void setClassname(String classname)
+	public void setClassname(String newClassname)
 	{
-		this.classname = classname;
+		String oldClassname = classname;
+		classname = newClassname;
+		
+		Types.typeFromXML.get(oldClassname).haxeType = newClassname;
+		Types.typeFromXML.put(newClassname, Types.typeFromXML.remove(oldClassname));
+		StructureDefinitions.defMap.put(newClassname, StructureDefinitions.defMap.remove(oldClassname));
+		
+		Structures.root.setDirty(true);
 	}
 	
 	public BufferedImage getIconImg()
@@ -376,9 +376,9 @@ public class StructureDefinition extends EditableObject
 		for(Structure s : Structures.structures.get(this))
 			StructurePage.get().getFolderModel().removeItem(s.dref, s.dref.getParent());
 		
-		StructureDefinitions.defMap.remove(getName());
+		StructureDefinitions.defMap.remove(getClassname());
 		Structures.structures.remove(this);
-		Types.typeFromXML.remove(name);	
+		Types.typeFromXML.remove(classname);
 		
 		dispose();
 	}

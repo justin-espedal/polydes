@@ -15,7 +15,6 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	public static String DEFAULT_VALUE = "default";
 	public static String EDITOR = "editor";
 	
-	public String xml;
 	public String stencylType;
 	public String haxeType;
 	public Class<T> javaType;
@@ -25,12 +24,11 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	
 	private final int hash;
 	
-	public DataType(Class<T> javaType, String haxeType, String stencylType, String xml)
+	public DataType(Class<T> javaType, String haxeType, String stencylType)
 	{
 		this.javaType = javaType;
 		this.haxeType = haxeType;
 		this.stencylType = stencylType;
-		this.xml = xml;
 		
 		int lastDot = haxeType.lastIndexOf('.');
 		if(lastDot == -1)
@@ -44,7 +42,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 			haxeClassname = haxeType.substring(lastDot + 1);
 		}
 		
-		hash = xml.hashCode();
+		hash = haxeType.hashCode();
 	}
 	
 	public abstract ExtrasMap saveExtras(ExtraProperties extras);
@@ -72,8 +70,15 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	}
 	
 	//return null for classes that already exist
-	public abstract List<String> generateHaxeClass();
-	public abstract List<String> generateHaxeReader();
+	public List<String> generateHaxeClass()
+	{
+		return null;
+	}
+	
+	public List<String> generateHaxeReader()
+	{
+		return null;
+	}
 //	public abstract JComponent[] getEditor(DataUpdater<T> updater, ExtraProperties extras, PropertiesSheetStyle style);
 //	public JComponent[] getEditor(DataUpdater<T> updater, ExtrasMap extras, PropertiesSheetStyle style)
 //	{
@@ -100,7 +105,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	 */
 	public /*abstract*/ void applyToFieldPanel(StructureFieldPanel panel)
 	{
-		System.out.println("APPLYING OTHER " + xml);
+		System.out.println("APPLYING OTHER " + haxeType);
 	};
 	
 	public abstract T decode(String s);
@@ -142,7 +147,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	@Override
 	public int compareTo(DataType<?> dt)
 	{
-		return xml.compareTo(dt.xml);
+		return haxeType.compareTo(dt.haxeType);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -164,7 +169,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	@Override
 	public String toString()
 	{
-		return xml;
+		return haxeType;
 	}
 
 	public ArrayList<Definition> getBlocks()
@@ -196,7 +201,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj instanceof DataType) && xml.equals(((DataType<?>) obj).xml);
+		return (obj instanceof DataType) && haxeType.equals(((DataType<?>) obj).haxeType);
 	}
 	
 	@Override

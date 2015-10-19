@@ -3,7 +3,7 @@ package com.polydes.datastruct.ui.objeditors;
 import com.polydes.datastruct.data.structure.StructureTab;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.StringType;
+import com.polydes.datastruct.data.types.builtin.basic.StringType;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureTabPanel extends StructureObjectPanel
@@ -24,7 +24,7 @@ public class StructureTabPanel extends StructureObjectPanel
 		
 		//=== Label
 		
-		labelEditor = new StringType.SingleLineStringEditor(style);
+		labelEditor = new StringType.SingleLineStringEditor(null, style);
 		labelEditor.setValue(tab.getLabel());
 		labelEditor.addListener(new UpdateListener()
 		{

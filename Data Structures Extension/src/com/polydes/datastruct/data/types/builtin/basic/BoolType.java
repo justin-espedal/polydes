@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,14 +11,15 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
-public class BooleanType extends BuiltinType<Boolean>
+public class BoolType extends BuiltinType<Boolean>
 {
-	public BooleanType()
+	public BoolType()
 	{
-		super(Boolean.class, "Bool", "BOOLEAN", "Boolean");
+		super(Boolean.class, "Bool", "BOOLEAN");
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class BooleanType extends BuiltinType<Boolean>
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Boolean, false);
+		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Bool, false);
 		return e;
 	}
 	

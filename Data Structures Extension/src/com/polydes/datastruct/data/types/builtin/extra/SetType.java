@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.extra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,9 +25,10 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.ArrayType.SimpleArrayEditor;
-import com.polydes.datastruct.data.types.builtin.SelectionType.DropdownSelectionEditor;
-import com.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
+import com.polydes.datastruct.data.types.builtin.basic.StringType.SingleLineStringEditor;
+import com.polydes.datastruct.data.types.builtin.extra.SelectionType.DropdownSelectionEditor;
 import com.polydes.datastruct.data.types.general.StencylResourceType;
 import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.data.types.hidden.DataTypeType;
@@ -45,7 +46,7 @@ public class SetType extends BuiltinType<DataSet>
 {
 	public SetType()
 	{
-		super(DataSet.class, "Map", "OBJECT", "Set");
+		super(DataSet.class, "com.polydes.datastruct.Set", "OBJECT");
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class SetType extends BuiltinType<DataSet>
 				if(dtype != null)
 				{
 					source = Game.getGame().getResources().getResourcesByType(dtype.javaType);
-					properType = dtype.xml;
+					properType = dtype.haxeType;
 				}
 			}
 			else
@@ -132,7 +133,7 @@ public class SetType extends BuiltinType<DataSet>
 				s += ",";
 		}
 		
-		s += "]:" + type.xml;
+		s += "]:" + type.haxeType;
 		
 		return s;
 	}
@@ -211,7 +212,7 @@ public class SetType extends BuiltinType<DataSet>
 		
 		//=== Source Filter
 
-		final DataEditor<String> filterField = new SingleLineStringEditor(style);
+		final DataEditor<String> filterField = new SingleLineStringEditor(null, style);
 		filterField.setValue(e.sourceFilter);
 		filterField.addListener(new UpdateListener()
 		{
@@ -300,7 +301,7 @@ public class SetType extends BuiltinType<DataSet>
 		if(e.source != null)
 		{
 			if(e.sourceType.equals(SourceType.Structure) || e.sourceType.equals(SourceType.Resource))
-				emap.put("source", ((DataType<?>) e.source).xml);
+				emap.put("source", ((DataType<?>) e.source).haxeType);
 			else
 				emap.put("source", Types._Array.checkEncode(e.source));
 		}

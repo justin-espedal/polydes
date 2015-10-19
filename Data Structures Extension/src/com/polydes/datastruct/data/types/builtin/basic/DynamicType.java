@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +16,7 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
 import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -29,7 +30,7 @@ public class DynamicType extends BuiltinType<Dynamic>
 	
 	public DynamicType()
 	{
-		super(Dynamic.class, "Dynamic", "OBJECT", "Dynamic");
+		super(Dynamic.class, "Dynamic", "OBJECT");
 	}
 	
 	@Override
@@ -178,9 +179,9 @@ public class DynamicType extends BuiltinType<Dynamic>
 		@SuppressWarnings("unchecked")
 		private void setType(DataType newType)
 		{
-			if(valueEditor == null || !newType.xml.equals(data.type))
+			if(valueEditor == null || !newType.haxeType.equals(data.type))
 			{
-				data.type = newType.xml;
+				data.type = newType.haxeType;
 				if(!newType.javaType.isInstance(data.value))
 					data.value = newType.decode("");
 				

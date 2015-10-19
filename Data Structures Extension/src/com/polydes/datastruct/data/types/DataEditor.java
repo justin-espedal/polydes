@@ -29,6 +29,14 @@ public abstract class DataEditor<T>
 		quiet = false;
 		updated();
 	}
+	@SuppressWarnings("unchecked")
+	public final void setValueUnchecked(Object o)
+	{
+		quiet = true;
+		set((T) o);
+		quiet = false;
+		updated();
+	}
 	protected abstract void set(T t);
 	
 	public final void updated()

@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -19,7 +19,9 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.IntType.PlainIntegerEditor;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.basic.IntType.PlainIntegerEditor;
+import com.polydes.datastruct.data.types.builtin.extra.SelectionType;
 import com.polydes.datastruct.ui.comp.OutlinelessSpinner;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -34,7 +36,7 @@ public class FloatType extends BuiltinType<Float>
 {
 	public FloatType()
 	{
-		super(Float.class, "Float", "NUMBER", "Float");
+		super(Float.class, "Float", "NUMBER");
 	}
 
 	@Override
@@ -195,7 +197,7 @@ public class FloatType extends BuiltinType<Float>
 		e.editor = extras.get(EDITOR, Editor.Plain);
 		e.min = extras.get("min", Types._Float, null);
 		e.max = extras.get("max", Types._Float, null);
-		e.decimalPlaces = extras.get("decimalPlaces", Types._Integer, null);
+		e.decimalPlaces = extras.get("decimalPlaces", Types._Int, null);
 		e.step = extras.get("step", Types._Float, 0.01f);
 		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Float, 0.0f);
 		return e;

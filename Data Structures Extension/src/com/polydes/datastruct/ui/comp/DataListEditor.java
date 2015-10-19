@@ -42,8 +42,8 @@ import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.data.types.builtin.DynamicType;
-import com.polydes.datastruct.data.types.builtin.DynamicType.DynamicEditor;
+import com.polydes.datastruct.data.types.builtin.basic.DynamicType;
+import com.polydes.datastruct.data.types.builtin.basic.DynamicType.DynamicEditor;
 import com.polydes.datastruct.ui.MiniDialog;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.utils.Layout;
@@ -276,7 +276,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 	{
 		if (e.getActionCommand().equals(lang.get("list.add")))
 		{
-			if (model.genType.xml.equals("Dynamic"))
+			if (model.genType.haxeType.equals("Dynamic"))
 			{
 				DynamicEditor deditor = new DynamicType.DynamicEditor(PropertiesSheetStyle.DARK);
 				deditor.excludeTypes(excludedTypes);
@@ -401,7 +401,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 
 		if (e.getClickCount() == 2 && selectedRow != -1)
 		{
-			if (model.genType.xml.equals("Dynamic"))
+			if (model.genType.haxeType.equals("Dynamic"))
 			{
 				Dynamic o = Types._Dynamic.copy((Dynamic) model.get(selectedRow));
 				DynamicEditor deditor = new DynamicType.DynamicEditor(PropertiesSheetStyle.DARK);

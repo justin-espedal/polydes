@@ -1,4 +1,13 @@
-	public static function rColor(s:String):Int
+package com.polydes.datastruct;
+
+abstract Color(Int)
+{
+	inline public function new(i:Int)
+	{
+		this = i;
+	}
+
+	public static function fromString(s:String):Color
 	{
 		if(s.substring(0, 2) == "0x")
 			return Std.parseInt(s);
@@ -7,3 +16,4 @@
 		else
 			return Std.parseInt("0x" + s);
 	}
+}

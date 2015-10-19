@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +18,8 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.extra.SelectionType;
 import com.polydes.datastruct.data.types.hidden.DataTypeType;
 import com.polydes.datastruct.data.types.hidden.DataTypeType.DataTypeEditor;
 import com.polydes.datastruct.ui.comp.DataListEditor;
@@ -34,7 +36,8 @@ public class ArrayType extends BuiltinType<DataList>
 {
 	public ArrayType()
 	{
-		super(DataList.class, "Array<Dynamic>", "LIST", "Array");
+		//TODO: How does genType work now?
+		super(DataList.class, "Array", "LIST");
 	}
 
 	@Override
@@ -117,7 +120,7 @@ public class ArrayType extends BuiltinType<DataList>
 		
 		for(int i = 0; i < array.size(); ++i)
 			s += array.genType.checkEncode(array.get(i)) + (i < array.size() - 1 ? "," : "");
-		s += "]:" + array.genType.xml;
+		s += "]:" + array.genType.haxeType;
 		
 		return s;
 	}
@@ -211,7 +214,7 @@ public class ArrayType extends BuiltinType<DataList>
 		Extras e = (Extras) extras;
 		ExtrasMap emap = new ExtrasMap();
 		emap.put(EDITOR, "" + e.editor);
-		emap.put("genType", e.genType.xml);
+		emap.put("genType", e.genType.haxeType);
 		if(e.defaultValue != null)
 			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
 		return emap;
@@ -276,7 +279,7 @@ public class ArrayType extends BuiltinType<DataList>
 		
 		public void setType(DataType<?> type)
 		{
-			if(!genType.xml.equals(type.xml))
+			if(!genType.haxeType.equals(type.haxeType))
 			{
 				genType = type;
 				set(null);

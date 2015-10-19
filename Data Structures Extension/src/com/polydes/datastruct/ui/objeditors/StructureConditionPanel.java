@@ -3,7 +3,7 @@ package com.polydes.datastruct.ui.objeditors;
 import com.polydes.datastruct.data.structure.cond.StructureCondition;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.StringType;
+import com.polydes.datastruct.data.types.builtin.basic.StringType;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureConditionPanel extends StructureObjectPanel
@@ -16,7 +16,7 @@ public class StructureConditionPanel extends StructureObjectPanel
 		super(style);
 		
 		oldText = condition.getText();
-		field = new StringType.SingleLineStringEditor(style);
+		field = new StringType.SingleLineStringEditor(null, style);
 		field.setValue(condition.getText());
 		field.addListener(new UpdateListener()
 		{

@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.extra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +10,7 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
 import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -21,7 +22,7 @@ public class IControlType extends BuiltinType<IControl>
 {
 	public IControlType()
 	{
-		super(IControl.class, "String", "CONTROL", "Control");
+		super(IControl.class, "com.polydes.datastruct.Control", "CONTROL");
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class IControlType extends BuiltinType<IControl>
 	public ExtraProperties loadExtras(ExtrasMap extras)
 	{
 		Extras e = new Extras();
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._IControl, null);
+		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Control, null);
 		return e;
 	}
 	

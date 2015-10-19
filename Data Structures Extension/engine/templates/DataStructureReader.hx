@@ -9,6 +9,9 @@ class DataStructureReader
 {
 	public static function readData():Void
 	{
+		StringData.registerBasicReaders();
+		[READERS]
+		
 		var files:Array<String> = getFileLines("MyDataStructures.txt");
 
 		var classmap:Map<String, Class<Dynamic>> = new Map<String, Class<Dynamic>>();

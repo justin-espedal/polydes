@@ -1,10 +1,13 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
+
+import java.awt.Color;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.core.DataList;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.types.DataEditor;
@@ -12,6 +15,8 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.extra.SelectionType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -22,7 +27,7 @@ public class StringType extends BuiltinType<String>
 {
 	public StringType()
 	{
-		super(String.class, "String", "TEXT", "String");
+		super(String.class, "String", "TEXT");
 	}
 	
 	@Override
@@ -30,9 +35,9 @@ public class StringType extends BuiltinType<String>
 	{
 		Extras e = (Extras) extras;
 		if(e.editor.equals(Editor.Expanding))
-			return new ExpandingStringEditor(style);
+			return new ExpandingStringEditor(e, style);
 		else //if(editorType.equals("Single Line"))
-			return new SingleLineStringEditor(style);
+			return new SingleLineStringEditor(e, style);
 	}
 
 	@Override
@@ -79,7 +84,7 @@ public class StringType extends BuiltinType<String>
 		
 		//=== Default Value
 		
-		final DataEditor<String> defaultField = new SingleLineStringEditor(style);
+		final DataEditor<String> defaultField = new SingleLineStringEditor(null, style);
 		defaultField.setValue(e.defaultValue);
 		defaultField.addListener(new UpdateListener()
 		{
@@ -90,8 +95,26 @@ public class StringType extends BuiltinType<String>
 			}
 		});
 		
+		//=== Regex
+		
+		final DataEditor<String> regexField = new SingleLineStringEditor(null, style);
+		regexField.setValue(Lang.or(e.regex, ""));
+		regexField.addListener(new UpdateListener()
+		{
+			@Override
+			public void updated()
+			{
+				String val = regexField.getValue();
+				if(val.isEmpty())
+					e.regex = null;
+				else
+					e.regex = val;
+			}
+		});
+
 		panel.addGenericRow(expansion, "Editor", editorChooser);
 		panel.addGenericRow(expansion, "Default", defaultField);
+		panel.addGenericRow(expansion, "Regex", regexField);
 	}
 	
 	@Override
@@ -100,6 +123,7 @@ public class StringType extends BuiltinType<String>
 		Extras e = new Extras();
 		e.editor = extras.get(EDITOR, Editor.SingleLine);
 		e.defaultValue = extras.get("defaultValue", Types._String, "");
+		e.regex = extras.get("regex", Types._String, null);
 		return e;
 	}
 	
@@ -110,6 +134,8 @@ public class StringType extends BuiltinType<String>
 		ExtrasMap emap = new ExtrasMap();
 		emap.put(EDITOR, "" + e.editor);
 		emap.put(DEFAULT_VALUE, encode(e.defaultValue));
+		if(e.regex != null)
+			emap.put("regex", e.regex);
 		return emap;
 	}
 	
@@ -117,6 +143,7 @@ public class StringType extends BuiltinType<String>
 	{
 		public Editor editor;
 		public String defaultValue;
+		public String regex;
 		
 		@Override
 		public Object getDefault()
@@ -134,17 +161,25 @@ public class StringType extends BuiltinType<String>
 	public static class SingleLineStringEditor extends DataEditor<String>
 	{
 		JTextField editor;
+		String regex;
 		
-		public SingleLineStringEditor(PropertiesSheetStyle style)
+		public SingleLineStringEditor(Extras e, PropertiesSheetStyle style)
 		{
 			editor = style.createTextField();
+			if(e != null)
+				regex = e.regex;
 			
 			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
 			{
+				Color fg = editor.getForeground();
+				
 				@Override
 				protected void update()
 				{
-					updated();
+					boolean valid = (regex == null || editor.getText().matches(regex));
+					if(valid)
+						updated();
+					editor.setForeground(valid ? fg : Color.RED);
 				}
 			});
 		}
@@ -173,8 +208,9 @@ public class StringType extends BuiltinType<String>
 	public static class ExpandingStringEditor extends DataEditor<String>
 	{
 		JTextArea editor;
+		String regex;
 		
-		public ExpandingStringEditor(PropertiesSheetStyle style)
+		public ExpandingStringEditor(Extras e, PropertiesSheetStyle style)
 		{
 			editor = new JTextArea();
 			editor.setBackground(style.fieldBg);
@@ -192,12 +228,20 @@ public class StringType extends BuiltinType<String>
 					)
 				);
 			
+			if(e != null)
+				regex = e.regex;
+			
 			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
 			{
+				Color fg = editor.getForeground();
+				
 				@Override
 				protected void update()
 				{
-					updated();
+					boolean valid = (regex == null || editor.getText().matches(regex));
+					if(valid)
+						updated();
+					editor.setForeground(valid ? fg : Color.RED);
 				}
 			});
 		}

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import stencyl.sw.util.Locations;
 
 import com.polydes.common.collections.CollectionPredicate;
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -27,7 +28,7 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
+import com.polydes.datastruct.data.types.builtin.basic.StringType.SingleLineStringEditor;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
@@ -42,7 +43,7 @@ public class StructureType extends DataType<Structure>
 	
 	public StructureType(StructureDefinition def)
 	{
-		super(Structure.class, def.getClassname(), "OBJECT", def.getName());
+		super(Structure.class, def.getClassname(), "OBJECT");
 		this.def = def;
 	}
 	
@@ -89,15 +90,7 @@ public class StructureType extends DataType<Structure>
 	@Override
 	public List<String> generateHaxeReader()
 	{
-		List<String> toReturn = new ArrayList<String>();
-		toReturn.add("\tpublic static function r" + xml + "(s:String):" + haxeType);
-		toReturn.add("\t{");
-		toReturn.add("\t\tif(s == \"\")");
-		toReturn.add("\t\t\treturn null;");
-		toReturn.add("\t\t");
-		toReturn.add("\t\treturn cast DataStructures.idMap.get(Std.parseInt(s));");
-		toReturn.add("\t}");
-		return toReturn;
+		return Lang.arraylist("registerStructureReader(\"" + haxeType + "\");");
 	}
 
 	@Override
@@ -165,7 +158,7 @@ public class StructureType extends DataType<Structure>
 		
 		//=== Source Filter
 
-		final DataEditor<String> filterField = new SingleLineStringEditor(style);
+		final DataEditor<String> filterField = new SingleLineStringEditor(null, style);
 		filterField.setValue(e.sourceFilter == null ? null : e.sourceFilter.getText());
 		filterField.addListener(new UpdateListener()
 		{

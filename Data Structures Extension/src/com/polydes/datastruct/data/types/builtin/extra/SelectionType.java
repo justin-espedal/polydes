@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.extra;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +18,9 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.ArrayType.SimpleArrayEditor;
-import com.polydes.datastruct.data.types.builtin.StringType.SingleLineStringEditor;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
+import com.polydes.datastruct.data.types.builtin.basic.StringType.SingleLineStringEditor;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.objeditors.StructureObjectPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -32,7 +33,7 @@ public class SelectionType extends BuiltinType<String>
 {
 	public SelectionType()
 	{
-		super(String.class, "String", "TEXT", "Selection");
+		super(String.class, "com.polydes.datastruct.Selection", "TEXT");
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class SelectionType extends BuiltinType<String>
 		
 		//=== Default Value
 		
-		final DataEditor<String> defaultField = new SingleLineStringEditor(style);
+		final DataEditor<String> defaultField = new SingleLineStringEditor(null, style);
 		defaultField.setValue(e.defaultValue);
 		defaultField.addListener(new UpdateListener()
 		{

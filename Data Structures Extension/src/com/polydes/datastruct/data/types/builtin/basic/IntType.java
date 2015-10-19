@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.types.builtin;
+package com.polydes.datastruct.data.types.builtin.basic;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -18,6 +18,8 @@ import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.BuiltinType;
+import com.polydes.datastruct.data.types.builtin.extra.SelectionType;
 import com.polydes.datastruct.ui.comp.OutlinelessSpinner;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -32,7 +34,7 @@ public class IntType extends BuiltinType<Integer>
 {
 	public IntType()
 	{
-		super(Integer.class, "Int", "NUMBER", "Int");
+		super(Integer.class, "Int", "NUMBER");
 	}
 
 	@Override
@@ -175,10 +177,10 @@ public class IntType extends BuiltinType<Integer>
 	{
 		Extras e = new Extras();
 		e.editor = extras.get(EDITOR, Editor.Plain);
-		e.min = extras.get("min", Types._Integer, null);
-		e.max = extras.get("max", Types._Integer, null);
-		e.step = extras.get("step", Types._Integer, 1);
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Integer, 0);
+		e.min = extras.get("min", Types._Int, null);
+		e.max = extras.get("max", Types._Int, null);
+		e.step = extras.get("step", Types._Int, 1);
+		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Int, 0);
 		return e;
 	}
 	
