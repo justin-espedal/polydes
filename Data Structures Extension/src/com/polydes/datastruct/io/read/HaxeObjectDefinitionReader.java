@@ -45,7 +45,11 @@ public class HaxeObjectDefinitionReader
 		
 		HaxeObjectDefinition def = new HaxeObjectDefinition(haxeClass, hfs);
 		
-		def.showLabels = XML.readBoolean(fields, "showlabels", true);			
+		def.showLabels = XML.readBoolean(fields, "showlabels", true);
+		
+		Element reader = XML.child(root, "haxereader");
+		if(reader != null)
+			def.haxereaderExpression = reader.getAttribute("expr");
 		
 		return def;
 	}

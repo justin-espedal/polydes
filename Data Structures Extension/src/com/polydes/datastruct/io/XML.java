@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -220,5 +221,13 @@ public class XML
 			map.put(n.getNodeName(), StringEscapeUtils.unescapeXml(n.getNodeValue()));
 		}
 		return map;
+	}
+	
+	public static void writeMap(Element e, HashMap<String, String> map)
+	{
+		for(Entry<String, String> entry : map.entrySet())
+		{
+			e.setAttribute(entry.getKey(), StringEscapeUtils.escapeXml11(entry.getValue()));
+		}
 	}
 }
