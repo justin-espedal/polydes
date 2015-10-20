@@ -20,6 +20,8 @@ import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.io.XML;
+import com.polydes.datastruct.io.read.StructureDefinitionReader;
+import com.polydes.datastruct.io.write.StructureDefinitionWriter;
 
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
@@ -98,7 +100,7 @@ public class StructureDefinitions
 		
 		Element structure = XML.getFile(fsfile.getAbsolutePath());
 		StructureDefinition def = new StructureDefinition(defname, structure.getAttribute("classname"));
-		XML.readDefinition(structure, def);
+		StructureDefinitionReader.read(structure, def);
 		
 		File parent = fsfile.getParentFile();
 		
@@ -216,7 +218,7 @@ public class StructureDefinitions
 			
 			Document doc = FileHelper.newDocument();
 			Element e = doc.createElement("structure");
-			XML.writeDefinition(doc, e, def);
+			StructureDefinitionWriter.write(doc, e, def);
 			doc.appendChild(e);
 			FileHelper.writeXMLToFile(doc, new File(file, def.getName() + ".xml"));
 			if(def.getIconImg() != null)
