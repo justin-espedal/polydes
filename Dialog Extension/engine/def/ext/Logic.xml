@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.Logic" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.Logic" />
+    <text label="Plugin Info" text="Use logic to control what dialog is shown. No options to configure." />
+    <text label="Dialog Commands" text="if condition:Bool&amp;lt;br&amp;gt;elseif condition:Bool&amp;lt;br&amp;gt;else&amp;lt;br&amp;gt;endif" />
+</structure>

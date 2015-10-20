@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.TextEffects" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.TextEffects" />
+    <text label="Plugin Info" text="Special effects to make dialog stand out." />
+    <text label="Dialog Commands" text="shake&amp;lt;br&amp;gt;/shake&amp;lt;br&amp;gt;sine&amp;lt;br&amp;gt;/sine&amp;lt;br&amp;gt;rotate&amp;lt;br&amp;gt;/rotate&amp;lt;br&amp;gt;grow&amp;lt;br&amp;gt;/grow" />
+    <field default="0" editor="Plain" hint="maximum x range from base position when vibrating." label="Max Shake Offset X" name="v_maxShakeOffsetX" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="maximum y range from base position when vibrating." label="Max Shake Offset Y" name="v_maxShakeOffsetY" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds before the character moves again. (100, vibrates 10 times / second)" label="Shake Frequency" name="v_shakeFrequency" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="maximum distance from base y position (5, ranges from base_y - 5 ~ base_y + 5)" label="Sine Magnitude" name="s_magnitude" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds it takes to complete a cycle. (1000, takes 1 second to go up, then down, then back to start)" label="Sine Frequency" name="s_frequency" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)" label="Sine Pattern" name="s_pattern" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="diameter of the circle that the revolution of this character will form. (4, this character will have a max range of 2 pixels up/down/left/right from its base position)" label="Revolve Diameter" name="r_diameter" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds it takes to complete a cycle. (1000, takes 1 second to go around in a circle and return to starting position)" label="Revolve Frequency" name="r_frequency" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds different from previous character. (100, if previous typed character is at 120 ms / 1000, then this character will start at 220 ms / 1000)" label="Revolve Pattern" name="r_pattern" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="scale that the character starts at. (5, character begins at 5x its normal size)" label="Grow Start" name="g_start" step="1" type="Float"/>
+    <field default="0" editor="Plain" hint="scale that the character stops at. (1, character returns to its normal size)" label="Grow Stop" name="g_stop" step="1" type="Float"/>
+    <field default="0" editor="Plain" hint="milliseconds it takes the character to grow from start size to stop size." label="Grow Duration" name="g_duration" step="1" type="Int"/>
+</structure>

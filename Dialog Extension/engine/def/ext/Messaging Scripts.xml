@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.MessagingScripts" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.MessagingScripts" />
+    <text label="Plugin Info" text="Send messages or get/set values with actors, scenes, and arbitrary Haxe objects. No options to configure." />
+    <text label="Dialog Commands" text="setattr [ATTR value:Anything]&amp;lt;br&amp;gt;getattr [ATTR]&amp;lt;br&amp;gt;showattr [ATTR]&amp;lt;br&amp;gt;messagescene behaviorName:String message:String [argument:Anything ...]&amp;lt;br&amp;gt;messageactor actorName:String behaviorName:String message:String [argument:Anything ...]" />
+</structure>

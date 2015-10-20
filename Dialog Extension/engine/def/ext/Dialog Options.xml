@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.DialogOptions" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.DialogOptions" />
+    <text label="Plugin Info" text="Show a list of options that the user can choose from and affect dialog." />
+    <text label="Dialog Commands" text="choice [[optionText:String dialogID:String condition:Bool] ...]" />
+    <field label="Window Name" name="windowTemplate" type="dialog.ds.WindowTemplate"/>
+    <field label="Window Font" name="windowFont" type="com.stencyl.models.Font"/>
+    <field default="" editor="Dropdown" label="Cursor Type" name="cursorType" options="[Use Image,Use Window]:String" type="com.polydes.datastruct.Selection"/>
+    <if condition="optCursorType == &amp;quot;Use Image&amp;quot;">
+        <field label="Cursor Image" name="cursorImage" type="com.polydes.datastruct.ExtrasImage"/>
+        <field hint="x/y offset from top-left of the currently selected option." label="Cursor Offset" name="cursorOffset" type="openfl.geom.Point"/>
+    </if>
+    <if condition="optCursorType == &amp;quot;Use Window&amp;quot;">
+        <field label="Cursor Window" name="cursorWindow" type="dialog.ds.WindowTemplate"/>
+    </if>
+    <field default="" editor="Dropdown" label="Choice Layout" name="choiceLayout" options="[Horizontal,Vertical]:String" type="com.polydes.datastruct.Selection"/>
+    <field hint="control used to confirm your selection." label="Select Choice Button" name="selectButton" type="com.polydes.datastruct.Control"/>
+    <field default="0" editor="Plain" hint="milliseconds after button is pressed before scrolling begins" label="Scroll Delay" name="scrollWait" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds per movement of the selector when scrolling" label="Scroll Duration" name="scrollDuration" step="1" type="Int"/>
+    <field hint="sound to play when options appear" label="Selection Appear Sound" name="appearSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field hint="sound to play when selector is moved" label="Selection Change Sound" name="changeSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field hint="sound to play when option selected" label="Selection Confirm Sound" name="confirmSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field default="0" editor="Plain" hint="pixels between each item" label="Item Padding" name="itemPadding" step="1" type="Int"/>
+    <field default="0" editor="Plain" hint="milliseconds to wait before allowing input" label="Inactive Time" name="inactiveTime" step="1" type="Int"/>
+</structure>

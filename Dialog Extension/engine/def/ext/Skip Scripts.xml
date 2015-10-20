@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.SkipScripts" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.SkipScripts" />
+    <text label="Plugin Info" text="Allow dialog to be made faster or skipped." />
+    <text label="Dialog Commands" text="skip&amp;lt;br&amp;gt;noskip" />
+    <field default="0.0" editor="Plain" hint="seconds between characters being typed for fast mode." label="Fast Speed" name="fastSpeed" step="0.01" type="Float"/>
+    <field label="Fast Button" name="fastButton" type="com.polydes.datastruct.Control"/>
+    <field editor="Simple" genType="com.stencyl.models.Sound" label="Fast Sound" name="fastSound" type="Array"/>
+    <field default="0" editor="Plain" hint="number of milliseconds between playback of the fast sound (0 makes the sound play when a character is typed.)" label="Fast Sound Interval" name="fastSoundInterval" step="1" type="Int"/>
+    <field default="0.0" editor="Plain" hint="seconds between characters being typed for zoom mode." label="Zoom Speed" name="zoomSpeed" step="0.01" type="Float"/>
+    <field label="Zoom Button" name="zoomButton" type="com.polydes.datastruct.Control"/>
+    <field editor="Simple" genType="com.stencyl.models.Sound" label="Zoom Sound" name="zoomSound" type="Array"/>
+    <field default="0" editor="Plain" hint="number of milliseconds between playback of the zoom sound (0 makes the sound play when a character is typed.)" label="Zoom Sound Interval" name="zoomSoundInterval" step="1" type="Int"/>
+    <field label="Instant Button" name="instantButton" type="com.polydes.datastruct.Control"/>
+    <field label="Instant Sound" name="instantSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field default="false" hint="whether these buttons have any effect by default." label="Skippable Default" name="skippableDefault" type="Bool"/>
+</structure>

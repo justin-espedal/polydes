@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure classname="dialog.ds.ext.TypingScripts" extends="dialog.ds.DialogExtension">
+    <com.polydes.dialog implementation="dialog.ext.TypingScripts" />
+    <text label="Plugin Info" text="Commands to change how text is typed in dialog." />
+    <text label="Dialog Commands" text="font fontName:String&amp;lt;br&amp;gt;color colorCode:Int&amp;lt;br&amp;gt;typespeed speed:Float&amp;lt;br&amp;gt;typesound sound:String" />
+    <field editor="Simple" genType="com.stencyl.models.Sound" hint="A list of sounds to randomly pick from for each Type Sound." label="Default Random Type Sounds" name="defaultRandomTypeSounds" type="Array"/>
+    <field default="0" editor="Plain" hint="Number of characters to skip for playing Type Sound." label="Type Sound Character Skip" name="characterSkipSFX" step="1" type="Int"/>
+    <field default="false" label="Play Type Sound On Spaces" name="playTypeSoundOnSpaces" type="Bool"/>
+</structure>
