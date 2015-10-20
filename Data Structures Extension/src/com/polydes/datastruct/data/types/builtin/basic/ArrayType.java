@@ -48,14 +48,14 @@ public class ArrayType extends BuiltinType<DataList>
 		if(e.editor.equals(Editor.Simple))
 			return new SimpleArrayEditor(style, e.genType);
 		else //if(editorType.equals("Standard"))
-			return new StandardArrayEditor();
+			return new StandardArrayEditor(e.genType);
 	}
 
 	@Override
 	public DataList decode(String s)
 	{
 		if(s.isEmpty())
-			return new DataList(Types._Dynamic);
+			return null;
 		
 		//backwards compatibility
 		if(!s.startsWith("["))
@@ -116,6 +116,9 @@ public class ArrayType extends BuiltinType<DataList>
 	@Override
 	public String encode(DataList array)
 	{
+		if(array == null)
+			return "";
+		
 		String s = "[";
 		
 		for(int i = 0; i < array.size(); ++i)
@@ -311,9 +314,12 @@ public class ArrayType extends BuiltinType<DataList>
 	public static class StandardArrayEditor extends DataEditor<DataList>
 	{
 		DataListEditor editor;
+		DataType<?> genType;
 		
-		public StandardArrayEditor()
+		public StandardArrayEditor(DataType<?> genType)
 		{
+			this.genType = genType;
+			
 			editor = new DataListEditor(null);
 			
 			editor.addActionListener(new ActionListener()
@@ -330,7 +336,7 @@ public class ArrayType extends BuiltinType<DataList>
 		public void set(DataList t)
 		{
 			if(t == null)
-				t = new DataList(Types._String);
+				t = new DataList(genType);
 			editor.setList(t);
 		}
 		

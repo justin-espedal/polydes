@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
+
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.structure.cond.StructureCondition;
@@ -16,6 +18,8 @@ import com.polydes.datastruct.ui.objeditors.StructureEditor;
 
 public class Structure extends EditableObject implements StructureConditionVerifier
 {
+	private static final Logger log = Logger.getLogger(Structure.class);
+	
 	private static HashMap<StructureDefinition, ArrayList<Structure>> allStructures = new HashMap<StructureDefinition, ArrayList<Structure>>();
 	
 	public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -39,6 +43,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 			fieldData.put(f, value);
 			enabledFields.put(f, !f.isOptional());
 			pcs.firePropertyChange(f.getVarname(), null, value);
+			log.debug(name + "::" + f.getVarname() + "=" + " -> " + value + " (init by string)");
 		}
 		
 		allStructures.get(template).add(this);
@@ -81,7 +86,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		pcs.firePropertyChange(field.getVarname(), oldValue, newValue);
 		dref.setDirty(true);
 		
-//		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + newValue + " (by string)");
+		log.debug(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + newValue + " (by string)");
 	}
 	
 	public void setProperty(StructureField field, Object value)
@@ -91,7 +96,7 @@ public class Structure extends EditableObject implements StructureConditionVerif
 		pcs.firePropertyChange(field.getVarname(), oldValue, value);
 		dref.setDirty(true);
 		
-//		System.out.println(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + value + " (by object)");
+		log.debug(dref.getName() + "::" + field.getVarname() + "=" + oldValue + " -> " + value + " (by object)");
 	}
 	
 	public void clearProperty(StructureField field)

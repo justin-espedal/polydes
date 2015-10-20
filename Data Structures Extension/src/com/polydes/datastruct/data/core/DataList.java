@@ -10,6 +10,8 @@ public class DataList extends ArrayList<Object>
 	
 	public DataList(DataType<?> genType)
 	{
+		if(genType == null)
+			throw new IllegalArgumentException("DataList.genType cannot be null.");
 		this.genType = genType;
 	}
 }
