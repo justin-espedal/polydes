@@ -12,11 +12,9 @@ import org.apache.log4j.Logger;
 
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.EditableObject;
-import com.polydes.datastruct.data.structure.cond.StructureCondition;
-import com.polydes.datastruct.data.structure.cond.StructureConditionVerifier;
 import com.polydes.datastruct.ui.objeditors.StructureEditor;
 
-public class Structure extends EditableObject implements StructureConditionVerifier
+public class Structure extends EditableObject
 {
 	private static final Logger log = Logger.getLogger(Structure.class);
 	
@@ -153,15 +151,6 @@ public class Structure extends EditableObject implements StructureConditionVerif
 			return true;
 		
 		return condition.check(this);
-	}
-
-	@Override
-	public boolean verify(StructureField field, String value)
-	{
-		if(field == null || getProperty(field) == null)
-			return false;
-		
-		return getProperty(field).equals(field.getType().decode(value));
 	}
 	
 	@Override

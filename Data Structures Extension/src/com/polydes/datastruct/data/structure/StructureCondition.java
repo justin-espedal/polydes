@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.structure.cond;
+package com.polydes.datastruct.data.structure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +9,6 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.datastruct.data.folder.EditableObject;
-import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.grammar.ExpressionParser;
 import com.polydes.datastruct.grammar.RuntimeLanguage;
 import com.polydes.datastruct.grammar.SyntaxException;

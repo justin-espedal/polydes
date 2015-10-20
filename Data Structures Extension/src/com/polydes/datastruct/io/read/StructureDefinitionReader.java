@@ -6,13 +6,13 @@ import org.w3c.dom.Element;
 
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.StructureCondition;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureField;
 import com.polydes.datastruct.data.structure.StructureHeader;
 import com.polydes.datastruct.data.structure.StructureTab;
 import com.polydes.datastruct.data.structure.StructureTabset;
 import com.polydes.datastruct.data.structure.StructureText;
-import com.polydes.datastruct.data.structure.cond.StructureCondition;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.utils.DelayedInitialize;
