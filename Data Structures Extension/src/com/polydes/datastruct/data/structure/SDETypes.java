@@ -12,6 +12,7 @@ import com.polydes.datastruct.data.structure.elements.StructureHeader.HeaderType
 import com.polydes.datastruct.data.structure.elements.StructureTab.TabType;
 import com.polydes.datastruct.data.structure.elements.StructureTabset.TabsetType;
 import com.polydes.datastruct.data.structure.elements.StructureText.TextType;
+import com.polydes.datastruct.data.structure.elements.StructureUnknown.UnknownType;
 
 public class SDETypes
 {
@@ -30,6 +31,7 @@ public class SDETypes
 		addType(null, new TabType());
 		addType(null, new TabsetType());
 		addType(null, new TextType());
+		addType(null, new UnknownType());
 	}
 	
 	public static StructureDefinitionElementType<?> fromTag(String ext, String tag)
