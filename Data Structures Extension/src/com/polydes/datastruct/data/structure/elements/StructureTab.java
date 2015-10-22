@@ -2,16 +2,15 @@ package com.polydes.datastruct.data.structure.elements;
 
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
-import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureTabPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -96,7 +95,7 @@ public class StructureTab extends StructureDefinitionElement
 		public Element write(StructureTab object, Document doc)
 		{
 			Element e = doc.createElement("tab");
-			e.setAttribute("label", StringEscapeUtils.escapeXml10(object.getLabel()));
+			XML.write(e, "label", object.getLabel());
 			return e;
 		}
 

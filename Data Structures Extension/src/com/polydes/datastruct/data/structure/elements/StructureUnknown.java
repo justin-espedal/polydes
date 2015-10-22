@@ -8,11 +8,11 @@ import javax.swing.JPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
-import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;

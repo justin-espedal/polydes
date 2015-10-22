@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.core.HaxeField;
 import com.polydes.datastruct.data.core.HaxeObjectDefinition;
-import com.polydes.datastruct.io.XML;
 
 import stencyl.sw.util.FileHelper;
 

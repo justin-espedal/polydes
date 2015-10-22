@@ -6,11 +6,11 @@ import java.util.Map.Entry;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
@@ -19,7 +19,6 @@ import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.GuiObject;
@@ -221,9 +220,9 @@ public class StructureField extends StructureDefinitionElement
 			Element e = doc.createElement("field");
 			e.setAttribute("name", f.getVarname());
 			e.setAttribute("type", f.getType().haxeType);
-			e.setAttribute("label", StringEscapeUtils.escapeXml10(f.getLabel()));
+			XML.write(e, "label", f.getLabel());
 			if(!f.getHint().isEmpty())
-				e.setAttribute("hint", StringEscapeUtils.escapeXml10(f.getHint()));
+				XML.write(e, "hint", f.getHint());
 			if(f.isOptional())
 				e.setAttribute("optional", "true");
 			

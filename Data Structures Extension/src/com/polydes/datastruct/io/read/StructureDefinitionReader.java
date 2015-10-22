@@ -3,6 +3,7 @@ package com.polydes.datastruct.io.read;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
@@ -10,7 +11,6 @@ import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.data.structure.elements.StructureUnknown;
-import com.polydes.datastruct.io.XML;
 
 public class StructureDefinitionReader
 {

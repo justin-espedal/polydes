@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
@@ -19,7 +20,6 @@ import com.polydes.datastruct.data.folder.FolderPolicy;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.io.Text;
-import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.io.read.StructureDefinitionReader;
 import com.polydes.datastruct.io.write.StructureDefinitionWriter;
 

@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
@@ -21,7 +21,6 @@ import com.polydes.datastruct.grammar.ExpressionParser;
 import com.polydes.datastruct.grammar.RuntimeLanguage;
 import com.polydes.datastruct.grammar.SyntaxException;
 import com.polydes.datastruct.grammar.SyntaxNode;
-import com.polydes.datastruct.io.XML;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureConditionPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -310,7 +309,7 @@ public class StructureCondition extends StructureDefinitionElement
 		public Element write(StructureCondition object, Document doc)
 		{
 			Element e = doc.createElement("if");
-			e.setAttribute("condition", StringEscapeUtils.escapeXml10(object.getText()));
+			XML.write(e, "condition", object.getText());
 			return e;
 		}
 

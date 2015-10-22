@@ -1,4 +1,4 @@
-package com.polydes.datastruct.io;
+package com.polydes.common.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -211,6 +212,11 @@ public class XML
 			return defaultValue;
 	}
 	
+	public static void write(Element e, String name, String text)
+	{
+		e.setAttribute(name, StringEscapeUtils.escapeXml11(text));
+	}
+	
 	public static HashMap<String, String> readMap(Element e)
 	{
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -223,11 +229,19 @@ public class XML
 		return map;
 	}
 	
-	public static void writeMap(Element e, HashMap<String, String> map)
+	public static void writeMap(Element e, Map<String, String> map)
 	{
 		for(Entry<String, String> entry : map.entrySet())
 		{
 			e.setAttribute(entry.getKey(), StringEscapeUtils.escapeXml11(entry.getValue()));
 		}
+	}
+	
+	public static Element element(Document doc, String tag, Map<String, String> atts)
+	{
+		Element e = doc.createElement(tag);
+		if(atts != null)
+			writeMap(e, atts);
+		return e;
 	}
 }
