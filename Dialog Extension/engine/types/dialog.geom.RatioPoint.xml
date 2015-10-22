@@ -6,6 +6,6 @@
 		<field name="y" type="dialog.geom.RatioInt" />
 	</fields>
 	
-	<haxereader expr="RatioPoint.fromString(s)" />
+	<haxereader expr="dialog.geom.RatioPoint.fromString(s)" />
 
 </type>
