@@ -1,4 +1,4 @@
-package com.polydes.datastruct.data.structure;
+package com.polydes.datastruct.data.structure.elements;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,20 +6,33 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.polydes.datastruct.data.folder.EditableObject;
+import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.Structure;
+import com.polydes.datastruct.data.structure.StructureDefinition;
+import com.polydes.datastruct.data.structure.StructureDefinitionElement;
+import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.grammar.ExpressionParser;
 import com.polydes.datastruct.grammar.RuntimeLanguage;
 import com.polydes.datastruct.grammar.SyntaxException;
 import com.polydes.datastruct.grammar.SyntaxNode;
 import com.polydes.datastruct.io.XML;
+import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureConditionPanel;
+import com.polydes.datastruct.ui.table.Card;
+import com.polydes.datastruct.ui.table.GuiObject;
+import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
+import com.polydes.datastruct.ui.table.RowGroup;
 
 import stencyl.sw.util.VerificationHelper;
 
-public class StructureCondition extends EditableObject
+public class StructureCondition extends StructureDefinitionElement
 {
 	public StructureDefinition def;
 	public SyntaxNode root;
@@ -264,5 +277,85 @@ public class StructureCondition extends EditableObject
 			return value;
 		else
 			return "\"" + value + "\"";
+	}
+	
+	@Override
+	public String getDisplayLabel()
+	{
+		return toString();
+	}
+	
+	public static class ConditionType extends StructureDefinitionElementType<StructureCondition>
+	{
+		public ConditionType()
+		{
+			sdeClass = StructureCondition.class;
+			tag = "if";
+			isBranchNode = true;
+			icon = Resources.thumb("condition.png", 16);
+			childTypes = SDETypes.standardChildren;
+		}
+		
+		@Override
+		public StructureCondition read(StructureDefinition model, Element e)
+		{
+			if(e.hasAttribute("condition"))
+				return new StructureCondition(model, XML.read(e, "condition"));
+			
+			//backwards compatibility
+			return StructureCondition.fromXML(model, e);
+		}
+		
+		@Override
+		public Element write(StructureCondition object, Document doc)
+		{
+			Element e = doc.createElement("if");
+			e.setAttribute("condition", StringEscapeUtils.escapeXml10(object.getText()));
+			return e;
+		}
+
+		@Override
+		public StructureCondition create(StructureDefinition def, String nodeName)
+		{
+			return new StructureCondition(def, "");
+		}
+
+		@Override
+		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureCondition value)
+		{
+			Card card = createConditionalCard(value, (Folder) node, sheet.model, sheet);
+			group.add(card);
+			group.add(sheet.style.rowgap);
+		}
+
+		@Override
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		{
+			((Card) ((RowGroup) gui).rows[0].components[0]).setCondition(value);
+		}
+		
+		private Card createConditionalCard(final StructureCondition c, final Folder n, final Structure model, final PropertiesSheet sheet)
+		{
+			return new Card("", false)
+			{
+				@Override
+				public boolean checkCondition()
+				{
+					return model.checkCondition(condition); 
+				}
+				
+				@Override
+				public void check()
+				{
+					boolean visible = super.visible;
+					
+					super.check();
+					
+					if(visible && !super.visible)
+						for(StructureField f : sheet.allDescendentsOfType(StructureField.class, null, n))
+							model.clearProperty(f);
+				}
+			};
+		}
 	}
 }

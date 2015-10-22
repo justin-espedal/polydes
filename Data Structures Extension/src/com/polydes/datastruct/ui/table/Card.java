@@ -19,7 +19,7 @@ import layout.TableLayoutConstraints;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.polydes.datastruct.data.structure.StructureCondition;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.ui.utils.Geometry;
 
 import stencyl.sw.util.Fonts;

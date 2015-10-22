@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.EditableObject;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
+import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.ui.objeditors.StructureEditor;
 
 public class Structure extends EditableObject

@@ -6,7 +6,7 @@ import javax.swing.text.PlainDocument;
 
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.structure.StructureField;
+import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;

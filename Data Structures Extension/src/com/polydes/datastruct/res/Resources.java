@@ -1,5 +1,8 @@
 package com.polydes.datastruct.res;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -7,6 +10,8 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
+
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class Resources
 {
@@ -65,5 +70,14 @@ public class Resources
 		{
 			return result;
 		}
+	}
+	
+	public static ImageIcon thumb(String loc, int size)
+	{
+		Image img = Resources.loadIcon(loc).getImage();
+		BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.createGraphics();
+		g.drawImage(img, 0, 0, bi.getWidth(), bi.getHeight(), null);
+		return new ImageIcon(GraphicsUtilities.createThumbnail(bi, size));
 	}
 }

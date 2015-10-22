@@ -1,17 +1,12 @@
 package com.polydes.datastruct.ui.objeditors;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -26,25 +21,22 @@ import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.common.ui.darktree.TNode;
 import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.PreviewStructure;
+import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureCondition;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureField;
-import com.polydes.datastruct.data.structure.StructureHeader;
-import com.polydes.datastruct.data.structure.StructureTab;
+import com.polydes.datastruct.data.structure.StructureDefinitionElement;
+import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.data.structure.StructureTable;
-import com.polydes.datastruct.data.structure.StructureTabset;
-import com.polydes.datastruct.data.structure.StructureText;
-import com.polydes.datastruct.data.types.ExtrasMap;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.res.Resources;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
+import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.structure.elements.StructureHeader;
+import com.polydes.datastruct.data.structure.elements.StructureTab;
+import com.polydes.datastruct.data.structure.elements.StructureTabset;
+import com.polydes.datastruct.data.structure.elements.StructureText;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.list.ListUtils;
-
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class StructureDefinitionEditor extends JPanel
 {
@@ -75,7 +67,7 @@ public class StructureDefinitionEditor extends JPanel
 		{
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
-			tree.createNewItemFromFolder(fieldItem, newNodeFolder, insertPosition);
+			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureField.class), newNodeFolder, insertPosition);
 		}
 	};
 	
@@ -86,7 +78,7 @@ public class StructureDefinitionEditor extends JPanel
 		{
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
-			tree.createNewItemFromFolder(headerItem, newNodeFolder, insertPosition);
+			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureHeader.class), newNodeFolder, insertPosition);
 		}
 	};
 	
@@ -97,7 +89,7 @@ public class StructureDefinitionEditor extends JPanel
 		{
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
-			tree.createNewItemFromFolder(textItem, newNodeFolder, insertPosition);
+			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureText.class), newNodeFolder, insertPosition);
 		}
 	};
 	
@@ -108,15 +100,15 @@ public class StructureDefinitionEditor extends JPanel
 		{
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			if(newNodeFolder.getObject() instanceof StructureTabset) 
-				tree.createNewItem(tabItem);
+				tree.createNewItem(SDETypes.asPopupItem.get(StructureTab.class));
 			else if(newNodeFolder.getObject() instanceof StructureTab && !(newNodeFolder.getObject() instanceof StructureTable))
 			{
 				Folder tabset = (Folder) newNodeFolder.getParent();
 				int insertPosition = tabset.indexOfItem(newNodeFolder) + 1;
-				tree.createNewItemFromFolder(tabItem, tabset, insertPosition);
+				tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureTab.class), tabset, insertPosition);
 			}
 			else
-				tree.createNewItem(tabsetItem);
+				tree.createNewItem(SDETypes.asPopupItem.get(StructureTabset.class));
 		}
 	};
 	
@@ -127,7 +119,7 @@ public class StructureDefinitionEditor extends JPanel
 		{
 			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
-			tree.createNewItemFromFolder(conditionItem, newNodeFolder, insertPosition);
+			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureCondition.class), newNodeFolder, insertPosition);
 		}
 	};
 	
@@ -170,42 +162,26 @@ public class StructureDefinitionEditor extends JPanel
 					return null;
 				
 				Object uo = selectionState.nodes.get(0).getUserObject();
-				EditableObject o = ((DataItem) uo).getObject();
-				return childNodes.get(o.getClass());
+				StructureDefinitionElement o = (StructureDefinitionElement) ((DataItem) uo).getObject();
+				StructureDefinitionElementType<?> type = SDETypes.fromClass(o.getClass());
+				
+				Collection<PopupItem> toReturn = new ArrayList<>();
+				type.childTypes.forEach((listedType) -> toReturn.add(SDETypes.asPopupItem.get(listedType)));
+				return toReturn;
 			}
 			
 			@Override
 			public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
 			{
-				Class<?> cls = (Class<?>) selected.data;
+				@SuppressWarnings("unchecked")
+				Class<? extends StructureDefinitionElement> cls = (Class<? extends StructureDefinitionElement>) selected.data;
 				
-				if(cls == StructureTabset.class)
-				{
-					return new Folder(nodeName, new StructureTabset());
-				}
-				else if(cls == StructureTab.class)
-				{
-					return new Folder(nodeName, new StructureTab(nodeName));
-				}
-				else if(cls == StructureField.class)
-				{
-					StructureField newField =
-							new StructureField(def, StructureField.formatVarname(nodeName), Types._String, nodeName, "", false, new ExtrasMap());
-					def.addField(newField, preview);
-					
-					return new DataItem(nodeName, newField);
-				}
-				else if(cls == StructureHeader.class)
-					return new DataItem(nodeName, new StructureHeader(nodeName));
-				else if(cls == StructureText.class)
-					return new DataItem(nodeName, new StructureText(nodeName, ""));
-				else if(cls == StructureCondition.class)
-				{
-					StructureCondition cond = new StructureCondition(def, "");
-					return new Folder(cond.toString(), cond);
-				}
+				StructureDefinitionElementType<?> type = SDETypes.fromClass(cls);
 				
-				return null;
+				if(type.isBranchNode)
+					return new Folder(nodeName, type.create(def, nodeName));
+				else
+					return new DataItem(nodeName, type.create(def, nodeName));
 			}
 			
 			@Override
@@ -264,51 +240,6 @@ public class StructureDefinitionEditor extends JPanel
 	{
 		c.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ctrl " + key), null);
 		c.getActionMap().put(name, null);
-	}
-	
-	private static final HashMap<Class<?>, ArrayList<PopupItem>> childNodes = new HashMap<Class<?>, ArrayList<PopupItem>>();
-	private static final PopupItem tabsetItem;
-	private static final PopupItem tabItem;
-	private static final PopupItem fieldItem;
-	private static final PopupItem headerItem;
-	private static final PopupItem conditionItem;
-	private static final PopupItem textItem;
-	static
-	{
-		
-		ImageIcon tabsetIcon = thumb("tabset.png");
-		ImageIcon tabIcon = thumb("tab.png");
-		ImageIcon fieldIcon = thumb("field.png");
-		ImageIcon headerIcon = thumb("header.png");
-		ImageIcon conditionIcon = thumb("condition.png");
-		ImageIcon textIcon = thumb("text.png");
-		
-		ArrayList<PopupItem> items = new ArrayList<PopupItem>();
-		items.add(tabItem = new PopupItem("Tab", StructureTab.class, tabIcon));
-		childNodes.put(StructureTabset.class, items);
-		
-		items = new ArrayList<PopupItem>();
-		items.add(fieldItem = new PopupItem("Field", StructureField.class, fieldIcon));
-		items.add(headerItem = new PopupItem("Header", StructureHeader.class, headerIcon));
-		items.add(conditionItem = new PopupItem("Condition", StructureCondition.class, conditionIcon));
-		items.add(tabsetItem = new PopupItem("Tabset", StructureTabset.class, tabsetIcon));
-		items.add(textItem = new PopupItem("Text", StructureText.class, textIcon));
-		
-		childNodes.put(StructureTab.class, items);
-		childNodes.put(StructureField.class, items);
-		childNodes.put(StructureHeader.class, items);
-		childNodes.put(StructureCondition.class, items);
-		childNodes.put(StructureTable.class, items);
-		childNodes.put(StructureText.class, items);
-	}
-	
-	private static final ImageIcon thumb(String loc)
-	{
-		Image img = Resources.loadIcon(loc).getImage();
-		BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bi.createGraphics();
-		g.drawImage(img, 0, 0, bi.getWidth(), bi.getHeight(), null);
-		return new ImageIcon(GraphicsUtilities.createThumbnail(bi, 16));
 	}
 	
 	public Structure getPreview()

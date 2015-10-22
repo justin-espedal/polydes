@@ -15,7 +15,6 @@ import java.util.TimerTask;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -26,13 +25,14 @@ import com.polydes.common.nodes.HierarchyRepresentation;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureCondition;
-import com.polydes.datastruct.data.structure.StructureField;
-import com.polydes.datastruct.data.structure.StructureHeader;
-import com.polydes.datastruct.data.structure.StructureTab;
-import com.polydes.datastruct.data.structure.StructureTabset;
-import com.polydes.datastruct.data.structure.StructureText;
+import com.polydes.datastruct.data.structure.StructureDefinitionElement;
+import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
+import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.structure.elements.StructureTab;
+import com.polydes.datastruct.data.structure.elements.StructureTabset;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.UpdateListener;
@@ -41,8 +41,6 @@ import com.polydes.datastruct.data.types.builtin.extra.ColorType.ColorEditor;
 import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import com.polydes.datastruct.ui.utils.Layout;
-
-import stencyl.sw.util.comp.RoundedLabel;
 
 public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem>
 {
@@ -120,26 +118,22 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		return (Deck) wrapper.getComponent(0);
 	}
 	
-	private Card getConditionalCard(RowGroup group)
+	public Card getConditionalCard(RowGroup group)
 	{
 		return (Card) group.rows[0].components[0];
 	}
 	
-	private RoundedLabel getHeader(RowGroup group)
-	{
-		return (RoundedLabel) group.rows[1].components[1];
-	}
-	
-	public ArrayList<StructureField> allDescendentFields(ArrayList<StructureField> list, Folder n)
+	@SuppressWarnings("unchecked")
+	public <T> ArrayList<T> allDescendentsOfType(Class<T> cls, ArrayList<T> list, Folder n)
 	{
 		if(list == null)
-			list = new ArrayList<StructureField>();
+			list = new ArrayList<T>();
 		for(Leaf<DataItem> n2 : n.getItems())
 		{
 			if(n2 instanceof Folder)
-				allDescendentFields(list, (Folder) n2);
-			if(((DataItem) n2).getObject() instanceof StructureField)
-				list.add((StructureField) ((DataItem) n2).getObject());
+				allDescendentsOfType(cls, list, (Folder) n2);
+			if(cls.isAssignableFrom(((DataItem) n2).getObject().getClass()))
+				list.add((T) ((DataItem) n2).getObject());
 		}
 		return list;
 	}
@@ -208,90 +202,27 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		revalidate();
 	}
 	
-	public RowGroup loadRows(RowGroup group, DataItem n)
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> RowGroup loadRows(RowGroup group, DataItem n)
 	{
-		Object data = n.getObject();
+		S data = (S) n.getObject();
 		
 		if(group == null)
 			group = new RowGroup(data);
 		
-		if(data instanceof StructureField)
-		{
-			StructureField f = (StructureField) data;
-			
-			String name = f.getLabel().isEmpty() ? f.getVarname() : f.getLabel();
-			
-			group.rows = new Row[0];
-			group.add(style.createLabel(name), createEditor(f));
-			if(!f.getHint().isEmpty())
-			{
-				group.add(style.hintgap);
-				group.add(null, style.createDescriptionRow(f.getHint()));
-			}
-			group.add(style.rowgap);
-		}
-		else if(data instanceof StructureHeader)
-		{
-			StructureHeader h = (StructureHeader) data;
-			
-			group.add(style.rowgap);
-			group.add(null, style.createRoundedLabel("<html><b>" + h.getLabel() + "</b></html>"));
-			group.add(style.rowgap);
-		}
-		else if(data instanceof StructureText)
-		{
-			StructureText t = (StructureText) data;
-			
-			group.add(style.createLabel(t.getLabel()), style.createDescriptionRow(t.getText()));
-			group.add(style.rowgap);
-		}
-		else if(data instanceof StructureTabset)
-		{
-			final Deck newDeck = new Deck();
-			
-			group.add(style.rowgap);
-			group.add(newDeck.buttons = Layout.horizontalBox());
-			group.add(style.tabsetgap);
-			group.add(newDeck.wrapper);
-			group.add(style.rowgap);
-		}
-		else if(data instanceof StructureCondition)
-		{
-			Card card = createConditionalCard((StructureCondition) data, (Folder) n);
-			group.add(card);
-			group.add(style.rowgap);
-		}
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psLoad(this, group, n, data);
 		
 		return group;
 	}
 	
-	public void lightRefreshDataItem(DataItem n)
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void lightRefreshDataItem(DataItem n)
 	{
-		if(n.getObject() instanceof StructureField)
-		{
-			StructureField f = (StructureField) n.getObject();
-			RowGroup group = (RowGroup) guiMap.get(n);
-			
-			((JLabel) group.rows[0].components[0]).setText(f.getLabel());
-			if(!f.getHint().isEmpty())
-				style.setDescription((JLabel) group.rows[2].components[1], f.getHint());
-		}
-		else if(n.getObject() instanceof StructureTab)
-			((Card) guiMap.get(n)).button.setText(((StructureTab) n.getObject()).getLabel());
-		else if(n.getObject() instanceof StructureHeader)
-			getHeader((RowGroup) guiMap.get(n)).setText(((StructureHeader) n.getObject()).getLabel());
-		else if(n.getObject() instanceof StructureText)
-		{
-			StructureText t = (StructureText) n.getObject();
-			Row r = ((RowGroup) guiMap.get(n)).rows[0];
-			((JLabel) r.components[0]).setText(t.getLabel());
-			((JLabel) r.components[1]).setText(t.getText());
-		}
-		else if(n.getObject() instanceof StructureCondition)
-		{
-			Card card = getConditionalCard((RowGroup) guiMap.get(n));
-			card.setCondition((StructureCondition) n.getObject());
-		}
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psLightRefresh(this, guiMap.get(n), n, data);
 		
 		highlightElement(n);
 		
@@ -499,6 +430,10 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		tweener = null;
 	}
 	
+	/*================================================*\
+	 | Highlighting
+	\*================================================*/
+	
 	private Highlighter highlighter = new Highlighter();
 	private Timer tweener;
 	
@@ -581,32 +516,6 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		super.paintChildren(g);
 		SwingUtilities.paintComponent(g, highlighter, this, 0, 0, getWidth(), getHeight());
 	}
-	
-	private Card createConditionalCard(final StructureCondition c, final Folder n)
-	{
-		return new Card("", false)
-		{
-			@Override
-			public boolean checkCondition()
-			{
-				return model.checkCondition(condition); 
-			}
-			
-			@Override
-			public void check()
-			{
-				boolean visible = super.visible;
-				
-				super.check();
-				
-				if(visible && !super.visible)
-					for(StructureField f : allDescendentFields(null, n))
-					{
-						model.clearProperty(f);
-					}
-			}
-		};
-	}
 
 	/*================================================*\
 	 | Folder Hierarchy Representation
@@ -625,15 +534,13 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@Override
-	public void itemAdded(Branch<DataItem> folder, Leaf<DataItem> item,
-			int position)
+	public void itemAdded(Branch<DataItem> folder, Leaf<DataItem> item,	int position)
 	{
 		addDataItem((Folder) folder, (DataItem) item, position);
 	}
 
 	@Override
-	public void itemRemoved(Branch<DataItem> folder, Leaf<DataItem> item,
-			int oldPosition)
+	public void itemRemoved(Branch<DataItem> folder, Leaf<DataItem> item, int oldPosition)
 	{
 		removeDataItem((DataItem) item);
 	}

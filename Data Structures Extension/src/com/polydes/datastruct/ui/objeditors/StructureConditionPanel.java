@@ -1,6 +1,6 @@
 package com.polydes.datastruct.ui.objeditors;
 
-import com.polydes.datastruct.data.structure.StructureCondition;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.UpdateListener;
 import com.polydes.datastruct.data.types.builtin.basic.StringType;

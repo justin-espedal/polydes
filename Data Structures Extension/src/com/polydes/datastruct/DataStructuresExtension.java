@@ -23,10 +23,10 @@ import stencyl.sw.util.Locations;
 
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
-import com.polydes.datastruct.data.structure.StructureCondition;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.Structures.MissingStructureDefinitionException;
+import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.ext.DataStructureExtension;

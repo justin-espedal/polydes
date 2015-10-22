@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.io.FolderInfo;
 import com.polydes.datastruct.io.Text;
 
