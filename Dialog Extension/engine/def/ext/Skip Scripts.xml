@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.SkipScripts" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.SkipScripts" />
+    <dg:extension implementation="dialog.ext.SkipScripts" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+            <dg:cmd name="skip" />
+            <dg:cmd name="noskip" />
+        </dg:cmds>
+    </dg:extension>
     <text label="Plugin Info" text="Allow dialog to be made faster or skipped." />
-    <text label="Dialog Commands" text="skip&amp;lt;br&amp;gt;noskip" />
     <field default="0.0" editor="Plain" hint="seconds between characters being typed for fast mode." label="Fast Speed" name="fastSpeed" step="0.01" type="Float"/>
     <field label="Fast Button" name="fastButton" type="com.polydes.datastruct.Control"/>
     <field editor="Simple" genType="com.stencyl.models.Sound" label="Fast Sound" name="fastSound" type="Array"/>

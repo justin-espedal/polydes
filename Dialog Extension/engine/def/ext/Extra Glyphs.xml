@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.ExtraGlyphs" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.ExtraGlyphs" />
+    <dg:extension implementation="dialog.ext.ExtraGlyphs" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+        	<dg:cmd name="glyph">
+        		<dg:arg name="image" type="String" />
+        	</dg:cmd>
+        </dg:cmds>
+    </dg:extension>
     <text label="Plugin Info" text="Show images inline with dialog." />
-    <text label="Dialog Commands" text="glyph image:String" />
     <field default="0" editor="Plain" hint="extra pixels counted for the width of a glyph." label="Padding" name="glyphPadding" step="1" type="Int"/>
 </structure>

@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.DialogOptions" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.DialogOptions" />
+    <dg:extension implementation="dialog.ext.DialogOptions" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+            <dg:cmd name="choice">
+                <dg:arg name="args" type="Array"/>
+            </dg:cmd>
+        </dg:cmds>
+        <dg:drawkeys>
+            <dg:drawkey name="Dialog Choice" />
+        </dg:drawkeys>
+    </dg:extension>
     <text label="Plugin Info" text="Show a list of options that the user can choose from and affect dialog." />
-    <text label="Dialog Commands" text="choice [[optionText:String dialogID:String condition:Bool] ...]" />
     <field label="Window Name" name="windowTemplate" type="dialog.ds.WindowTemplate"/>
     <field label="Window Font" name="windowFont" type="com.stencyl.models.Font"/>
     <field default="" editor="Dropdown" label="Cursor Type" name="cursorType" options="[Use Image,Use Window]:String" type="com.polydes.datastruct.Selection"/>

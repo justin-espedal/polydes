@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.FlowScripts" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.FlowScripts" />
+    <dg:extension implementation="dialog.ext.FlowScripts" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+            <dg:cmd name="waitattr">
+                <dg:arg name="source" type="Array" />
+            </dg:cmd>
+            <dg:cmd name="wait">
+                <dg:arg name="time" type="Float" />
+            </dg:cmd>
+            <dg:cmd name="but" />
+            <dg:cmd name="bc" />
+        </dg:cmds>
+        <dg:drawkeys>
+            <dg:drawkey name="Wait Pointer" />
+        </dg:drawkeys>
+    </dg:extension>
     <text label="Plugin Info" text="Control dialog flow by waiting for variables or user input, or by short pauses." />
-    <text label="Dialog Commands" text="waitattr [ATTR value:Dynamic]&amp;lt;br&amp;gt;wait time:Float&amp;lt;br&amp;gt;but&amp;lt;br&amp;gt;bc" />
     <field hint="Anim to display as the pointer when waiting for user input." label="Anim For Pointer" name="animForPointer" type="dialog.core.Animation"/>
     <field hint="position to create pointer at." label="Pointer Position" name="pointerPos" type="dialog.geom.RatioPoint"/>
     <field label="Advance Dialog Button" name="advanceDialogButton" type="com.polydes.datastruct.Control"/>

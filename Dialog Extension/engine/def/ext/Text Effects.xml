@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.TextEffects" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.TextEffects" />
+    <dg:extension implementation="dialog.ext.TextEffects" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+            <dg:cmd name="shake" />
+            <dg:cmd name="/shake" />
+            <dg:cmd name="sine" />
+            <dg:cmd name="/sine" />
+            <dg:cmd name="revolve" />
+            <dg:cmd name="/revolve" />
+            <dg:cmd name="grow" />
+            <dg:cmd name="/grow" />
+        </dg:cmds>
+        <dg:drawkeys>
+            <dg:drawkey name="Text Effects" />
+        </dg:drawkeys>
+    </dg:extension>
     <text label="Plugin Info" text="Special effects to make dialog stand out." />
-    <text label="Dialog Commands" text="shake&amp;lt;br&amp;gt;/shake&amp;lt;br&amp;gt;sine&amp;lt;br&amp;gt;/sine&amp;lt;br&amp;gt;rotate&amp;lt;br&amp;gt;/rotate&amp;lt;br&amp;gt;grow&amp;lt;br&amp;gt;/grow" />
     <field default="0" editor="Plain" hint="maximum x range from base position when vibrating." label="Max Shake Offset X" name="v_maxShakeOffsetX" step="1" type="Int"/>
     <field default="0" editor="Plain" hint="maximum y range from base position when vibrating." label="Max Shake Offset Y" name="v_maxShakeOffsetY" step="1" type="Int"/>
     <field default="0" editor="Plain" hint="milliseconds before the character moves again. (100, vibrates 10 times / second)" label="Shake Frequency" name="v_shakeFrequency" step="1" type="Int"/>

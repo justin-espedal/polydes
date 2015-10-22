@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.SoundScripts" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.SoundScripts" />
+    <dg:extension implementation="dialog.ext.SoundScripts" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+        	<dg:cmd name="playsound">
+        		<dg:arg name="sound" type="String" />
+        	</dg:cmd>
+        	<dg:cmd name="loopsound">
+        		<dg:arg name="sound" type="String" />
+        	</dg:cmd>
+        	<dg:cmd name="stopsound" />
+        	<dg:cmd name="playchan">
+        		<dg:arg name="sound" type="String" />
+        		<dg:arg name="channel" type="Int" />
+        	</dg:cmd>
+        	<dg:cmd name="loopchan">
+        		<dg:arg name="sound" type="String" />
+        		<dg:arg name="channel" type="Int" />
+        	</dg:cmd>
+        	<dg:cmd name="stopchan">
+        		<dg:arg name="channel" type="Int" />
+        	</dg:cmd>
+        </dg:cmds>
+    </dg:extension>
     <text label="Plugin Info" text="Play and loop sounds from dialog. No options to configure." />
-    <text label="Dialog Commands" text="playsound sound:String&amp;lt;br&amp;gt;loopsound sound:String&amp;lt;br&amp;gt;stopsound&amp;lt;br&amp;gt;playchan sound:String channel:Int&amp;lt;br&amp;gt;loopchan sound:String channel:Int&amp;lt;br&amp;gt;stopchan channel:Int" />
 </structure>

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.Logic" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.Logic" />
+    <dg:extension implementation="dialog.ext.Logic" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+        	<dg:cmd name="if">
+        		<dg:arg name="condition" type="Bool" />
+        	</dg:cmd>
+        	<dg:cmd name="elseif">
+        		<dg:arg name="condition" type="Bool" />
+        	</dg:cmd>
+        	<dg:cmd name="else" />
+        	<dg:cmd name="endif" />
+        </dg:cmds>
+    </dg:extension>
     <text label="Plugin Info" text="Use logic to control what dialog is shown. No options to configure." />
-    <text label="Dialog Commands" text="if condition:Bool&amp;lt;br&amp;gt;elseif condition:Bool&amp;lt;br&amp;gt;else&amp;lt;br&amp;gt;endif" />
 </structure>

@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.DialogBase" extends="dialog.ds.DialogExtension">
-    <com.polydes.dialog implementation="dialog.ext.DialogBase" />
+    <dg:extension implementation="dialog.ext.DialogBase" xmlns:dg="com.polydes.dialog">
+        <dg:cmds>
+            <dg:cmd name="br" />
+            <dg:cmd name="end" />
+            <dg:cmd name="clear" />
+            <dg:cmd name="close" />
+            <dg:cmd name="dg">
+                <dg:arg name="dialogID" type="String" />
+            </dg:cmd>
+        </dg:cmds>
+        <dg:drawkeys>
+            <dg:drawkey name="Window Frame" />
+            <dg:drawkey name="Message" />
+        </dg:drawkeys>
+    </dg:extension>
     <text label="Plugin Info" text="Basic dialog properties related to the window and text typing." />
-    <text label="Dialog Commands" text="br&amp;lt;br&amp;gt;end&amp;lt;br&amp;gt;clear&amp;lt;br&amp;gt;close&amp;lt;br&amp;gt;dg dialogID:String" />
     <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate"/>
     <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Bool"/>
     <if condition="fitMsgToWindow == false">
