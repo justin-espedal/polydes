@@ -23,6 +23,8 @@ import stencyl.sw.util.Locations;
 
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
+import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.Structures.MissingStructureDefinitionException;
@@ -31,6 +33,7 @@ import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.ext.DataStructureExtension;
 import com.polydes.datastruct.ext.DataTypeExtension;
+import com.polydes.datastruct.ext.StructureDefinitionExtension;
 import com.polydes.datastruct.io.HXGenerator;
 import com.polydes.datastruct.io.Text;
 
@@ -40,8 +43,9 @@ public class DataStructuresExtension extends GameExtension
 	
 	private static DataStructuresExtension instance;
 	
-	public ArrayList<DataTypeExtension> dataTypeExtensions = new ArrayList<DataTypeExtension>();
-	public ArrayList<DataStructureExtension> dataStructureExtensions = new ArrayList<DataStructureExtension>();
+	public ArrayList<DataTypeExtension> dataTypeExtensions = new ArrayList<>();
+	public ArrayList<DataStructureExtension> dataStructureExtensions = new ArrayList<>();
+	public ArrayList<StructureDefinitionExtension> sdeExtensions = new ArrayList<>();
 	
 	public static boolean forceUpdateData = false;
 	private boolean initialized = false;
@@ -123,10 +127,17 @@ public class DataStructuresExtension extends GameExtension
 			(DataStructureExtension) e :
 			null;
 			
+		StructureDefinitionExtension sdExt =
+			(e instanceof StructureDefinitionExtension) ?
+			(StructureDefinitionExtension) e :
+			null;
+			
 		if(dtExt != null)
 			dataTypeExtensions.add(dtExt);
 		if(dsExt != null)
 			dataStructureExtensions.add(dsExt);
+		if(sdExt != null)
+			sdeExtensions.add(sdExt);
 		
 		if(initialized)
 		{
@@ -164,10 +175,17 @@ public class DataStructuresExtension extends GameExtension
 			(DataStructureExtension) e :
 			null;
 		
+		StructureDefinitionExtension sdExt =
+			(e instanceof StructureDefinitionExtension) ?
+			(StructureDefinitionExtension) e :
+			null;
+		
 		if(dtExt != null)
 			dataTypeExtensions.remove(dtExt);
 		if(dsExt != null)
 			dataStructureExtensions.remove(dsExt);
+		if(sdExt != null)
+			sdeExtensions.remove(sdExt);
 		
 		if(initialized)
 		{
@@ -340,6 +358,13 @@ public class DataStructuresExtension extends GameExtension
 		
 		try
 		{
+			for(StructureDefinitionExtension sdExt : sdeExtensions)
+			{
+				String extensionID = ((BaseExtension) sdExt).getManifest().id;
+				for(StructureDefinitionElementType<?> type : sdExt.getSdeTypes())
+					SDETypes.addType(extensionID, type);
+			}
+			
 			//Add all Types
 			Types.addBasicTypes();
 			
@@ -401,6 +426,7 @@ public class DataStructuresExtension extends GameExtension
 		Images.dispose();
 		Structures.dispose();
 		Blocks.dispose();
+		SDETypes.disposeExtended();
 		
 		initialized = false;
 	}

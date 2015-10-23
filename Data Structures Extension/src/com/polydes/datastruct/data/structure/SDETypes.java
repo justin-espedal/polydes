@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.structure.elements.StructureCondition.ConditionType;
@@ -68,9 +69,23 @@ public class SDETypes
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
 		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));
 	}
+	
+	public static void removeExtendedType(String extension, StructureDefinitionElementType<?> type)
+	{
+		fromClass.remove(type.sdeClass);
+		asPopupItem.remove(type.sdeClass);
+	}
 
 	public static Collection<StructureDefinitionElementType<?>> getTypes()
 	{
 		return fromClass.values();
+	}
+
+	public static void disposeExtended()
+	{
+		for(HashMap<String, StructureDefinitionElementType<?>> map : fromTag.values())
+			for(Entry<String, StructureDefinitionElementType<?>> entry : map.entrySet())
+				removeExtendedType(entry.getKey(), entry.getValue());
+		fromTag.clear();
 	}
 }

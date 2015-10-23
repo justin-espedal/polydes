@@ -27,12 +27,16 @@ public class StructureDefinitionReader
 		{
 			for(Element e : XML.children(parent))
 			{
-				StructureDefinitionElementType<?> type;
+				StructureDefinitionElementType<?> type = null;
 				try
 				{
 					type = SDETypes.fromTag(e.getNamespaceURI(), e.getLocalName());
 				}
-				catch(NullPointerException ex)
+				catch(Exception ex)
+				{
+					log.error(ex.getMessage());
+				}
+				if(type == null)
 				{
 					log.error("Couldn't load structure definition element: " + e.getTagName());
 					type = SDETypes.fromClass(StructureUnknown.class);
