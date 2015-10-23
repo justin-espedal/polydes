@@ -12,15 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import stencyl.core.lib.Game;
-import stencyl.sw.SW;
-import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
-import stencyl.sw.ext.BaseExtension;
-import stencyl.sw.ext.GameExtension;
-import stencyl.sw.ext.OptionsPanel;
-import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Locations;
-
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
 import com.polydes.datastruct.data.structure.SDETypes;
@@ -36,6 +27,16 @@ import com.polydes.datastruct.ext.DataTypeExtension;
 import com.polydes.datastruct.ext.StructureDefinitionExtension;
 import com.polydes.datastruct.io.HXGenerator;
 import com.polydes.datastruct.io.Text;
+import com.polydes.datastruct.updates.V3_GameExtensionUpdate;
+import com.polydes.datastruct.updates.V4_FullTypeNamesUpdate;
+
+import stencyl.core.lib.Game;
+import stencyl.sw.SW;
+import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
+import stencyl.sw.ext.BaseExtension;
+import stencyl.sw.ext.GameExtension;
+import stencyl.sw.ext.OptionsPanel;
+import stencyl.sw.util.Locations;
 
 public class DataStructuresExtension extends GameExtension
 {
@@ -339,16 +340,10 @@ public class DataStructuresExtension extends GameExtension
 	@Override
 	public void updateFromVersion(int fromVersion)
 	{
-		if(fromVersion <= 2)
-		{
-			File oldExtrasFolder = new File(Locations.getGameLocation(getGame()) + "extras/[ext] data structures");
-			File oldExtrasDefsFolder = new File(oldExtrasFolder, "defs");
-			File oldExtrasDataFolder = new File(oldExtrasFolder, "data");
-			
-			FileHelper.copyDirectory(oldExtrasDataFolder, new File(getExtrasFolder(), "data"));
-			FileHelper.copyDirectory(oldExtrasDefsFolder, new File(getDataFolder(), "defs"));
-			FileHelper.delete(oldExtrasFolder);
-		}
+		if(fromVersion < 3)
+			new V3_GameExtensionUpdate().run();
+		if(fromVersion < 4)
+			new V4_FullTypeNamesUpdate().run();
 	}
 	
 	@Override

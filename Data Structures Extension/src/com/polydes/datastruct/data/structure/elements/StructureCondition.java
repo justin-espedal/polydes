@@ -29,8 +29,6 @@ import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.RowGroup;
 
-import stencyl.sw.util.VerificationHelper;
-
 public class StructureCondition extends StructureDefinitionElement
 {
 	public StructureDefinition def;
@@ -232,52 +230,6 @@ public class StructureCondition extends StructureDefinitionElement
 		return "if " + text;
 	}
 	
-	//Backwards compatibility
-	
-	public static StructureCondition fromXML(StructureDefinition def, Element e)
-	{
-		if(!e.getTagName().equals("if"))
-			return null;
-		
-		return new StructureCondition(def, subFromXML(XML.child(e, 0)));
-	}
-	
-	public static String subFromXML(Element e)
-	{
-		if(e.getTagName().equals("is"))
-		{
-			return XML.read(e, "field") + " == " + codeRepresentation(XML.read(e, "value"));
-		}
-		else if(e.getTagName().equals("not"))
-		{
-			if(XML.child(e, 0).getTagName().equals("is"))
-			{
-				Element sub = XML.child(e, 0);
-				return XML.read(sub, "field") + " != " + codeRepresentation(XML.read(sub, "value"));
-			}
-			else
-				return "!(" + subFromXML(XML.child(e, 0)) + ")";
-		}
-		else if(e.getTagName().equals("and"))
-		{
-			return subFromXML(XML.child(e, 0)) + " && " + subFromXML(XML.child(e, 1));
-		}
-		else if(e.getTagName().equals("or"))
-		{
-			return subFromXML(XML.child(e, 0)) + " || " + subFromXML(XML.child(e, 1));
-		}
-		else
-			return "";
-	}
-	
-	public static String codeRepresentation(String value)
-	{
-		if(VerificationHelper.isInteger(value) || VerificationHelper.isFloat(value) || value.equals("true") || value.equals("false"))
-			return value;
-		else
-			return "\"" + value + "\"";
-	}
-	
 	@Override
 	public String getDisplayLabel()
 	{
@@ -298,11 +250,7 @@ public class StructureCondition extends StructureDefinitionElement
 		@Override
 		public StructureCondition read(StructureDefinition model, Element e)
 		{
-			if(e.hasAttribute("condition"))
-				return new StructureCondition(model, XML.read(e, "condition"));
-			
-			//backwards compatibility
-			return StructureCondition.fromXML(model, e);
+			return new StructureCondition(model, XML.read(e, "condition"));
 		}
 		
 		@Override

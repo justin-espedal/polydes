@@ -297,27 +297,6 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		revalidate();
 		repaint();
 	}
-	/*
-	public void setStructure(Structure model)
-	{
-		guiMap.clear();
-		conditionalCards.clear();
-		root.removeAll();
-		for(DataEditor<?> editor : fieldEditorMap.values())
-			editor.dispose();
-		fieldEditorMap.clear();
-		
-		if(this.model != null)
-			removeDataItem(this.model.getTemplate().guiRoot);
-		
-		this.model = model;
-		
-		if(model != null)
-			guiMap.put(model.getTemplate().guiRoot, root);
-		
-		isChangingLayout = true;
-	}
-	*/
 	
 	@Override
 	public Dimension getPreferredSize()

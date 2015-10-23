@@ -117,10 +117,7 @@ public class StringData
 		if(fromString.length() == 0)
 			return null;
 		
-		//Split here for backwards compatibility.
-		String[] splitString = fromString.startsWith("[") ? 
-				fromString.substring(1, fromString.length() - 1).split(",") :
-				fromString.split(",");
+		String[] splitString = fromString.split(",");
 		
 		int[] toReturn = new int[splitString.length];
 		for(int i = 0; i < splitString.length; ++i)

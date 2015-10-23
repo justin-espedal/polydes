@@ -9,7 +9,6 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.core.DataList;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.types.DataEditor;
@@ -56,51 +55,6 @@ public class ArrayType extends BuiltinType<DataList>
 	{
 		if(s.isEmpty())
 			return null;
-		
-		//backwards compatibility
-		if(!s.startsWith("["))
-		{
-			DataStructuresExtension.forceUpdateData = true;
-			
-			String[] strings = StringUtils.split(s, ",");
-			
-			DataType<?> genType;
-			DataList list;
-			
-			if(strings[0].indexOf(":") == -1)
-			{
-				genType = Types.fromXML("String");
-				list = new DataList(genType);
-				for(String s2 : strings)
-					list.add(s2);
-			}
-			else
-			{
-				genType = Types.fromXML(strings[0].split(":")[1]);
-				list = new DataList(genType);
-				for(String s2 : strings)
-					list.add(genType.decode(s2.split(":")[0]));
-			}
-			
-			return list;
-		}
-		
-		/*
-		BranchNode node = StringData.readTree(s);
-		
-		String typename;
-		if(((String) node.data).isEmpty())
-			typename = "String";
-		else
-			typename = ((String) node.data);
-		
-		DataType<?> genType = Types.fromXML(typename);
-		
-		DataList list = new DataList(genType);
-		
-		for(Node n : node.children)
-			list.add(genType.decode((String) n.data));
-		*/
 		
 		int i = s.lastIndexOf(":");
 		String typename = s.substring(i + 1);

@@ -10,9 +10,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -90,113 +90,14 @@ public class Text
 		return map;
 	}
 	
-	public static String sectionMark = ">";
-	public static final String folderStartMark = ">>";
-	public static final String folderEndMark = "<<";
-	
-	public static class TextObject
+	public static void writeKeyValues(File file, Map<String, String> map)
 	{
-		public String name;
+		List<String> lines = new ArrayList<String>();
 		
-		public TextObject(String name)
-		{
-			this.name = name;
-		}
-	}
-	
-	public static class TextFolder extends TextObject
-	{
-		public LinkedHashMap<String, TextObject> parts;
+		for(Entry<String, String> entry : map.entrySet())
+			lines.add(entry.getKey() + "=" + entry.getValue());
 		
-		public TextFolder(String name)
-		{
-			super(name);
-			parts = new LinkedHashMap<String, Text.TextObject>();
-		}
-		
-		public void add(TextObject object)
-		{
-			parts.put(object.name, object);
-		}
-	}
-	
-	public static class TextSection extends TextObject
-	{
-		public ArrayList<String> parts;
-		
-		public TextSection(String name)
-		{
-			super(name);
-			parts = new ArrayList<String>();
-		}
-		
-		public void add(String line)
-		{
-			parts.add(line);
-		}
-	}
-	
-	public static TextFolder readSectionedText(File file, String sectionMark)
-	{
-		Text.sectionMark = sectionMark;
-		TextFolder toReturn = new TextFolder("root");
-		TextSection section = null;
-		
-		Stack<TextFolder> folderStack = new Stack<TextFolder>();
-		folderStack.push(toReturn);
-		
-		for(String line : readLines(file))
-		{
-			if(line.startsWith(folderStartMark))
-			{
-				folderStack.push(new TextFolder(line.substring(folderStartMark.length())));
-			}
-			else if(line.startsWith(folderEndMark))
-			{
-				TextFolder newFolder = folderStack.pop();
-				folderStack.peek().add(newFolder);
-			}
-			else if(line.startsWith(sectionMark))
-			{
-				section = new TextSection(line.substring(sectionMark.length()));
-				folderStack.peek().add(section);
-			}
-			else if(section != null && line.trim().length() != 0)
-				section.add(line);
-		}
-		
-		return toReturn;
-	}
-	
-	public static void writeSectionedText(File file, TextFolder folder, String sectionMark)
-	{
-		Text.sectionMark = sectionMark;
-		ArrayList<String> toWrite = new ArrayList<String>();
-		for(TextObject o : folder.parts.values())
-			addSection(toWrite, o);
-		writeLines(file, toWrite);
-	}
-	
-	public static void addSection(ArrayList<String> lines, TextObject object)
-	{
-		if(object instanceof TextFolder)
-		{
-			TextFolder folder = (TextFolder) object;
-			
-			lines.add(folderStartMark + folder.name);
-			for(String key : folder.parts.keySet())
-				addSection(lines, folder.parts.get(key));
-			lines.add(folderEndMark);
-		}
-		else
-		{
-			TextSection section = (TextSection) object;
-			
-			lines.add(sectionMark + section.name);
-			lines.add("");
-			lines.addAll(section.parts);
-			lines.add("");
-		}
+		writeLines(file, lines);
 	}
 	
 	public static void writeLines(File file, Collection<String> lines)

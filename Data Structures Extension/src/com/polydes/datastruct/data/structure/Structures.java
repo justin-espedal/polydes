@@ -110,28 +110,12 @@ public class Structures
 			
 			StructureDefinition template = StructureDefinitions.defMap.get(type);
 			if(template == null)
-				template = loadTemplateFromOldName(type);
-			if(template == null)
 				throw new MissingStructureDefinitionException(name, type);
 				
 			Structure model = new Structure(id, name, template);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
 		}
-	}
-	
-	private HashMap<String, StructureDefinition> oldNameToDef;
-	
-	private StructureDefinition loadTemplateFromOldName(String type)
-	{
-		if(oldNameToDef == null)
-		{
-			oldNameToDef = new HashMap<String, StructureDefinition>();
-			for(StructureDefinition def : StructureDefinitions.defMap.values())
-				oldNameToDef.put(def.getName(), def);
-		}
-		
-		return oldNameToDef.get(type);
 	}
 	
 	public void deepload(StructureFolder folder, File file)
