@@ -32,9 +32,7 @@ import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
-import com.polydes.datastruct.data.structure.StructureTable;
 import com.polydes.datastruct.data.structure.Structures;
-import com.polydes.datastruct.data.structure.elements.StructureTabset;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.list.ListUtils;
 import com.polydes.datastruct.ui.objeditors.PreviewableEditor;
@@ -129,9 +127,10 @@ public class StructureDefinitionPage extends JPanel
 			EditableObject selected = (di == null) ? null : di.getObject();
 			if(selected != null)
 			{
-				if(!(selected instanceof StructureTable || selected instanceof StructureTabset))
+				EditableObject toEdit = (EditableObject) selected;
+				
+				if(toEdit.getEditor() != EditableObject.BLANK_EDITOR)
 				{
-					EditableObject toEdit = (EditableObject) selected;
 					if(toEdit.getEditor() instanceof PreviewableEditor)
 						((PreviewableEditor) toEdit.getEditor()).setPreviewSheet(editor.getPreview().getEditor().properties, di);
 					

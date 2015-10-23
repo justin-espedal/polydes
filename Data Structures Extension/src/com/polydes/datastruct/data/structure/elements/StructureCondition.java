@@ -266,13 +266,49 @@ public class StructureCondition extends StructureDefinitionElement
 		{
 			return new StructureCondition(def, "");
 		}
-
+		
 		@Override
-		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureCondition value)
+		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureCondition value, int i)
 		{
+			Card parentCard = sheet.getFirstCardParent(parent);
+			
+			RowGroup group = new RowGroup(value);
 			Card card = createConditionalCard(value, (Folder) node, sheet.model, sheet);
 			group.add(card);
 			group.add(sheet.style.rowgap);
+			
+			parentCard.addGroup(i, group);
+			
+			card.setCard(parentCard);
+			card.setCondition(value);
+			sheet.conditionalCards.add(card);
+			
+			if(!sheet.isChangingLayout)
+				parentCard.layoutContainer();
+			
+			return group;
+		}
+		
+		@Override
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		{
+			
+		}
+		
+		@Override
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		{
+			RowGroup group = (RowGroup) gui;
+			Card card = group.card;
+			
+			int groupIndex = card.indexOf(group);
+			card.removeGroup(groupIndex);
+			
+			Card subcard = (Card) group.rows[0].components[0];
+			subcard.setCard(null);
+			sheet.conditionalCards.remove(subcard);
+			
+			card.layoutContainer();
 		}
 
 		@Override

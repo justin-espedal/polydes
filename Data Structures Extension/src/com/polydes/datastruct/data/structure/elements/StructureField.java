@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
@@ -21,6 +22,7 @@ import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -255,8 +257,52 @@ public class StructureField extends StructureDefinitionElement
 			def.addField(newField, def.getEditor().preview);
 			return newField;
 		}
-
+		
 		@Override
+		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureField value, int i)
+		{
+			Card parentCard = sheet.getFirstCardParent(parent);
+			
+			RowGroup group = new RowGroup(value);
+			psLoad(sheet, group, node, value);
+			
+			parentCard.addGroup(i, group);
+			
+			if(!sheet.isChangingLayout)
+				parentCard.layoutContainer();
+			
+			return group;
+		}
+		
+		@Override
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
+		{
+			RowGroup group = (RowGroup) gui;
+			Card card = group.card;
+			
+			int groupIndex = card.indexOf(group);
+			card.removeGroup(groupIndex);
+			
+			psLoad(sheet, group, node, value);
+			
+			card.addGroup(groupIndex, group);
+			card.layoutContainer();
+		}
+		
+		@Override
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
+		{
+			RowGroup group = (RowGroup) gui;
+			Card card = group.card;
+			
+			int groupIndex = card.indexOf(group);
+			card.removeGroup(groupIndex);
+			
+			sheet.fieldEditorMap.remove(value).dispose();
+			
+			card.layoutContainer();
+		}
+
 		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureField f)
 		{
 			String name = f.getLabel().isEmpty() ? f.getVarname() : f.getLabel();

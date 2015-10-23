@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
@@ -14,6 +15,7 @@ import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureTabPanel;
 import com.polydes.datastruct.ui.table.Card;
+import com.polydes.datastruct.ui.table.Deck;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -106,16 +108,42 @@ public class StructureTab extends StructureDefinitionElement
 		}
 
 		@Override
-		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureTab value)
+		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureTab value, int i)
 		{
-			// TODO Auto-generated method stub
+			Deck deckParent = getFirstDeckParent(sheet, parent);
 			
+			Card card = new Card(value.getLabel(), true);
+			deckParent.addCard(card, i);
+			
+			return card;
+		}
+		
+		@Override
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
+		{
+			
+		}
+		
+		@Override
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
+		{
+			Card card = (Card) gui;
+			if(card.deck != null)
+				card.deck.removeCard(card);
 		}
 
 		@Override
 		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
 		{
 			((Card) gui).button.setText(value.getLabel());
+		}
+		
+		private Deck getFirstDeckParent(PropertiesSheet sheet, DataItem n)
+		{
+			while(!(n.getObject() instanceof StructureTabset))
+				n = (DataItem) n.getParent();
+			
+			return (Deck) ((RowGroup) sheet.guiMap.get(n)).rows[3].components[0].getComponent(0);
 		}
 	}
 }

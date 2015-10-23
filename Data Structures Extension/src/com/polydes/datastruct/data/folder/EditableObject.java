@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 
 public abstract class EditableObject
 {
+	public static JPanel BLANK_EDITOR = new JPanel();
+	
 	private boolean dirty;
 	
 	public abstract JPanel getEditor();

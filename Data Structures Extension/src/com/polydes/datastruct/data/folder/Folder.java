@@ -39,7 +39,7 @@ public class Folder extends DataItem implements Branch<DataItem>
 		@Override
 		public JPanel getEditor()
 		{
-			return null;
+			return BLANK_EDITOR;
 		}
 
 		@Override

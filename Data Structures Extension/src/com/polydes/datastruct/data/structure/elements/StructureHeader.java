@@ -7,11 +7,13 @@ import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureHeaderPanel;
+import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
@@ -104,15 +106,43 @@ public class StructureHeader extends StructureDefinitionElement
 		{
 			return new StructureHeader(nodeName);
 		}
-
+		
 		@Override
-		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureHeader value)
+		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureHeader value, int i)
 		{
+			Card parentCard = sheet.getFirstCardParent(parent);
+			
+			RowGroup group = new RowGroup(value);
 			group.add(sheet.style.rowgap);
 			group.add(null, sheet.style.createRoundedLabel("<html><b>" + value.getLabel() + "</b></html>"));
 			group.add(sheet.style.rowgap);
+			
+			parentCard.addGroup(i, group);
+			
+			if(!sheet.isChangingLayout)
+				parentCard.layoutContainer();
+			
+			return group;
 		}
-
+		
+		@Override
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureHeader value)
+		{
+			
+		}
+		
+		@Override
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureHeader value)
+		{
+			RowGroup group = (RowGroup) gui;
+			Card card = group.card;
+			
+			int groupIndex = card.indexOf(group);
+			card.removeGroup(groupIndex);
+			
+			card.layoutContainer();
+		}
+		
 		@Override
 		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureHeader value)
 		{

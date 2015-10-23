@@ -32,7 +32,6 @@ import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
-import com.polydes.datastruct.data.structure.elements.StructureTabset;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.UpdateListener;
@@ -44,83 +43,15 @@ import com.polydes.datastruct.ui.utils.Layout;
 
 public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem>
 {
-	public void addDataItem(Folder parent, DataItem n, int i)
-	{
-		Card parentCard = getFirstCardParent(parent);
-		
-		if(isRowGroupDataItem(n))
-		{
-			RowGroup group = loadRows(null, n);
-			guiMap.put(n, group);
-			
-			parentCard.addGroup(i, group);
-			
-			if(n.getObject() instanceof StructureTabset)
-			{
-				Deck deck = getDeck(group);
-				deck.setCard(parentCard);
-			}
-			else if(n.getObject() instanceof StructureCondition)
-			{
-				Card card = getConditionalCard(group);
-				card.setCard(parentCard);
-				card.setCondition((StructureCondition) n.getObject());
-				conditionalCards.add(card);
-			}
-			
-			if(!isChangingLayout)
-				parentCard.layoutContainer();
-		}
-		else if(n.getObject() instanceof StructureTab)
-		{
-			StructureTab tab = (StructureTab) n.getObject();
-			
-			Deck deckParent = getFirstDeckParent(parent);
-			
-			Card card = new Card(tab.getLabel(), true);
-			deckParent.addCard(card, i);
-			
-			guiMap.put(n, card);
-		}
-		
-		if(!isChangingLayout)
-			revalidate();
-	}
-	
-	private boolean isRowGroupDataItem(DataItem n)
-	{
-		Object o = n.getObject();
-		return !(o instanceof StructureTab);
-	}
-	
-	private Card getFirstCardParent(DataItem n)
+	public Card getFirstCardParent(DataItem n)
 	{
 		while(!((n.getObject() instanceof StructureTab) || (n.getObject() instanceof StructureCondition)))
 			n = (DataItem) n.getParent();
 		
 		if(n.getObject() instanceof StructureTab)
 			return (Card) guiMap.get(n);
-		else
-			return getConditionalCard((RowGroup) guiMap.get(n));
-	}
-	
-	private Deck getFirstDeckParent(DataItem n)
-	{
-		while(!(n.getObject() instanceof StructureTabset))
-			n = (DataItem) n.getParent();
-		
-		return getDeck((RowGroup) guiMap.get(n));
-	}
-	
-	private Deck getDeck(RowGroup group)
-	{
-		JPanel wrapper = (JPanel) group.rows[3].components[0];
-		return (Deck) wrapper.getComponent(0);
-	}
-	
-	public Card getConditionalCard(RowGroup group)
-	{
-		return (Card) group.rows[0].components[0];
+		else // if(n.getObject() instanceof StructureCondition)
+			return (Card) ((RowGroup) guiMap.get(n)).rows[0].components[0];
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -138,64 +69,43 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		return list;
 	}
 	
-	public void removeDataItem(DataItem n)
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void addDataItem(Folder parent, DataItem n, int i)
 	{
-		if(isRowGroupDataItem(n))
-		{
-			RowGroup group = (RowGroup) guiMap.get(n);
-			Card card = group.card;
-			
-			int groupIndex = card.indexOf(group);
-			card.removeGroup(groupIndex);
-			
-			if(n.getObject() instanceof StructureTabset)
-			{
-				Deck deck = getDeck(group);
-				deck.setCard(null);
-			}
-			else if(n.getObject() instanceof StructureCondition)
-			{
-				Card subcard = getConditionalCard((RowGroup) guiMap.get(n));
-				subcard.setCard(null);
-				conditionalCards.remove(subcard);
-			}
-			else if(n.getObject() instanceof StructureField)
-			{
-				fieldEditorMap.remove((StructureField) n.getObject()).dispose();
-			}
-			
-			card.layoutContainer();
-		}
-		else if(n.getObject() instanceof StructureTab)
-		{
-			Card card = (Card) guiMap.get(n);
-			if(card.deck != null)
-				card.deck.removeCard(card);
-		}
+		S data = (S) n.getObject();
 		
-		guiMap.remove(n);
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		GuiObject newObj = type.psAdd(this, parent, n, data, i);
+		guiMap.put(n, newObj);
 		
-		revalidate();
+		if(!isChangingLayout)
+			revalidate();
 	}
 	
-	public void refreshDataItem(DataItem n)
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void removeDataItem(DataItem n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
-		if(n.getObject() instanceof StructureField)
-		{
-			RowGroup group = (RowGroup) guiMap.get(n);
-			Card card = group.card;
-			
-			int groupIndex = card.indexOf(group);
-			card.removeGroup(groupIndex);
-			
-			loadRows(group, n);
-			
-			card.addGroup(groupIndex, group);
-			card.layoutContainer();
-		}
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psRemove(this, guiMap.remove(n), n, data);
+		
+		revalidate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void refreshDataItem(DataItem n)
+	{
+		if(!guiMap.containsKey(n))
+			return;
+		
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psRefresh(this, guiMap.get(n), n, data);
 		
 		highlightElement(n);
 		
@@ -203,22 +113,11 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> RowGroup loadRows(RowGroup group, DataItem n)
-	{
-		S data = (S) n.getObject();
-		
-		if(group == null)
-			group = new RowGroup(data);
-		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
-		type.psLoad(this, group, n, data);
-		
-		return group;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public <S extends StructureDefinitionElement> void lightRefreshDataItem(DataItem n)
 	{
+		if(!guiMap.containsKey(n))
+			return;
+		
 		S data = (S) n.getObject();
 		
 		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());

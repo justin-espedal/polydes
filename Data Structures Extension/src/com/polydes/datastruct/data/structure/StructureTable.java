@@ -17,7 +17,7 @@ public class StructureTable extends StructureTab
 	@Override
 	public JPanel getEditor()
 	{
-		return new JPanel();
+		return BLANK_EDITOR;
 	}
 	
 	@Override

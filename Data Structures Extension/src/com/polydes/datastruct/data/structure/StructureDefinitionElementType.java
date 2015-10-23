@@ -8,9 +8,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.ui.table.RowGroup;
 
 public abstract class StructureDefinitionElementType<T extends StructureDefinitionElement>
 {
@@ -24,6 +24,8 @@ public abstract class StructureDefinitionElementType<T extends StructureDefiniti
 	public abstract Element write(T object, Document doc);
 	public abstract T create(StructureDefinition def, String nodeName);
 	
-	public abstract void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, T value);
+	public abstract GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, T value, int i);
+	public abstract void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
+	public abstract void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
 	public abstract void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
 }
