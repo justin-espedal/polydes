@@ -136,7 +136,7 @@ public abstract class PropertiesSheetStyle
 		@Override
 		public void setDescription(JLabel label, String desc)
 		{
-			label.setText(String.format("<html>%s<html>", desc));
+			label.setText(String.format("<html>%s</html>", desc));
 			label.setPreferredSize(null);
 			label.setPreferredSize(new Dimension(fieldDimension.width, label.getPreferredSize().height * (label.getPreferredSize().width / fieldDimension.width + 1)));
 		}

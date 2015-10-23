@@ -30,6 +30,11 @@ public class ColorUtil
 		return "#" + hex(c.getAlpha(), 2) + hex(c.getRed(), 2) + hex(c.getGreen(), 2) + hex(c.getBlue(), 2);
 	}
 	
+	public static String encode24(Color c)
+	{
+		return "#" + hex(c.getRed(), 2) + hex(c.getGreen(), 2) + hex(c.getBlue(), 2);
+	}
+	
 	public static String hex(int i, int places)
 	{
 		String s = Integer.toHexString(i);
