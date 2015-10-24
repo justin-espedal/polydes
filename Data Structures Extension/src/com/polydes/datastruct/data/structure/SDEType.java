@@ -12,13 +12,14 @@ import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 
-public abstract class StructureDefinitionElementType<T extends StructureDefinitionElement>
+/** StructureDefinitionElementType **/
+public abstract class SDEType<T extends SDE>
 {
 	public Class<T> sdeClass;
 	public String tag;
 	public Icon icon;
 	public boolean isBranchNode;
-	public Collection<Class<StructureDefinitionElementType<?>>> childTypes;
+	public Collection<Class<SDEType<?>>> childTypes;
 	
 	public abstract T read(StructureDefinition model, Element e);
 	public abstract Element write(T object, Document doc);

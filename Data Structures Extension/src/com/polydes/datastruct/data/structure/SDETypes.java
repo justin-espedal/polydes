@@ -16,15 +16,16 @@ import com.polydes.datastruct.data.structure.elements.StructureTabset.TabsetType
 import com.polydes.datastruct.data.structure.elements.StructureText.TextType;
 import com.polydes.datastruct.data.structure.elements.StructureUnknown.UnknownType;
 
+/** StructureDefinitionElementTypes **/
 public class SDETypes
 {
-	static HashMap<String, StructureDefinitionElementType<?>> fromStandardTags = new HashMap<>();
-	static HashMap<String, HashMap<String, StructureDefinitionElementType<?>>> fromTag = new HashMap<>();
-	static HashMap<Class<? extends StructureDefinitionElement>, StructureDefinitionElementType<?>> fromClass = new HashMap<>();
+	static HashMap<String, SDEType<?>> fromStandardTags = new HashMap<>();
+	static HashMap<String, HashMap<String, SDEType<?>>> fromTag = new HashMap<>();
+	static HashMap<Class<? extends SDE>, SDEType<?>> fromClass = new HashMap<>();
 	
-	public static Collection<Class<StructureDefinitionElementType<?>>> standardChildren = new ArrayList<>();
-	public static Collection<Class<StructureDefinitionElementType<?>>> tabsetChildren = new ArrayList<>();
-	public static HashMap<Class<? extends StructureDefinitionElement>, PopupItem> asPopupItem = new HashMap<>();
+	public static Collection<Class<SDEType<?>>> standardChildren = new ArrayList<>();
+	public static Collection<Class<SDEType<?>>> tabsetChildren = new ArrayList<>();
+	public static HashMap<Class<? extends SDE>, PopupItem> asPopupItem = new HashMap<>();
 	static
 	{
 		addType(null, new ConditionType());
@@ -37,7 +38,7 @@ public class SDETypes
 		fromClass.put(StructureTable.class, fromClass.get(StructureTab.class));
 	}
 	
-	public static StructureDefinitionElementType<?> fromTag(String ext, String tag)
+	public static SDEType<?> fromTag(String ext, String tag)
 	{
 		if(ext == null)
 			return fromStandardTags.get(tag);
@@ -46,13 +47,13 @@ public class SDETypes
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends StructureDefinitionElement> StructureDefinitionElementType<T> fromClass(Class<T> c)
+	public static <T extends SDE> SDEType<T> fromClass(Class<T> c)
 	{
-		return (StructureDefinitionElementType<T>) fromClass.get(c);
+		return (SDEType<T>) fromClass.get(c);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void addType(String ext, StructureDefinitionElementType<?> type)
+	public static void addType(String ext, SDEType<?> type)
 	{
 		if(ext == null)
 			fromStandardTags.put(type.tag, type);
@@ -65,29 +66,29 @@ public class SDETypes
 		fromClass.put(type.sdeClass, type);
 		
 		if(type instanceof TabType)
-			tabsetChildren.add((Class<StructureDefinitionElementType<?>>) type.sdeClass);
+			tabsetChildren.add((Class<SDEType<?>>) type.sdeClass);
 		else
-			standardChildren.add((Class<StructureDefinitionElementType<?>>) type.sdeClass);
+			standardChildren.add((Class<SDEType<?>>) type.sdeClass);
 		
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
 		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));
 	}
 	
-	public static void removeExtendedType(String extension, StructureDefinitionElementType<?> type)
+	public static void removeExtendedType(String extension, SDEType<?> type)
 	{
 		fromClass.remove(type.sdeClass);
 		asPopupItem.remove(type.sdeClass);
 	}
 
-	public static Collection<StructureDefinitionElementType<?>> getTypes()
+	public static Collection<SDEType<?>> getTypes()
 	{
 		return fromClass.values();
 	}
 
 	public static void disposeExtended()
 	{
-		for(HashMap<String, StructureDefinitionElementType<?>> map : fromTag.values())
-			for(Entry<String, StructureDefinitionElementType<?>> entry : map.entrySet())
+		for(HashMap<String, SDEType<?>> map : fromTag.values())
+			for(Entry<String, SDEType<?>> entry : map.entrySet())
 				removeExtendedType(entry.getKey(), entry.getValue());
 		fromTag.clear();
 	}

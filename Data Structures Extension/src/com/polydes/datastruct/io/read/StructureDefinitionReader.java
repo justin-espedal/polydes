@@ -8,8 +8,8 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.elements.StructureUnknown;
 
 public class StructureDefinitionReader
@@ -27,7 +27,7 @@ public class StructureDefinitionReader
 		{
 			for(Element e : XML.children(parent))
 			{
-				StructureDefinitionElementType<?> type = null;
+				SDEType<?> type = null;
 				try
 				{
 					type = SDETypes.fromTag(e.getNamespaceURI(), e.getLocalName());
@@ -41,7 +41,7 @@ public class StructureDefinitionReader
 					log.error("Couldn't load structure definition element: " + e.getTagName());
 					type = SDETypes.fromClass(StructureUnknown.class);
 				}
-				StructureDefinitionElement newItem = type.read(model, e);
+				SDE newItem = type.read(model, e);
 				
 				if(type.isBranchNode)
 				{

@@ -8,8 +8,8 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 
 public class StructureDefinitionWriter
 {
@@ -21,10 +21,10 @@ public class StructureDefinitionWriter
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <S extends StructureDefinitionElement> void writeNode(Document doc, Element parent, Leaf<DataItem> gui)
+	public static <S extends SDE> void writeNode(Document doc, Element parent, Leaf<DataItem> gui)
 	{
 		S obj = (S) ((DataItem) gui).getObject();
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(obj.getClass());
+		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(obj.getClass());
 		
 		Element e = type.write(obj, doc);
 		

@@ -15,8 +15,8 @@ import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.grammar.ExpressionParser;
 import com.polydes.datastruct.grammar.RuntimeLanguage;
 import com.polydes.datastruct.grammar.SyntaxException;
@@ -29,7 +29,7 @@ import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.RowGroup;
 
-public class StructureCondition extends StructureDefinitionElement
+public class StructureCondition extends SDE
 {
 	public StructureDefinition def;
 	public SyntaxNode root;
@@ -236,7 +236,7 @@ public class StructureCondition extends StructureDefinitionElement
 		return toString();
 	}
 	
-	public static class ConditionType extends StructureDefinitionElementType<StructureCondition>
+	public static class ConditionType extends SDEType<StructureCondition>
 	{
 		public ConditionType()
 		{

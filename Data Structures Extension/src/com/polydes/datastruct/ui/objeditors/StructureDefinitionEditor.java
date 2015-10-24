@@ -26,8 +26,8 @@ import com.polydes.datastruct.data.structure.PreviewStructure;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureTable;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
@@ -162,8 +162,8 @@ public class StructureDefinitionEditor extends JPanel
 					return null;
 				
 				Folder parent = (Folder) tree.getCreationParentFolder(selectionState);
-				StructureDefinitionElement o = (StructureDefinitionElement) parent.getObject();
-				StructureDefinitionElementType<?> type = SDETypes.fromClass(o.getClass());
+				SDE o = (SDE) parent.getObject();
+				SDEType<?> type = SDETypes.fromClass(o.getClass());
 				
 				Collection<PopupItem> toReturn = new ArrayList<>();
 				type.childTypes.forEach((listedType) -> toReturn.add(SDETypes.asPopupItem.get(listedType)));
@@ -174,9 +174,9 @@ public class StructureDefinitionEditor extends JPanel
 			public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
 			{
 				@SuppressWarnings("unchecked")
-				Class<? extends StructureDefinitionElement> cls = (Class<? extends StructureDefinitionElement>) selected.data;
+				Class<? extends SDE> cls = (Class<? extends SDE>) selected.data;
 				
-				StructureDefinitionElementType<?> type = SDETypes.fromClass(cls);
+				SDEType<?> type = SDETypes.fromClass(cls);
 				
 				if(type.isBranchNode)
 					return new Folder(nodeName, type.create(def, nodeName));

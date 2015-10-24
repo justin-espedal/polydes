@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
 import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.Structures.MissingStructureDefinitionException;
@@ -356,7 +356,7 @@ public class DataStructuresExtension extends GameExtension
 			for(StructureDefinitionExtension sdExt : sdeExtensions)
 			{
 				String extensionID = ((BaseExtension) sdExt).getManifest().id;
-				for(StructureDefinitionElementType<?> type : sdExt.getSdeTypes())
+				for(SDEType<?> type : sdExt.getSdeTypes())
 					SDETypes.addType(extensionID, type);
 			}
 			

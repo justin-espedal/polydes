@@ -10,8 +10,8 @@ import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureTextPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -21,7 +21,7 @@ import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 
-public class StructureText extends StructureDefinitionElement
+public class StructureText extends SDE
 {
 	private String label;
 	private String text;
@@ -88,7 +88,7 @@ public class StructureText extends StructureDefinitionElement
 		return label;
 	}
 	
-	public static class TextType extends StructureDefinitionElementType<StructureText>
+	public static class TextType extends SDEType<StructureText>
 	{
 		public TextType()
 		{

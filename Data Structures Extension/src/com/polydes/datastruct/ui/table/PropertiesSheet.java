@@ -23,8 +23,8 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.DataEditor;
 
@@ -294,11 +294,11 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void addDataItem(Folder parent, DataItem n, int i)
+	public <S extends SDE> void addDataItem(Folder parent, DataItem n, int i)
 	{
 		S data = (S) n.getObject();
 		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		GuiObject newObj = type.psAdd(this, parent, n, data, i);
 		guiMap.put(n, newObj);
 		
@@ -307,28 +307,28 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void removeDataItem(DataItem n)
+	public <S extends SDE> void removeDataItem(DataItem n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
 		S data = (S) n.getObject();
 		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psRemove(this, guiMap.remove(n), n, data);
 		
 		revalidate();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void refreshDataItem(DataItem n)
+	public <S extends SDE> void refreshDataItem(DataItem n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
 		S data = (S) n.getObject();
 		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psRefresh(this, guiMap.get(n), n, data);
 		
 		highlightElement(n);
@@ -337,14 +337,14 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void lightRefreshDataItem(DataItem n)
+	public <S extends SDE> void lightRefreshDataItem(DataItem n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
 		S data = (S) n.getObject();
 		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psLightRefresh(this, guiMap.get(n), n, data);
 		
 		highlightElement(n);

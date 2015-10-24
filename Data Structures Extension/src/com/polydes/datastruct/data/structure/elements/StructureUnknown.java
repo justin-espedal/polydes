@@ -12,15 +12,15 @@ import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.RowGroup;
 
-public class StructureUnknown extends StructureDefinitionElement
+public class StructureUnknown extends SDE
 {
 	public String prefix;
 	public String tag;
@@ -48,7 +48,7 @@ public class StructureUnknown extends StructureDefinitionElement
 	@Override
 	public void revertChanges() {}
 	
-	public static class UnknownType extends StructureDefinitionElementType<StructureUnknown>
+	public static class UnknownType extends SDEType<StructureUnknown>
 	{
 		public UnknownType()
 		{

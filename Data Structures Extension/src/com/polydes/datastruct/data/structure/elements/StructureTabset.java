@@ -9,8 +9,8 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.Deck;
@@ -19,7 +19,7 @@ import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.utils.Layout;
 
-public class StructureTabset extends StructureDefinitionElement
+public class StructureTabset extends SDE
 {
 	@Override
 	public String toString()
@@ -49,7 +49,7 @@ public class StructureTabset extends StructureDefinitionElement
 		return "tabset";
 	}
 	
-	public static class TabsetType extends StructureDefinitionElementType<StructureTabset>
+	public static class TabsetType extends SDEType<StructureTabset>
 	{
 		public TabsetType()
 		{

@@ -19,8 +19,8 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitionElement;
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;
@@ -42,7 +42,7 @@ import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.utils.Layout;
 import com.polydes.datastruct.utils.DelayedInitialize;
 
-public class StructureField extends StructureDefinitionElement
+public class StructureField extends SDE
 {
 	private StructureDefinition owner;
 	
@@ -194,7 +194,7 @@ public class StructureField extends StructureDefinitionElement
 		return label;
 	}
 	
-	public static class FieldType extends StructureDefinitionElementType<StructureField>
+	public static class FieldType extends SDEType<StructureField>
 	{
 		public FieldType()
 		{

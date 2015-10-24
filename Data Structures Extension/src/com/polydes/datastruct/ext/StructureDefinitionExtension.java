@@ -2,9 +2,9 @@ package com.polydes.datastruct.ext;
 
 import java.util.ArrayList;
 
-import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.structure.SDEType;
 
 public interface StructureDefinitionExtension
 {
-	public ArrayList<StructureDefinitionElementType<?>> getSdeTypes();
+	public ArrayList<SDEType<?>> getSdeTypes();
 }
