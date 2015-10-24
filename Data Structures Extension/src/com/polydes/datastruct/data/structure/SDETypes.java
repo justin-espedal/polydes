@@ -10,6 +10,7 @@ import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.structure.elements.StructureCondition.ConditionType;
 import com.polydes.datastruct.data.structure.elements.StructureField.FieldType;
 import com.polydes.datastruct.data.structure.elements.StructureHeader.HeaderType;
+import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.structure.elements.StructureTab.TabType;
 import com.polydes.datastruct.data.structure.elements.StructureTabset.TabsetType;
 import com.polydes.datastruct.data.structure.elements.StructureText.TextType;
@@ -33,6 +34,7 @@ public class SDETypes
 		addType(null, new TabsetType());
 		addType(null, new TextType());
 		addType(null, new UnknownType());
+		fromClass.put(StructureTable.class, fromClass.get(StructureTab.class));
 	}
 	
 	public static StructureDefinitionElementType<?> fromTag(String ext, String tag)

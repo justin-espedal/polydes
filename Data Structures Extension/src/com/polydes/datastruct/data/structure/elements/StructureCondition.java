@@ -275,7 +275,7 @@ public class StructureCondition extends StructureDefinitionElement
 			RowGroup group = new RowGroup(value);
 			Card card = createConditionalCard(value, (Folder) node, sheet.model, sheet);
 			
-			group.addSubcard(card, sheet.style.rowgap);
+			group.addSubcard(card, parentCard);
 			parentCard.addGroup(i, group);
 			
 			card.setCondition(value);

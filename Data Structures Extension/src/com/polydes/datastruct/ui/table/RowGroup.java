@@ -22,11 +22,11 @@ public class RowGroup implements GuiObject
 		this.data = data;
 	}
 	
-	public void addSubcard(Card card, int pad)
+	public void addSubcard(Card card, Card parent)
 	{
 		add(card);
-		add(pad);
-		card.setCard(this.card);
+		add(parent.getRoot().style.rowgap);
+		card.setCard(parent);
 		subcarded = true;
 	}
 	
