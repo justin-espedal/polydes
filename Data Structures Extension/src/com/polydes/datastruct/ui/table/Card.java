@@ -205,7 +205,12 @@ public class Card extends JPanel implements GuiObject
 	{
 		this.condition = condition;
 		
-		if(condition == null)
+		setLineBorder(condition == null ? null : "" + condition);
+	}
+	
+	public void setLineBorder(String title)
+	{
+		if(title == null)
 		{
 			lineBorder = null;
 			setBorder(BorderFactory.createEmptyBorder());
@@ -213,9 +218,9 @@ public class Card extends JPanel implements GuiObject
 		else
 		{
 			if(lineBorder == null)
-				setBorder(lineBorder = createTitledBorder("" + condition));
+				setBorder(lineBorder = createTitledBorder(title));
 			else
-				lineBorder.setTitle("" + condition);
+				lineBorder.setTitle(title);
 		}
 	}
 	

@@ -1,8 +1,12 @@
 package com.polydes.datastruct.data.structure.elements;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -13,21 +17,29 @@ import org.w3c.dom.Element;
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
+import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
+import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.extra.ColorType;
+import com.polydes.datastruct.data.types.builtin.extra.ColorType.ColorEditor;
+import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
+import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
+import com.polydes.datastruct.ui.utils.Layout;
 import com.polydes.datastruct.utils.DelayedInitialize;
 
 public class StructureField extends StructureDefinitionElement
@@ -302,21 +314,7 @@ public class StructureField extends StructureDefinitionElement
 			
 			card.layoutContainer();
 		}
-
-		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureField f)
-		{
-			String name = f.getLabel().isEmpty() ? f.getVarname() : f.getLabel();
-			
-			group.rows = new Row[0];
-			group.add(sheet.style.createLabel(name), sheet.createEditor(f));
-			if(!f.getHint().isEmpty())
-			{
-				group.add(sheet.style.hintgap);
-				group.add(null, sheet.style.createDescriptionRow(f.getHint()));
-			}
-			group.add(sheet.style.rowgap);
-		}
-
+		
 		@Override
 		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
 		{
@@ -325,6 +323,99 @@ public class StructureField extends StructureDefinitionElement
 			((JLabel) group.rows[0].components[0]).setText(value.getLabel());
 			if(!value.getHint().isEmpty())
 				sheet.style.setDescription((JLabel) group.rows[2].components[1], value.getHint());
+		}
+		
+		/*================================================*\
+		 | Helpers
+		\*================================================*/
+		
+		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureField f)
+		{
+			String name = f.getLabel().isEmpty() ? f.getVarname() : f.getLabel();
+			
+			group.rows = new Row[0];
+			group.add(sheet.style.createLabel(name), createEditor(sheet, f));
+			if(!f.getHint().isEmpty())
+			{
+				group.add(sheet.style.hintgap);
+				group.add(null, sheet.style.createDescriptionRow(f.getHint()));
+			}
+			group.add(sheet.style.rowgap);
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		public JComponent createEditor(PropertiesSheet sheet, final StructureField f)
+		{
+			JComponent editPanel = null;
+			
+			DataType type = f.getType();
+			
+			if(sheet.fieldEditorMap.containsKey(f))
+				sheet.fieldEditorMap.get(f).dispose();
+			
+			final DataEditor deditor;
+			
+			//special case for "Structure" editors, because they may need to know which Structure they're in for filtering.
+			if(type instanceof StructureType)
+				deditor = ((StructureType) type).new StructureEditor((StructureType.Extras) f.getExtras(), sheet.model);
+			else
+				deditor = type.createEditor(f.getExtras(), sheet.style);
+			
+			//special case for Color editors inside preview structures. Need to make sure the popup window works.
+			if(type instanceof ColorType && sheet.model.getID() == -1)
+				((ColorEditor) deditor).setOwner(StructureDefinitionsWindow.get());
+			
+			deditor.setValue(sheet.model.getProperty(f));
+			deditor.addListener(new UpdateListener()
+			{
+				@Override
+				public void updated()
+				{
+					sheet.model.setProperty(f, deditor.getValue());
+					sheet.refreshVisibleComponents();
+				}
+			});
+			
+			sheet.fieldEditorMap.put(f, deditor);
+			
+			editPanel = Layout.horizontalBox(sheet.style.fieldDimension, deditor.getComponents());
+			
+			if(f.isOptional())
+				return constrict(sheet.style, createEnabler(sheet.model, editPanel, f), editPanel);
+			else
+				return editPanel;
+		}
+		
+		private JCheckBox createEnabler(final Structure model, final JComponent component, final StructureField f)
+		{
+			final JCheckBox enabler = new JCheckBox();
+			enabler.setSelected(model.isPropertyEnabled(f));
+			enabler.setBackground(null);
+			
+			enabler.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					if(model.isPropertyEnabled(f) != enabler.isSelected())
+					{
+						component.setVisible(enabler.isSelected());
+						model.setPropertyEnabled(f, enabler.isSelected());
+						if(!enabler.isSelected())
+							model.clearProperty(f);
+						model.setDirty(true);
+					}
+				}
+			});
+			
+			component.setVisible(model.isPropertyEnabled(f));
+			
+			return enabler;
+		}
+		
+		private JPanel constrict(PropertiesSheetStyle style, JComponent... comps)
+		{
+			return Layout.horizontalBox(style.fieldDimension, comps);
 		}
 	}
 }

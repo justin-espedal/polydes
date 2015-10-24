@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -13,8 +11,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -29,29 +25,28 @@ import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinitionElement;
 import com.polydes.datastruct.data.structure.StructureDefinitionElementType;
-import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
-import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.extra.ColorType;
-import com.polydes.datastruct.data.types.builtin.extra.ColorType.ColorEditor;
-import com.polydes.datastruct.data.types.general.StructureType;
-import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
-import com.polydes.datastruct.ui.utils.Layout;
 
 public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem>
 {
 	public Card getFirstCardParent(DataItem n)
 	{
-		while(!((n.getObject() instanceof StructureTab) || (n.getObject() instanceof StructureCondition)))
+		while(true)
+		{
+			GuiObject o = guiMap.get(n);
+			
+			if(o instanceof Card)
+				return (Card) o;
+			if(o instanceof RowGroup && ((RowGroup) o).hasSubcard())
+				return ((RowGroup) o).getSubcard();
+			
 			n = (DataItem) n.getParent();
+			if(n == null)
+				break;
+		}
 		
-		if(n.getObject() instanceof StructureTab)
-			return (Card) guiMap.get(n);
-		else // if(n.getObject() instanceof StructureCondition)
-			return (Card) ((RowGroup) guiMap.get(n)).rows[0].components[0];
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -67,65 +62,6 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 				list.add((T) ((DataItem) n2).getObject());
 		}
 		return list;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void addDataItem(Folder parent, DataItem n, int i)
-	{
-		S data = (S) n.getObject();
-		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
-		GuiObject newObj = type.psAdd(this, parent, n, data, i);
-		guiMap.put(n, newObj);
-		
-		if(!isChangingLayout)
-			revalidate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void removeDataItem(DataItem n)
-	{
-		if(!guiMap.containsKey(n))
-			return;
-		
-		S data = (S) n.getObject();
-		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
-		type.psRemove(this, guiMap.remove(n), n, data);
-		
-		revalidate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void refreshDataItem(DataItem n)
-	{
-		if(!guiMap.containsKey(n))
-			return;
-		
-		S data = (S) n.getObject();
-		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
-		type.psRefresh(this, guiMap.get(n), n, data);
-		
-		highlightElement(n);
-		
-		revalidate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <S extends StructureDefinitionElement> void lightRefreshDataItem(DataItem n)
-	{
-		if(!guiMap.containsKey(n))
-			return;
-		
-		S data = (S) n.getObject();
-		
-		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
-		type.psLightRefresh(this, guiMap.get(n), n, data);
-		
-		highlightElement(n);
-		
-		repaint();
 	}
 	
 	public Structure model;
@@ -186,10 +122,8 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 			folderModel.addRepresentation(this);
 		
 		for(DataItem n : guiMap.keySet())
-		{
-			if(n.getObject() instanceof StructureTab)
+			if(guiMap.get(n) instanceof Card)
 				((Card) guiMap.get(n)).layoutContainer();
-		}
 		
 		refreshVisibleComponents();
 		model.setDirty(false);
@@ -209,81 +143,6 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	public Dimension getMaximumSize()
 	{
 		return getPreferredSize();
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public JComponent createEditor(final StructureField f)
-	{
-		JComponent editPanel = null;
-		
-		DataType type = f.getType();
-		
-		if(fieldEditorMap.containsKey(f))
-			fieldEditorMap.get(f).dispose();
-		
-		final DataEditor deditor;
-		
-		//special case for "Structure" editors, because they may need to know which Structure they're in for filtering.
-		if(type instanceof StructureType)
-			deditor = ((StructureType) type).new StructureEditor((StructureType.Extras) f.getExtras(), model);
-		else
-			deditor = type.createEditor(f.getExtras(), style);
-		
-		//special case for Color editors inside preview structures. Need to make sure the popup window works.
-		if(type instanceof ColorType && model.getID() == -1)
-			((ColorEditor) deditor).setOwner(StructureDefinitionsWindow.get());
-		
-		deditor.setValue(model.getProperty(f));
-		deditor.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				model.setProperty(f, deditor.getValue());
-				refreshVisibleComponents();
-			}
-		});
-		
-		fieldEditorMap.put(f, deditor);
-		
-		editPanel = Layout.horizontalBox(style.fieldDimension, deditor.getComponents());
-		
-		if(f.isOptional())
-			return constrict(createEnabler(editPanel, f), editPanel);
-		else
-			return editPanel;
-	}
-	
-	private JCheckBox createEnabler(final JComponent component, final StructureField f)
-	{
-		final JCheckBox enabler = new JCheckBox();
-		enabler.setSelected(model.isPropertyEnabled(f));
-		enabler.setBackground(null);
-		
-		enabler.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if(model.isPropertyEnabled(f) != enabler.isSelected())
-				{
-					component.setVisible(enabler.isSelected());
-					model.setPropertyEnabled(f, enabler.isSelected());
-					if(!enabler.isSelected())
-						model.clearProperty(f);
-					model.setDirty(true);
-				}
-			}
-		});
-		
-		component.setVisible(model.isPropertyEnabled(f));
-		
-		return enabler;
-	}
-	
-	public JPanel constrict(JComponent... comps)
-	{
-		return Layout.horizontalBox(style.fieldDimension, comps);
 	}
 	
 	public void refreshVisibleComponents()
@@ -432,5 +291,64 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 			if(d instanceof Folder)
 				buildSheetFromFolder((Folder) d); 
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void addDataItem(Folder parent, DataItem n, int i)
+	{
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		GuiObject newObj = type.psAdd(this, parent, n, data, i);
+		guiMap.put(n, newObj);
+		
+		if(!isChangingLayout)
+			revalidate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void removeDataItem(DataItem n)
+	{
+		if(!guiMap.containsKey(n))
+			return;
+		
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psRemove(this, guiMap.remove(n), n, data);
+		
+		revalidate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void refreshDataItem(DataItem n)
+	{
+		if(!guiMap.containsKey(n))
+			return;
+		
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psRefresh(this, guiMap.get(n), n, data);
+		
+		highlightElement(n);
+		
+		revalidate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S extends StructureDefinitionElement> void lightRefreshDataItem(DataItem n)
+	{
+		if(!guiMap.containsKey(n))
+			return;
+		
+		S data = (S) n.getObject();
+		
+		StructureDefinitionElementType<S> type = (StructureDefinitionElementType<S>) SDETypes.fromClass(data.getClass());
+		type.psLightRefresh(this, guiMap.get(n), n, data);
+		
+		highlightElement(n);
+		
+		repaint();
 	}
 }

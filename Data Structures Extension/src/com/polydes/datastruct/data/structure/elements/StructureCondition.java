@@ -274,12 +274,10 @@ public class StructureCondition extends StructureDefinitionElement
 			
 			RowGroup group = new RowGroup(value);
 			Card card = createConditionalCard(value, (Folder) node, sheet.model, sheet);
-			group.add(card);
-			group.add(sheet.style.rowgap);
 			
+			group.addSubcard(card, sheet.style.rowgap);
 			parentCard.addGroup(i, group);
 			
-			card.setCard(parentCard);
 			card.setCondition(value);
 			sheet.conditionalCards.add(card);
 			
@@ -304,9 +302,7 @@ public class StructureCondition extends StructureDefinitionElement
 			int groupIndex = card.indexOf(group);
 			card.removeGroup(groupIndex);
 			
-			Card subcard = (Card) group.rows[0].components[0];
-			subcard.setCard(null);
-			sheet.conditionalCards.remove(subcard);
+			sheet.conditionalCards.remove(group.removeSubcard());
 			
 			card.layoutContainer();
 		}
@@ -314,7 +310,7 @@ public class StructureCondition extends StructureDefinitionElement
 		@Override
 		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
 		{
-			((Card) ((RowGroup) gui).rows[0].components[0]).setCondition(value);
+			((RowGroup) gui).getSubcard().setCondition(value);
 		}
 		
 		private Card createConditionalCard(final StructureCondition c, final Folder n, final Structure model, final PropertiesSheet sheet)

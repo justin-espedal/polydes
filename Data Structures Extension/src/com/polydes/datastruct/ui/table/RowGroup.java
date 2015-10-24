@@ -13,10 +13,42 @@ public class RowGroup implements GuiObject
 	public Row[] rows = null;
 	int firstRow;
 	
+	// Subcard
+	
+	private boolean subcarded = false;
+	
 	public RowGroup(Object data)
 	{
 		this.data = data;
 	}
+	
+	public void addSubcard(Card card, int pad)
+	{
+		add(card);
+		add(pad);
+		card.setCard(this.card);
+		subcarded = true;
+	}
+	
+	public boolean hasSubcard()
+	{
+		return subcarded;
+	}
+	
+	public Card getSubcard()
+	{
+		return (Card) rows[0].components[0];
+	}
+	
+	public Card removeSubcard()
+	{
+		Card c = (Card) rows[0].components[0];
+		c.setCard(null);
+		subcarded = false;
+		return c;
+	}
+	
+	// Normal
 	
 	public void add(JComponent... comps)
 	{
