@@ -8,25 +8,34 @@ import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
 
+import com.polydes.common.util.Lang;
+import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.types.DataType;
+import com.polydes.datastruct.ext.DataStructureExtension;
+import com.polydes.datastruct.ext.DataTypeExtension;
+import com.polydes.datastruct.ext.StructureDefinitionExtension;
+import com.polydes.dialog.app.MainEditor;
+import com.polydes.dialog.data.def.elements.StructureCommand.CommandType;
+import com.polydes.dialog.data.def.elements.StructureCommands.CommandsType;
+import com.polydes.dialog.data.def.elements.StructureDrawkey.DrawkeyType;
+import com.polydes.dialog.data.def.elements.StructureDrawkeys.DrawkeysType;
+import com.polydes.dialog.data.def.elements.StructureExtension.ExtensionType;
+import com.polydes.dialog.data.stores.Dialog;
+import com.polydes.dialog.data.stores.Macros;
+import com.polydes.dialog.defaults.Defaults;
+
 import stencyl.core.lib.Game;
 import stencyl.sw.ext.GameExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.ext.DataStructureExtension;
-import com.polydes.datastruct.ext.DataTypeExtension;
-import com.polydes.dialog.app.MainEditor;
-import com.polydes.dialog.data.stores.Dialog;
-import com.polydes.dialog.data.stores.Macros;
-import com.polydes.dialog.defaults.Defaults;
-
-public class DialogExtension extends GameExtension implements DataTypeExtension, DataStructureExtension
+public class DialogExtension extends GameExtension implements DataTypeExtension, DataStructureExtension, StructureDefinitionExtension
 {
 	private static DialogExtension _instance;
 	
 	ArrayList<DataType<?>> types;
+	ArrayList<SDEType<?>> sdeTypes;
 	
 	public static DialogExtension get()
 	{
@@ -52,6 +61,13 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 		gameCenterName = "Dialog Extension";
 		
 		types = DataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
+		sdeTypes = Lang.arraylist(
+			new ExtensionType(),
+			new CommandsType(),
+			new CommandType(),
+			new DrawkeysType(),
+			new DrawkeyType()
+		);
 	}
 	
 	@Override
@@ -221,5 +237,11 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	public ArrayList<DataType<?>> getDataTypes()
 	{
 		return types;
+	}
+
+	@Override
+	public ArrayList<SDEType<?>> getSdeTypes()
+	{
+		return sdeTypes;
 	}
 }

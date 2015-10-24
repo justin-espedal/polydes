@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.SoundScripts" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.SoundScripts" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.SoundScripts" desc="Play and loop sounds from dialog. No options to configure." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-        	<dg:cmd name="playsound">
+        	<dg:cmd name="playsound" desc="Play [sound].">
         		<dg:arg name="sound" type="String" />
         	</dg:cmd>
-        	<dg:cmd name="loopsound">
+        	<dg:cmd name="loopsound" desc="Loop [sound].">
         		<dg:arg name="sound" type="String" />
         	</dg:cmd>
-        	<dg:cmd name="stopsound" />
-        	<dg:cmd name="playchan">
-        		<dg:arg name="sound" type="String" />
-        		<dg:arg name="channel" type="Int" />
-        	</dg:cmd>
-        	<dg:cmd name="loopchan">
+        	<dg:cmd name="stopsound" desc="Stop sounds." />
+        	<dg:cmd name="playchan" desc="Play [sound] on [channel].">
         		<dg:arg name="sound" type="String" />
         		<dg:arg name="channel" type="Int" />
         	</dg:cmd>
-        	<dg:cmd name="stopchan">
+        	<dg:cmd name="loopchan" desc="Loop [sound] on [channel].">
+        		<dg:arg name="sound" type="String" />
+        		<dg:arg name="channel" type="Int" />
+        	</dg:cmd>
+        	<dg:cmd name="stopchan" desc="Stop sounds on [channel].">
         		<dg:arg name="channel" type="Int" />
         	</dg:cmd>
         </dg:cmds>
     </dg:extension>
-    <text label="Plugin Info" text="Play and loop sounds from dialog. No options to configure." />
 </structure>

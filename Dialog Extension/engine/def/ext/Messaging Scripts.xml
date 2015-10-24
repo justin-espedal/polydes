@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.MessagingScripts" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.MessagingScripts" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.MessagingScripts" desc="Send messages or get/set values with actors, scenes, and arbitrary Haxe objects. No options to configure." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-        	<dg:cmd name="setattr">
+        	<dg:cmd name="setattr" desc="Set an attribute.">
         		<dg:arg name="args" type="Array" />
         	</dg:cmd>
-        	<dg:cmd name="getattr" returns="Dynamic">
+        	<dg:cmd name="getattr" returns="Dynamic" desc="Get an attribute.">
         		<dg:arg name="args" type="Array" />
         	</dg:cmd>
-        	<dg:cmd name="showattr">
+        	<dg:cmd name="showattr" desc="Show an attribute in dialog.">
         		<dg:arg name="args" type="Array" />
         	</dg:cmd>
-        	<dg:cmd name="messagescene">
+        	<dg:cmd name="messagescene" desc="Send a message to a scene behavior.">
         		<dg:arg name="behaviorName" type="String" />
         		<dg:arg name="message" type="String" />
         		<dg:arg name="args" type="Array" />
         	</dg:cmd>
-        	<dg:cmd name="messageactor">
+        	<dg:cmd name="messageactor" desc="Send a message to an actor behavior.">
         		<dg:arg name="actorName" type="String" />
         		<dg:arg name="behaviorName" type="String" />
         		<dg:arg name="message" type="String" />
@@ -24,5 +24,4 @@
         	</dg:cmd>
         </dg:cmds>
     </dg:extension>
-    <text label="Plugin Info" text="Send messages or get/set values with actors, scenes, and arbitrary Haxe objects. No options to configure." />
 </structure>

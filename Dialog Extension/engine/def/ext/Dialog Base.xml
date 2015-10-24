@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.DialogBase" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.DialogBase" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.DialogBase" desc="Basic dialog properties related to the window and text typing." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-            <dg:cmd name="br" />
-            <dg:cmd name="end" />
-            <dg:cmd name="clear" />
-            <dg:cmd name="close" />
-            <dg:cmd name="dg">
+            <dg:cmd name="br" desc="Insert a line break." />
+            <dg:cmd name="end" desc="End the dialog." />
+            <dg:cmd name="clear" desc="Clear all text in the dialog box." />
+            <dg:cmd name="close" desc="Temporarily close the dialog box." />
+            <dg:cmd name="dg" desc="Go to dialog script with name [dialogID].">
                 <dg:arg name="dialogID" type="String" />
             </dg:cmd>
         </dg:cmds>
@@ -15,7 +15,6 @@
             <dg:drawkey name="Message" />
         </dg:drawkeys>
     </dg:extension>
-    <text label="Plugin Info" text="Basic dialog properties related to the window and text typing." />
     <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate"/>
     <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Bool"/>
     <if condition="fitMsgToWindow == false">
@@ -27,7 +26,7 @@
     <field default="" editor="SingleLine" hint="Name of Game Attribute that will be set to &amp;quot;true&amp;quot; while Dialog is open." label="Control Attribute" name="controlAttribute" type="String"/>
     <field default="0" editor="Plain" hint="Pixels added between lines." label="Line Spacing" name="lineSpacing" step="1" type="Int"/>
     <field default="0" editor="Plain" hint="Pixels added between characters." label="Character Spacing" name="charSpacing" step="1" type="Int"/>
-    <field hint="Name of sound to play when &amp;lt;clear&amp;gt; is used." label="Clear Sound" name="clearSound" type="com.stencyl.models.Sound" optional="true"/>
-    <field hint="Name of sound to play when &amp;lt;close&amp;gt; is used." label="Close Sound" name="closeSound" type="com.stencyl.models.Sound" optional="true"/>
-    <field hint="Name of sound to play when &amp;lt;end&amp;gt; is used." label="End Sound" name="endSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field hint="Name of sound to play when &amp;amp;lt;clear&amp;amp;gt; is used." label="Clear Sound" name="clearSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field hint="Name of sound to play when &amp;amp;lt;close&amp;amp;gt; is used." label="Close Sound" name="closeSound" type="com.stencyl.models.Sound" optional="true"/>
+    <field hint="Name of sound to play when &amp;amp;lt;end&amp;amp;gt; is used." label="End Sound" name="endSound" type="com.stencyl.models.Sound" optional="true"/>
 </structure>

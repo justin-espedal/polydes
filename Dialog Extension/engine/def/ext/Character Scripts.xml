@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.CharacterScripts" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.CharacterScripts" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.CharacterScripts" desc="Display character names and faces." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-            <dg:cmd name="showname">
+            <dg:cmd name="showname" desc="Show [name] in a namebox.">
                 <dg:arg name="name" type="String" />
             </dg:cmd>
-            <dg:cmd name="hidename" />
-            <dg:cmd name="face">
+            <dg:cmd name="hidename" desc="Hide the namebox."/>
+            <dg:cmd name="face" desc="Show the face graphic [image].">
                 <dg:arg name="image" type="String" />
             </dg:cmd>
         </dg:cmds>
@@ -15,7 +15,6 @@
             <dg:drawkey name="Face" />
         </dg:drawkeys>
     </dg:extension>
-    <text label="Plugin Info" text="Display character names and faces." />
     <field label="Namebox Window" name="nameboxWindow" type="dialog.ds.WindowTemplate"/>
     <field label="Namebox Font" name="nameboxFont" type="com.stencyl.models.Font"/>
     <field default="" editor="SingleLine" hint="To be added to the beginning of the face called for. &amp;quot;Face &amp;quot; will turn &amp;lt;face Lenny&amp;gt; into &amp;quot;Face Lenny.png&amp;quot;" label="Face Image prefix" name="faceImagePrefix" type="String"/>

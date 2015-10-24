@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.FlowScripts" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.FlowScripts" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.FlowScripts" desc="Control dialog flow by waiting for variables or user input, or by short pauses." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-            <dg:cmd name="waitattr">
+            <dg:cmd name="waitattr" desc="Wait for an attribute to be equal to a value before proceeding.">
                 <dg:arg name="source" type="Array" />
             </dg:cmd>
-            <dg:cmd name="wait">
+            <dg:cmd name="wait" desc="Wait [time] seconds before proceeding.">
                 <dg:arg name="time" type="Float" />
             </dg:cmd>
-            <dg:cmd name="but" />
-            <dg:cmd name="bc" />
+            <dg:cmd name="but" desc="Wait for the Advance Dialog Button to be pressed." />
+            <dg:cmd name="bc" desc="Wait for button press, then clear dialog window before proceeding." />
         </dg:cmds>
         <dg:drawkeys>
             <dg:drawkey name="Wait Pointer" />
         </dg:drawkeys>
     </dg:extension>
-    <text label="Plugin Info" text="Control dialog flow by waiting for variables or user input, or by short pauses." />
     <field hint="Anim to display as the pointer when waiting for user input." label="Anim For Pointer" name="animForPointer" type="dialog.core.Animation"/>
     <field hint="position to create pointer at." label="Pointer Position" name="pointerPos" type="dialog.geom.RatioPoint"/>
     <field label="Advance Dialog Button" name="advanceDialogButton" type="com.polydes.datastruct.Control"/>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.Logic" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.Logic" xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.Logic" desc="Use logic to control what dialog is shown. No options to configure." xmlns:dg="com.polydes.dialog">
         <dg:cmds>
-        	<dg:cmd name="if">
+        	<dg:cmd name="if" desc="If [condition] is true, show the contained dialog.">
         		<dg:arg name="condition" type="Bool" />
         	</dg:cmd>
-        	<dg:cmd name="elseif">
+        	<dg:cmd name="elseif" desc="If [condition] is true, show the contained dialog. Only used after if.">
         		<dg:arg name="condition" type="Bool" />
         	</dg:cmd>
-        	<dg:cmd name="else" />
-        	<dg:cmd name="endif" />
+        	<dg:cmd name="else" desc="If no preceeding conditions are true, show the contained dialog." />
+        	<dg:cmd name="endif" desc="End a chain of if/else conditions." />
         </dg:cmds>
     </dg:extension>
-    <text label="Plugin Info" text="Use logic to control what dialog is shown. No options to configure." />
 </structure>
