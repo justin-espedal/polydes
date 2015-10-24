@@ -6,12 +6,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureTabPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -84,7 +84,13 @@ public class StructureTab extends SDE
 			tag = "tab";
 			isBranchNode = true;
 			icon = Resources.thumb("tab.png", 16);
-			childTypes = SDETypes.standardChildren;
+			childTypes = Lang.arraylist(
+				StructureCondition.class,
+				StructureField.class,
+				StructureHeader.class,
+				StructureTabset.class,
+				StructureText.class
+			);
 		}
 		
 		@Override

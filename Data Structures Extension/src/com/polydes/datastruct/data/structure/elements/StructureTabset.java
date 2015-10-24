@@ -5,12 +5,12 @@ import javax.swing.JPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.Deck;
@@ -57,7 +57,7 @@ public class StructureTabset extends SDE
 			tag = "tabset";
 			isBranchNode = true;
 			icon = Resources.thumb("tabset.png", 16);
-			childTypes = SDETypes.tabsetChildren;
+			childTypes = Lang.arraylist(StructureTab.class);
 		}
 		
 		@Override

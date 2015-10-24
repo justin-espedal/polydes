@@ -10,13 +10,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.Structure;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.grammar.ExpressionParser;
 import com.polydes.datastruct.grammar.RuntimeLanguage;
 import com.polydes.datastruct.grammar.SyntaxException;
@@ -244,7 +244,13 @@ public class StructureCondition extends SDE
 			tag = "if";
 			isBranchNode = true;
 			icon = Resources.thumb("condition.png", 16);
-			childTypes = SDETypes.standardChildren;
+			childTypes = Lang.arraylist(
+				StructureCondition.class,
+				StructureField.class,
+				StructureHeader.class,
+				StructureTabset.class,
+				StructureText.class
+			);
 		}
 		
 		@Override

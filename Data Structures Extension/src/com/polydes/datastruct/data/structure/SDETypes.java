@@ -1,6 +1,5 @@
 package com.polydes.datastruct.data.structure;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -23,8 +22,6 @@ public class SDETypes
 	static HashMap<String, HashMap<String, SDEType<?>>> fromTag = new HashMap<>();
 	static HashMap<Class<? extends SDE>, SDEType<?>> fromClass = new HashMap<>();
 	
-	public static Collection<Class<SDEType<?>>> standardChildren = new ArrayList<>();
-	public static Collection<Class<SDEType<?>>> tabsetChildren = new ArrayList<>();
 	public static HashMap<Class<? extends SDE>, PopupItem> asPopupItem = new HashMap<>();
 	static
 	{
@@ -52,7 +49,6 @@ public class SDETypes
 		return (SDEType<T>) fromClass.get(c);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static void addType(String ext, SDEType<?> type)
 	{
 		if(ext == null)
@@ -64,11 +60,6 @@ public class SDETypes
 			fromTag.get(ext).put(type.tag, type);
 		}
 		fromClass.put(type.sdeClass, type);
-		
-		if(type instanceof TabType)
-			tabsetChildren.add((Class<SDEType<?>>) type.sdeClass);
-		else
-			standardChildren.add((Class<SDEType<?>>) type.sdeClass);
 		
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
 		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));
