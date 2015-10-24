@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -39,19 +40,18 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import stencyl.sw.util.UI;
-
 import com.polydes.common.comp.StatusBar;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafWalker;
-import com.polydes.common.nodes.LeafWalker.LeafRunnable;
 import com.polydes.common.res.ResourceLoader;
 import com.polydes.common.util.PopupUtil;
 import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.common.util.PopupUtil.PopupSelectionListener;
+
+import stencyl.sw.util.UI;
 
 public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelectionListener, ActionListener, KeyListener,
 	CellEditorListener, CellEditValidator, HierarchyRepresentation<T>
@@ -446,18 +446,14 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		if (reselectNode == null)
 			reselectNode = selectedNodes.get(selectedNodes.size() - 1).getParent();
 		
-		final HashSet<Leaf<T>> toRemoveDiList = new HashSet<Leaf<T>>();
+		//Remove any objects that are under parents that will be deleted.
+		final HashSet<Leaf<T>> toRemoveDiSet = new HashSet<Leaf<T>>();
 		for(TNode<T> toRemoveNode : toRemoveList)
-		{
-			LeafWalker.recursiveRun(toRemoveNode.getUserObject(), new LeafRunnable<T>()
-			{
-				@Override
-				public void run(Leaf<T> item)
-				{
-					toRemoveDiList.add(item);
-				}
-			});
-		}
+			LeafWalker.recursiveRun(toRemoveNode.getUserObject(), (item) -> toRemoveDiSet.add(item));
+		
+		//Sort it so that the deepest items in hierarchy are removed one by one before their parents.
+		ArrayList<Leaf<T>> toRemoveDiList = new ArrayList<>(toRemoveDiSet);
+		Collections.sort(toRemoveDiList, (a, b) -> Integer.compare(Leaf.getDepth(b), Leaf.getDepth(a)));
 		
 		if(nodeCreator.attemptRemove(new ArrayList<Leaf<T>>(toRemoveDiList)))
 		{

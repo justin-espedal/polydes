@@ -41,6 +41,14 @@ public class LeafWalker
 				recursiveRun(curItem, runnable);
 	}
 	
+	public static final <T extends Leaf<T>> void recursiveRunPost(Leaf<T> item, LeafRunnable<T> runnable)
+	{
+		if(item instanceof Branch)
+			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
+				recursiveRun(curItem, runnable);
+		runnable.run(item);
+	}
+	
 	public static interface LeafRunnable<T extends Leaf<T>>
 	{
 		public void run(Leaf<T> item);

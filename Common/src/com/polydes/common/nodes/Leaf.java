@@ -4,6 +4,17 @@ import javax.swing.ImageIcon;
 
 public interface Leaf<T extends Leaf<T>>
 {
+	public static int getDepth(Leaf<?> l)
+	{
+		int d = 0;
+		while(l != null)
+		{
+			l = l.getParent();
+			++d;
+		}
+		return d;
+	}
+	
 	public void setParent(Branch<T> branch, boolean addToParent);
 	public Branch<T> getParent();
 	public void addListener(LeafListener<T> l);
