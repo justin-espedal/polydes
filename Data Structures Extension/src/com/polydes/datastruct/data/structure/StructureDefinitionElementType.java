@@ -18,7 +18,7 @@ public abstract class StructureDefinitionElementType<T extends StructureDefiniti
 	public String tag;
 	public Icon icon;
 	public boolean isBranchNode;
-	public Collection<StructureDefinitionElementType<?>> childTypes;
+	public Collection<Class<StructureDefinitionElementType<?>>> childTypes;
 	
 	public abstract T read(StructureDefinition model, Element e);
 	public abstract Element write(T object, Document doc);

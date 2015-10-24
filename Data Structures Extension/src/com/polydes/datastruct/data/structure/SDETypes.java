@@ -21,8 +21,8 @@ public class SDETypes
 	static HashMap<String, HashMap<String, StructureDefinitionElementType<?>>> fromTag = new HashMap<>();
 	static HashMap<Class<? extends StructureDefinitionElement>, StructureDefinitionElementType<?>> fromClass = new HashMap<>();
 	
-	public static Collection<StructureDefinitionElementType<?>> standardChildren = new ArrayList<>();
-	public static Collection<StructureDefinitionElementType<?>> tabsetChildren = new ArrayList<>();
+	public static Collection<Class<StructureDefinitionElementType<?>>> standardChildren = new ArrayList<>();
+	public static Collection<Class<StructureDefinitionElementType<?>>> tabsetChildren = new ArrayList<>();
 	public static HashMap<Class<? extends StructureDefinitionElement>, PopupItem> asPopupItem = new HashMap<>();
 	static
 	{
@@ -49,6 +49,7 @@ public class SDETypes
 		return (StructureDefinitionElementType<T>) fromClass.get(c);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void addType(String ext, StructureDefinitionElementType<?> type)
 	{
 		if(ext == null)
@@ -62,9 +63,9 @@ public class SDETypes
 		fromClass.put(type.sdeClass, type);
 		
 		if(type instanceof TabType)
-			tabsetChildren.add(type);
+			tabsetChildren.add((Class<StructureDefinitionElementType<?>>) type.sdeClass);
 		else
-			standardChildren.add(type);
+			standardChildren.add((Class<StructureDefinitionElementType<?>>) type.sdeClass);
 		
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
 		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));

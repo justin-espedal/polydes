@@ -161,8 +161,8 @@ public class StructureDefinitionEditor extends JPanel
 				if(selectionState.nodes.size() < 1)
 					return null;
 				
-				Object uo = selectionState.nodes.get(0).getUserObject();
-				StructureDefinitionElement o = (StructureDefinitionElement) ((DataItem) uo).getObject();
+				Folder parent = (Folder) tree.getCreationParentFolder(selectionState);
+				StructureDefinitionElement o = (StructureDefinitionElement) parent.getObject();
 				StructureDefinitionElementType<?> type = SDETypes.fromClass(o.getClass());
 				
 				Collection<PopupItem> toReturn = new ArrayList<>();
