@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.app;
+package com.polydes.points.app;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -8,7 +8,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import stencyl.ext.polydes.points.NamedPoint;
+import com.polydes.points.NamedPoint;
 
 public class PointListEditor extends DefaultCellEditor
 {

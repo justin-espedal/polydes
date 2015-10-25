@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.comp;
+package com.polydes.points.comp;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,19 +10,18 @@ import javax.swing.JComboBox;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import stencyl.ext.polydes.common.collections.CollectionObserver;
-import stencyl.ext.polydes.common.collections.CollectionPredicate;
-import stencyl.ext.polydes.common.collections.CollectionUpdateListener;
+import com.polydes.common.collections.CollectionObserver;
+import com.polydes.common.collections.CollectionPredicate;
+import com.polydes.common.collections.CollectionUpdateListener;
 
 /**
  * An UpdatingCombo automatically begins to observe the list it's passed.
  * When finished with an UpdatingCombo, it's important to call {@code dispose()} on it.
  */
-public class UpdatingCombo<T> extends JComboBox
+public class UpdatingCombo<T> extends JComboBox<T>
 {
 	UpdatingModel<T> model;
 	
-	@SuppressWarnings("unchecked")
 	public UpdatingCombo(Collection<T> list, CollectionPredicate<T> filter)
 	{
 		super(new UpdatingModel<T>(list, filter));
@@ -51,7 +50,7 @@ public class UpdatingCombo<T> extends JComboBox
 	}
 }
 
-class UpdatingModel<T> extends DefaultComboBoxModel implements CollectionUpdateListener
+class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpdateListener
 {
 	public static Map<Collection<?>, CollectionObserver> observers = new IdentityHashMap<Collection<?>, CollectionObserver>();
 	
@@ -116,10 +115,11 @@ class UpdatingModel<T> extends DefaultComboBoxModel implements CollectionUpdateL
 		fireContentsChanged(this, 0, objects.length);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getElementAt(int index)
+	public T getElementAt(int index)
 	{
-		return objects[index];
+		return (T) objects[index];
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.comp;
+package com.polydes.points.comp;
 
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;

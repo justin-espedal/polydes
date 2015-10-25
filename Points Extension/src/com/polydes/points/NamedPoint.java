@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points;
+package com.polydes.points;
 
 import java.awt.Point;
 

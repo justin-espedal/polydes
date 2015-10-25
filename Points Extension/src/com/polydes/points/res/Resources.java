@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.res;
+package com.polydes.points.res;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -6,10 +6,12 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 
-import stencyl.sw.util.debug.Debug;
+import org.apache.log4j.Logger;
 
 public class Resources
 {
+	private static final Logger log = Logger.getLogger(Resources.class);
+	
 	private static Resources _instance;
 	private static HashMap<String, ImageIcon> iconCache = new HashMap<String, ImageIcon>();
 	
@@ -53,7 +55,7 @@ public class Resources
 
 			catch (Exception e)
 			{
-				Debug.error(e);
+				log.error(e.getMessage(), e);
 			}
 
 			return new ImageIcon();

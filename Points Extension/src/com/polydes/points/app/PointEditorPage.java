@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.app;
+package com.polydes.points.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -52,25 +52,24 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.io.FileUtils;
 
+import com.jidesoft.swing.PaintPanel;
+import com.polydes.common.collections.CollectionPredicate;
+import com.polydes.common.comp.StatusBar;
+import com.polydes.points.NamedPoint;
+import com.polydes.points.PointsExtension;
+import com.polydes.points.comp.CyclingSpinnerListModel;
+import com.polydes.points.comp.UpdatingCombo;
+import com.polydes.points.res.Resources;
+
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
-import stencyl.core.lib.sprite.Animation;
-import stencyl.ext.polydes.common.collections.CollectionPredicate;
-import stencyl.ext.polydes.common.comp.StatusBar;
-import stencyl.ext.polydes.points.Main;
-import stencyl.ext.polydes.points.NamedPoint;
-import stencyl.ext.polydes.points.comp.CyclingSpinnerListModel;
-import stencyl.ext.polydes.points.comp.UpdatingCombo;
-import stencyl.ext.polydes.points.res.Resources;
 import stencyl.sw.data.EditableAnimation;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Fonts;
 import stencyl.sw.util.UI;
 import stencyl.sw.util.comp.GroupButton;
 import stencyl.sw.util.comp.GroupToggleButton;
-
-import com.jidesoft.swing.PaintPanel;
 
 public class PointEditorPage extends JPanel
 {
@@ -82,7 +81,7 @@ public class PointEditorPage extends JPanel
 	
 	private JTextField actorTypeFilter;
 	private UpdatingCombo<IActorType> actorTypeChooser;
-	private UpdatingCombo<Animation> animationChooser;
+	private UpdatingCombo<EditableAnimation> animationChooser;
 	private JSpinner frameField;
 	
 	private Point currentOffset;
@@ -117,7 +116,7 @@ public class PointEditorPage extends JPanel
 		return _instance;
 	}
 	
-	private static final List<Animation> noAnims = new ArrayList<Animation>();
+	private static final List<EditableAnimation> noAnims = new ArrayList<EditableAnimation>();
 	
 	public PointEditorPage()
 	{
@@ -169,7 +168,7 @@ public class PointEditorPage extends JPanel
 			}
 		});
 		
-		animationChooser = new UpdatingCombo<Animation>(noAnims, null);
+		animationChooser = new UpdatingCombo<EditableAnimation>(noAnims, null);
 		animationChooser.setBackground(null);
 		animationChooser.addActionListener(new ActionListener()
 		{
@@ -749,7 +748,7 @@ public class PointEditorPage extends JPanel
 	
 	private void loadPoints(Resource r)
 	{
-		File f = Main.get().getExtrasFolder();
+		File f = PointsExtension.get().getExtrasFolder();
 		File rf = new File(f, r.getID() + ".txt");
 		if(rf.exists())
 		{
@@ -780,7 +779,7 @@ public class PointEditorPage extends JPanel
 	
 	private void savePoints(Resource r)
 	{
-		File f = Main.get().getExtrasFolder();
+		File f = PointsExtension.get().getExtrasFolder();
 		if(!f.exists())
 			f.mkdirs();
 		

@@ -1,4 +1,4 @@
-package stencyl.ext.polydes.points.app;
+package com.polydes.points.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -1,6 +1,7 @@
-package stencyl.ext.polydes.points.app;
+package com.polydes.points.app;
 
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -9,8 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
-import stencyl.ext.polydes.common.comp.MiniSplitPane;
-import stencyl.ext.polydes.points.Prefs;
+import com.polydes.common.comp.MiniSplitPane;
+import com.polydes.points.PointsExtension;
+
 import stencyl.sw.SW;
 
 public class PointEditorWindow extends JDialog
@@ -57,12 +59,8 @@ public class PointEditorWindow extends JDialog
 	
 	private void closeWindow()
 	{
-		Prefs.set(Prefs.POINTWIN_X, getX());
-		Prefs.set(Prefs.POINTWIN_Y, getY());
-		Prefs.set(Prefs.POINTWIN_WIDTH, getWidth());
-		Prefs.set(Prefs.POINTWIN_HEIGHT, getHeight());
-		Prefs.set(Prefs.POINTWIN_SIDEWIDTH, splitPane.getDividerLocation());
-		Prefs.save();
+		PointsExtension.pointWindowPos = new Rectangle(getBounds());
+		PointsExtension.pointWindowSideWidth = splitPane.getDividerLocation();
 		
 		setVisible(false);
 	}
@@ -80,22 +78,18 @@ public class PointEditorWindow extends JDialog
 	{
 		initialized = true;
 		
-		int x = Prefs.get(Prefs.POINTWIN_X);
-		int y = Prefs.get(Prefs.POINTWIN_Y);
-		int w = Prefs.get(Prefs.POINTWIN_WIDTH);
-		int h = Prefs.get(Prefs.POINTWIN_HEIGHT);
-		int dl = Prefs.get(Prefs.POINTWIN_SIDEWIDTH);
+		Rectangle r = PointsExtension.pointWindowPos;
 		
 		splitPane.setLeftComponent(PointEditorPage.get().getSidebar());
 		splitPane.setRightComponent(PointEditorPage.get());
-		splitPane.setDividerLocation(dl);
+		splitPane.setDividerLocation(PointsExtension.pointWindowSideWidth);
 		
-		setSize(w, h);
+		setSize(r.width, r.height);
 		
-		if(x == -1 || y == -1)
+		if(r.x == -1 || r.y == -1)
 			setLocationRelativeTo(SW.get());
 		else
-			setLocation(x, y);
+			setLocation(r.x, r.y);
 	}
 	
 	@Override
