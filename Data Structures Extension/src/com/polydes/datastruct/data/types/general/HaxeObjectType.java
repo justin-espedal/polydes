@@ -52,7 +52,7 @@ public class HaxeObjectType extends DataType<HaxeObject>
 	{
 		String[] parts = s.length() <= 2 ?
 				ArrayUtils.EMPTY_STRING_ARRAY :
-				s.substring(1, s.length() - 2).split(",");
+				s.substring(1, s.length() - 1).split(",");
 		Object[] values = new Object[def.fields.length];
 		for(int i = 0; i < def.fields.length; ++i)
 			values[i] = def.fields[i].type.decode(parts.length > i ? parts[i] : def.fields[i].defaultValue);
