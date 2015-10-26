@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.ext.SkipScripts" extends="dialog.ds.DialogExtension">
-    <dg:extension implementation="dialog.ext.SkipScripts" desc="Allow dialog to be made faster or skipped." xmlns:dg="com.polydes.dialog">
+    <dg:extension implementation="dialog.ext.SkipScripts" desc="Allow dialog to be made faster or skipped.&amp;lt;br/&amp;gt;&amp;lt;b&amp;gt;Requires Typing Scripts.&amp;lt;/b&amp;gt;" xmlns:dg="com.polydes.dialog">
         <dg:cmds>
             <dg:cmd name="skip" desc="Allow skipping dialog." />
             <dg:cmd name="noskip" desc="Disallow skipping dialog." />
