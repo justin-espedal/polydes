@@ -43,7 +43,6 @@ public abstract class GameExtensionWatcher
 			BaseExtension ext = i.next();
 			if(!active.contains(ext))
 			{
-				System.out.println("REMOVE EXTENSION " + ext.getManifest().name);
 				i.remove();
 				extensionRemoved(ext);
 			}
@@ -51,7 +50,6 @@ public abstract class GameExtensionWatcher
 		for(BaseExtension ext : active)
 			if(!allExtensions.contains(ext))
 			{
-				System.out.println("ADD EXTENSION " + ext.getManifest().name);
 				allExtensions.add(ext);
 				extensionAdded(ext);
 			}
