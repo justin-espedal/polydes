@@ -3,7 +3,6 @@ package com.polydes.datastruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -12,13 +11,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.polydes.common.ext.GameExtensionWatcher;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.core.Images;
-import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
-import com.polydes.datastruct.data.structure.Structures.MissingStructureDefinitionException;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.Types;
@@ -31,7 +30,6 @@ import com.polydes.datastruct.updates.V3_GameExtensionUpdate;
 import com.polydes.datastruct.updates.V4_FullTypeNamesUpdate;
 
 import stencyl.core.lib.Game;
-import stencyl.sw.SW;
 import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.GameExtension;
@@ -44,6 +42,7 @@ public class DataStructuresExtension extends GameExtension
 	
 	private static DataStructuresExtension instance;
 	
+	private ExtensionMonitor monitor;
 	public ArrayList<DataTypeExtension> dataTypeExtensions = new ArrayList<>();
 	public ArrayList<DataStructureExtension> dataStructureExtensions = new ArrayList<>();
 	public ArrayList<StructureDefinitionExtension> sdeExtensions = new ArrayList<>();
@@ -51,7 +50,10 @@ public class DataStructuresExtension extends GameExtension
 	public static boolean forceUpdateData = false;
 	private boolean initialized = false;
 	
-	private boolean tryToReloadForNewExtensions = false;
+	public boolean isInitialized()
+	{
+		return initialized;
+	}
 	
 	/*
 	 * Happens when StencylWorks launches. 
@@ -81,9 +83,8 @@ public class DataStructuresExtension extends GameExtension
 		Prefs.DEFPAGE_SIDEWIDTH = readIntProp("defpage.sidewidth", DarkTree.DEF_WIDTH);
 		Prefs.DEFPAGE_SIDEDL = readIntProp("defpage.sidedl", 150);
 		
-//		SW.get().getExtensionManager().getActiveExtensions().addListener(extListener);
-//		SW.get().getExtensionManager().getActiveGameExtensions().addListener(gameExtListener);
-		refreshExtensions();
+		monitor = new ExtensionMonitor();
+		monitor.startWatching();
 	}
 	
 	public static DataStructuresExtension get()
@@ -91,125 +92,93 @@ public class DataStructuresExtension extends GameExtension
 		return instance;
 	}
 	
-	public void refreshExtensions()
+	private class ExtensionMonitor extends GameExtensionWatcher
 	{
-		BaseExtension[] exts = allExtensions.toArray(new BaseExtension[allExtensions.size()]);
-		for(BaseExtension e : exts)
-			removeExtension(e);
-		
-		for(BaseExtension e : SW.get().getExtensionManager().getActiveExtensions().values())
+		@Override
+		public void extensionAdded(BaseExtension e)
 		{
-			if(e instanceof GameExtension)
-				continue;
+			DataTypeExtension dtExt =
+				(e instanceof DataTypeExtension) ?
+				(DataTypeExtension) e :
+				null;
 			
-			addExtension(e);
-		}
-		for(GameExtension e : SW.get().getExtensionManager().getActiveGameExtensions().values())
-		{
-			addExtension(e);
-		}
-	}
-	
-	private HashSet<BaseExtension> allExtensions = new HashSet<BaseExtension>();
-	
-	public void addExtension(BaseExtension e)
-	{
-		if(allExtensions.contains(e))
-			return;
-		allExtensions.add(e);
-		
-		DataTypeExtension dtExt =
-			(e instanceof DataTypeExtension) ?
-			(DataTypeExtension) e :
-			null;
-		
-		DataStructureExtension dsExt =
-			(e instanceof DataStructureExtension) ?
-			(DataStructureExtension) e :
-			null;
-			
-		StructureDefinitionExtension sdExt =
-			(e instanceof StructureDefinitionExtension) ?
-			(StructureDefinitionExtension) e :
-			null;
-			
-		if(dtExt != null)
-			dataTypeExtensions.add(dtExt);
-		if(dsExt != null)
-			dataStructureExtensions.add(dsExt);
-		if(sdExt != null)
-			sdeExtensions.add(sdExt);
-		
-		if(initialized)
-		{
-			if(dtExt != null)
-				for(DataType<?> type : dtExt.getDataTypes())
-					Types.addType(type);
+			DataStructureExtension dsExt =
+				(e instanceof DataStructureExtension) ?
+				(DataStructureExtension) e :
+				null;
 				
-			if(dsExt != null)
-				StructureDefinitions.get().addFolder(dsExt.getDefinitionsFolder(), e.getManifest().name);
-			
-			Types.initNewTypeFields();
-			Types.initNewTypeMethods();
-			Types.finishInit();
-		}
-		else if(tryToReloadForNewExtensions)
-		{
-			tryToReloadForNewExtensions = false;
-			reloadGame();
-		}
-	}
-	
-	public void removeExtension(BaseExtension e)
-	{
-		if(!allExtensions.contains(e))
-			return;
-		allExtensions.remove(e);
-		
-		DataTypeExtension dtExt =
-			(e instanceof DataTypeExtension) ?
-			(DataTypeExtension) e :
-			null;
-		
-		DataStructureExtension dsExt =
-			(e instanceof DataStructureExtension) ?
-			(DataStructureExtension) e :
-			null;
-		
-		StructureDefinitionExtension sdExt =
-			(e instanceof StructureDefinitionExtension) ?
-			(StructureDefinitionExtension) e :
-			null;
-		
-		if(dtExt != null)
-			dataTypeExtensions.remove(dtExt);
-		if(dsExt != null)
-			dataStructureExtensions.remove(dsExt);
-		if(sdExt != null)
-			sdeExtensions.remove(sdExt);
-		
-		if(initialized)
-		{
+			StructureDefinitionExtension sdExt =
+				(e instanceof StructureDefinitionExtension) ?
+				(StructureDefinitionExtension) e :
+				null;
+				
 			if(dtExt != null)
-				for(DataType<?> type : dtExt.getDataTypes())
-					Types.removeType(type);
-			
+				dataTypeExtensions.add(dtExt);
 			if(dsExt != null)
-				StructureDefinitions.get().removeFolder(dsExt.getDefinitionsFolder());
+				dataStructureExtensions.add(dsExt);
+			if(sdExt != null)
+				sdeExtensions.add(sdExt);
 			
-			Types.initNewTypeFields();
-			Types.initNewTypeMethods();
-			Types.finishInit();
+			if(initialized)
+			{
+				if(sdExt != null)
+					for(SDEType<?> type : sdExt.getSdeTypes())
+						SDETypes.addType(e.getManifest().id, type);
+				
+				if(dtExt != null)
+					for(DataType<?> type : dtExt.getDataTypes())
+						Types.addType(type);
+					
+				if(dsExt != null)
+					StructureDefinitions.get().addFolder(dsExt.getDefinitionsFolder(), e.getManifest().name);
+				
+				Types.resolveChanges();
+			}
+		}
+
+		@Override
+		public void extensionRemoved(BaseExtension e)
+		{
+			DataTypeExtension dtExt =
+				(e instanceof DataTypeExtension) ?
+				(DataTypeExtension) e :
+				null;
+			
+			DataStructureExtension dsExt =
+				(e instanceof DataStructureExtension) ?
+				(DataStructureExtension) e :
+				null;
+			
+			StructureDefinitionExtension sdExt =
+				(e instanceof StructureDefinitionExtension) ?
+				(StructureDefinitionExtension) e :
+				null;
+			
+			if(dtExt != null)
+				dataTypeExtensions.remove(dtExt);
+			if(dsExt != null)
+				dataStructureExtensions.remove(dsExt);
+			if(sdExt != null)
+				sdeExtensions.remove(sdExt);
+			
+			if(initialized)
+			{
+//				if(sdExt != null)
+//					for(SDEType<?> type : sdExt.getSdeTypes())
+//						SDETypes.removeType(e.getManifest().id, type);
+				
+				if(dtExt != null)
+					for(DataType<?> type : dtExt.getDataTypes())
+						Types.removeType(type);
+				
+				if(dsExt != null)
+					StructureDefinitions.get().removeFolder(dsExt.getDefinitionsFolder());
+				
+				Types.resolveChanges();
+			}
 		}
 	}
 	
-	/*
-	 * Happens when the extension is told to display.
-	 * 
-	 * May happen multiple times during the course of the app. 
-	 * 
-	 * A good way to handle this is to make your extension a singleton.
-	 */
 	@Override
 	public void onActivate()
 	{
@@ -239,8 +208,8 @@ public class DataStructuresExtension extends GameExtension
 		
 		super.onDestroy();
 		
-//		SW.get().getExtensionManager().getActiveExtensions().removeListener(extListener);
-//		SW.get().getExtensionManager().getActiveGameExtensions().removeListener(gameExtListener);
+		monitor.stopWatching();
+		monitor = null;
 	}
 	
 	private static String sourceDir;
@@ -349,8 +318,6 @@ public class DataStructuresExtension extends GameExtension
 	@Override
 	public void onGameWithDataOpened()
 	{
-		refreshExtensions();
-		
 		try
 		{
 			for(StructureDefinitionExtension sdExt : sdeExtensions)
@@ -361,7 +328,7 @@ public class DataStructuresExtension extends GameExtension
 			}
 			
 			//Add all Types
-			Types.addBasicTypes();
+			Types.initialize();
 			
 			for(DataTypeExtension ext : dataTypeExtensions)
 				for(DataType<?> type : ext.getDataTypes())
@@ -371,33 +338,12 @@ public class DataStructuresExtension extends GameExtension
 			for(DataStructureExtension ext : dataStructureExtensions)
 				StructureDefinitions.get().addFolder(ext.getDefinitionsFolder(), ((BaseExtension) ext).getManifest().name);
 			
-			//Field datatypes need to be loaded before Structures are loaded.
-			Types.initNewTypeFields();
-			
 			Images.get().load(new File(Locations.getGameLocation(getGame()), "extras"));
 			Structures.get().load(new File(getExtrasFolder(), "data"));
 			
-			//This is how extras are loaded, because they often rely on things that haven't been loaded
-			//yet when they're read in from XML files.
-			Types.initNewTypeMethods();
-			
 			Blocks.addDesignModeBlocks();
-			Types.finishInit();
 			
 			initialized = true;
-		}
-		catch(MissingStructureDefinitionException ex)
-		{
-			showMessageDialog
-			(
-				"Couldn't initialize Data Structures Extension",
-				"Error: " + ex.getMessage() + "<br><br>" +
-				"If this type is defined in another extension, enable that extension to continue.\n"
-			);
-			
-			log.error(ex.getMessage(), ex);
-			
-			tryToReloadForNewExtensions = true;
 		}
 		catch(Exception ex)
 		{
@@ -458,7 +404,7 @@ public class DataStructuresExtension extends GameExtension
 	@Override
 	public void onUninstall()
 	{
-//		SW.get().getExtensionManager().getActiveExtensions().removeListener(extListener);
-//		SW.get().getExtensionManager().getActiveGameExtensions().removeListener(gameExtListener);
+		monitor.stopWatching();
+		monitor = null;
 	}
 }

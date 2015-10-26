@@ -36,7 +36,7 @@ public class StructureDefinition extends EditableObject
 	private String name;
 	private String classname;
 	
-	public String customCode;
+	public String customCode = "";
 	private final LinkedHashMap<String, StructureField> fields;
 	public DataItem dref;
 	public Folder guiRoot; //this is passed in from elsewhere.
@@ -384,5 +384,31 @@ public class StructureDefinition extends EditableObject
 		Types.typeFromXML.remove(classname);
 		
 		dispose();
+	}
+	
+	/*-------------------------------------*\
+	 * Unknown Definitions
+	\*-------------------------------------*/ 
+	
+	private boolean unknown;
+	
+	public boolean isUnknown()
+	{
+		return unknown;
+	}
+	
+	public void realize(String name, String classname)
+	{
+		this.name = name;
+		this.classname = classname;
+		dref.setName(name);
+		unknown = false;
+	}
+	
+	public static StructureDefinition newUnknown(String name)
+	{
+		StructureDefinition def = new StructureDefinition(name, name);
+		def.unknown = true;
+		return def;
 	}
 }

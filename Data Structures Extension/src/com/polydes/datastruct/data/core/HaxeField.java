@@ -22,4 +22,11 @@ public class HaxeField
 			new ExtrasMap() :
 			editorData;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "HaxeField [name=" + name + ", type=" + type + ", editorData="
+				+ editorData + ", defaultValue=" + defaultValue + "]";
+	}
 }

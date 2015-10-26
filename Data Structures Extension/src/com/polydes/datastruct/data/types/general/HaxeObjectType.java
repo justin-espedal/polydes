@@ -35,6 +35,11 @@ public class HaxeObjectType extends DataType<HaxeObject>
 		super(HaxeObject.class, def.haxeClass, "OBJECT");
 		this.def = def;
 	}
+	
+	public HaxeObjectDefinition getDef()
+	{
+		return def;
+	}
 
 	@Override
 	public DataEditor<HaxeObject> createEditor(ExtraProperties extras, PropertiesSheetStyle style)

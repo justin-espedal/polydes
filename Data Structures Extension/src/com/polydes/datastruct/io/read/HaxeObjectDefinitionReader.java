@@ -6,8 +6,9 @@ import com.polydes.common.io.XML;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.core.HaxeField;
 import com.polydes.datastruct.data.core.HaxeObjectDefinition;
+import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtrasMap;
-import com.polydes.datastruct.utils.DelayedInitialize;
+import com.polydes.datastruct.data.types.Types;
 
 public class HaxeObjectDefinitionReader
 {
@@ -33,12 +34,14 @@ public class HaxeObjectDefinitionReader
 				}
 			}
 			
-			HaxeField hf = new HaxeField(name, null, editorData);
+			if(!Types.typeFromXML.containsKey(type))
+				Types.addUnknown(type);
+			DataType<?> dtype = Types.fromXML(type);
+			
+			HaxeField hf = new HaxeField(name, dtype, editorData);
 			
 			if(field.hasAttribute("default"))
 				hf.defaultValue = field.getAttribute("default");
-			
-			DelayedInitialize.addObject(hf, "type", type);
 			
 			return hf;
 		});

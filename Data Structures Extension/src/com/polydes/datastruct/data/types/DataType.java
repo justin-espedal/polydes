@@ -47,22 +47,6 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	
 	public abstract ExtrasMap saveExtras(ExtraProperties extras);
 	public abstract ExtraProperties loadExtras(ExtrasMap extras);
-	/*{
-		if(extraParameters != null)
-			for(StructureField f : extraParameters.getFields())
-			{
-				if(field.optionalArgs.containsKey(f.name))
-				{
-					DataType<?> converter = Types.fromXML(f.type);
-					field.optionalArgs.put(f.name, converter.decode("" + field.optionalArgs.get(f.name)));
-				}
-				else if(f.optionalArgs.containsKey("default"))
-				{
-					DataType<?> converter = Types.fromXML(f.type);
-					field.optionalArgs.put(f.name, converter.decode("" + f.optionalArgs.get("default")));
-				}
-			}
-	}*/
 	
 	protected static JComponent[] comps(JComponent... c)
 	{
@@ -79,11 +63,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	{
 		return null;
 	}
-//	public abstract JComponent[] getEditor(DataUpdater<T> updater, ExtraProperties extras, PropertiesSheetStyle style);
-//	public JComponent[] getEditor(DataUpdater<T> updater, ExtrasMap extras, PropertiesSheetStyle style)
-//	{
-//		return getEditor(updater, loadExtras(extras), style);
-//	}
+	
 	/**
 	 * Create editor, set value, add listener.<br />
 	 * Dispose when you're done.
@@ -179,8 +159,8 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	
 	public static class InvalidEditor<T> extends DataEditor<T>
 	{
-		PropertiesSheetStyle style;
-		String msg;
+		protected PropertiesSheetStyle style;
+		protected String msg;
 		
 		public InvalidEditor(String msg, PropertiesSheetStyle style)
 		{

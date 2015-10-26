@@ -5,6 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -247,5 +248,51 @@ public class Structure extends EditableObject
 	public String toString()
 	{
 		return dref.getName();
+	}
+	
+	private Map<String, String> unknownData;
+	
+	public Map<String, String> getUnknownData()
+	{
+		return unknownData;
+	}
+	
+	public void setUnknownProperty(String key, String value)
+	{
+		if(unknownData == null)
+			unknownData = new HashMap<String, String>();
+		unknownData.put(key, value);
+	}
+	
+	public void realizeTemplate(StructureDefinition def)
+	{
+		if(unknownData == null)
+			return;
+		
+		log.info("Realizing unknown structure " + dref.getName() + " as " + def.getClassname());
+		
+		StructureDefinition oldTemplate = template;
+		template = def;
+		dref.setIcon(template.getSmallIcon());
+		
+		for(StructureField f : template.getFields())
+		{
+			Object value = f.getType().decode("");
+			fieldData.put(f, value);
+			enabledFields.put(f, !f.isOptional());
+			pcs.firePropertyChange(f.getVarname(), null, value);
+			log.debug(dref.getName() + "::" + f.getVarname() + "=" + " -> " + value + " (init by string)");
+		}
+		
+		for(StructureField f : getFields())
+		{
+			setPropertyFromString(f, unknownData.remove(f.getVarname()));
+			setPropertyEnabled(f, true);
+		}
+		if(unknownData.isEmpty())
+			unknownData = null;
+		
+		allStructures.get(oldTemplate).remove(this);
+		allStructures.get(template).add(this);
 	}
 }

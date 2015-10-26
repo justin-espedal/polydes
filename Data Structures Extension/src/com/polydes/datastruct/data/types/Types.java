@@ -2,9 +2,17 @@ package com.polydes.datastruct.data.types;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import com.polydes.datastruct.Blocks;
+import com.polydes.datastruct.data.core.HaxeField;
+import com.polydes.datastruct.data.structure.Structure;
+import com.polydes.datastruct.data.structure.StructureDefinition;
+import com.polydes.datastruct.data.structure.StructureDefinitions;
+import com.polydes.datastruct.data.structure.Structures;
+import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.types.builtin.UnknownDataType;
 import com.polydes.datastruct.data.types.builtin.basic.ArrayType;
 import com.polydes.datastruct.data.types.builtin.basic.BoolType;
 import com.polydes.datastruct.data.types.builtin.basic.DynamicType;
@@ -16,9 +24,9 @@ import com.polydes.datastruct.data.types.builtin.extra.ExtrasImageType;
 import com.polydes.datastruct.data.types.builtin.extra.IControlType;
 import com.polydes.datastruct.data.types.builtin.extra.SelectionType;
 import com.polydes.datastruct.data.types.builtin.extra.SetType;
+import com.polydes.datastruct.data.types.general.HaxeObjectType;
 import com.polydes.datastruct.data.types.general.StencylResourceType;
 import com.polydes.datastruct.data.types.hidden.DataTypeType;
-import com.polydes.datastruct.utils.DelayedInitialize;
 
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.engine.sound.ISoundClip;
@@ -28,8 +36,9 @@ import stencyl.sw.data.EditableTileset;
 
 public class Types
 {
-	public static HashMap<String, DataType<?>> typeFromXML = new LinkedHashMap<String, DataType<?>>();
-	public static ArrayList<DataType<?>> changedTypes = new ArrayList<DataType<?>>();
+	public static HashMap<String, DataType<?>> typeFromXML = new LinkedHashMap<>();
+	public static HashSet<DataType<?>> addedTypes = new HashSet<>();
+	public static HashSet<DataType<?>> removedTypes = new HashSet<>();
 	
 	//===
 	
@@ -50,8 +59,24 @@ public class Types
 	
 	//===
 	
+	private static boolean initialized;
+	
+	public static boolean isInitialized()
+	{
+		return initialized;
+	}
+	
+	public static void initialize()
+	{
+		addBasicTypes();
+	}
+	
 	public static void addBasicTypes()
 	{
+		if(initialized)
+			return;
+		initialized = true;
+		
 		//Basic
 		addType(_Array);
 		addType(_Bool);
@@ -86,55 +111,102 @@ public class Types
 	
 	public static void addType(DataType<?> type)
 	{
-		addType(type, false);
+		if(isUnknown(type.haxeType))
+			realizeUnknown(type.haxeType, type);
+		else
+			addType(type, false);
 	}
 	
 	public static void removeType(DataType<?> type)
 	{
 		typeFromXML.remove(type.haxeType);
 		
-		changedTypes.add(type);
+		removedTypes.add(type);
 	}
 	
 	public static void addType(DataType<?> type, boolean hidden)
 	{
+		//Catch anything holding unknown types that have already been realized.
+		if(type instanceof HaxeObjectType)
+			for(HaxeField f : ((HaxeObjectType) type).getDef().fields)
+				if(f.type instanceof UnknownDataType && !isUnknown(f.type.haxeType))
+					f.type = typeFromXML.get(f.type.haxeType);
+		
 		typeFromXML.put(type.haxeType, type);
 		
-		changedTypes.add(type);
+		addedTypes.add(type);
 	}
 	
 	public static void dispose()
 	{
 		typeFromXML.clear();
+		addedTypes.clear();
+		removedTypes.clear();
+		unknownTypes.clear();
+		initialized = false;
 	}
 
-	public static void initNewTypeFields()
+	/*-------------------------------------*\
+	 * Unknown Data Types
+	\*-------------------------------------*/ 
+	
+	private static HashMap<String, UnknownDataType> unknownTypes = new HashMap<>();
+	
+	public static void addUnknown(String s)
 	{
-		for(DataType<?> type : typeFromXML.values())
-			DelayedInitialize.initPropPartial(type.haxeType, type, DelayedInitialize.CALL_FIELDS);
-	}
-
-	public static void initNewTypeMethods()
-	{
-		for(DataType<?> type : typeFromXML.values())
-			DelayedInitialize.initPropPartial(type.haxeType, type, DelayedInitialize.CALL_METHODS);
-	}
-
-	public static void finishInit()
-	{
-		DelayedInitialize.clearProps();
-		
-		for(DataType<?> type : changedTypes)
-			Blocks.addDesignModeBlocks(type);
-		
-		changedTypes.clear();
+		UnknownDataType newType = new UnknownDataType(s);
+		unknownTypes.put(s, newType);
+		addType(newType, false);
 	}
 	
-	public static void finishRemove()
+	public static boolean isUnknown(String s)
 	{
-		for(DataType<?> type : changedTypes)
-			Blocks.removeDesignModeBlocks(type);
+		return unknownTypes.containsKey(s);
+	}
+	
+	public static void realizeUnknown(String s, DataType<?> type)
+	{
+		UnknownDataType unknown = unknownTypes.remove(s);
 		
-		changedTypes.clear();
+		if(unknown == null)
+			throw new IllegalArgumentException("There is no unknown type \"" + s + "\"");
+		
+		for(StructureDefinition def : StructureDefinitions.defMap.values())
+		{
+			ArrayList<StructureField> realizedFields = new ArrayList<>();
+			for(StructureField field : def.getFields())
+			{
+				if(field.getType() == unknown)
+				{
+					field.realizeType(type);
+					realizedFields.add(field);
+				}
+			}
+			for(Structure struct : Structures.structures.get(def))
+				for(StructureField field : realizedFields)
+					struct.setPropertyFromString(field, (String) struct.getProperty(field));
+		}
+		
+		for(DataType<?> t : typeFromXML.values())
+			if(t instanceof HaxeObjectType)
+				for(HaxeField f : ((HaxeObjectType) t).getDef().fields)
+					if(f.type == unknown)
+						f.type = type;
+		
+		addType(type, false);
+	}
+	
+	/*-------------------------------------*\
+	 * Delayed Initialization
+	\*-------------------------------------*/ 
+	
+	public static void resolveChanges()
+	{
+		for(DataType<?> type : addedTypes)
+			if(!removedTypes.contains(type))
+				Blocks.addDesignModeBlocks(type);
+		for(DataType<?> type : removedTypes)
+			if(!addedTypes.contains(type))
+				Blocks.removeDesignModeBlocks(type);
 	}
 }

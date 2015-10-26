@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
@@ -17,23 +19,7 @@ import com.polydes.datastruct.io.Text;
 
 public class Structures
 {
-	public static class MissingStructureDefinitionException extends Exception
-	{
-		String name;
-		String type;
-		
-		public MissingStructureDefinitionException(String name, String type)
-		{
-			this.name = name;
-			this.type = type;
-		}
-		
-		@Override
-		public String getMessage()
-		{
-			return "Can't load structure " + name + ": missing definition \"" + type + "\"";
-		}
-	}
+	private static final Logger log = Logger.getLogger(Structures.class);
 	
 	private static int nextID = 0;
 	private static Structures _instance;
@@ -59,11 +45,9 @@ public class Structures
 	
 	//Deepload: The second pass reads in the key-value pairs, which might include refs to other structures.
 	
-	//TODO: The two-pass loading mechanism can be replaced by a promise system.
-	
 	private HashMap<String, HashMap<String, String>> fmaps;
 	
-	public void load(File folder) throws MissingStructureDefinitionException
+	public void load(File folder)
 	{
 		fmaps = new HashMap<String, HashMap<String,String>>();
 		
@@ -87,7 +71,7 @@ public class Structures
 		fmaps = null;
 	}
 	
-	public void lightload(File file) throws MissingStructureDefinitionException
+	public void lightload(File file)
 	{
 		if(!file.exists())
 			return;
@@ -110,8 +94,12 @@ public class Structures
 			
 			StructureDefinition template = StructureDefinitions.defMap.get(type);
 			if(template == null)
-				throw new MissingStructureDefinitionException(name, type);
-				
+			{
+				log.error("Couldn't find definition of type: " + type);
+				StructureDefinitions.createUnknownDefinition(type);
+				template = StructureDefinitions.defMap.get(type);
+			}
+			
 			Structure model = new Structure(id, name, template);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
@@ -139,12 +127,17 @@ public class Structures
 			HashMap<String, String> map = fmaps.get(file.getAbsolutePath());
 			Structure model = structuresByID.get(Integer.parseInt(map.remove("struct_id")));
 			
-			for(String key : map.keySet())
+			boolean unknown = model.getTemplate().isUnknown();
+			
+			for(Entry<String, String> entry : map.entrySet())
 			{
-				StructureField f = model.getField(key);
-				if(f == null)
+				StructureField f = model.getField(entry.getKey());
+				if(f == null || unknown)
+				{
+					model.setUnknownProperty(entry.getKey(), entry.getValue());
 					continue;
-				model.setPropertyFromString(f, map.get(key));
+				}
+				model.setPropertyFromString(f, entry.getValue());
 				model.setPropertyEnabled(f, true);
 			}
 			
@@ -198,12 +191,17 @@ public class Structures
 			ArrayList<String> toWrite = new ArrayList<String>();
 			toWrite.add("struct_id=" + s.getID());
 			toWrite.add("struct_type=" + s.getTemplate().getClassname());
+			
 			for(StructureField field : s.getFields())
 			{
 				if(field.isOptional() && !s.isPropertyEnabled(field))
 					continue;
 				toWrite.add(field.getVarname() + "=" + field.getType().checkEncode(s.getProperty(field)));
 			}
+			if(s.getUnknownData() != null)
+				for(Entry<String, String> entry : s.getUnknownData().entrySet())
+					toWrite.add(entry.getKey() + "=" + entry.getValue());
+			
 			FileUtils.writeLines(new File(file, item.getName()), toWrite);
 		}
 	}

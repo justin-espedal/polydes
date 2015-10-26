@@ -17,16 +17,17 @@ import org.w3c.dom.Element;
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.Structure;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.Structure;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.UpdateListener;
+import com.polydes.datastruct.data.types.builtin.UnknownDataType;
 import com.polydes.datastruct.data.types.builtin.extra.ColorType;
 import com.polydes.datastruct.data.types.builtin.extra.ColorType.ColorEditor;
 import com.polydes.datastruct.data.types.general.StructureType;
@@ -40,7 +41,6 @@ import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.utils.Layout;
-import com.polydes.datastruct.utils.DelayedInitialize;
 
 public class StructureField extends SDE
 {
@@ -61,8 +61,7 @@ public class StructureField extends SDE
 		this.label = label;
 		this.hint = hint;
 		this.optional = optional;
-		if(type != null)
-			this.extras = type.loadExtras(extras);
+		this.extras = type.loadExtras(extras);
 	}
 	
 	public StructureDefinition getOwner()
@@ -143,6 +142,14 @@ public class StructureField extends SDE
 		owner.setFieldType(this, type);
 	}
 	
+	public void realizeType(DataType<?> type)
+	{
+		if(!(this.type instanceof UnknownDataType))
+			throw new IllegalStateException("Cannot realize a field that already knows its type.");
+		this.extras = type.loadExtras(((UnknownDataType) this.type).saveExtras(extras));
+		this.type = type;
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -218,12 +225,12 @@ public class StructureField extends SDE
 			ExtrasMap emap = new ExtrasMap();
 			emap.putAll(map);
 			
-			//DataType<?> dtype = Types.fromXML(type);
-			StructureField toAdd = new StructureField(model, name, null, label, hint, optional, emap);
-			model.addField(toAdd);
+			if(!Types.typeFromXML.containsKey(type))
+				Types.addUnknown(type);
+			DataType<?> dtype = Types.fromXML(type);
 			
-			DelayedInitialize.addObject(toAdd, "type", type);
-			DelayedInitialize.addMethod(toAdd, "loadExtras", new Object[]{emap}, type);
+			StructureField toAdd = new StructureField(model, name, dtype, label, hint, optional, emap);
+			model.addField(toAdd);
 			
 			return toAdd;
 		}

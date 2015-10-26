@@ -22,6 +22,7 @@ import com.polydes.datastruct.data.types.general.StructureType;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.io.read.StructureDefinitionReader;
 import com.polydes.datastruct.io.write.StructureDefinitionWriter;
+import com.polydes.datastruct.res.Resources;
 
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
@@ -89,6 +90,8 @@ public class StructureDefinitions
 		}
 	}
 	
+	//If the definition already exists as an unknown definition,
+	//it will simply have its data set
 	public static StructureDefinition loadDefinition(File fsfile)
 	{
 		String fname = fsfile.getName();
@@ -97,9 +100,15 @@ public class StructureDefinitions
 			return null;
 		
 		String defname = fname.substring(0, fname.length() - 4);
-		
 		Element structure = XML.getFile(fsfile.getAbsolutePath());
-		StructureDefinition def = new StructureDefinition(defname, structure.getAttribute("classname"));
+		String classname = structure.getAttribute("classname");
+		
+		StructureDefinition def = defMap.containsKey(classname) ?
+			defMap.get(classname) :
+			new StructureDefinition(defname, classname);
+		if(def.isUnknown())
+			def.realize(defname, classname);
+		
 		StructureDefinitionReader.read(structure, def);
 		
 		File parent = fsfile.getParentFile();
@@ -107,8 +116,6 @@ public class StructureDefinitions
 		File haxeFile = new File(parent, defname + ".hx");
 		if(haxeFile.exists())
 			def.customCode = Text.readString(haxeFile);
-		else
-			def.customCode = "";
 		
 		try
 		{
@@ -119,8 +126,21 @@ public class StructureDefinitions
 			System.out.println("Couldn't load icon for Structure Definition " + def.getName());
 		}
 		
-		addDefinition(def);
+		if(!defMap.containsKey(classname))
+			addDefinition(def);
 		
+		return def;
+	}
+	
+	public static StructureDefinition createUnknownDefinition(String name)
+	{
+		StructureDefinition def = StructureDefinition.newUnknown(name);
+		try
+		{
+			def.setImage(ImageIO.read(Resources.getUrl("question-32.png")));
+		}
+		catch (IOException e){}
+		addDefinition(def);
 		return def;
 	}
 	
@@ -130,52 +150,6 @@ public class StructureDefinitions
 		Structures.structures.put(def, new ArrayList<Structure>());
 		Types.addType(new StructureType(def));
 	}
-	
-	/*
-	public static void addDesignModeBlocks(StructureDefinition def)
-	{
-		for(StructureField field : def.getFields())
-		{
-			String spec = String.format("set %s for %s %%0 to %%1", field.label, def.label);
-			
-			Definition blockDef = new Definition
-			(
-				Definition.Category.CUSTOM,
-				String.format("ds-%s-set-%s", def.name, field.name),
-				new Type[] { Definition.Type.OBJECT, Definition.getTypeFromString(Types.fromXML(field.type).stencylType) },
-				new BasicCodeMap().setCode(CodeMap.HX, String.format("~.%s = ~;", field.name)),
-				spec,
-				Block.BlockType.ACTION,
-				Definition.Type.VOID
-			);
-			
-			blockDef.guiTemplate = spec;
-			blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
-			
-			Definitions.get().put(blockDef.tag, blockDef);
-			tagCache.add(blockDef.tag);
-			
-			spec = String.format("get %s for %s %%0", field.label, def.label);
-			
-			blockDef = new Definition
-			(
-				Definition.Category.CUSTOM,
-				String.format("ds-%s-get-%s", def.name, field.name),
-				new Type[] { Definition.Type.OBJECT },
-				new BasicCodeMap().setCode(CodeMap.HX, String.format("~.%s", field.name)),
-				spec,
-				Block.BlockType.NORMAL,
-				Definition.getTypeFromString(Types.fromXML(field.type).stencylType)
-			);
-			
-			blockDef.guiTemplate = spec;
-			blockDef.customBlockTheme = BlockTheme.THEMES.get("blue");
-			
-			Definitions.get().put(blockDef.tag, blockDef);
-			tagCache.add(blockDef.tag);
-		}
-	}
-	*/
 	
 	public void saveChanges() throws IOException
 	{

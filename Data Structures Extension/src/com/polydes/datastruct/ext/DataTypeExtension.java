@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.polydes.datastruct.data.types.DataType;
+import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.general.HaxeObjectType;
 import com.polydes.datastruct.io.read.HaxeObjectDefinitionReader;
 
@@ -25,6 +26,8 @@ public interface DataTypeExtension
 	
 	public static DataType<?> readType(String path)
 	{
+		if(!Types.isInitialized())
+			Types.initialize();
 		return new HaxeObjectType(HaxeObjectDefinitionReader.read(path));
 	}
 }
