@@ -23,6 +23,8 @@ import com.polydes.dialog.data.def.elements.StructureExtension.ExtensionType;
 import com.polydes.dialog.data.stores.Dialog;
 import com.polydes.dialog.data.stores.Macros;
 import com.polydes.dialog.defaults.Defaults;
+import com.polydes.dialog.updates.V5_GameExtensionUpdate;
+import com.polydes.dialog.updates.V6_ExtensionSubmodules;
 
 import stencyl.core.lib.Game;
 import stencyl.sw.ext.GameExtension;
@@ -112,13 +114,10 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void updateFromVersion(int fromVersion)
 	{
-		if(fromVersion <= 4)
-		{
-			File oldExtrasFolder = new File(Locations.getGameLocation(getGame()) + "extras/[ext] dialog");
-			
-			FileHelper.copyDirectory(oldExtrasFolder, getExtrasFolder());
-			FileHelper.delete(oldExtrasFolder);
-		}
+		if(fromVersion < 5)
+			new V5_GameExtensionUpdate().run();
+		if(fromVersion < 6)
+			new V6_ExtensionSubmodules().run();
 	}
 	
 	private void loadDefaults()
