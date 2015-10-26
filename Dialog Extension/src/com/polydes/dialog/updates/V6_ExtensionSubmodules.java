@@ -8,11 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.ext.ExtensionInterface;
 import com.polydes.common.util.Lang;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
+import com.polydes.datastruct.data.structure.StructureFolder;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.updates.TypenameUpdater;
@@ -175,6 +177,9 @@ public class V6_ExtensionSubmodules implements Runnable
 				"ScalingImage", "dialog.ds.ScalingImageTemplate"
 			));
 			tu.convert();
+			
+			DataStructuresExtension.forceUpdateData = true;
+			DataStructuresExtension.get().onGameSave(Game.getGame());
 		});
 	}
 	
@@ -204,7 +209,7 @@ public class V6_ExtensionSubmodules implements Runnable
 		{
 			Folder f = (Folder) item;
 			if(f.getItemByName(pathPart) == null)
-				f.addItem(new Folder(pathPart));
+				f.addItem(new StructureFolder(pathPart));
 			
 			item = (DataItem) f.getItemByName(pathPart);
 		}
