@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
+import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
@@ -286,13 +287,16 @@ public class Structure extends EditableObject
 		
 		for(StructureField f : getFields())
 		{
-			setPropertyFromString(f, unknownData.remove(f.getVarname()));
-			setPropertyEnabled(f, true);
+			Object o = unknownData.remove(f.getVarname());
+			setPropertyFromString(f, Lang.or((String) o, ""));
+			setPropertyEnabled(f, o != null || !f.isOptional());
 		}
 		if(unknownData.isEmpty())
 			unknownData = null;
 		
 		allStructures.get(oldTemplate).remove(this);
 		allStructures.get(template).add(this);
+		
+		disposeEditor();
 	}
 }

@@ -112,7 +112,7 @@ public class StructureType extends DataType<Structure>
 				log.warn("Couldn't load structure with id " + s + ". It no longer exists.");
 				return null;
 			}
-			if(model.getTemplate() != def)
+			if(model.getTemplate() != def && !model.getTemplate().isUnknown() && !def.isUnknown())
 			{
 				log.warn("Couldn't load structure with id " + s + " as type " + def.getName());
 				return null;
