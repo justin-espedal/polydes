@@ -251,11 +251,6 @@ public class DataStructuresExtension extends GameExtension
 					try{FileUtils.copyDirectory(temp, saveTo);}catch(IOException e){e.printStackTrace();}
 				}
 			}
-			
-			DataStructuresExtension.sourceDir = Locations.getPath(Locations.getHXProjectDir(getGame()), "Source");
-			
-			File out = new File(Locations.getPath(Locations.getHXProjectDir(getGame()), "Assets", "data"), "MyDataStructures.txt");
-			Text.writeLines(out, HXGenerator.generateFileList(saveTo));
 		}
 	}
 	
@@ -264,6 +259,11 @@ public class DataStructuresExtension extends GameExtension
 	{
 		if(initialized)
 		{
+			sourceDir = Locations.getPath(Locations.getHXProjectDir(getGame()), "Source");
+			
+			File dataList = new File(Locations.getPath(Locations.getHXProjectDir(getGame()), "Assets", "data"), "MyDataStructures.txt");
+			Text.writeLines(dataList, HXGenerator.generateFileList(new File(getExtrasFolder(), "data")));
+			
 			write("com.polydes.datastruct.DataStructureReader", HXGenerator.generateReader());
 			for(DataType<?> type : Types.typeFromXML.values())
 			{
@@ -313,6 +313,7 @@ public class DataStructuresExtension extends GameExtension
 			new V3_GameExtensionUpdate().run();
 		if(fromVersion < 4)
 			new V4_FullTypeNamesUpdate().run();
+		forceUpdateData = true;
 	}
 	
 	@Override
