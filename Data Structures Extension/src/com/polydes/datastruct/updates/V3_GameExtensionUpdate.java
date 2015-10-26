@@ -19,8 +19,8 @@ public class V3_GameExtensionUpdate implements Runnable
 		File oldExtrasDefsFolder = new File(oldExtrasFolder, "defs");
 		File oldExtrasDataFolder = new File(oldExtrasFolder, "data");
 		
-		File newExtrasDataFolder = new File(Locations.getExtensionExtrasDataLocation(Game.getGame(), dse.getManifest().id), "data");
-		File newExtrasDefsFolder = new File(Locations.getExtensionGameDataLocation(Game.getGame(), dse.getManifest().id), "defs");
+		File newExtrasDataFolder = new File(dse.getExtrasFolder(), "data");
+		File newExtrasDefsFolder = new File(dse.getDataFolder(), "defs");
 		
 		FileHelper.copyDirectory(oldExtrasDataFolder, newExtrasDataFolder);
 		FileHelper.copyDirectory(oldExtrasDefsFolder, newExtrasDefsFolder);

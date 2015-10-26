@@ -2,7 +2,6 @@ package com.polydes.datastruct.updates;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -12,11 +11,8 @@ import org.w3c.dom.NodeList;
 import com.polydes.common.io.XML;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.io.Text;
 
-import stencyl.core.lib.Game;
 import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Locations;
 import stencyl.sw.util.VerificationHelper;
 
 public class V4_FullTypeNamesUpdate implements Runnable
@@ -27,10 +23,11 @@ public class V4_FullTypeNamesUpdate implements Runnable
 	public void run()
 	{
 		DataStructuresExtension dse = DataStructuresExtension.get();
-		File data = new File(Locations.getExtensionExtrasDataLocation(Game.getGame(), dse.getManifest().id), "data");
-		File defs = new File(Locations.getExtensionGameDataLocation(Game.getGame(), dse.getManifest().id), "defs");
+		File data = new File(dse.getExtrasFolder(), "data");
+		File defs = new File(dse.getDataFolder(), "defs");
 		
-		HashMap<String, String> typeBackMap = Lang.hashmap(
+		TypenameUpdater tu = new TypenameUpdater();
+		tu.addTypes(Lang.hashmap(
 			"Boolean", "Bool",
 			"Color", "com.polydes.datastruct.Color",
 			"Control", "com.polydes.datastruct.Control",
@@ -42,7 +39,7 @@ public class V4_FullTypeNamesUpdate implements Runnable
 			"Font", "com.stencyl.models.Font",
 			"Sound", "com.stencyl.models.Sound",
 			"Tileset", "com.stencyl.models.scene.Tileset"
-		);
+		));
 		for(File xmlFile : FileHelper.listFiles(defs, "xml"))
 		{
 			String name = xmlFile.getName();
@@ -51,7 +48,7 @@ public class V4_FullTypeNamesUpdate implements Runnable
 			{
 				Document doc = FileHelper.readXMLFromFile(xmlFile);
 				String classname = doc.getDocumentElement().getAttribute("classname");
-				typeBackMap.put(name, classname);
+				tu.addType(name, classname);
 			}
 			catch (IOException e)
 			{
@@ -64,15 +61,9 @@ public class V4_FullTypeNamesUpdate implements Runnable
 			{
 				Document doc = FileHelper.readXMLFromFile(xmlFile);
 				
-				NodeList nl = doc.getElementsByTagName("field");
-				for(int i = 0; i < nl.getLength(); ++i)
-				{
-					Element e = (Element) nl.item(i);
-					String type = e.getAttribute("type");
-					e.setAttribute("type", Lang.or(typeBackMap.get(type), type));
-				}
+				tu.applyToDocument(doc);
 				
-				nl = doc.getElementsByTagName("if");
+				NodeList nl = doc.getElementsByTagName("if");
 				for(int i = 0; i < nl.getLength(); ++i)
 				{
 					Element e = (Element) nl.item(i);
@@ -99,10 +90,7 @@ public class V4_FullTypeNamesUpdate implements Runnable
 			if(dataFile.getName().endsWith(".txt"))
 				continue;
 			
-			HashMap<String, String> props = Text.readKeyValues(dataFile);
-			String type = props.get("struct_type");
-			props.put("struct_type", Lang.or(typeBackMap.get(type), type));
-			Text.writeKeyValues(dataFile, props);
+			tu.applyToData(dataFile);
 		}
 	}
 	
