@@ -212,5 +212,12 @@ public class StructureExtension extends SDE
 			Card subcard = ((RowGroup) gui).getSubcard();
 			sheet.style.setDescription((JLabel) subcard.rows[0].rows[1].components[1], value.description);
 		}
+		
+		@Override
+		public void genCode(StructureExtension value, StringBuilder builder)
+		{
+			builder.append("\tpublic var resolveMe:").append(value.implementation).append(";\n");
+			builder.append("\tpublic var implementation:String = \"").append(value.implementation).append("\";\n");
+		}
 	}
 }
