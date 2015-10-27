@@ -310,7 +310,7 @@ public class SetType extends BuiltinType<DataSet>
 		return emap;
 	}
 	
-	class Extras extends ExtraProperties
+	public class Extras extends ExtraProperties
 	{
 		public Editor editor;
 		public SourceType sourceType;
@@ -324,7 +324,7 @@ public class SetType extends BuiltinType<DataSet>
 		Grid*/
 	}
 	
-	enum SourceType
+	public enum SourceType
 	{
 		Structure,
 		Resource,

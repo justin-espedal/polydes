@@ -36,7 +36,7 @@ public class DataTypeType extends HiddenType<DataType>
 	@Override
 	public DataType decode(String s)
 	{
-		return Types.fromXML(s);
+		return Types.tryToGetFromString(s);
 	}
 
 	@Override

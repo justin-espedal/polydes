@@ -152,6 +152,13 @@ public class Types
 	
 	private static HashMap<String, UnknownDataType> unknownTypes = new HashMap<>();
 	
+	public static DataType<?> tryToGetFromString(String s)
+	{
+		if(!typeFromXML.containsKey(s))
+			addUnknown(s);
+		return typeFromXML.get(s);
+	}
+	
 	public static void addUnknown(String s)
 	{
 		UnknownDataType newType = new UnknownDataType(s);
@@ -180,6 +187,37 @@ public class Types
 				{
 					field.realizeType(type);
 					realizedFields.add(field);
+				}
+				if(field.getType() == _Array)
+				{
+					/*
+					 * TODO: Really specific checks like this are kind of annoying.
+					 * Eventually, it might be better for everything that's waiting
+					 * for an unknown type to be registered, along with a function to
+					 * do any data initialization. A lot like the previous DelayedInitialize
+					 * system!
+					 * 
+					 * Plus this kinda breaks encapsulation. I had to make these public:
+					 * - ArrayType.Extras
+					 * - SetType.Extras
+					 * - SetType.SourceType
+					 */
+					
+					ArrayType.Extras ex = (ArrayType.Extras) field.getExtras();
+					
+					if(ex.genType == unknown)
+					{
+						if(ex.genTypeExtras != null)
+							ex.genTypeExtras = type.loadExtras(unknown.saveExtras(ex.genTypeExtras));
+						ex.genType = type;
+					}
+				}
+				else if(field.getType() == _Set)
+				{
+					SetType.Extras ex = (SetType.Extras) field.getExtras();
+					
+					if(ex.sourceType == SetType.SourceType.Structure && ex.source == unknown)
+						ex.source = type;
 				}
 			}
 			for(Structure struct : Structures.structures.get(def))

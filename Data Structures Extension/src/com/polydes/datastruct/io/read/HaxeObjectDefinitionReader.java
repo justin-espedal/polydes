@@ -34,9 +34,7 @@ public class HaxeObjectDefinitionReader
 				}
 			}
 			
-			if(!Types.typeFromXML.containsKey(type))
-				Types.addUnknown(type);
-			DataType<?> dtype = Types.fromXML(type);
+			DataType<?> dtype = Types.tryToGetFromString(type);
 			
 			HaxeField hf = new HaxeField(name, dtype, editorData);
 			

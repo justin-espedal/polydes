@@ -224,15 +224,24 @@ public class StructureField extends SDE
 			boolean optional = take(map, "optional").equals("true");
 			ExtrasMap emap = new ExtrasMap();
 			emap.putAll(map);
+			if(e.hasChildNodes())
+				XML.children(e).forEach((child) -> emap.put(child.getTagName(), readExtrasFromElement(child)));
 			
-			if(!Types.typeFromXML.containsKey(type))
-				Types.addUnknown(type);
-			DataType<?> dtype = Types.fromXML(type);
+			DataType<?> dtype = Types.tryToGetFromString(type);
 			
 			StructureField toAdd = new StructureField(model, name, dtype, label, hint, optional, emap);
 			model.addField(toAdd);
 			
 			return toAdd;
+		}
+		
+		public static ExtrasMap readExtrasFromElement(Element e)
+		{
+			ExtrasMap emap = new ExtrasMap();
+			emap.putAll(XML.readMap(e));
+			if(e.hasChildNodes())
+				XML.children(e).forEach((child) -> emap.put(child.getTagName(), readExtrasFromElement(child)));
+			return emap;
 		}
 		
 		@Override
@@ -250,14 +259,23 @@ public class StructureField extends SDE
 			DataType<?> dtype = f.getType();
 			ExtrasMap emap = dtype.saveExtras(f.getExtras());
 			if(emap != null)
-			{
-				for(Entry<String,String> entry : emap.entrySet())
-				{
-					e.setAttribute(entry.getKey(), entry.getValue());
-					//e.setAttribute(field.getName(), StringEscapeUtils.escapeXml10(writeValue));
-				}
-			}
+				writeExtrasToElement(doc, e, emap);
 			return e;
+		}
+		
+		public static void writeExtrasToElement(Document doc, Element e, ExtrasMap emap)
+		{
+			for(Entry<String,Object> entry : emap.entrySet())
+			{
+				if(entry.getValue() instanceof ExtrasMap)
+				{
+					Element child = doc.createElement(entry.getKey());
+					writeExtrasToElement(doc, child, (ExtrasMap) entry.getValue());
+					e.appendChild(child);
+				}
+				else
+					e.setAttribute(entry.getKey(), (String) entry.getValue());
+			}
 		}
 		
 		private String take(HashMap<String, String> map, String name)

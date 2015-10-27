@@ -47,7 +47,7 @@ public class ArrayType extends BuiltinType<DataList>
 		if(e.editor.equals(Editor.Simple))
 			return new SimpleArrayEditor(style, e.genType);
 		else //if(editorType.equals("Standard"))
-			return new StandardArrayEditor(e.genType);
+			return new StandardArrayEditor(e.genType, e.genTypeExtras);
 	}
 
 	@Override
@@ -161,6 +161,8 @@ public class ArrayType extends BuiltinType<DataList>
 		Extras e = new Extras();
 		e.editor = extras.get(EDITOR, Editor.Standard);
 		e.genType = extras.get("genType", Types._DataType, Types._String);
+		if(extras.containsKey("genTypeExtras"))
+			e.genTypeExtras = e.genType.loadExtras(extras.getMap("genTypeExtras"));
 		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Array, null);
 		return e;
 	}
@@ -177,10 +179,11 @@ public class ArrayType extends BuiltinType<DataList>
 		return emap;
 	}
 	
-	class Extras extends ExtraProperties
+	public class Extras extends ExtraProperties
 	{
 		public Editor editor;
 		public DataType<?> genType;
+		public ExtraProperties genTypeExtras;
 		public DataList defaultValue;
 		
 		@Override
@@ -270,11 +273,11 @@ public class ArrayType extends BuiltinType<DataList>
 		DataListEditor editor;
 		DataType<?> genType;
 		
-		public StandardArrayEditor(DataType<?> genType)
+		public StandardArrayEditor(DataType<?> genType, ExtraProperties genTypeExtras)
 		{
 			this.genType = genType;
 			
-			editor = new DataListEditor(null);
+			editor = new DataListEditor(null, genTypeExtras);
 			
 			editor.addActionListener(new ActionListener()
 			{

@@ -2,11 +2,11 @@ package com.polydes.datastruct.data.types;
 
 import java.util.HashMap;
 
-public class ExtrasMap extends HashMap<String, String>
+public class ExtrasMap extends HashMap<String, Object>
 {
 	public <T> T get(String key, DataType<T> type, T defaultValue)
 	{
-		String s = get(key);
+		String s = (String) get(key);
 		if(s == null)
 			return defaultValue;
 		else
@@ -15,7 +15,7 @@ public class ExtrasMap extends HashMap<String, String>
 	
 	public <T> T get(String key, DataType<T> type)
 	{
-		String s = get(key);
+		String s = (String) get(key);
 		if(s == null)
 			return null;
 		else
@@ -24,8 +24,13 @@ public class ExtrasMap extends HashMap<String, String>
 	
 	public String get(String key, String defaultValue)
 	{
-		String s = get(key);
+		String s = (String) get(key);
 		return (s == null) ? defaultValue : s;
+	}
+	
+	public ExtrasMap getMap(String key)
+	{
+		return (ExtrasMap) get(key);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -36,7 +41,7 @@ public class ExtrasMap extends HashMap<String, String>
 		
 		try
 		{
-			return (T) Enum.valueOf(enm.getClass(), get(key));
+			return (T) Enum.valueOf(enm.getClass(), (String) get(key));
 		}
 		catch(IllegalArgumentException ex)
 		{

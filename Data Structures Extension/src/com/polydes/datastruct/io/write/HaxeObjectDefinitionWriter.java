@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.core.HaxeField;
 import com.polydes.datastruct.data.core.HaxeObjectDefinition;
+import com.polydes.datastruct.data.structure.elements.StructureField.FieldType;
 
 import stencyl.sw.util.FileHelper;
 
@@ -31,7 +31,7 @@ public class HaxeObjectDefinitionWriter
 			if(!hf.editorData.isEmpty())
 			{
 				Element editor = doc.createElement("editor");
-				XML.writeMap(editor, hf.editorData);
+				FieldType.writeExtrasToElement(doc, editor, hf.editorData);
 				field.appendChild(editor);
 			}
 			fields.appendChild(field);
