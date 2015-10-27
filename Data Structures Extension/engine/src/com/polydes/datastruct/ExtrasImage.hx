@@ -5,7 +5,7 @@ import openfl.Assets;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
 
-abstract ExtrasImage(BitmapData)
+abstract ExtrasImage(BitmapData) from BitmapData to BitmapData
 {
 	inline public function new(bmp:BitmapData)
 	{

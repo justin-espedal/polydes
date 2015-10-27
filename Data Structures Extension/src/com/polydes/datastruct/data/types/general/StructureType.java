@@ -80,7 +80,12 @@ public class StructureType extends DataType<Structure>
 	
 	private String getType(StructureField f)
 	{
+		//TODO: Formalize type parameters again instead of handling it explicitly
 		String type = f.getType().haxeType;
+		if(type.equals("Array"))
+			type = "Array<Dynamic>";
+		else if(type.equals("Set"))
+			type = "Set<Dynamic>";
 		if(f.isOptional())
 			return "Null<" + type + ">";
 		else
@@ -90,7 +95,7 @@ public class StructureType extends DataType<Structure>
 	@Override
 	public List<String> generateHaxeReader()
 	{
-		return Lang.arraylist("registerStructureReader(\"" + haxeType + "\");");
+		return Lang.arraylist("StringData.registerStructureReader(\"" + haxeType + "\");");
 	}
 
 	@Override

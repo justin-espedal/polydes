@@ -7,7 +7,7 @@ using Lambda;
 
 class StringData
 {
-	public static var readers:Map<String, String->Dynamic> = [];
+	public static var readers:Map<String, String->Dynamic> = new Map<String, String->Dynamic>();
 
 	public static function registerReader(type:String, reader:String->Dynamic):Void
 	{
@@ -63,7 +63,7 @@ class StringData
 		var char:String;
 		var k:Int = 0;
 		var commas:Array<Int> = [];
-		for(j in 1...i)
+		for(j in 1...s.length)
 		{
 			char = s.charAt(j);
 			if(char == "[")
@@ -82,7 +82,7 @@ class StringData
 			a.push(StringData.read(s.substring(lastComma + 1, comma), types[curArg++]));
 			lastComma = comma;
 		}
-		a.push(StringData.read(s.substring(lastComma + 1, i - 1), types[curArg++]));
+		a.push(StringData.read(s.substring(lastComma + 1, s.length - 1), types[curArg++]));
 		
 		return a;
 	}
@@ -118,7 +118,7 @@ class StringData
 		var splitString:Array<String> = s.substring(1,s.length - 1).split(",");
 		var toReturn:Array<Int> = [];
 		for(sub in splitString)
-			toReturn.push(rInt(sub));
+			toReturn.push(readInt(sub));
 		return toReturn;
 	}
 

@@ -1,6 +1,6 @@
 package com.polydes.datastruct;
 
-abstract Control(String)
+abstract Control(String) from String to String
 {
 	inline public function new(s:String)
 	{

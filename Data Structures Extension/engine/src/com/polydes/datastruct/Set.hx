@@ -11,13 +11,13 @@ abstract Set<T>(Array<T>)
 
 	public function has(e:T):Bool
 	{
-		return a.has(e);
+		return this.has(e);
 	}
 
 	public function set(e:T):Void
 	{
-		if(!a.has(e))
-			a.push(e);
+		if(!this.has(e))
+			this.push(e);
 	}
 
 	public static function fromString(s:String):Set<Dynamic>

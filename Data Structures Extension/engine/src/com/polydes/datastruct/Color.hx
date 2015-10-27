@@ -1,6 +1,6 @@
 package com.polydes.datastruct;
 
-abstract Color(Int)
+abstract Color(Int) from Int to Int
 {
 	inline public function new(i:Int)
 	{
