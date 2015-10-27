@@ -12,8 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import stencyl.sw.util.Locations;
-
 import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
@@ -34,6 +32,8 @@ import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
+
+import stencyl.sw.util.Locations;
 
 public class StructureType extends DataType<Structure>
 {
@@ -112,7 +112,7 @@ public class StructureType extends DataType<Structure>
 				log.warn("Couldn't load structure with id " + s + ". It no longer exists.");
 				return null;
 			}
-			if(model.getTemplate() != def && !model.getTemplate().isUnknown() && !def.isUnknown())
+			if(!model.getTemplate().is(def) && !model.getTemplate().isUnknown() && !def.isUnknown())
 			{
 				log.warn("Couldn't load structure with id " + s + " as type " + def.getName());
 				return null;
@@ -203,6 +203,7 @@ public class StructureType extends DataType<Structure>
 		if(filterText != null)
 			e.sourceFilter = new StructureCondition(null, filterText);
 		e.defaultValue = extras.get(DEFAULT_VALUE, this, null);
+		e.allowSubclasses = extras.get("allowSubclasses", Types._Bool, false);
 		return e;
 	}
 	
@@ -215,6 +216,8 @@ public class StructureType extends DataType<Structure>
 			emap.put("sourceFilter", e.sourceFilter.getText());
 		if(e.defaultValue != null)
 			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
+		if(e.allowSubclasses)
+			emap.put("allowSubclasses", "true");
 		return emap;
 	}
 	
@@ -222,6 +225,7 @@ public class StructureType extends DataType<Structure>
 	{
 		public StructureCondition sourceFilter;
 		public Structure defaultValue;
+		public boolean allowSubclasses;
 		
 		@Override
 		public Object getDefault()
@@ -234,17 +238,16 @@ public class StructureType extends DataType<Structure>
 	{
 		private UpdatingCombo<Structure> editor;
 		
-		/**
-		 * @param e 
-		 * @param currentStructure
-		 */
 		public StructureEditor(Extras e, Structure currentStructure)
 		{
 			CollectionPredicate<Structure> filter =
-					e.sourceFilter == null ? null :
-					new StructurePredicate(e.sourceFilter, currentStructure);
+				e.sourceFilter == null ? null :
+				new StructurePredicate(e.sourceFilter, currentStructure);
 			
-			editor = new UpdatingCombo<Structure>(Structures.getList(def), filter);
+			if(e.allowSubclasses)
+				filter = CollectionPredicate.and(filter, (s) -> s.getTemplate().is(def));
+			
+			editor = new UpdatingCombo<Structure>(e.allowSubclasses ? Structures.structuresByID.values() : Structures.getList(def), filter);
 			
 			editor.addActionListener(new ActionListener()
 			{

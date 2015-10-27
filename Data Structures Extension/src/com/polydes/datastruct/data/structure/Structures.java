@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 
 import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
@@ -19,7 +18,7 @@ import com.polydes.datastruct.io.Text;
 
 public class Structures
 {
-	private static final Logger log = Logger.getLogger(Structures.class);
+//	private static final Logger log = Logger.getLogger(Structures.class);
 	
 	private static int nextID = 0;
 	private static Structures _instance;
@@ -92,14 +91,7 @@ public class Structures
 			String type = map.remove("struct_type");
 			nextID = Math.max(nextID, id + 1);
 			
-			StructureDefinition template = StructureDefinitions.defMap.get(type);
-			if(template == null)
-			{
-				log.error("Couldn't find definition of type: " + type);
-				StructureDefinitions.createUnknownDefinition(type);
-				template = StructureDefinitions.defMap.get(type);
-			}
-			
+			StructureDefinition template = StructureDefinitions.getFromString(type);
 			Structure model = new Structure(id, name, template);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
@@ -117,7 +109,7 @@ public class Structures
 			FolderInfo info = new FolderInfo(file);
 			ArrayList<String> order = info.getFileOrder();
 			if(info.containsKey("childType"))
-				newFolder.childType = StructureDefinitions.defMap.get(info.get("childType"));
+				newFolder.childType = StructureDefinitions.getFromString(info.get("childType"));
 			for(String fname : order)
 				deepload(newFolder, new File(file, fname));
 			folder.addItem(newFolder);

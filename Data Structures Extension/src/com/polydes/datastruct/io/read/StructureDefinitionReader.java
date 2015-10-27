@@ -8,6 +8,7 @@ import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
+import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.elements.StructureUnknown;
@@ -18,6 +19,8 @@ public class StructureDefinitionReader
 	
 	public static void read(Element root, StructureDefinition model)
 	{
+		if(root.hasAttribute("extends"))
+			model.parent = StructureDefinitions.getFromString(root.getAttribute("extends"));
 		readFields(root, model, model.guiRoot);
 	}
 	

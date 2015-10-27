@@ -62,6 +62,14 @@ public class StructureDefinitions
 		return _instance;
 	}
 	
+	//Use this to keep track of what might need updating when a StructureDefinition is realized.
+	public static StructureDefinition getFromString(String defType)
+	{
+		if(!defMap.containsKey(defType))
+			createUnknownDefinition(defType);
+		return defMap.get(defType);
+	}
+	
 	public void addFolder(File fsfolder, String name)
 	{
 		Folder newFolder = new Folder(name);

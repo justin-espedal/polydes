@@ -42,6 +42,8 @@ public class StructureDefinition extends EditableObject
 	public Folder guiRoot; //this is passed in from elsewhere.
 	private StructureDefinitionEditor editor;
 	
+	public StructureDefinition parent = null;
+	
 	public StructureDefinition(String name, String classname)
 	{
 		this.name = name;
@@ -331,6 +333,15 @@ public class StructureDefinition extends EditableObject
 		fields.put(name, f);
 	}
 	
+	/*-------------------------------------*\
+	 * Inheritence
+	\*-------------------------------------*/ 
+	
+	public boolean is(StructureDefinition def)
+	{
+		return this == def || (parent != null && parent.is(def));
+	}
+	
 	//===
 	
 	private boolean savedDefinitionDirtyState;
@@ -391,7 +402,7 @@ public class StructureDefinition extends EditableObject
 	\*-------------------------------------*/ 
 	
 	private boolean unknown;
-	
+
 	public boolean isUnknown()
 	{
 		return unknown;
