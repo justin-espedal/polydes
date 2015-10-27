@@ -40,6 +40,7 @@ import com.polydes.datastruct.data.core.DataList;
 import com.polydes.datastruct.data.core.Dynamic;
 import com.polydes.datastruct.data.types.DataEditor;
 import com.polydes.datastruct.data.types.DataType;
+import com.polydes.datastruct.data.types.ExtraProperties;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.data.types.builtin.basic.DynamicType;
@@ -58,16 +59,19 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 	private final ArrayList<ActionListener> extraListeners;
 	private final DataListEditorRenderer renderer;
 
+	private final ExtraProperties genTypeExtras;
+	
 	private final SAction newAction;
 	private final SAction deleteAction;
 	private final SAction upAction;
 	private final SAction downAction;
 
-	public DataListEditor(DataList model)
+	public DataListEditor(DataList model, ExtraProperties genTypeExtras)
 	{
 		setOpaque(false);
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
+		this.genTypeExtras = genTypeExtras;
 		listModel = new DefaultListModel<Object>();
 		renderer = new DataListEditorRenderer();
 		setList(model);
@@ -296,7 +300,11 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 			{
 				Object newItem = model.genType.decode("");
 				
-				DataEditor editor = model.genType.createEditor(new ExtrasMap(), PropertiesSheetStyle.DARK);
+				DataEditor editor = null;
+				if(genTypeExtras != null)
+					editor = model.genType.createEditor(genTypeExtras, PropertiesSheetStyle.DARK);
+				else
+					editor = model.genType.createEditor(new ExtrasMap(), PropertiesSheetStyle.DARK);
 				editor.setValue(newItem);
 				MiniDialog dg = new MiniDialog(Layout.horizontalBox(editor.getComponents()), "Add Item", 400, 100);
 				
