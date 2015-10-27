@@ -8,13 +8,17 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.polydes.common.collections.CollectionPredicate;
+import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.Structures;
@@ -56,12 +60,12 @@ public class StructureType extends DataType<Structure>
 		String fieldmap = "";
 		String variables = "";
 		String typeinfo = "";
-		typeinfo += String.format("\t\tm.set(\"name\", \"String\");%s", IOUtils.LINE_SEPARATOR_WINDOWS);
+		typeinfo += "\t\tm.set(\"name\", \"String\");\n";
 		for(StructureField f : def.getFields())
 		{
-			fieldmap += String.format("\t\tm.set(\"%s\", \"%s\");%s", f.getLabel(), f.getVarname(), IOUtils.LINE_SEPARATOR_WINDOWS);
-			variables += String.format("\tpublic var %s:%s;%s", f.getVarname(), getType(f), IOUtils.LINE_SEPARATOR_WINDOWS);
-			typeinfo += String.format("\t\tm.set(\"%s\", \"%s\");%s", f.getVarname(), f.getType(), IOUtils.LINE_SEPARATOR_WINDOWS);
+			fieldmap += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getLabel(), f.getVarname());
+			variables += String.format("\tpublic var %s:%s;\n", f.getVarname(), getType(f));
+			typeinfo += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getVarname(), f.getType());
 		}
 		
 		s = StringUtils.replace(s, "[PACKAGE]", haxePackage);
@@ -69,13 +73,34 @@ public class StructureType extends DataType<Structure>
 		s = StringUtils.replace(s, "[FIELDMAP]", fieldmap, 1);
 		s = StringUtils.replace(s, "[TYPEINFO]", typeinfo, 1);
 		s = StringUtils.replace(s, "[VARIABLES]", variables, 1);
-		s = StringUtils.replace(s, "[CUSTOM]", def.customCode, 1);
+		s = StringUtils.replace(s, "[CUSTOM]", def.customCode + runCustomCodeInjector(def), 1);
 		
 		ArrayList<String> lines = new ArrayList<String>();
-		for(String s2 : s.split(IOUtils.LINE_SEPARATOR_WINDOWS))
+		for(String s2 : s.split("\n"))
 			lines.add(s2);
 		
 		return lines;
+	}
+	
+	private String runCustomCodeInjector(StructureDefinition def)
+	{
+		StringBuilder builder = new StringBuilder();
+		runCustomCodeInjector(def.guiRoot, builder);
+		return builder.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <S extends SDE> void runCustomCodeInjector(DataItem d, StringBuilder builder)
+	{
+		S sde = (S) d.getObject();
+		SDEType<S> sdetype = (SDEType<S>) SDETypes.fromClass(sde.getClass());
+		sdetype.genCode(sde, builder);
+		
+		if(d instanceof Folder)
+		{
+			for(Leaf<DataItem> item : ((Folder) d).getItems())
+				runCustomCodeInjector((DataItem) item, builder);
+		}
 	}
 	
 	private String getType(StructureField f)

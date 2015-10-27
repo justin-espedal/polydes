@@ -29,4 +29,6 @@ public abstract class SDEType<T extends SDE>
 	public abstract void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
 	public abstract void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
 	public abstract void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
+	
+	public void genCode(T value, StringBuilder builder) { }
 }
