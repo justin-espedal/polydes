@@ -38,4 +38,9 @@ class RatioInt
 		
 		return new RatioInt(v, p);
 	}
+
+	public function toString():String
+	{
+		return '${p * 100}% + $v';
+	}
 }

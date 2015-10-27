@@ -18,6 +18,6 @@ class IntPoint
 
 	public function toString():String
 	{
-		return "(" + x + ", " + y + ")";
+		return '[$x, $y]';
 	}
 }

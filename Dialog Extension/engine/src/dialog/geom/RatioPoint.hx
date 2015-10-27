@@ -24,7 +24,7 @@ class RatioPoint
 	
 	public function toString():String
 	{
-		return "(" + xp + "% " + xv + ", " + yp + "% " + yv + ")";
+		return '[${xp * 100}% + $xv, ${yp * 100}% + $yv]';
 	}
 
 	public static function fromString(s:String):RatioPoint
@@ -36,7 +36,7 @@ class RatioPoint
 		
 		if(sa.length == 1)
 			sa.push("");
-		
+
 		var x:RatioInt = RatioInt.fromString(sa[0]);
 		var y:RatioInt = RatioInt.fromString(sa[1]);
 		

@@ -14,4 +14,9 @@ class Insets
 		this.bottom = bottom;
 		this.left = left;
 	}
+
+	public function toString():String
+	{
+		return '[$top, $right, $bottom, $left]';
+	}
 }

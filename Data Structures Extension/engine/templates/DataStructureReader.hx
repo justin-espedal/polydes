@@ -57,7 +57,7 @@ class DataStructureReader
 				catch(e:Dynamic)
 				{
 					trace("Warning: Couldn't load data.");
-					trace("- " + fname + "" + key);
+					trace("- " + fname + ":: " + key + ":" + data.getTypeInfo(key) + " -> " + map.get(key));
 				}
 			}
 
