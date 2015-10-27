@@ -125,7 +125,7 @@ public class V6_ExtensionSubmodules implements Runnable
 						","
 					);
 				extensionList = "[" + extensionList + "]:dialog.ds.DialogExtension";
-//				map.put("extensions", extensionList);
+				map.put("extensions", extensionList);
 			}
 			
 			unknownDef = StructureDefinitions.defMap.get("ScalingImage");

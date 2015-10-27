@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <structure classname="dialog.ds.Style">
-    <field editor="Standard" genType="dialog.ds.DialogExtension" label="Extensions" name="extensions" type="Array" />
+    <field editor="Standard" genType="dialog.ds.DialogExtension" label="Extensions" name="extensions" type="Array">
+    	<genTypeExtras allowSubclasses="true" />
+    </field>
     <field default="[Window Frame,Message,Text Effects,Face,Namebox,Wait Pointer,Dialog Choice]:String" editor="Standard" genType="String" hint="Available to draw:&amp;lt;br&amp;gt;- Window Frame&amp;lt;br&amp;gt;- Message&amp;lt;br&amp;gt;- Text Effects&amp;lt;br&amp;gt;- Face&amp;lt;br&amp;gt;- Namebox&amp;lt;br&amp;gt;- Wait Pointer&amp;lt;br&amp;gt;- Dialog Choice" label="Draw Order" name="drawOrder" type="Array"/>
 </structure>
