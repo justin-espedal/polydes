@@ -21,7 +21,7 @@ class RatioInt
 		if(s == "")
 			return new RatioInt(0, 0);
 		
-		var sa:Array<String> = s.split("");
+		var sa:Array<String> = s.substring(1,s.length - 1).split("");
 		while(sa.remove(" ")){}
 		s = sa.join("");
 		sa = s.split("%");
