@@ -4,6 +4,7 @@ package dialog.ext;
 
 import com.stencyl.behavior.Script;
 import com.stencyl.models.Sound;
+import openfl.geom.Rectangle;
 
 #elseif unity
 
@@ -15,7 +16,7 @@ import unityengine.*;
 
 #end
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 import dialog.core.*;
 
 class DialogBase extends DialogExtension
@@ -38,6 +39,8 @@ class DialogBase extends DialogExtension
 	public var clearSound:Null<Sound>;
 	public var closeSound:Null<Sound>;
 	public var endSound:Null<Sound>;
+	#elseif stencyl
+	private var style:dialog.ds.ext.DialogBase;
 	#end
 
 	public function new()
@@ -49,9 +52,10 @@ class DialogBase extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Dialog Base";
 
@@ -106,6 +110,37 @@ class DialogBase extends DialogExtension
 		{
 			Script.setGameAttribute(style.controlAttribute, false);
 			messageBegan = false;
+		});
+
+		addCallback(Dialog.RESTORE_DEFAULTS, function():Void
+		{
+			#if stencyl
+			if(style.fitMsgToWindow)
+			{
+				if(window != null)
+				{
+					dg.msgX = Std.int(window.position.x + window.template.insets.left);
+					dg.msgY = Std.int(window.position.y + window.template.insets.top);
+					dg.msgW = Std.int(window.size.x - window.template.insets.left - window.template.insets.right);
+					dg.msgH = Std.int(window.size.y - window.template.insets.top - window.template.insets.bottom);
+				}
+			}
+			else
+			{
+			#end
+				dg.msgX = Std.int(style.msgBounds.x);
+				dg.msgY = Std.int(style.msgBounds.y);
+				dg.msgW = Std.int(style.msgBounds.width);
+				dg.msgH = Std.int(style.msgBounds.height);
+			#if stencyl
+			}
+			#end
+			dg.defaultBounds = new Rectangle(dg.msgX, dg.msgY, dg.msgW, dg.msgH);
+			dg.msgColor = -1;
+			dg.msgFont = DialogFont.get(style.msgFont);
+			dg.msgTypeSpeed = style.msgTypeSpeed;
+			dg.charSpacing = style.charSpacing;
+			dg.lineSpacing = style.lineSpacing;
 		});
 
 		addDrawCallback("Window Frame", function():Void
@@ -178,7 +213,7 @@ class DialogBase extends DialogExtension
 		return window;
 	}
 
-	public function getStyle(): #if stencyl Style #elseif unity DialogBase #end
+	public function getStyle(): #if stencyl dialog.ds.ext.DialogBase #elseif unity DialogBase #end
 	{
 		return style;
 	}

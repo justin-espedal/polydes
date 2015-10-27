@@ -18,7 +18,8 @@ using dialog.unity.extension.VectorUtil;
 
 #end
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
+import dialog.geom.*;
 
 class WindowTween
 {

@@ -47,6 +47,8 @@ class SkipScripts extends DialogExtension
 	public var instantButton:String;
 	public var instantSound:Null<Sound>;
 	public var skippableDefault:Bool;
+	#elseif stencyl
+	private var style:dialog.ds.ext.SkipScripts;
 	#end
 
 	public function new()
@@ -58,9 +60,10 @@ class SkipScripts extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Skip Scripts";
 

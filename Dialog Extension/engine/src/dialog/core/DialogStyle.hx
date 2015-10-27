@@ -1,6 +1,6 @@
 package dialog.core;
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 import dialog.ext.*;
 
 #if unity
@@ -13,11 +13,8 @@ class DialogStyle
 {
 	public var style:Style;
 
-	#if stencyl
-	public var extensionClasses:Array<Class<Dynamic>>;
-	#end
-	public var extensions:Array<DialogExtension>;
-	public var extensionMap:Map<String, DialogExtension>;
+	public var extensions:Array<dialog.core.DialogExtension>;
+	public var extensionMap:Map<String, dialog.core.DialogExtension>;
 
 	public var callbacks:Map<Int, Array<Void->Void>>; //callback const, index -> function():Void
 	public var graphicsCallbacks:Map<String, Void->Void>; //layer name -> function():Void
@@ -27,14 +24,6 @@ class DialogStyle
 	{
 		var toReturn:DialogStyle = new DialogStyle();
 		toReturn.style = style;
-
-		#if stencyl
-
-		toReturn.extensionClasses =
-			[DialogBase, CharacterScripts, FlowScripts, MessagingScripts, SkipScripts,
-			SoundScripts, TypingScripts, ExtraGlyphs, TextEffects, DialogOptions, Logic];
-
-		#end
 
 		return toReturn;
 	}
@@ -46,31 +35,33 @@ class DialogStyle
 
 	public function tieExtensionsToDialogBox(dg:DialogBox):Void
 	{
-		extensions = new Array<DialogExtension>();
-		extensionMap = new Map<String, DialogExtension>();
+		extensions = new Array<dialog.core.DialogExtension>();
+		extensionMap = new Map<String, dialog.core.DialogExtension>();
 
-		var curExt:DialogExtension;
+		var curExt:dialog.core.DialogExtension;
 
 		#if stencyl
 
-		for(curClass in extensionClasses)
+		for(extTemplate in style.extensions)
 		{
-			curExt = Type.createInstance(curClass, []);
+			curExt = Type.createInstance(extTemplate.implementation, []);
+			curExt.setup(dg, extTemplate);
 			extensions.push(curExt);
+			extensionMap.set(curExt.name, curExt);
 		}
 
 		#elseif unity
 
 		extensions = style.extensions;
 
-		#end
-		
 		for(ext in extensions)
 		{
-			ext.setup(dg);
+			ext.setup(dg, null);
 			extensionMap.set(ext.name, ext);
 		}
 
+		#end
+		
 		cmds = new Map<String, Dynamic>();
 		for(curExtension in this.extensions)
 		{

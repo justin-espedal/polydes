@@ -50,6 +50,8 @@ class TextEffects extends DialogExtension implements DrawHandler
 	public var g_start:Float;
 	public var g_stop:Float;
 	public var g_duration:Int;
+	#elseif stencyl
+	private var style:dialog.ds.ext.TextEffects;
 	#end
 
 	public function new()
@@ -61,9 +63,10 @@ class TextEffects extends DialogExtension implements DrawHandler
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		//Set up as a DrawHandler
 		imgs = new Map<Int, DrawnImage>();

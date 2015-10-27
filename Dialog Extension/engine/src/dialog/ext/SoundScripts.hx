@@ -20,9 +20,9 @@ class SoundScripts extends DialogExtension
 		super();
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
 
 		name = "Sound Scripts";
 

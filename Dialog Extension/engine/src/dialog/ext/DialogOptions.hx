@@ -18,7 +18,7 @@ import dialog.unity.compat.Typedefs;
 #end
 
 import dialog.core.*;
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -63,6 +63,8 @@ class DialogOptions extends DialogExtension
 	public var optConfirmSound:Null<Sound>;
 	public var optItemPadding:Int;
 	public var optInactiveTime:Int;
+	#elseif stencyl
+	private var style:dialog.ds.ext.DialogOptions;
 	#end
 
 	public function new()
@@ -74,9 +76,10 @@ class DialogOptions extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Dialog Options";
 

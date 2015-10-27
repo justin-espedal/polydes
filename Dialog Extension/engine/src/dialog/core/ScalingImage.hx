@@ -12,7 +12,7 @@ import dialog.unity.compat.Typedefs;
 
 #end
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -25,7 +25,7 @@ class ScalingImage
 	{
 		this.template = template;
 		if(template != null)
-			image = template.image.clone();
+			image = (template.image:BitmapData).clone();
 	}
 
 	public function setSize(w:Int, h:Int)

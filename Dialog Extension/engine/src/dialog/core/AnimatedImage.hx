@@ -14,7 +14,7 @@ import openfl.geom.Rectangle;
 
 import dialog.util.BitmapDataUtil;
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 typedef StencylAnim = com.stencyl.models.actor.Animation;
 

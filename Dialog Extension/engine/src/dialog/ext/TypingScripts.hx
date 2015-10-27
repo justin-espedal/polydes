@@ -33,6 +33,8 @@ class TypingScripts extends DialogExtension
 	public var defaultRandomTypeSounds:Array<Sound>;
 	public var characterSkipSFX:Int;
 	public var playTypeSoundOnSpaces:Bool;
+	#elseif stencyl
+	private var style:dialog.ds.ext.TypingScripts;
 	#end
 
 	public function new()
@@ -44,9 +46,10 @@ class TypingScripts extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Typing Scripts";
 

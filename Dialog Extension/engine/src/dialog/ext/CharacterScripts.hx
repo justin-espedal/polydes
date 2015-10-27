@@ -19,7 +19,7 @@ using dialog.unity.extension.FontUtil;
 #end
 
 import dialog.core.*;
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -40,6 +40,8 @@ class CharacterScripts extends DialogExtension
 	public var faceOrigin:RatioPoint;
 	public var facePos:RatioPoint;
 	public var faceMsgOffset:Rectangle;
+	#elseif stencyl
+	private var style:dialog.ds.ext.CharacterScripts;
 	#end
 
 	public function new()
@@ -51,9 +53,10 @@ class CharacterScripts extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Character Scripts";
 

@@ -1,4 +1,4 @@
-package scripts.ds.dialog;
+package dialog.core;
 
 import com.stencyl.models.actor.ActorType;
 

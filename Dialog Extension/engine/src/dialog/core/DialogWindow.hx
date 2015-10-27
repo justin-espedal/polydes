@@ -15,7 +15,8 @@ import dialog.unity.compat.Typedefs;
 
 #end
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
+import dialog.geom.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -59,8 +60,8 @@ class DialogWindow
 	public function setContentPos(x:Int, y:Int)
 	{
 		floating = true;
-		position.x = Std.int(x - template.insets.x);
-		position.y = Std.int(y - template.insets.y);
+		position.x = Std.int(x + template.insets.left);
+		position.y = Std.int(y + template.insets.top);
 	}
 
 	public function setContentSize(w:Int, h:Int)
@@ -68,9 +69,9 @@ class DialogWindow
 		var imgWidth:Int = img.image.width;
 		var imgHeight:Int = img.image.height;
 		if(template.scaleWidth == "Fit Contents")
-			imgWidth = Std.int(w + template.insets.x + template.insets.width);
+			imgWidth = Std.int(w + template.insets.left + template.insets.right);
 		if(template.scaleHeight == "Fit Contents")
-			imgHeight = Std.int(h + template.insets.y + template.insets.height);
+			imgHeight = Std.int(h + template.insets.top + template.insets.bottom);
 		img.setSize(imgWidth, imgHeight);
 		size.x = imgWidth;
 		size.y = imgHeight;

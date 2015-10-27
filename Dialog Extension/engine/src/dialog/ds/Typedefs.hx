@@ -1,18 +1,7 @@
 package dialog.ds;
 
-#if stencyl
+#if unity
 
-typedef Animation = scripts.ds.dialog.Animation;
-typedef RatioInt = scripts.ds.dialog.RatioInt;
-typedef RatioPoint = scripts.ds.dialog.RatioPoint;
-typedef ScalingImageTemplate = scripts.ds.dialog.ScalingImageTemplate;
-typedef Style = scripts.ds.dialog.Style;
-typedef TweenTemplate = scripts.ds.dialog.TweenTemplate;
-typedef WindowTemplate = scripts.ds.dialog.WindowTemplate;
-
-#elseif unity
-
-//typedef Animation = scripts.ds.dialog.Animation;
 typedef RatioInt = dialog.unity.ds.RatioInt;
 typedef RatioPoint = dialog.unity.ds.RatioPoint;
 typedef ScalingImageTemplate = dialog.unity.ds.ScalingImageTemplate;

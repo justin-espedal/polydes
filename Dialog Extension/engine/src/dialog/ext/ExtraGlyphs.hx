@@ -24,6 +24,8 @@ class ExtraGlyphs extends DialogExtension
 	private var style:ExtraGlyphs;
 
 	public var glyphPadding:Int;
+	#elseif stencyl
+	private var style:dialog.ds.ext.ExtraGlyphs;
 	#end
 
 	public function new()
@@ -35,9 +37,10 @@ class ExtraGlyphs extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Extra Glyphs";
 

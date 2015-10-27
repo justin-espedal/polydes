@@ -21,7 +21,7 @@ using hugs.HUGSWrapper.GameObjectMethods;
 
 #end
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 class Dialog
 {

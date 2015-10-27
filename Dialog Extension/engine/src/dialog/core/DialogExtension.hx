@@ -1,6 +1,6 @@
 package dialog.core;
 
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 #if unity
 @:build(dialog.unity.EditorBuilder.prepareForUnityInspector())
@@ -20,11 +20,6 @@ class DialogExtension #if unity extends unityengine.ScriptableObject #end
 	public var callbacks:Map<Int, Array<Void->Void>>; //callbackConstant, <Array> //id, <Function>
 	public var graphicsCallbacks:Map<String, Void->Void>;
 
-	//For Unity, define in each extension as 'public var style:ExtensionClass' and set to 'this'.
-	#if stencyl
-	public var style:Style;
-	#end
-
 	public function new()
 	{
 		#if unity
@@ -32,13 +27,9 @@ class DialogExtension #if unity extends unityengine.ScriptableObject #end
 		#end
 	}
 
-	public function setup(dg:DialogBox)
+	public function setup(dg:DialogBox, style:Dynamic)
 	{
 		this.dg = dg;
-
-		#if stencyl
-		style = dg.style;
-		#end
 
 		cmds = new Map<String, Dynamic>();
 		callbacks = new Map<Int, Array<Void->Void>>();

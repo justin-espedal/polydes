@@ -22,7 +22,7 @@ using dialog.unity.extension.GameObjectUtil;
 #end
 
 import dialog.core.*;
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 class FlowScripts extends DialogExtension
 {
@@ -48,6 +48,8 @@ class FlowScripts extends DialogExtension
 	public var waitingSoundInterval:Int;
 	public var inputSound:Null<Sound>;
 	//public var noInputSoundWithTags:Array<String>;
+	#elseif stencyl
+	private var style:dialog.ds.ext.FlowScripts;
 	#end
 
 	public function new()
@@ -59,9 +61,10 @@ class FlowScripts extends DialogExtension
 		#end
 	}
 
-	override public function setup(dg:DialogBox)
+	override public function setup(dg:DialogBox, style:Dynamic)
 	{
-		super.setup(dg);
+		super.setup(dg, style);
+		this.style = style;
 
 		name = "Flow Scripts";
 

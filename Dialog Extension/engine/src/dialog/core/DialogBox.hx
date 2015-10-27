@@ -25,7 +25,7 @@ using dialog.unity.extension.NativeArrayUtil;
 #end
 
 import dialog.ext.*;
-import dialog.ds.Typedefs;
+import dialog.ds.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -59,7 +59,8 @@ class DialogBox #if unity extends MonoBehaviour #end
 	@:isVar public var msgFont (get, set):DialogFont;
 	@:isVar public var msgColor (get, set):Int;
 	public var msgTypeSpeed:Float;
-	public var lineSpacing:Int;
+	public var lineSpacing:Int = 0;
+	public var charSpacing:Int = 0;
 
 	public var drawX:Int;
 	private var _font:DialogFontInfo;
@@ -337,34 +338,6 @@ class DialogBox #if unity extends MonoBehaviour #end
 
 	public function restoreDefaults():Void
 	{
-		#if stencyl
-		if(style.fitMsgToWindow)
-		{
-			var w:DialogWindow = dgBase.getWindow();
-			if(w != null)
-			{
-				msgX = Std.int(w.position.x + w.template.insets.x);
-				msgY = Std.int(w.position.y + w.template.insets.y);
-				msgW = Std.int(w.size.x - w.template.insets.x - w.template.insets.width);
-				msgH = Std.int(w.size.y - w.template.insets.y - w.template.insets.height);
-			}
-		}
-		else
-		{
-		#end
-			msgX = Std.int(dgBase.getStyle().msgBounds.x);
-			msgY = Std.int(dgBase.getStyle().msgBounds.y);
-			msgW = Std.int(dgBase.getStyle().msgBounds.width);
-			msgH = Std.int(dgBase.getStyle().msgBounds.height);
-		#if stencyl
-		}
-		#end
-		defaultBounds = new Rectangle(msgX, msgY, msgW, msgH);
-		msgColor = -1;
-		msgFont = DialogFont.get(dgBase.getStyle().msgFont);
-		msgTypeSpeed = dgBase.getStyle().msgTypeSpeed;
-		lineSpacing = dgBase.getStyle().lineSpacing;
-
 		runCallbacks(Dialog.RESTORE_DEFAULTS);
 	}
 
@@ -434,7 +407,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 				else
 					curLine.img.drawChar(char, msgFont, G2.s(drawX), G2.s(curLine.aboveBase) - _font.scaledAboveBase);
 
-				drawX += _font.getAdvance(char) + dgBase.getStyle().charSpacing;
+				drawX += _font.getAdvance(char) + charSpacing;
 
 				runCallbacks(Dialog.WHEN_CHAR_TYPED);
 			}
@@ -454,7 +427,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 		var i:Int = typeIndex;
 		if(msg[i] == " ")
 		{
-			tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.getStyle().charSpacing;
+			tempDrawX += _font.getAdvance(Std.string(msg[i])) + charSpacing;
 			++i;
 		}
 		while(msg[i] != " ")
@@ -462,7 +435,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 			if(Std.is(msg[i], String))
 			{
 				tempMsgDisplay += Std.string(msg[i]);
-				tempDrawX += _font.getAdvance(Std.string(msg[i])) + dgBase.getStyle().charSpacing;
+				tempDrawX += _font.getAdvance(Std.string(msg[i])) + charSpacing;
 			}
 			++i;
 			if(i > msg.length - 1)
@@ -671,7 +644,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 		continueNewDialog();
 	}
 
-	public function getExt(extName:String):DialogExtension
+	public function getExt(extName:String):dialog.core.DialogExtension
 	{
 		return dgstyle.extensionMap.get(extName);
 	}
