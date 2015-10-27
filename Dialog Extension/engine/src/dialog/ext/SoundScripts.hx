@@ -13,7 +13,7 @@ import unityengine.*;
 
 import dialog.core.*;
 
-class SoundScripts extends DialogExtension
+class SoundScripts extends dialog.core.DialogExtension
 {
 	public function new()
 	{

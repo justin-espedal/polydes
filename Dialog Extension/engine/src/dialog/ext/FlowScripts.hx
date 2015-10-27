@@ -24,7 +24,7 @@ using dialog.unity.extension.GameObjectUtil;
 import dialog.core.*;
 import dialog.ds.*;
 
-class FlowScripts extends DialogExtension
+class FlowScripts extends dialog.core.DialogExtension
 {
 	//Communicates with SkipScripts
 
@@ -88,7 +88,7 @@ class FlowScripts extends DialogExtension
 			skipScripts = cast(dg.getExt("Skip Scripts"), SkipScripts);
 			#if stencyl
 			noInputSoundWithTags = [];
-			for(tagname in style.noInputSoundWithTags)
+			for(tagname in (style.noInputSoundWithTags: Array<String>))
 				noInputSoundWithTags.push("" + tagname);
 			#end
 		});

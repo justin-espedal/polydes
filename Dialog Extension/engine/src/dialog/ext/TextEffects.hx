@@ -19,7 +19,7 @@ import dialog.core.*;
 
 using dialog.util.BitmapDataUtil;
 
-class TextEffects extends DialogExtension implements DrawHandler
+class TextEffects extends dialog.core.DialogExtension implements DrawHandler
 {
 	private static inline var SHAKE_FLAG = 1;
 	private static inline var SINE_FLAG = 2;

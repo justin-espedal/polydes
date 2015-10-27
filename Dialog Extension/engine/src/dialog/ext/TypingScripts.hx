@@ -18,7 +18,7 @@ import unityengine.*;
 
 import dialog.core.*;
 
-class TypingScripts extends DialogExtension
+class TypingScripts extends dialog.core.DialogExtension
 {
 	private var typeSound:Sound;
 	private var stopTypeSound:Bool;
@@ -70,7 +70,7 @@ class TypingScripts extends DialogExtension
 		addCallback(Dialog.WHEN_CREATED, function():Void
 		{
 			//typeSound = style.defaultTypeSound;
-			typeSoundArray = [for(sound in style.defaultRandomTypeSounds) Std.is(sound, String) ? Util.sound(sound) : sound];
+			typeSoundArray = style.defaultRandomTypeSounds;
 			storedTypeSound = typeSoundArray;
 		});
 		addCallback(Dialog.WHEN_CHAR_TYPED, function():Void

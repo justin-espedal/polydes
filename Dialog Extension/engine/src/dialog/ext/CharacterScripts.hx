@@ -20,10 +20,11 @@ using dialog.unity.extension.FontUtil;
 
 import dialog.core.*;
 import dialog.ds.*;
+import dialog.geom.*;
 
 using dialog.util.BitmapDataUtil;
 
-class CharacterScripts extends DialogExtension
+class CharacterScripts extends dialog.core.DialogExtension
 {
 	private var nameBitmap:BitmapData;
 	private var _nameboxWindow:DialogWindow;
@@ -94,7 +95,7 @@ class CharacterScripts extends DialogExtension
 
 				if(_nameboxWindow.tween == null)
 				{
-					G2.drawImage(nameBitmap, _nameboxWindow.position.x + _nameboxWindow.template.insets.x, _nameboxWindow.position.y + _nameboxWindow.template.insets.y, false);
+					G2.drawImage(nameBitmap, _nameboxWindow.position.x + _nameboxWindow.template.insets.left, _nameboxWindow.position.y + _nameboxWindow.template.insets.top, false);
 				}
 			}
 		});
@@ -159,10 +160,10 @@ class CharacterScripts extends DialogExtension
 		else
 		{
 			faceBitmap = Util.scaledImg(style.faceImagePrefix + facename);
-			dg.msgX = Std.int(dg.defaultBounds.x + style.faceMsgOffset.x);
-			dg.msgY = Std.int(dg.defaultBounds.y + style.faceMsgOffset.y);
-			dg.msgW = Std.int(dg.defaultBounds.width + style.faceMsgOffset.width);
-			dg.msgH = Std.int(dg.defaultBounds.height + style.faceMsgOffset.height);
+			dg.msgX = Std.int(dg.defaultBounds.x + style.faceMsgOffset.left);
+			dg.msgY = Std.int(dg.defaultBounds.y + style.faceMsgOffset.top);
+			dg.msgW = Std.int(dg.defaultBounds.width - style.faceMsgOffset.right);
+			dg.msgH = Std.int(dg.defaultBounds.height - style.faceMsgOffset.bottom);
 		}
 	}
 }

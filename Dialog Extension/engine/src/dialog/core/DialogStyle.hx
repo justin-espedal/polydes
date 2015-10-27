@@ -44,7 +44,7 @@ class DialogStyle
 
 		for(extTemplate in style.extensions)
 		{
-			curExt = Type.createInstance(extTemplate.implementation, []);
+			curExt = Type.createInstance(Type.resolveClass(extTemplate.implementation), []);
 			curExt.setup(dg, extTemplate);
 			extensions.push(curExt);
 			extensionMap.set(curExt.name, curExt);

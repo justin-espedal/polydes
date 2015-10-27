@@ -17,7 +17,7 @@ import cs.NativeArray;
 
 import dialog.core.*;
 
-class SkipScripts extends DialogExtension
+class SkipScripts extends dialog.core.DialogExtension
 {
 	//Communicates with TypingScripts
 
@@ -86,8 +86,8 @@ class SkipScripts extends DialogExtension
 			typingScript = cast(dg.getExt("Typing Scripts"), TypingScripts);
 
 			#if stencyl
-			fastSound = [for(sound in style.fastSound) Std.is(sound, String) ? Util.sound(sound) : sound];
-			zoomSound = [for(sound in style.zoomSound) Std.is(sound, String) ? Util.sound(sound) : sound];
+			fastSound = style.fastSound;
+			zoomSound = style.zoomSound;
 			#end
 		});
 		addCallback(Dialog.ALWAYS, function():Void

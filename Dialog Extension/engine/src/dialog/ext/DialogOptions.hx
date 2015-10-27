@@ -19,10 +19,11 @@ import dialog.unity.compat.Typedefs;
 
 import dialog.core.*;
 import dialog.ds.*;
+import dialog.geom.*;
 
 using dialog.util.BitmapDataUtil;
 
-class DialogOptions extends DialogExtension
+class DialogOptions extends dialog.core.DialogExtension
 {
 	private var visible:Bool;
 	private var options:Array<String>;
@@ -48,21 +49,21 @@ class DialogOptions extends DialogExtension
 	#if unity
 	private var style:DialogOptions;
 
-	public var optWindow:WindowTemplate;
-	public var optWindowFont:Font;
-	public var optCursorType:String;
-	public var optCursorImage:Null<BitmapData>;
-	public var optCursorOffset:Point;
-	public var optCursorWindow:Null<WindowTemplate>;
-	public var optChoiceLayout:String;
-	public var optSelectButton:String;
-	public var optScrollWait:Int;
-	public var optScrollDuration:Int;
-	public var optAppearSound:Null<Sound>;
-	public var optChangeSound:Null<Sound>;
-	public var optConfirmSound:Null<Sound>;
-	public var optItemPadding:Int;
-	public var optInactiveTime:Int;
+	public var windowTemplate:WindowTemplate;
+	public var windowFont:Font;
+	public var cursorType:String;
+	public var cursorImage:Null<BitmapData>;
+	public var cursorOffset:Point;
+	public var cursorWindow:Null<WindowTemplate>;
+	public var choiceLayout:String;
+	public var selectButton:String;
+	public var scrollWait:Int;
+	public var scrollDuration:Int;
+	public var appearSound:Null<Sound>;
+	public var changeSound:Null<Sound>;
+	public var confirmSound:Null<Sound>;
+	public var itemPadding:Int;
+	public var inactiveTime:Int;
 	#elseif stencyl
 	private var style:dialog.ds.ext.DialogOptions;
 	#end
@@ -130,7 +131,7 @@ class DialogOptions extends DialogExtension
 				{
 					downElapsed = 0;
 					upElapsed += 10;
-					if(upElapsed > style.optScrollWait)
+					if(upElapsed > style.scrollWait)
 					{
 						upElapsed = 0;
 						scrolling = -1;
@@ -140,7 +141,7 @@ class DialogOptions extends DialogExtension
 				{
 					upElapsed = 0;
 					downElapsed += 10;
-					if(downElapsed > style.optScrollWait)
+					if(downElapsed > style.scrollWait)
 					{
 						downElapsed = 0;
 						scrolling = 1;
@@ -160,7 +161,7 @@ class DialogOptions extends DialogExtension
 				else
 				{
 					scrollElapsed += 10;
-					if(scrollElapsed > style.optScrollDuration)
+					if(scrollElapsed > style.scrollDuration)
 					{
 						scrollElapsed = 0;
 						moveSelection(scrolling);
@@ -179,7 +180,7 @@ class DialogOptions extends DialogExtension
 					moveSelection(1);
 				}
 			}
-			if(Input.pressed(style.optSelectButton))
+			if(Input.pressed(style.selectButton))
 			{
 				targetSelected();
 			}
@@ -194,18 +195,18 @@ class DialogOptions extends DialogExtension
 			if(window.tween == null)
 			{
 				if(useImage)
-					G2.drawImage(selectionImg, Std.int(curCoord.x + style.optCursorOffset.x), Std.int(curCoord.y + style.optCursorOffset.y));
+					G2.drawImage(selectionImg, Std.int(curCoord.x + style.cursorOffset.x), Std.int(curCoord.y + style.cursorOffset.y));
 				else
 					selectionWindow.draw();
 
-				G2.drawImage(choiceImg, Std.int(window.position.x + window.template.insets.x), Std.int(window.position.y + window.template.insets.y), false);
+				G2.drawImage(choiceImg, Std.int(window.position.x + window.template.insets.left), Std.int(window.position.y + window.template.insets.top), false);
 			}
 		});
 	}
 
 	public function option(args:Array<Array<Dynamic>>):Void
 	{
-		window = new DialogWindow(style.optWindow);
+		window = new DialogWindow(style.windowTemplate);
 
 		visible = true;
 		selectedIndex = 0;
@@ -219,13 +220,13 @@ class DialogOptions extends DialogExtension
 			}
 		}
 
-		useImage = (style.optCursorType == "Use Image");
+		useImage = (style.cursorType == "Use Image");
 		if(useImage)
-			selectionImg = style.optCursorImage; //Used to be .clone()?
+			selectionImg = style.cursorImage; //Used to be .clone()?
 		else
-			selectionWindow = new DialogWindow(style.optCursorWindow);
+			selectionWindow = new DialogWindow(style.cursorWindow);
 
-		var f:DialogFont = usedFont = DialogFont.get(style.optWindowFont);
+		var f:DialogFont = usedFont = DialogFont.get(style.windowFont);
 
 		//Figure out dimensions
 		var w:Int = 0;
@@ -233,26 +234,26 @@ class DialogOptions extends DialogExtension
 		var i:Int = 0;
 		while(i < options.length)
 		{
-			if(style.optChoiceLayout == "Vertical")
+			if(style.choiceLayout == "Vertical")
 			{
-				h += f.info.scaledLineHeight + G2.s(style.optItemPadding);
+				h += f.info.scaledLineHeight + G2.s(style.itemPadding);
 				if(f.info.getScaledWidth(options[i]) > w)
 					w = f.info.getScaledWidth(options[i]);
 			}
 			else
 			{
-				w += f.info.getScaledWidth(options[i]) + G2.s(style.optItemPadding);
+				w += f.info.getScaledWidth(options[i]) + G2.s(style.itemPadding);
 			}
 			++i;
 		}
-		if(style.optChoiceLayout == "Horizontal")
+		if(style.choiceLayout == "Horizontal")
 		{
-			w -= G2.s(style.optItemPadding);
+			w -= G2.s(style.itemPadding);
 			h = f.info.scaledLineHeight + f.info.belowBase;
 		}
 		else
 		{
-			h -= G2.s(style.optItemPadding) - f.info.belowBase;
+			h -= G2.s(style.itemPadding) - f.info.belowBase;
 		}
 
 		//Write text
@@ -267,13 +268,13 @@ class DialogOptions extends DialogExtension
 				x += f.info.getScaledAdvance(options[i].charAt(j));
 			}
 
-			if(style.optChoiceLayout == "Vertical")
+			if(style.choiceLayout == "Vertical")
 			{
 				x = 0;
-				y += f.info.scaledLineHeight + G2.s(style.optItemPadding);
+				y += f.info.scaledLineHeight + G2.s(style.itemPadding);
 			}
 			else
-				x += G2.s(style.optItemPadding);
+				x += G2.s(style.itemPadding);
 		}
 
 		window.setContentSize(G2.us(choiceImg.width), G2.us(choiceImg.height));
@@ -281,15 +282,15 @@ class DialogOptions extends DialogExtension
 
 		dg.paused = true;
 
-		windowPause = style.optInactiveTime;
+		windowPause = style.inactiveTime;
 
 		window.tweenCompleteNotify.push(function():Void
 		{
 			setCoords();
 		});
-		window.applyTween(style.optWindow.createTween);
+		window.applyTween(style.windowTemplate.createTween);
 
-		var snd:Sound = style.optAppearSound;
+		var snd:Sound = style.appearSound;
 		if(snd != null)
 			Script.playSound(snd);
 	}
@@ -299,16 +300,16 @@ class DialogOptions extends DialogExtension
 		coords = new Array<Point>();
 		var f:DialogFont = usedFont;
 
-		var x:Int = Std.int(window.position.x + window.template.insets.x);
-		var y:Int = Std.int(window.position.y + window.template.insets.y);
+		var x:Int = Std.int(window.position.x + window.template.insets.left);
+		var y:Int = Std.int(window.position.y + window.template.insets.top);
 
 		for(i in 0...options.length)
 		{
 			coords.push(new Point(x, y));
-			if(style.optChoiceLayout == "Vertical")
-				y += f.info.lineHeight + style.optItemPadding;
+			if(style.choiceLayout == "Vertical")
+				y += f.info.lineHeight + style.itemPadding;
 			else
-				x += f.info.getWidth(options[i]) + style.optItemPadding;
+				x += f.info.getWidth(options[i]) + style.itemPadding;
 		}
 
 		if(useImage)
@@ -336,7 +337,7 @@ class DialogOptions extends DialogExtension
 			tweenSelection();
 		}
 
-		var snd:Sound = style.optChangeSound;
+		var snd:Sound = style.changeSound;
 		if(snd != null)
 			Script.playSound(snd);
 	}
@@ -358,7 +359,7 @@ class DialogOptions extends DialogExtension
 	{
 		var f:DialogFont = usedFont;
 		var itemDim:IntPoint = new IntPoint(G2.us(choiceImg.width), G2.us(choiceImg.height));
-		if(style.optChoiceLayout == "Vertical")
+		if(style.choiceLayout == "Vertical")
 			itemDim.y = f.info.lineHeight;
 		else
 			itemDim.x = f.info.getWidth(options[selectedIndex]);
@@ -371,7 +372,7 @@ class DialogOptions extends DialogExtension
 	{
 		selectedTarget = targets[selectedIndex];
 
-		var snd:Sound = style.optConfirmSound;
+		var snd:Sound = style.confirmSound;
 		if(snd != null)
 			Script.playSound(snd);
 
@@ -393,6 +394,6 @@ class DialogOptions extends DialogExtension
 
 			dg.goToDialog(t);
 		});
-		window.applyTween(style.optWindow.destroyTween);
+		window.applyTween(style.windowTemplate.destroyTween);
 	}
 }

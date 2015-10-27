@@ -16,7 +16,7 @@ using dialog.unity.extension.GameObjectUtil;
 
 import dialog.core.*;
 
-class MessagingScripts extends DialogExtension
+class MessagingScripts extends dialog.core.DialogExtension
 {
 	public var attributes:Map<String, Dynamic>;
 

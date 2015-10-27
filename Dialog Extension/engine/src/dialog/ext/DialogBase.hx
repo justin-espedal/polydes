@@ -19,7 +19,7 @@ import unityengine.*;
 import dialog.ds.*;
 import dialog.core.*;
 
-class DialogBase extends DialogExtension
+class DialogBase extends dialog.core.DialogExtension
 {
 	private var window:Null<DialogWindow>;
 	private var messageBegan:Bool;

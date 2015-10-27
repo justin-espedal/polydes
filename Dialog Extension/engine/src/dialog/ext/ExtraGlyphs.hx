@@ -18,7 +18,7 @@ import dialog.core.*;
 
 using dialog.util.BitmapDataUtil;
 
-class ExtraGlyphs extends DialogExtension
+class ExtraGlyphs extends dialog.core.DialogExtension
 {
 	#if unity
 	private var style:ExtraGlyphs;

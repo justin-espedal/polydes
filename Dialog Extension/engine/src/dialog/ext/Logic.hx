@@ -2,7 +2,7 @@ package dialog.ext;
 
 import dialog.core.*;
 
-class Logic extends DialogExtension
+class Logic extends dialog.core.DialogExtension
 {
 	private var conditionOpen:Bool;
 	private var lastIfWasTrue:Bool;
