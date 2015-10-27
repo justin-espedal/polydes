@@ -233,7 +233,7 @@ public class HaxeObjectType extends DataType<HaxeObject>
 		else
 		{
 			String[] types = Lang.map(def.fields, String.class, (field) -> "\"" + field.type.haxeType + "\"");
-			return Lang.arraylist(String.format("StringData.registerHaxeObjectReader(\"%s\", [%s]);", haxeType, StringUtils.join(types, ",")));
+			return Lang.arraylist(String.format("StringData.registerHaxeObjectReader(\"%s\", %s, [%s]);", haxeType, haxeType, StringUtils.join(types, ",")));
 		}
 	}
 }

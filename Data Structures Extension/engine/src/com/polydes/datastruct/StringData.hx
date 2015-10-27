@@ -47,10 +47,8 @@ class StringData
 		#end
 	}
 
-	public static function registerHaxeObjectReader(type:String, argTypes:Array<String>):Void
+	public static function registerHaxeObjectReader(type:String, cls:Class<Dynamic>, argTypes:Array<String>):Void
 	{
-		var cls = Type.resolveClass(type);
-
 		registerReader(type, function(s) {
 			return Type.createInstance(cls, parseArgs(s, argTypes));
 		});
