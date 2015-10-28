@@ -1,5 +1,7 @@
 package com.polydes.dialog.updates;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,7 +21,9 @@ import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.updates.TypenameUpdater;
 
+import stencyl.core.engine.sound.ISoundClip;
 import stencyl.core.lib.Game;
+import stencyl.core.lib.Resource;
 
 public class V6_ExtensionSubmodules implements Runnable
 {
@@ -33,7 +37,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			Structure ss = make("dialog.ds.ext.SoundScripts", "Dialog/Plugins/Sound Scripts");
 			
 			StructureDefinition unknownDef = StructureDefinitions.defMap.get("Style");
-			for(Structure style : Structures.structures.get(unknownDef))
+			for(Structure style : loopDef(unknownDef))
 			{
 				String prefix = "Dialog/Plugins/" + style.dref.getName() + " ";
 				Structure db = make("dialog.ds.ext.DialogBase", prefix + "Dialog Base");
@@ -129,7 +133,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			}
 			
 			unknownDef = StructureDefinitions.defMap.get("ScalingImage");
-			for(Structure scalingImage : Structures.structures.get(unknownDef))
+			for(Structure scalingImage : loopDef(unknownDef))
 			{
 				Map<String,String> map = scalingImage.getUnknownData();
 				map.put("origin", convertRatioPoint(map.get("origin")));
@@ -139,7 +143,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			}
 			
 			unknownDef = StructureDefinitions.defMap.get("Tween");
-			for(Structure tween : Structures.structures.get(unknownDef))
+			for(Structure tween : loopDef(unknownDef))
 			{
 				Map<String,String> map = tween.getUnknownData();
 				map.put("positionStart", convertRatioPoint(map.get("positionStart")));
@@ -150,7 +154,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			}
 			
 			unknownDef = StructureDefinitions.defMap.get("Window");
-			for(Structure window : Structures.structures.get(unknownDef))
+			for(Structure window : loopDef(unknownDef))
 			{
 				Map<String,String> map = window.getUnknownData();
 				map.put("position", convertRatioPoint(map.get("position")));
@@ -181,6 +185,13 @@ public class V6_ExtensionSubmodules implements Runnable
 			DataStructuresExtension.forceUpdateData = true;
 			DataStructuresExtension.get().onGameSave(Game.getGame());
 		});
+	}
+	
+	private Collection<Structure> loopDef(StructureDefinition def)
+	{
+		if(def == null || !Structures.structures.containsKey(def))
+			return new ArrayList<Structure>();
+		return Structures.structures.get(def);
 	}
 	
 	private void set(Structure s, String field, String value)
@@ -245,7 +256,13 @@ public class V6_ExtensionSubmodules implements Runnable
 		s = simplifyArray(s);
 		String[] ids = s.split(",");
 		for(int i = 0; i < ids.length; ++i)
-			ids[i] = String.valueOf(Game.getGame().getResources().getResourceWithName(s).getID());
+		{
+			Resource r = Game.getGame().getResources().getResourceWithName(s);
+			if(r != null && ISoundClip.class.isAssignableFrom(r.getClass()))
+				ids[i] = String.valueOf(r.getID());
+			else
+				ids[i] = "";
+		}
 		return "[" + StringUtils.join(ids, ",") + "]:com.stencyl.models.Sound";
 	}
 }
