@@ -50,9 +50,8 @@ public class V6_ExtensionSubmodules implements Runnable
 				Structure dop = make("dialog.ds.ext.DialogOptions", prefix + "Dialog Options");
 				
 				Map<String,String> map = style.getUnknownData();
-				String[] parts;
-				String newValue;
 				
+				//Dialog Base
 				for (String prop : new String[] {"msgWindow",
 					"fitMsgToWindow", "msgBounds", "msgFont",
 					"msgTypeSpeed", "msgStartSound",
@@ -60,23 +59,25 @@ public class V6_ExtensionSubmodules implements Runnable
 					"charSpacing", "clearSound", "closeSound",
 					"endSound" })
 					set(db, prop, map.remove(prop));
-			
+				
+				//Typing Scripts
 				set(ts, "defaultRandomTypeSounds", stringArrayToSoundArray(map.remove("defaultRandomTypeSounds")));
 				set(ts, "characterSkipSFX", map.remove("characterSkipSFX"));
 				set(ts, "playTypeSoundOnSpaces", map.remove("playTypeSoundOnSpaces"));
 				
+				//Extra Glyphs
 				set(eg, "glyphPadding", map.remove("glyphPadding"));
-
+				
+				//Character Scripts
 				for (String prop : new String[] { "nameboxWindow",
 					"nameboxFont", "faceImagePrefix",
 					"faceRelation" })
 					set(cs, prop, map.remove(prop));
 				set(cs, "faceOrigin", convertRatioPoint(map.remove("faceOrigin")));
 				set(cs, "facePos", convertRatioPoint(map.remove("facePos")));
-				parts = map.remove("faceMsgOffset").replaceAll("\\[|\\]| ", "").split(",");
-				newValue = String.format("[%s,-%s,-%s,%s]", parts[1], parts[2], parts[3], parts[0]);
-				set(cs, "faceMsgOffset", newValue.replaceAll("--", ""));
+				set(cs, "faceMsgOffset", convertRectangleToInsets(map.remove("faceMsgOffset"), "[%s,-%s,-%s,%s]"));
 				
+				//Skip Scripts
 				for (String prop : new String[] { "fastSpeed",
 					"fastButton", "fastSoundInterval", "zoomSpeed",
 					"zoomButton", "zoomSoundInterval",
@@ -86,6 +87,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				set(sks, "fastSound", stringArrayToSoundArray(map.remove("fastSound")));
 				set(sks, "zoomSound", stringArrayToSoundArray(map.remove("zoomSound")));
 				
+				//Flow Scripts
 				for (String prop : new String[] { "advanceDialogButton",
 					"waitingSound", "waitingSoundInterval",
 					"inputSound", "noInputSoundWithTags" })
@@ -93,6 +95,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				set(fs, "animForPointer", convertAnimation(map.remove("animForPointer")));
 				set(fs, "pointerPos", convertRatioPoint(map.remove("pointerPos")));
 				
+				//Text Effects
 				for (String prop : new String[] { "v_maxShakeOffsetX",
 					"v_maxShakeOffsetY", "v_shakeFrequency",
 					"s_magnitude", "s_frequency", "s_pattern",
@@ -100,6 +103,7 @@ public class V6_ExtensionSubmodules implements Runnable
 					"g_start", "g_stop", "g_duration" })
 					set(te, prop, map.remove(prop));
 				
+				//Dialog Options
 				for(Entry<Object, Object> entry : Lang.hashmap(
 					"optWindow", "windowTemplate",
 					"optWindowFont", "windowFont",
@@ -122,7 +126,7 @@ public class V6_ExtensionSubmodules implements Runnable
 					StringUtils.join(
 						Lang.mapCA
 						(
-							Lang.arraylist(db,ts,eg,cs,sks,fs,te,dop,log,ms,ss),
+							Lang.arraylist(log,ms,ss,db,ts,eg,cs,sks,fs,te,dop),
 							Integer.class,
 							(struct) -> ((Structure) struct).getID()
 						),
@@ -160,9 +164,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				map.put("position", convertRatioPoint(map.get("position")));
 				map.put("scaleWidthSize", convertRatioInt(map.get("scaleWidthSize")));
 				map.put("scaleHeightSize", convertRatioInt(map.get("scaleHeightSize")));
-				
-				String[] parts = map.remove("insets").replaceAll("\\[|\\]| ", "").split(",");
-				map.put("insets", String.format("[%s,%s,%s,%s]", parts[1], parts[2], parts[3], parts[0]));
+				map.put("insets", convertRectangleToInsets(map.remove("insets"), "[%s,%s,%s,%s]"));
 				
 				System.out.println(window.dref.getName());
 				System.out.println(map);
@@ -242,6 +244,14 @@ public class V6_ExtensionSubmodules implements Runnable
 	private String convertRatioPoint(String s)
 	{
 		return s == null ? null : s.replaceAll("([^,]+)", "\\[$0\\]");
+	}
+	
+	private String convertRectangleToInsets(String s, String format)
+	{
+		String[] parts = s.replaceAll("\\[|\\]| ", "").split(",");
+		String newValue = String.format(format, parts[1], parts[2], parts[3], parts[0]);
+		newValue.replaceAll("--", "").replaceAll("-0","0");
+		return newValue;
 	}
 	
 	private String simplifyArray(String s)
