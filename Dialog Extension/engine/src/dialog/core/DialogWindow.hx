@@ -60,8 +60,8 @@ class DialogWindow
 	public function setContentPos(x:Int, y:Int)
 	{
 		floating = true;
-		position.x = Std.int(x + template.insets.left);
-		position.y = Std.int(y + template.insets.top);
+		position.x = Std.int(x - template.insets.left);
+		position.y = Std.int(y - template.insets.top);
 	}
 
 	public function setContentSize(w:Int, h:Int)
