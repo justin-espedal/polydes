@@ -36,16 +36,20 @@ public class Layout
 	public static JPanel horizontalBox(Component... comps)
 	{
 		JPanel constricted = new JPanel();
-		constricted.setLayout(new BoxLayout(constricted, BoxLayout.X_AXIS));
-		constricted.setBackground(null);
+		addHorizontally(constricted, comps);
+		return constricted;
+	}
+	
+	public static void addHorizontally(JPanel panel, Component... comps)
+	{
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setBackground(null);
 		for(int i = 0; i < comps.length; ++i)
 		{
-			constricted.add(comps[i]);
+			panel.add(comps[i]);
 			if(i != comps.length - 1)
-				constricted.add(Box.createHorizontalStrut(10));
+				panel.add(Box.createHorizontalStrut(10));
 		}
-
-		return constricted;
 	}
 	
 	public static JPanel aligned(Component comp, int xAlign, int yAlign)

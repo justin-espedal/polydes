@@ -47,7 +47,7 @@ public class ArrayType extends BuiltinType<DataList>
 		if(e.editor.equals(Editor.Simple))
 			return new SimpleArrayEditor(style, e.genType);
 		else //if(editorType.equals("Standard"))
-			return new StandardArrayEditor(e.genType, e.genTypeExtras);
+			return new StandardArrayEditor(e.genType, e.genTypeExtras, style);
 	}
 
 	@Override
@@ -272,12 +272,14 @@ public class ArrayType extends BuiltinType<DataList>
 	{
 		DataListEditor editor;
 		DataType<?> genType;
+		ExtraProperties genTypeExtras;
 		
-		public StandardArrayEditor(DataType<?> genType, ExtraProperties genTypeExtras)
+		public StandardArrayEditor(DataType<?> genType, ExtraProperties genTypeExtras, PropertiesSheetStyle style)
 		{
 			this.genType = genType;
+			this.genTypeExtras = genTypeExtras;
 			
-			editor = new DataListEditor(null, genTypeExtras);
+			editor = new DataListEditor(null, genTypeExtras, style);
 			
 			editor.addActionListener(new ActionListener()
 			{
@@ -294,7 +296,7 @@ public class ArrayType extends BuiltinType<DataList>
 		{
 			if(t == null)
 				t = new DataList(genType);
-			editor.setList(t);
+			editor.setData(t, genTypeExtras);
 		}
 		
 		@Override
@@ -307,6 +309,14 @@ public class ArrayType extends BuiltinType<DataList>
 		public JComponent[] getComponents()
 		{
 			return comps(editor);
+		}
+		
+		@Override
+		public void dispose()
+		{
+			super.dispose();
+			editor.dispose();
+			editor = null;
 		}
 	}
 }
