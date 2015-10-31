@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -25,6 +26,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
@@ -45,7 +50,7 @@ import stencyl.sw.lnf.Theme;
 import stencyl.sw.loc.LanguagePack;
 import stencyl.sw.util.UI;
 
-public class DataListEditor extends JPanel implements KeyListener, MouseListener
+public class DataListEditor extends JPanel implements KeyListener, MouseListener, CellEditorListener, TableModelListener
 {
 	private static final LanguagePack lang = LanguagePack.get();
 	
@@ -90,6 +95,8 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		
 		editor = new DataListCellEditor(table);
 		renderer = new DataListCellRenderer();
+		
+		editor.addCellEditorListener(this);
 		
 		hll = new HierarchyLeaveListener(table, () -> {
 			if(table.isEditing())
@@ -143,8 +150,12 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		{
 			this.model = model;
 			
+			if(tableModel != null)
+				tableModel.removeTableModelListener(this);
+			
 			tableModel = new DataListTableWrapper(model);
 			table.setModel(tableModel);
+			tableModel.addTableModelListener(this);
 			
 			renderer.setModel(model);
 			editor.setType(model, model.genType, genTypeExtras);
@@ -184,39 +195,28 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		
 		int onmask = KeyEvent.CTRL_DOWN_MASK;
 		if ((e.getModifiersEx() & onmask) == onmask)
+			return;
+		
+		if (e.getKeyCode() == KeyEvent.VK_DELETE)
 		{
-//			if(e.getKeyCode() == KeyEvent.VK_UP)
-//			{
-//				shiftSelection(-1);
-//			}
-//			if(e.getKeyCode() == KeyEvent.VK_DOWN)
-//			{
-//				shiftSelection(1);
-//			}
+			removeSelected();
 		}
-		else
+		
+		if(e.getKeyCode() == KeyEvent.VK_N)
 		{
-			if (e.getKeyCode() == KeyEvent.VK_DELETE)
-			{
-				removeSelected();
-			}
+			add();
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			//this is only called when enter is refused by the cell editor
+			//-- perhaps the "new item" cell is selected
 			
-			if(e.getKeyCode() == KeyEvent.VK_N)
-			{
+			if(table.getSelectedRow() == model.size())
 				add();
-			}
 			
-			if(e.getKeyCode() == KeyEvent.VK_ENTER)
-			{
-				//this is only called when enter is refused by the cell editor
-				//-- perhaps the "new item" cell is selected
-				
-				if(table.getSelectedRow() == model.size())
-					add();
-				
-				//or the index column is selected
-				table.editCellAt(table.getSelectedRow(), 1);
-			}
+			//or the index column is selected
+			edit(table.getSelectedRow());
 		}
 	}
 
@@ -226,14 +226,46 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
 	
+	@Override
+	public void editingStopped(ChangeEvent e)
+	{
+		fireDataUpdated();
+	}
+
+	@Override
+	public void editingCanceled(ChangeEvent e) {}
+	
+	@Override
+	public void tableChanged(TableModelEvent e)
+	{
+		switch(e.getType())
+		{
+			case TableModelEvent.INSERT:
+				fireDataAdded();
+				break;
+			case TableModelEvent.UPDATE:
+				fireDataUpdated();
+				break;
+			case TableModelEvent.DELETE:
+				fireDataRemoved();
+				break;
+		}
+	}
+	
 	public void add()
 	{
 		Object newItem = model.genType.decode("");
 		int insertAt = Math.max(0, table.getSelectedRow());
 		
 		tableModel.insert(newItem, insertAt);
+		fireDataAdded();
 		selectRow(insertAt);
-		table.editCellAt(insertAt, 1);
+		edit(insertAt);
+	}
+	
+	public void edit(int row)
+	{
+		table.editCellAt(row, 1);
 	}
 	
 	public void removeSelected()
@@ -249,6 +281,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		{
 			tableModel.deleteRows(rows);
 			selectRow(selectionLead);
+			fireDataRemoved();
 			return;
 		}
 		
@@ -268,6 +301,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		
 		table.requestFocus();
 		selectRow(selectionLead);
+		fireDataRemoved();
 	}
 	
 	public void selectRow(int r)
@@ -295,9 +329,8 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 			return;
 		
 		tableModel.shiftRows(rows, space);
+		fireDataUpdated();
 	}
-	
-	//TODO: Send the actionListeners actionPerformed notifications.
 	
 	public void addActionListener(ActionListener listener)
 	{
@@ -309,12 +342,30 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		actionListeners.removeListener(listener);
 	}
 	
+	public void fireDataAdded()
+	{
+		actionListeners.fire().actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Data Added"));
+	}
+	
+	public void fireDataRemoved()
+	{
+		actionListeners.fire().actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Data Removed"));
+	}
+	
+	public void fireDataUpdated()
+	{
+		actionListeners.fire().actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Data Updated"));
+	}
+	
 	public void dispose()
 	{
 		hll.dispose();
+		editor.removeCellEditorListener(this);
 		editor.dispose();
+		tableModel.removeTableModelListener(this);
 		genTypeExtras = null;
 		model = null;
+		tableModel = null;
 	}
 
 	@Override
@@ -333,7 +384,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 				add();
 			
 			//or the index column was clicked
-			table.editCellAt(table.getSelectedRow(), 1);
+			edit(table.getSelectedRow());
 		}
 	}
 
