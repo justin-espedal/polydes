@@ -1,5 +1,6 @@
 package com.polydes.datastruct.ui.comp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -7,6 +8,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.event.EventListenerSupport;
 
 import com.polydes.datastruct.data.core.DataList;
@@ -91,6 +94,14 @@ public class DataListTableWrapper implements TableModel
 		tableListeners.fire().tableChanged(new TableModelEvent(this, row, row, 1, TableModelEvent.INSERT));
 	}
 	
+	public void insertList(DataList list, int row)
+	{
+		int firstRow = row;
+		for(Object value : list)
+			model.add(row++, value);
+		tableListeners.fire().tableChanged(new TableModelEvent(this, firstRow, --row, 1, TableModelEvent.INSERT));
+	}
+	
 	public void delete(int row)
 	{
 		model.remove(row);
@@ -110,6 +121,71 @@ public class DataListTableWrapper implements TableModel
 		for(int i = rows.length - 1; i >= 0; --i)
 			model.remove(rows[i]);
 		tableListeners.fire().tableChanged(new TableModelEvent(this));
+	}
+
+	public void shiftRows(int[] rows, int space)
+	{
+		Arrays.sort(rows);
+		
+		int start = 0;
+		int end = rows.length;
+		int step = 1;
+		
+		if(space > 0)
+		{
+			start = end;
+			end = -1;
+			step = -1;
+		}
+		
+		for(int i = start; i != end; i += step)
+			swap(rows[i], space);
+		
+		int l = rows.length - 1;
+		int changeMin = Math.min(rows[0], rows[0] + space);
+		int changeMax = Math.max(rows[l], rows[l] + space);
+		
+		tableListeners.fire().tableChanged(new TableModelEvent(this, changeMin, changeMax, 1));
+	}
+	
+	public void moveLines(int[] rows, int target)
+	{
+		Arrays.sort(rows);
+		
+		System.out.println(StringUtils.join(rows, ','));
+		System.out.println(target);
+		
+		if(ArrayUtils.contains(rows, target))
+			return;
+		
+		int min = Math.min(rows[0], target);
+		int max = rows[rows.length - 1];
+		
+		ArrayList<Object> transferData = new ArrayList<Object>(rows.length);
+		
+		for(int i = rows.length - 1; i >= 0; --i)
+		{
+			transferData.add(model.remove(rows[i]));
+			if(rows[i] < target)
+				--target;
+		}
+		
+		for(int i = rows.length - 1; i >= 0; --i)
+			model.add(target++, transferData.get(i));
+		
+		max = Math.max(max, --target);
+		
+		tableListeners.fire().tableChanged(new TableModelEvent(this, min, max, 1));
+	}
+	
+	private void swap(int row, int space)
+	{
+		if(row + space < 0 || row + space >= model.size())
+			return;
+		
+		Object temp = model.get(row + space);
+		model.set(row + space, model.get(row));
+		model.set(row, temp);
 	}
 	
 	@Override
