@@ -36,13 +36,18 @@ class ScalingImage
 		if(image.width == w && image.height == h)
 			return;
 
-		if(template.part == "Inside Border")
-			image = template.image.get9Scaled(w, h, G2.s(template.border.x), G2.s(template.border.y), template.type == "Stretch Image");
-		else
+		if(template.type == "Stretch Image")
 		{
-			if(template.type == "Stretch Image")
+			if(template.part == "Inside Border")
+				image = template.image.get9Scaled(w, h, G2.si(template.border), true);
+			else 
 				image = template.image.getScaled(w / image.width, h / image.height);
-			else if(template.type == "Tile Image")
+		}
+		else if(template.type == "Tile Image")
+		{
+			if(template.part == "Inside Border")
+				image = template.image.get9Scaled(w, h, G2.si(template.border), false);
+			else 
 				image = template.image.getTiled(w / image.width, h / image.height);
 		}
 	}

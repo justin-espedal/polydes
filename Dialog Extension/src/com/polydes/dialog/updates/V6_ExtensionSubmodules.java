@@ -141,6 +141,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			{
 				Map<String,String> map = scalingImage.getUnknownData();
 				map.put("origin", convertRatioPoint(map.get("origin")));
+				map.put("border", convertPointToInsets(map.remove("border")));
 				
 				System.out.println(scalingImage.dref.getName());
 				System.out.println(map);
@@ -251,6 +252,15 @@ public class V6_ExtensionSubmodules implements Runnable
 		String[] parts = s.replaceAll("\\[|\\]| ", "").split(",");
 		String newValue = String.format(format, parts[1], parts[2], parts[3], parts[0]);
 		newValue.replaceAll("--", "").replaceAll("-0","0");
+		return newValue;
+	}
+	
+	private String convertPointToInsets(String s)
+	{
+		if(s == null)
+			return "[0,0,0,0]";
+		String[] parts = s.replaceAll("\\[|\\]| ", "").split(",");
+		String newValue = String.format("[%s,%s,%s,%s", parts[1], parts[0], parts[1], parts[0]);
 		return newValue;
 	}
 	

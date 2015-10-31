@@ -3,10 +3,8 @@
     <field label="Image" name="image" type="com.polydes.datastruct.ExtrasImage"/>
     <field label="Origin" name="origin" type="dialog.geom.RatioPoint"/>
     <field default="" editor="Dropdown" label="Scale Type" name="type" options="[Stretch Image,Tile Image]:String" type="com.polydes.datastruct.Selection"/>
-    <if condition="type == &amp;quot;Stretch Image&amp;quot;">
-        <field default="" editor="Dropdown" label="Scale Part" name="part" options="[Whole Image,Inside Border]:String" type="com.polydes.datastruct.Selection"/>
-        <if condition="part == &amp;quot;Inside Border&amp;quot;">
-            <field label="Border Dimension" name="border" type="openfl.geom.Point"/>
-        </if>
+    <field default="" editor="Dropdown" label="Scale Part" name="part" options="[Whole Image,Inside Border]:String" type="com.polydes.datastruct.Selection"/>
+    <if condition="part == &amp;quot;Inside Border&amp;quot;">
+        <field label="Border Insets" name="border" type="dialog.geom.Insets"/>
     </if>
 </structure>

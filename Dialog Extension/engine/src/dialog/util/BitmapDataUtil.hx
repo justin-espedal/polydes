@@ -24,91 +24,105 @@ import dialog.unity.extension.TextureUtil;
 #end
 
 import dialog.core.DialogFont;
+import dialog.geom.*;
 
 using dialog.util.BitmapDataUtil;
 
 class BitmapDataUtil
 {
-	public static function get9Scaled(src:BitmapData, width:Int, height:Int, cornerWidth:Int, cornerHeight:Int, stretch:Bool):BitmapData
+	public static function get9Scaled(src:BitmapData, width:Int, height:Int, insets:Insets, stretch:Bool):BitmapData
 	{
 		if(width <= 0) width = src.width;
 		if(height <= 0) height = src.height;
-		if(cornerWidth <= 0) cornerWidth = 1;
-		if(cornerHeight <= 0) cornerHeight = 1;
+
+		var inl = Std.int(insets.left);
+		var inr = Std.int(insets.right);
+		var int = Std.int(insets.top);
+		var inb = Std.int(insets.bottom);
+
+		if(inl <= 0) inl = 1;
+		if(inr <= 0) inr = 1;
+		if(int <= 0) int = 1;
+		if(inb <= 0) inb = 1;
 
 		var bg:BitmapData = new BitmapData(width, height);
 		var w:Int = src.width;
 		var h:Int = src.height;
-		var cW:Int = cornerWidth;
-		var cH:Int = cornerHeight;
-		var mW:Int = w - (cW * 2);
-		var mH:Int = h - (cH * 2);
+		var mW:Int = w - inl - inr;
+		var mH:Int = h - int - inb;
 		var p:Point = new Point(0, 0);
 		var rect:Rectangle = new Rectangle(0, 0, 0, 0);
 
 		//copy corners
-		rect.width = cW;
-		rect.height = cH;
+		rect.width = inl;
+		rect.height = int;
 		//top left
 		rect.x = 0;
 		rect.y = 0;
 		bg.copyPixels(src, rect, p);
 		//top right
-		rect.x = w - cW;
-		p.x = width - cW;
+		rect.x = w - inr;
+		rect.width = inr;
+		p.x = width - inr;
 		bg.copyPixels(src, rect, p);
 		//bottom right
-		rect.y = h - cH;
-		p.y = height - cH;
+		rect.y = h - inb;
+		rect.height = inb;
+		p.y = height - inb;
 		bg.copyPixels(src, rect, p);
 		//bottom left
 		rect.x = 0;
+		rect.width = inl;
 		p.x = 0;
 		bg.copyPixels(src, rect, p);
 
 		//copy edges
 		var newRect:Rectangle = new Rectangle(0, 0, 0, 0);
-		var xScale = (width - (cW * 2)) / mW;
-		var yScale = (height - (cH * 2)) / mH;
+		var xScale = (width - inl - inr) / mW;
+		var yScale = (height - int - inb) / mH;
 		//top and bottom edges
 		newRect.x = 0;
 		newRect.y = 0;
-		newRect.width = width - (cW * 2);
-		newRect.height = cH;
-		rect.x = cW;
+		newRect.width = width - inl - inr;
+		newRect.height = int;
+		rect.x = inl;
 		rect.y = 0;
 		rect.width = mW;
-		rect.height = cH;
-		p.x = cW;
+		rect.height = int;
+		p.x = inl;
 		p.y = 0;
 		bg.copyPixels(src.getScaledPartial(rect, xScale, 1), newRect, p);
-		rect.y = h - cH;
-		p.y = height - cH;
+		newRect.height = inb;
+		rect.y = h - inb;
+		rect.height = inb;
+		p.y = height - inb;
 		bg.copyPixels(src.getScaledPartial(rect, xScale, 1), newRect, p);
 		//left and right edges
-		newRect.width = cW;
-		newRect.height = height - (cH * 2);
+		newRect.width = inl;
+		newRect.height = height - int - inb;
 		rect.x = 0;
-		rect.y = cH;
-		rect.width = cW;
+		rect.y = int;
+		rect.width = inl;
 		rect.height = mH;
 		p.x = 0;
-		p.y = cH;
+		p.y = inl;
 		bg.copyPixels(src.getScaledPartial(rect, 1, yScale), newRect, p);
-		rect.x = w - cW;
-		p.x = width - cW;
+		newRect.width = inr;
+		rect.x = w - inr;
+		rect.width = inr;
+		p.x = width - inr;
 		bg.copyPixels(src.getScaledPartial(rect, 1, yScale), newRect, p);
 
 		//copy center
-		newRect.width = width - (cW * 2);
-		newRect.height = height - (cH * 2);
-		rect.x = cW;
-		rect.y = cH;
+		newRect.width = width - inl - inr;
+		newRect.height = height - int - inb;
+		rect.x = inl;
+		rect.y = int;
 		rect.width = mW;
 		rect.height = mH;
-		p.x = cW;
-		p.y = cH;
-
+		p.x = inl;
+		p.y = inr;
+		
 		if(stretch)
 			bg.copyPixels(src.getScaledPartial(rect, xScale, yScale), newRect, p);
 		else

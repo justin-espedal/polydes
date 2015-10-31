@@ -5,10 +5,10 @@ package dialog.core;
 import com.stencyl.graphics.G;
 import com.stencyl.Engine;
 
-import nme.display.BitmapData;
-import nme.geom.Rectangle;
-import nme.geom.Point;
-import nme.geom.Matrix;
+import dialog.geom.*;
+
+import openfl.display.BitmapData;
+import openfl.geom.*;
 
 using dialog.util.BitmapDataUtil;
 
@@ -88,6 +88,17 @@ class G2
 		r.height *= Engine.SCALE;
 
 		return r;
+	}
+
+	public static function si(val:Insets):Insets
+	{
+		var i:Insets = val.clone();
+		i.top *= Engine.SCALE;
+		i.left *= Engine.SCALE;
+		i.bottom *= Engine.SCALE;
+		i.right *= Engine.SCALE;
+
+		return i;
 	}
 
 	public static function sp(val:Point):Point

@@ -15,6 +15,11 @@ class Insets
 		this.left = left;
 	}
 
+	public function clone():Insets
+	{
+		return new Insets(top, right, bottom, left);
+	}
+
 	public function toString():String
 	{
 		return '[$top, $right, $bottom, $left]';
