@@ -270,7 +270,7 @@ public class Structure extends EditableObject
 		if(unknownData == null)
 			return;
 		
-		log.info("Realizing unknown structure " + dref.getName() + " as " + def.getClassname());
+		log.info("Realizing unknown structure " + dref.getName() + " as " + def.getFullClassname());
 		
 		StructureDefinition oldTemplate = template;
 		template = def;

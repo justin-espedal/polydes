@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
@@ -19,9 +21,6 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 	public String haxeType;
 	public Class<T> javaType;
 	
-	public String haxeClassname;
-	public String haxePackage;
-	
 	private final int hash;
 	
 	public DataType(Class<T> javaType, String haxeType, String stencylType)
@@ -30,19 +29,20 @@ public abstract class DataType<T> implements Comparable<DataType<?>>
 		this.haxeType = haxeType;
 		this.stencylType = stencylType;
 		
-		int lastDot = haxeType.lastIndexOf('.');
-		if(lastDot == -1)
-		{
-			haxePackage = "";
-			haxeClassname = haxeType;
-		}
-		else
-		{
-			haxePackage = haxeType.substring(0, lastDot);
-			haxeClassname = haxeType.substring(lastDot + 1);
-		}
-		
 		hash = haxeType.hashCode();
+	}
+	
+	public String getSimpleClassname()
+	{
+		return StringUtils.substringAfterLast(haxeType, ".");
+	}
+	
+	public String getPackage()
+	{
+		if(haxeType.indexOf('.') == -1)
+			return StringUtils.EMPTY;
+		else
+			return StringUtils.substringBeforeLast(haxeType, ".");
 	}
 	
 	public abstract ExtrasMap saveExtras(ExtraProperties extras);

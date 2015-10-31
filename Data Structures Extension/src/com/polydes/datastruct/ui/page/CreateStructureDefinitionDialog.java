@@ -21,9 +21,11 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.datastruct.data.structure.StructureDefinition;
+import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.UIConsts;
+import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.utils.ImageImporter;
 import com.polydes.datastruct.ui.utils.Layout;
 
@@ -47,6 +49,8 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	AutoVerifyField classField;
 	AutoVerifyField packageField;
 	
+	UpdatingCombo<StructureDefinition> parentTypeChooser;
+	
 	JButton okButton;
 	
 	boolean nameOk;
@@ -60,7 +64,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	
 	public CreateStructureDefinitionDialog()
 	{
-		super(StructureDefinitionsWindow.get(), "Create New Structure", 450, 370, true, true, true);
+		super(StructureDefinitionsWindow.get(), "Create New Structure", 450, 390, true, true, true);
 	}
 	
 	@Override
@@ -116,12 +120,18 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		nameField = new AutoVerifyField(nameVerifier, "");
 		classField = new AutoVerifyField(classVerifier, "");
 		packageField = new AutoVerifyField(packageVerifier, "");
+		parentTypeChooser = new UpdatingCombo<StructureDefinition>(StructureDefinitions.defMap.values(), null);
+		parentTypeChooser.setBackground(null);
+		JButton parentTypeClearButton = new JButton("Clear");
+		parentTypeClearButton.addActionListener(e -> parentTypeChooser.setSelectedItem(null));
+		parentTypeClearButton.setBackground(null);
 		
 		dp.startBlock();
 		dp.addHeader("New Structure");
 		dp.addGenericRow("Name", nameField);
 		dp.addGenericRow("Class", classField);
 		dp.addGenericRow("Package", packageField);
+		dp.addGenericRow("Extends", Layout.horizontalBox(parentTypeChooser, parentTypeClearButton));
 		
 		final JLabel iconLabel = new JLabel()
 		{
@@ -197,9 +207,9 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		
 		editDef = def;
 		nameField.getTextField().setText(def.getName());
-		int lastDot = def.getClassname().lastIndexOf('.');
-		classField.getTextField().setText(def.getClassname().substring(lastDot + 1));
-		packageField.getTextField().setText(def.getClassname().substring(0, lastDot));
+		classField.getTextField().setText(def.getSimpleClassname());
+		packageField.getTextField().setText(def.getPackage());
+		parentTypeChooser.setSelectedItem(def.parent);
 		iconImg = editDef.getIconImg();
 		
 		verify();
@@ -257,6 +267,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 			editDef.setClassname(packageField.getText() + "." + classField.getText());
 			if(editDef.getIconImg() != iconImg)
 				editDef.setImage(iconImg);
+			editDef.parent = parentTypeChooser.getSelected();
 			
 			JLabel previewLabel = editDef.getEditor().getPreview().getEditor().label;
 			previewLabel.setText(editDef.getName());
@@ -269,6 +280,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 			String className = packageField.getText() + "." + classField.getText();
 			newDef = new StructureDefinition(nodeName, className);
 			newDef.setImage(iconImg);
+			newDef.parent = parentTypeChooser.getSelected();
 		}
 	}
 	

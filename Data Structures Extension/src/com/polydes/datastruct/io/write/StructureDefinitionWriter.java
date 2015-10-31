@@ -40,9 +40,9 @@ public class StructureDefinitionWriter
 	
 	public static void write(Document doc, Element root, StructureDefinition def)
 	{
-		root.setAttribute("classname", def.getClassname());
+		root.setAttribute("classname", def.getFullClassname());
 		if(def.parent != null)
-			root.setAttribute("extends", def.parent.getClassname());
+			root.setAttribute("extends", def.parent.getFullClassname());
 		for(Leaf<DataItem> n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}

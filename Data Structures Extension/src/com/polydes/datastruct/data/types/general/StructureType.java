@@ -47,7 +47,7 @@ public class StructureType extends DataType<Structure>
 	
 	public StructureType(StructureDefinition def)
 	{
-		super(Structure.class, def.getClassname(), "OBJECT");
+		super(Structure.class, def.getFullClassname(), "OBJECT");
 		this.def = def;
 	}
 	
@@ -68,8 +68,8 @@ public class StructureType extends DataType<Structure>
 			typeinfo += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getVarname(), f.getType());
 		}
 		
-		s = StringUtils.replace(s, "[PACKAGE]", haxePackage);
-		s = StringUtils.replace(s, "[CLASSNAME]", haxeClassname);
+		s = StringUtils.replace(s, "[PACKAGE]", getPackage());
+		s = StringUtils.replace(s, "[CLASSNAME]", getSimpleClassname());
 		s = StringUtils.replace(s, "[FIELDMAP]", fieldmap, 1);
 		s = StringUtils.replace(s, "[TYPEINFO]", typeinfo, 1);
 		s = StringUtils.replace(s, "[VARIABLES]", variables, 1);

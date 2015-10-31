@@ -154,7 +154,7 @@ public class StructureDefinitions
 	
 	public static void addDefinition(StructureDefinition def)
 	{
-		defMap.put(def.getClassname(), def);
+		defMap.put(def.getFullClassname(), def);
 		Structures.structures.put(def, new ArrayList<Structure>());
 		Types.addType(new StructureType(def));
 	}

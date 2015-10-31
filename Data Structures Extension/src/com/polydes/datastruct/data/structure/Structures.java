@@ -182,7 +182,7 @@ public class Structures
 			Structure s = (Structure) ((DataItem) item).getObject();
 			ArrayList<String> toWrite = new ArrayList<String>();
 			toWrite.add("struct_id=" + s.getID());
-			toWrite.add("struct_type=" + s.getTemplate().getClassname());
+			toWrite.add("struct_type=" + s.getTemplate().getFullClassname());
 			
 			for(StructureField field : s.getFields())
 			{

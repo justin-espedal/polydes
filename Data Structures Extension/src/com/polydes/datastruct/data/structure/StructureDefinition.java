@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.polydes.datastruct.data.core.Pair;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.EditableObject;
@@ -86,9 +88,22 @@ public class StructureDefinition extends EditableObject
 		return name;
 	}
 	
-	public String getClassname()
+	public String getFullClassname()
 	{
 		return classname;
+	}
+	
+	public String getSimpleClassname()
+	{
+		return StringUtils.substringAfterLast(classname, ".");
+	}
+	
+	public String getPackage()
+	{
+		if(classname.indexOf('.') == -1)
+			return StringUtils.EMPTY;
+		else
+			return StringUtils.substringBeforeLast(classname, ".");
 	}
 
 	public void setClassname(String newClassname)
@@ -390,7 +405,7 @@ public class StructureDefinition extends EditableObject
 		for(Structure s : Structures.structures.get(this))
 			StructurePage.get().getFolderModel().removeItem(s.dref, s.dref.getParent());
 		
-		StructureDefinitions.defMap.remove(getClassname());
+		StructureDefinitions.defMap.remove(getFullClassname());
 		Structures.structures.remove(this);
 		Types.typeFromXML.remove(classname);
 		
