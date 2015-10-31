@@ -335,10 +335,12 @@ public class DataStructuresExtension extends GameExtension
 				for(DataType<?> type : ext.getDataTypes())
 					Types.addType(type);
 			
+			new File(getDataFolder(), "defs").mkdirs();
 			StructureDefinitions.get().addFolder(new File(getDataFolder(), "defs"), "My Structures");
 			for(DataStructureExtension ext : dataStructureExtensions)
 				StructureDefinitions.get().addFolder(ext.getDefinitionsFolder(), ((BaseExtension) ext).getManifest().name);
 			
+			new File(getExtrasFolder(), "data").mkdirs();
 			Images.get().load(new File(Locations.getGameLocation(getGame()), "extras"));
 			Structures.get().load(new File(getExtrasFolder(), "data"));
 			
