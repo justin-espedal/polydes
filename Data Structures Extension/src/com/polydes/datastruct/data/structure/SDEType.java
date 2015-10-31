@@ -19,7 +19,7 @@ public abstract class SDEType<T extends SDE>
 	public String tag;
 	public Icon icon;
 	public boolean isBranchNode;
-	public Collection<Class<SDEType<?>>> childTypes;
+	public Collection<Class<? extends SDE>> childTypes;
 	
 	public abstract T read(StructureDefinition model, Element e);
 	public abstract Element write(T object, Document doc);
