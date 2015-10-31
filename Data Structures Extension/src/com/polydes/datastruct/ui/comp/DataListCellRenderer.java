@@ -42,11 +42,10 @@ public class DataListCellRenderer extends JPanel implements TableCellRenderer
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
 	{
-		if (isSelected && table.hasFocus())
-		{
+		if(isSelected && table.hasFocus())
 			setBackground(UIConsts.TREE_SELECTION_COLOR);
-			setForeground(UIConsts.TREE_SELECTION_COLOR);
-		}
+		else if(isSelected)// && table.hasFocus())
+			setBackground(UIConsts.TREE_SELECTION_COLOR.darker());
 		else
 			setBackground(table.getBackground());
 		

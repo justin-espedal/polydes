@@ -3,6 +3,9 @@ package com.polydes.datastruct.ui.comp;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -59,7 +62,13 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		table.setBackground(style.pageBg.darker());
 		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		table.setSurrendersFocusOnKeystroke(true);
-		table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ENTER"), "none");
+		InputMap tableIM = table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		tableIM.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "none");
+		tableIM.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "none");
+		tableIM.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), "none");
+//		tableIM.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK), "none");
+//		tableIM.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK), "none");
+		
 		table.setShowGrid(false);
 		table.setColumnSelectionAllowed(false);
 		table.setTableHeader(null);
@@ -77,7 +86,21 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 				table.getCellEditor().stopCellEditing();
 				table.removeEditor();
 			}
-			table.clearSelection();
+//			table.clearSelection();
+		});
+		table.addFocusListener(new FocusListener()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				table.repaint();
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				table.repaint();
+			}
 		});
 		
 //		table.setDragEnabled(true);
