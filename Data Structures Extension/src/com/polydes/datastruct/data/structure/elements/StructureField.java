@@ -245,9 +245,8 @@ public class StructureField extends SDE
 		}
 		
 		@Override
-		public Element write(StructureField f, Document doc)
+		public void write(StructureField f, Element e)
 		{
-			Element e = doc.createElement("field");
 			e.setAttribute("name", f.getVarname());
 			e.setAttribute("type", f.getType().haxeType);
 			XML.write(e, "label", f.getLabel());
@@ -259,8 +258,7 @@ public class StructureField extends SDE
 			DataType<?> dtype = f.getType();
 			ExtrasMap emap = dtype.saveExtras(f.getExtras());
 			if(emap != null)
-				writeExtrasToElement(doc, e, emap);
-			return e;
+				writeExtrasToElement(e.getOwnerDocument(), e, emap);
 		}
 		
 		public static void writeExtrasToElement(Document doc, Element e, ExtrasMap emap)

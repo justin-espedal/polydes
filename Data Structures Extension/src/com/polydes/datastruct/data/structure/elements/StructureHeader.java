@@ -2,15 +2,14 @@ package com.polydes.datastruct.data.structure.elements;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureHeaderPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -94,11 +93,9 @@ public class StructureHeader extends SDE
 		}
 
 		@Override
-		public Element write(StructureHeader object, Document doc)
+		public void write(StructureHeader object, Element e)
 		{
-			Element e = doc.createElement("header");
 			XML.write(e, "label", object.getLabel());
-			return e;
 		}
 
 		@Override

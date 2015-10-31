@@ -2,7 +2,6 @@ package com.polydes.datastruct.data.structure.elements;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.util.Lang;
@@ -67,9 +66,8 @@ public class StructureTabset extends SDE
 		}
 
 		@Override
-		public Element write(StructureTabset object, Document doc)
-		{
-			return doc.createElement("tabset");
+		public void write(StructureTabset object, Element e)
+		{	
 		}
 		
 		@Override

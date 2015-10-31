@@ -2,7 +2,6 @@ package com.polydes.datastruct.data.structure.elements;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
@@ -100,11 +99,9 @@ public class StructureTab extends SDE
 		}
 
 		@Override
-		public Element write(StructureTab object, Document doc)
+		public void write(StructureTab object, Element e)
 		{
-			Element e = doc.createElement("tab");
 			XML.write(e, "label", object.getLabel());
-			return e;
 		}
 
 		@Override

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import javax.swing.Icon;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.datastruct.data.folder.DataItem;
@@ -22,7 +21,7 @@ public abstract class SDEType<T extends SDE>
 	public Collection<Class<? extends SDE>> childTypes;
 	
 	public abstract T read(StructureDefinition model, Element e);
-	public abstract Element write(T object, Document doc);
+	public abstract void write(T object, Element e);
 	public abstract T create(StructureDefinition def, String nodeName);
 	
 	public abstract GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, T value, int i);
@@ -31,4 +30,6 @@ public abstract class SDEType<T extends SDE>
 	public abstract void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
 	
 	public void genCode(T value, StringBuilder builder) { }
+	
+	public String owner;
 }

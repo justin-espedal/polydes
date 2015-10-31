@@ -63,6 +63,8 @@ public class SDETypes
 		
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
 		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));
+		
+		type.owner = ext;
 	}
 	
 	public static void removeExtendedType(String extension, SDEType<?> type)

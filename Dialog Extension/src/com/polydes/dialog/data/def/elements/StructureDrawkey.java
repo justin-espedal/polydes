@@ -3,7 +3,6 @@ package com.polydes.dialog.data.def.elements;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
@@ -136,11 +135,9 @@ public class StructureDrawkey extends SDE
 		}
 
 		@Override
-		public Element write(StructureDrawkey object, Document doc)
+		public void write(StructureDrawkey object, Element e)
 		{
-			Element e = doc.createElement(tag);
 			e.setAttribute("name", object.getName());
-			return e;
 		}
 		
 		@Override

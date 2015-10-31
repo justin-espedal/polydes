@@ -10,6 +10,8 @@ import org.apache.commons.io.FileUtils;
 
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.types.DataType;
 import com.polydes.datastruct.ext.DataStructureExtension;
 import com.polydes.datastruct.ext.DataTypeExtension;
@@ -19,6 +21,7 @@ import com.polydes.dialog.data.def.elements.StructureCommand.CommandType;
 import com.polydes.dialog.data.def.elements.StructureCommands.CommandsType;
 import com.polydes.dialog.data.def.elements.StructureDrawkey.DrawkeyType;
 import com.polydes.dialog.data.def.elements.StructureDrawkeys.DrawkeysType;
+import com.polydes.dialog.data.def.elements.StructureExtension;
 import com.polydes.dialog.data.def.elements.StructureExtension.ExtensionType;
 import com.polydes.dialog.data.stores.Dialog;
 import com.polydes.dialog.data.stores.Macros;
@@ -171,6 +174,8 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	{
 		Dialog.get().load(new File(getExtrasFolder(), "dialog.txt"));
 		Macros.get().load(new File(getExtrasFolder(), "macros.txt"));
+		
+		SDETypes.fromClass(StructureTab.class).childTypes.add(StructureExtension.class);
 	}
 
 	@Override
@@ -185,6 +190,8 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	@Override
 	public void onGameWithDataClosed()
 	{
+		SDETypes.fromClass(StructureTab.class).childTypes.remove(StructureExtension.class);
+		
 		Dialog.get().unload();
 		Macros.get().unload();
 

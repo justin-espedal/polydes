@@ -5,15 +5,14 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
@@ -22,13 +21,13 @@ import com.polydes.datastruct.ui.table.RowGroup;
 
 public class StructureUnknown extends SDE
 {
-	public String prefix;
+	public String namespace;
 	public String tag;
 	public HashMap<String, String> atts;
 	
-	public StructureUnknown(String prefix, String tag, HashMap<String, String> atts)
+	public StructureUnknown(String namespace, String tag, HashMap<String, String> atts)
 	{
-		this.prefix = prefix;
+		this.namespace = namespace;
 		this.tag = tag;
 		this.atts = atts;
 	}
@@ -36,7 +35,7 @@ public class StructureUnknown extends SDE
 	@Override
 	public String getDisplayLabel()
 	{
-		return prefix + ":" + tag;
+		return namespace + ":" + tag;
 	}
 	
 	@Override
@@ -66,12 +65,9 @@ public class StructureUnknown extends SDE
 		}
 
 		@Override
-		public Element write(StructureUnknown object, Document doc)
+		public void write(StructureUnknown object, Element e)
 		{
-			Element e = doc.createElement(object.tag);
-			e.setPrefix(object.prefix);
 			XML.writeMap(e, object.atts);
-			return e;
 		}
 		
 		@Override

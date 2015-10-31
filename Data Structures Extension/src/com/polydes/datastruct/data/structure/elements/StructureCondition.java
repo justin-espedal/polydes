@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
@@ -260,11 +259,9 @@ public class StructureCondition extends SDE
 		}
 		
 		@Override
-		public Element write(StructureCondition object, Document doc)
+		public void write(StructureCondition object, Element e)
 		{
-			Element e = doc.createElement("if");
 			XML.write(e, "condition", object.getText());
-			return e;
 		}
 
 		@Override

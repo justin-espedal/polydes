@@ -3,15 +3,14 @@ package com.polydes.datastruct.data.structure.elements;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureTextPanel;
 import com.polydes.datastruct.ui.table.Card;
@@ -106,12 +105,10 @@ public class StructureText extends SDE
 		}
 
 		@Override
-		public Element write(StructureText object, Document doc)
+		public void write(StructureText object, Element e)
 		{
-			Element e = doc.createElement("text");
 			XML.write(e, "label", object.getLabel());
 			XML.write(e, "text", object.getText());
-			return e;
 		}
 		
 		@Override

@@ -3,7 +3,6 @@ package com.polydes.dialog.data.def.elements;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
@@ -149,12 +148,10 @@ public class StructureExtension extends SDE
 		}
 
 		@Override
-		public Element write(StructureExtension object, Document doc)
+		public void write(StructureExtension object, Element e)
 		{
-			Element e = doc.createElement("extension");
 			e.setAttribute("implementation", object.implementation);
 			e.setAttribute("desc", object.description);
-			return e;
 		}
 		
 		@Override

@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
@@ -257,21 +256,18 @@ public class StructureCommand extends SDE
 		}
 
 		@Override
-		public Element write(StructureCommand object, Document doc)
+		public void write(StructureCommand object, Element e)
 		{
-			Element e = doc.createElement(tag);
 			e.setAttribute("name", object.name);
 			e.setAttribute("desc", object.description);
 			
 			for(StructureArgument arg : object.args)
 			{
-				Element child = doc.createElement("arg");
+				Element child = e.getOwnerDocument().createElement("arg");
 				XML.write(child, "name", arg.name);
 				XML.write(child, "type", arg.type.name());
 				e.appendChild(child);
 			}
-			
-			return e;
 		}
 
 		@Override

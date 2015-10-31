@@ -2,7 +2,6 @@ package com.polydes.dialog.data.def.elements;
 
 import javax.swing.JPanel;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.util.Lang;
@@ -58,9 +57,8 @@ public class StructureCommands extends SDE
 		}
 
 		@Override
-		public Element write(StructureCommands object, Document doc)
+		public void write(StructureCommands object, Element e)
 		{
-			return doc.createElement(tag);
 		}
 
 		@Override
