@@ -53,8 +53,8 @@ import com.polydes.common.util.PopupUtil.PopupSelectionListener;
 
 import stencyl.sw.util.UI;
 
-public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelectionListener, ActionListener, KeyListener,
-	CellEditorListener, CellEditValidator, HierarchyRepresentation<T>
+public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel implements TreeSelectionListener, ActionListener, KeyListener,
+	CellEditorListener, CellEditValidator, HierarchyRepresentation<T,U>
 {
 	public static final int DEF_WIDTH = 200;
 	public static final int MINI_BUTTON_WIDTH = 25;
@@ -64,19 +64,19 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	
 	private JTree tree;
 	private DefaultTreeModel model;
-	private TNode<T> root;
-	private ArrayList<TNode<T>> selectedNodes;
-	private HierarchyModel<T> folderModel;
-	private HashMap<Leaf<T>, TNode<T>> nodeMap;
+	private TNode<T,U> root;
+	private ArrayList<TNode<T,U>> selectedNodes;
+	private HierarchyModel<T,U> folderModel;
+	private HashMap<T, TNode<T,U>> nodeMap;
 	
-	private DTreeNodeCreator<T> nodeCreator;
-	private DTreeCellRenderer<T> renderer;
-	private DTreeCellEditor<T> editor;
-	private DTreeSelectionState<T> selectionState;
+	private DTreeNodeCreator<T,U> nodeCreator;
+	private DTreeCellRenderer<T,U> renderer;
+	private DTreeCellEditor<T,U> editor;
+	private DTreeSelectionState<T,U> selectionState;
 
 	private boolean nameEditingAllowed = true;
 	
-	private ArrayList<DTreeSelectionListener<T>> listeners;
+	private ArrayList<DTreeSelectionListener<T,U>> listeners;
 	
 	private JScrollPane scroller;
 	
@@ -100,16 +100,16 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	private static ImageIcon propertiesPressed = ResourceLoader.loadIcon("tree/properties-pressed.png");
 	
 	private boolean listEditEnabled;
-	private DTreeTransferHandler<T> transferHandler;
+	private DTreeTransferHandler<T,U> transferHandler;
 	
-	public DarkTree(HierarchyModel<T> folderModel)
+	public DarkTree(HierarchyModel<T,U> folderModel)
 	{
 		super(new BorderLayout());
 		
 		folderModel.addRepresentation(this);
 		
 		this.folderModel = folderModel;
-		nodeMap = new HashMap<Leaf<T>, TNode<T>>();
+		nodeMap = new HashMap<T, TNode<T,U>>();
 		
 		listEditEnabled = false;
 		
@@ -126,16 +126,16 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 			@Override
 			public String convertValueToText(Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
 			{
-				TNode<T> node = (TNode<T>) value;
+				TNode<T,U> node = (TNode<T,U>) value;
 				return DarkTree.this.convertValueToText(node.getUserObject());
 			}
 		};
 		model = (DefaultTreeModel) tree.getModel();
 		tree.expandPath(new TreePath(root.getPath()));
-		editor = new DTreeCellEditor<T>(this);
+		editor = new DTreeCellEditor<T,U>(this);
 		editor.setValidator(this);
 		editor.addCellEditorListener(this);
-		renderer = new DTreeCellRenderer<T>();
+		renderer = new DTreeCellRenderer<T,U>();
 		tree.setUI(new DTreeUI(this));
 		tree.setCellEditor(editor);
 		tree.setCellRenderer(renderer);
@@ -156,7 +156,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		
 		tree.setDragEnabled(true);
 		tree.setDropMode(DropMode.ON_OR_INSERT);
-		tree.setTransferHandler(transferHandler = new DTreeTransferHandler<T>(folderModel, this));
+		tree.setTransferHandler(transferHandler = new DTreeTransferHandler<T,U>(folderModel, this));
 		
 		scroller = UI.createScrollPane(tree);
 		scroller.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
@@ -180,16 +180,16 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		setOpaque(true);
 		setBorder(null);
 		
-		listeners = new ArrayList<DTreeSelectionListener<T>>();
-		selectedNodes = new ArrayList<TNode<T>>();
-		selectionState = new DTreeSelectionState<T>();
+		listeners = new ArrayList<DTreeSelectionListener<T,U>>();
+		selectedNodes = new ArrayList<TNode<T,U>>();
+		selectionState = new DTreeSelectionState<T,U>();
 		selectionState.nodes = selectedNodes;
 		
 		tree.setSelectionPath(new TreePath(model.getPathToRoot(root)));
 		refreshDisplay();
 	}
 	
-	public String convertValueToText(Leaf<T> item)
+	public String convertValueToText(T item)
 	{
 		return item.getName();
 	}
@@ -220,17 +220,17 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		tree = null;
 	}
 	
-	public void setNode(Leaf<T> item, TNode<T> node)
+	public void setNode(T item, TNode<T,U> node)
 	{
 		nodeMap.put(item, node);
 	}
 	
-	public TNode<T> getNode(Leaf<T> item)
+	public TNode<T,U> getNode(T item)
 	{
 		return nodeMap.get(item);
 	}
 	
-	public void removeNode(Leaf<T> item)
+	public void removeNode(T item)
 	{
 		nodeMap.remove(item);
 	}
@@ -245,9 +245,10 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	    tree.treeDidChange();
 	}
 	
-	public void expand(Branch<T> branch)
+	@SuppressWarnings("unchecked")
+	public void expand(U branch)
 	{
-		tree.expandPath(new TreePath(getNode(branch).getPath()));
+		tree.expandPath(new TreePath(getNode((T) branch).getPath()));
 	}
 	
 	public void expandLevel(int level)
@@ -255,15 +256,16 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		expandLevel(level, folderModel.getRootBranch());
 	}
 	
-	private void expandLevel(int level, Branch<T> branch)
+	@SuppressWarnings("unchecked")
+	private void expandLevel(int level, U branch)
 	{
-		for(Leaf<T> item : branch.getItems())
+		for(T item : branch.getItems())
 		{
 			if(item instanceof Branch)
 			{
 				tree.expandPath(new TreePath(getNode(item).getPath()));
 				if(level > 0)
-					expandLevel(level - 1, (Branch<T>) item);
+					expandLevel(level - 1, (U) item);
 			}
 		}
 	}
@@ -292,7 +294,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 			{
 				rows[i] = tree.getRowForPath(paths[i]);
 				if(rows[i] == -1)
-					selectedNodes.add((TNode<T>) paths[i].getLastPathComponent());
+					selectedNodes.add((TNode<T,U>) paths[i].getLastPathComponent());
 			}
 			
 			Arrays.sort(rows);
@@ -302,7 +304,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 				if(row == -1)
 					continue;
 				
-				selectedNodes.add((TNode<T>) tree.getPathForRow(row).getLastPathComponent());
+				selectedNodes.add((TNode<T,U>) tree.getPathForRow(row).getLastPathComponent());
 			}
 		}
 		
@@ -313,7 +315,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		int folderCounter = 0;
 		int itemCounter = 0;
 		
-		for(TNode<T> node : selectedNodes)
+		for(TNode<T,U> node : selectedNodes)
 		{
 			if(node.getUserObject() instanceof Branch)
 				++folderCounter;
@@ -328,21 +330,22 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		else
 			selectionState.type = SelectionType.ITEMS;
 		
-		for (DTreeSelectionListener<T> l : listeners)
+		for (DTreeSelectionListener<T,U> l : listeners)
 			l.selectionStateChanged();
 		
-		Branch<T> newNodeFolder = getCreationParentFolder(selectionState);
+		U newNodeFolder = getCreationParentFolder(selectionState);
 		newItemButton.setEnabled(newNodeFolder.isFolderCreationEnabled() || newNodeFolder.isItemCreationEnabled());
 		removeItemButton.setEnabled(newNodeFolder.isItemRemovalEnabled());
 		propertiesButton.setEnabled(newNodeFolder.isItemEditingEnabled() && selectedNodes.size() == 1 && selectedNodes.get(0) != root);
 	}
 	
-	public Branch<T> getCreationParentFolder(DTreeSelectionState<T> state)
+	@SuppressWarnings("unchecked")
+	public U getCreationParentFolder(DTreeSelectionState<T,U> state)
 	{
 		if(selectionState.type == SelectionType.FOLDERS)
-			return (Branch<T>) selectedNodes.get(selectedNodes.size() - 1).getUserObject();
+			return (U) selectedNodes.get(selectedNodes.size() - 1).getUserObject();
 		else
-			return selectedNodes.get(selectedNodes.size() - 1).getUserObject().getParent();
+			return (U) selectedNodes.get(selectedNodes.size() - 1).getUserObject().getParent();
 	}
 
 	@Override
@@ -350,7 +353,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	{
 		if(e.getSource() == newItemButton)
 		{
-			Branch<T> newNodeFolder = getCreationParentFolder(selectionState);
+			U newNodeFolder = getCreationParentFolder(selectionState);
 			
 			ArrayList<PopupItem> items = new ArrayList<PopupItem>();
 			if(newNodeFolder.isFolderCreationEnabled())
@@ -390,7 +393,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	
 	public void createNewItem(PopupItem item)
 	{
-		Branch<T> newNodeFolder = getCreationParentFolder(selectionState);
+		U newNodeFolder = getCreationParentFolder(selectionState);
 		
 		int insertPosition;
 		
@@ -402,9 +405,9 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		createNewItemFromFolder(item, newNodeFolder, insertPosition);
 	}
 	
-	public void createNewItemFromFolder(PopupItem item, Branch<T> newNodeFolder, int insertPosition)
+	public void createNewItemFromFolder(PopupItem item, U newNodeFolder, int insertPosition)
 	{
-		Leaf<T> newNodeObject;
+		T newNodeObject;
 		
 		if (nodeCreator == null)
 			return;
@@ -436,9 +439,9 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	
 	private void removeSelected()
 	{
-		TNode<T> reselectNode;
+		TNode<T,U> reselectNode;
 		@SuppressWarnings("unchecked")
-		ArrayList<TNode<T>> toRemoveList = (ArrayList<TNode<T>>) selectedNodes.clone();
+		ArrayList<TNode<T,U>> toRemoveList = (ArrayList<TNode<T,U>>) selectedNodes.clone();
 		
 		reselectNode = selectedNodes.get(selectedNodes.size() - 1).getNextSibling();
 		if (reselectNode == null)
@@ -447,19 +450,19 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 			reselectNode = selectedNodes.get(selectedNodes.size() - 1).getParent();
 		
 		//Remove any objects that are under parents that will be deleted.
-		final HashSet<Leaf<T>> toRemoveDiSet = new HashSet<Leaf<T>>();
-		for(TNode<T> toRemoveNode : toRemoveList)
-			NodeUtils.recursiveRun(toRemoveNode.getUserObject(), (item) -> toRemoveDiSet.add(item));
+		final HashSet<T> toRemoveDiSet = new HashSet<T>();
+		for(TNode<T,U> toRemoveNode : toRemoveList)
+			NodeUtils.recursiveRun(toRemoveNode.getUserObject(), (T item) -> toRemoveDiSet.add(item));
 		
 		//Sort it so that the deepest items in hierarchy are removed one by one before their parents.
-		ArrayList<Leaf<T>> toRemoveDiList = new ArrayList<>(toRemoveDiSet);
-		Collections.sort(toRemoveDiList, (a, b) -> Integer.compare(Leaf.getDepth(b), Leaf.getDepth(a)));
+		ArrayList<T> toRemoveDiList = new ArrayList<>(toRemoveDiSet);
+		Collections.sort(toRemoveDiList, (a, b) -> Integer.compare(NodeUtils.getDepth(b), NodeUtils.getDepth(a)));
 		
-		if(nodeCreator.attemptRemove(new ArrayList<Leaf<T>>(toRemoveDiList)))
+		if(nodeCreator.attemptRemove(new ArrayList<T>(toRemoveDiList)))
 		{
-			for(Leaf<T> toRemove : toRemoveDiList)
+			for(T toRemove : toRemoveDiList)
 			{
-				Branch<T> parent = toRemove.getParent();
+				U parent = (U) toRemove.getParent();
 				
 				folderModel.removeItem(toRemove, parent);
 				nodeCreator.nodeRemoved(toRemove);
@@ -509,18 +512,18 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	{
 	}
 
-	public void addTreeListener(DTreeSelectionListener<T> l)
+	public void addTreeListener(DTreeSelectionListener<T,U> l)
 	{
 		l.setSelectionState(selectionState);
 		listeners.add(l);
 	}
 	
-	public void removeTreeListener(DTreeSelectionListener<T> l)
+	public void removeTreeListener(DTreeSelectionListener<T,U> l)
 	{
 		listeners.remove(l);
 	}
 
-	public void setNodeCreator(DTreeNodeCreator<T> nodeCreator)
+	public void setNodeCreator(DTreeNodeCreator<T,U> nodeCreator)
 	{
 		this.nodeCreator = nodeCreator;
 		
@@ -573,7 +576,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		remove(miniButtonBar);
 	}
 	
-	public TNode<T> getRoot()
+	public TNode<T,U> getRoot()
 	{
 		return root;
 	}
@@ -593,7 +596,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		return scroller;
 	}
 	
-	public DTreeSelectionState<T> getSelectionState()
+	public DTreeSelectionState<T,U> getSelectionState()
 	{
 		return selectionState;
 	}
@@ -684,58 +687,60 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 	 | Folder Hierarchy Representation
 	\*================================================*/
 	
-	private TNode<T> recentlyCreated = null;
+	private TNode<T,U> recentlyCreated = null;
 	
 	@Override
-	public void leafNameChanged(Leaf<T> item, String oldName)
+	public void leafNameChanged(T item, String oldName)
 	{
 		model.nodeChanged(getNode(item));
 		repaint();
 	}
 	
 	@Override
-	public void leafStateChanged(Leaf<T> item)
+	public void leafStateChanged(T item)
 	{
 		model.nodeChanged(getNode(item));
 		repaint();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public void itemAdded(Branch<T> folder, Leaf<T> item, int position)
+	public void itemAdded(U folder, T item, int position)
 	{
-		TNode<T> itemNode;
+		TNode<T,U> itemNode;
 		if(folderModel.isMovingItem())
 			itemNode = getNode(item);
 		else
 		{
-			itemNode = new TNode<T>(item);
+			itemNode = new TNode<T,U>(item);
 			recentlyCreated = itemNode;
 			setNode(item, itemNode);
 		}
-		model.insertNodeInto(itemNode, getNode(folder), position);
+		model.insertNodeInto(itemNode, getNode((T) folder), position);
 	}
 	
 	@Override
-	public void itemRemoved(Branch<T> folder, Leaf<T> item, int position)
+	public void itemRemoved(U folder, T item, int position)
 	{
 		model.removeNodeFromParent(getNode(item));
 		if(!folderModel.isMovingItem())
 			removeNode(item);
 	}
 	
-	private TNode<T> createNodeFromFolder(Branch<T> folder)
+	@SuppressWarnings("unchecked")
+	private TNode<T,U> createNodeFromFolder(U folder)
 	{
-		TNode<T> newNode = new TNode<T>(folder);
-		TNode<T> newSubNode;
-		setNode(folder, newNode);
+		TNode<T,U> newNode = new TNode<T,U>((T) folder);
+		TNode<T,U> newSubNode;
+		setNode((T) folder, newNode);
 		
-		for(Leaf<T> item : folder.getItems())
+		for(T item : folder.getItems())
 		{
 			if(item instanceof Branch)
-				newNode.add(createNodeFromFolder((Branch<T>) item));
+				newNode.add(createNodeFromFolder((U) item));
 			else
 			{
-				newSubNode = new TNode<T>(item);
+				newSubNode = new TNode<T,U>(item);
 				setNode(item, newSubNode);
 				newNode.add(newSubNode);
 			}

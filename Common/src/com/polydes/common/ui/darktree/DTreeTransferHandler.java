@@ -6,6 +6,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragGestureRecognizer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
@@ -18,14 +19,14 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 
-public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
+public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> extends TransferHandler
 {
 	DataFlavor nodesFlavor;
 	DataFlavor[] flavors = new DataFlavor[1];
-	HierarchyModel<T> folderModel;
-	DarkTree<T> dtree;
+	HierarchyModel<T,U> folderModel;
+	DarkTree<T,U> dtree;
 
-	public DTreeTransferHandler(HierarchyModel<T> folderModel, DarkTree<T> dtree)
+	public DTreeTransferHandler(HierarchyModel<T,U> folderModel, DarkTree<T,U> dtree)
 	{
 		this.folderModel = folderModel;
 		this.dtree = dtree;
@@ -45,6 +46,7 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean canImport(TransferSupport support)
 	{
@@ -60,8 +62,7 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 		TreePath dest = dl.getPath();
-		@SuppressWarnings("unchecked")
-		TNode<T> target = (TNode<T>) dest.getLastPathComponent();
+		TNode<T,U> target = (TNode<T,U>) dest.getLastPathComponent();
 
 		// don't allow dropping onto selection.
 		JTree tree = (JTree) support.getComponent();
@@ -85,12 +86,12 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 			return false;
 		}
 
-		Branch<T> f = (Branch<T>) target.getUserObject();
+		U f = (U) target.getUserObject();
 		
 		// name uniqueness check within target folder
-		ArrayList<TNode<T>> nodes = dtree.getSelectionState().nodesForTransfer;
-		Leaf<T> item;
-		for (TNode<T> node : nodes)
+		ArrayList<TNode<T,U>> nodes = dtree.getSelectionState().nodesForTransfer;
+		T item;
+		for (TNode<T,U> node : nodes)
 		{
 			item = node.getUserObject();
 			if (!folderModel.canMoveItem(item, f))
@@ -116,9 +117,9 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 
 		// name uniqueness check among all selected items.
 		HashSet<String> nodeNames = new HashSet<String>();
-		Leaf<T> item;
+		T item;
 
-		for (TNode<T> node : dtree.getSelectionState().nodesForTransfer)
+		for (TNode<T,U> node : dtree.getSelectionState().nodesForTransfer)
 		{
 			item = node.getUserObject();
 			if (nodeNames.contains(item.getName()))
@@ -128,7 +129,7 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 		}
 
 		@SuppressWarnings("unchecked")
-		TNode<T>[] nodes = dtree.getSelectionState().nodesForTransfer
+		TNode<T,U>[] nodes = dtree.getSelectionState().nodesForTransfer
 				.toArray(new TNode[0]);
 		return new NodesTransferable(nodes);
 	}
@@ -155,11 +156,11 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 			return false;
 		
 		// Extract transfer data.
-		TNode<T>[] nodes = null;
+		TNode<T,U>[] nodes = null;
 		try
 		{
 			Transferable t = support.getTransferable();
-			nodes = (TNode<T>[]) t.getTransferData(nodesFlavor);
+			nodes = (TNode<T,U>[]) t.getTransferData(nodesFlavor);
 		}
 		catch (UnsupportedFlavorException ufe)
 		{
@@ -174,7 +175,7 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 		int childIndex = dl.getChildIndex();
 		TreePath dest = dl.getPath();
-		TNode<T> parent = (TNode<T>) dest.getLastPathComponent();
+		TNode<T,U> parent = (TNode<T,U>) dest.getLastPathComponent();
 		
 		// Configure for drop mode.
 		int visibleIndex = childIndex; // DropMode.INSERT
@@ -182,15 +183,15 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 			visibleIndex = parent.getChildCount();
 		
 		// Build folder model representations.
-		Branch<T> parentFolder = (Branch<T>) parent.getUserObject();
-		Leaf<T>[] transferItems = new Leaf[nodes.length];
+		U parentFolder = (U) parent.getUserObject();
+		List<T> transferItems = new ArrayList<T>(nodes.length);
 		for(int i = 0; i < nodes.length; i++)
-			transferItems[i] = (Leaf<T>) nodes[i].getUserObject();
+			transferItems.set(i, (T) nodes[i].getUserObject());
 		
 		int index = visibleIndex;
 		
 		//for all transferring nodes within target folder and pos < visibleChildIndex, decrement childIndex
-		for(Leaf<T> item : transferItems)
+		for(T item : transferItems)
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
 		
@@ -210,9 +211,9 @@ public class DTreeTransferHandler<T extends Leaf<T>> extends TransferHandler
 
 	public class NodesTransferable implements Transferable
 	{
-		TNode<T>[] nodes;
+		TNode<T,U>[] nodes;
 
-		public NodesTransferable(TNode<T>[] nodes)
+		public NodesTransferable(TNode<T,U>[] nodes)
 		{
 //			System.out.println("new nodesTransferable()");
 			this.nodes = nodes;

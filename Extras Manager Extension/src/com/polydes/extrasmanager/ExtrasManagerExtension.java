@@ -27,7 +27,7 @@ public class ExtrasManagerExtension extends BaseExtension
 {
 	private static ExtrasManagerExtension _instance;
 	
-	private static HierarchyModel<SysFile> model;
+	private static HierarchyModel<SysFile,SysFolder> model;
 	
 	private static boolean gameOpen;
 	
@@ -39,7 +39,7 @@ public class ExtrasManagerExtension extends BaseExtension
 		return _instance;
 	}
 
-	public static HierarchyModel<SysFile> getModel()
+	public static HierarchyModel<SysFile,SysFolder> getModel()
 	{
 		return model;
 	}

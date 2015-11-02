@@ -8,14 +8,13 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
-import stencyl.sw.SW;
-
-import com.polydes.common.nodes.Leaf;
 import com.polydes.extrasmanager.ExtrasManagerExtension;
 import com.polydes.extrasmanager.app.list.FileListRenderer;
 import com.polydes.extrasmanager.data.FilePreviewer;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
+
+import stencyl.sw.SW;
 
 public class FileMonitor
 {
@@ -25,7 +24,7 @@ public class FileMonitor
 	private static FileAlterationMonitor monitor;
 	private static FileAlterationListener listener;
 	
-	public static HashMap<String, Leaf<SysFile>> fileCache = new HashMap<String, Leaf<SysFile>>();
+	public static HashMap<String, SysFile> fileCache = new HashMap<String, SysFile>();
 	
 	public static SysFolder registerOnRoot(File folder)
 	{
@@ -133,7 +132,7 @@ public class FileMonitor
 		return toReturn;
 	}
 	
-	private static Leaf<SysFile> getSys(File file)
+	private static SysFile getSys(File file)
 	{
 		String key = file.getAbsolutePath();
 		if(fileCache.containsKey(key))
@@ -141,7 +140,7 @@ public class FileMonitor
 		if(!file.exists())
 			return null;
 		
-		Leaf<SysFile> newFile;
+		SysFile newFile;
 		if(file.isDirectory())
 			newFile = new SysFolder(file);
 		else
@@ -166,7 +165,7 @@ public class FileMonitor
 			if(isRoot && extensionExists(file.getName()))
 				continue;
 			
-			Leaf<SysFile> sysFile = getSys(file);
+			SysFile sysFile = getSys(file);
 			folder.addItem(sysFile, folder.findInsertionIndex(sysFile.getName(), sysFile instanceof SysFolder));
 			if(file.isDirectory())
 				readFolder((SysFolder) sysFile, false);
@@ -180,7 +179,7 @@ public class FileMonitor
 	
 	private static SysFile getSysFile(File file)
 	{
-		return (SysFile) getSys(file);
+		return getSys(file);
 	}
 	
 	private static SysFolder getParentSysFolder(File file)

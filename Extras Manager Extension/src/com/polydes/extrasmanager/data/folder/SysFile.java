@@ -5,19 +5,18 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 import com.polydes.extrasmanager.app.list.FileListRenderer;
 
-public class SysFile implements Leaf<SysFile>
+public class SysFile implements Leaf<SysFile,SysFolder>
 {
 	protected File file;
 	protected String path;
 	protected int hash;
 	
-	protected ArrayList<LeafListener<SysFile>> listeners;
-	protected Branch<SysFile> parent;
+	protected ArrayList<LeafListener<SysFile,SysFolder>> listeners;
+	protected SysFolder parent;
 	
 	protected String name;
 	
@@ -27,12 +26,12 @@ public class SysFile implements Leaf<SysFile>
 		path = file.getAbsolutePath().intern();
 		hash = path.hashCode();
 		
-		listeners = new ArrayList<LeafListener<SysFile>>();
+		listeners = new ArrayList<LeafListener<SysFile,SysFolder>>();
 		parent = null;
 	}
 	
 	@Override
-	public void setParent(Branch<SysFile> parent, boolean addToParent)
+	public void setParent(SysFolder parent, boolean addToParent)
 	{
 		if(this.parent == parent)
 			return;
@@ -57,19 +56,19 @@ public class SysFile implements Leaf<SysFile>
 	}
 
 	@Override
-	public Branch<SysFile> getParent()
+	public SysFolder getParent()
 	{
 		return parent;
 	}
 
 	@Override
-	public void addListener(LeafListener<SysFile> l)
+	public void addListener(LeafListener<SysFile,SysFolder> l)
 	{
 		listeners.add(l);
 	}
 
 	@Override
-	public void removeListener(LeafListener<SysFile> l)
+	public void removeListener(LeafListener<SysFile,SysFolder> l)
 	{
 		listeners.remove(l);
 	}
@@ -84,7 +83,7 @@ public class SysFile implements Leaf<SysFile>
 			if(file.renameTo(new File(file.getParentFile(), newName)))
 			{
 				name = newName;
-				for(LeafListener<SysFile> l : listeners) {l.leafNameChanged(this, oldName);}
+				for(LeafListener<SysFile,SysFolder> l : listeners) {l.leafNameChanged(this, oldName);}
 				
 				if(parent != null)
 					parent.registerNameChange(oldName, name);

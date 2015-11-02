@@ -2,7 +2,6 @@ package com.polydes.paint.data.stores;
 
 import java.io.File;
 
-import com.polydes.common.nodes.Leaf;
 import com.polydes.paint.data.BitmapFont;
 import com.polydes.paint.data.DataItem;
 import com.polydes.paint.data.Folder;
@@ -39,7 +38,7 @@ public abstract class FontStore extends Folder
 	{
 		updateItem(this);
 		
-		for(Leaf<DataItem> item : getItems())
+		for(DataItem item : getItems())
 		{
 			System.out.println(item.getName() + ", " + item.isDirty());
 			
@@ -54,7 +53,7 @@ public abstract class FontStore extends Folder
 		setClean();
 	}
 	
-	private void updateItem(Leaf<DataItem> item)
+	private void updateItem(DataItem item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -66,7 +65,7 @@ public abstract class FontStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
+			for(DataItem curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}

@@ -8,13 +8,12 @@ import javax.swing.JPanel;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.page.FolderPage;
 
 
-public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
+public class Folder extends DataItem implements Branch<DataItem,Folder>, ViewableObject
 {
 	public static FolderPolicy DEFAULT_POLICY;
 	static
@@ -30,8 +29,8 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	
 	public static final ImageIcon folderIcon = Resources.loadIcon("page/folder-small.png");
 	
-	protected ArrayList<BranchListener<DataItem>> fListeners;
-	private ArrayList<Leaf<DataItem>> items;
+	protected ArrayList<BranchListener<DataItem,Folder>> fListeners;
+	private ArrayList<DataItem> items;
 	private HashSet<String> itemNames;
 	
 	public Folder(String name)
@@ -61,39 +60,39 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	public Folder(String name, EditableObject object)
 	{
 		super(name);
-		fListeners = new ArrayList<BranchListener<DataItem>>();
-		items = new ArrayList<Leaf<DataItem>>();
+		fListeners = new ArrayList<BranchListener<DataItem,Folder>>();
+		items = new ArrayList<DataItem>();
 		itemNames = new HashSet<String>();
 		policy = null;
 		this.object = object;
 	}
 	
 	@Override
-	public void addFolderListener(BranchListener<DataItem> l)
+	public void addFolderListener(BranchListener<DataItem,Folder> l)
 	{
 		fListeners.add(l);
 	}
 	
 	@Override
-	public void removeFolderListener(BranchListener<DataItem> l)
+	public void removeFolderListener(BranchListener<DataItem,Folder> l)
 	{
 		fListeners.remove(l);
 	}
 	
 	@Override
-	public void addItem(Leaf<DataItem> item)
+	public void addItem(DataItem item)
 	{
 		addItem(item, items.size());
 	}
 	
 	@Override
-	public void addItem(Leaf<DataItem> item, int position)
+	public void addItem(DataItem item, int position)
 	{
 		items.add(position, item);
 		itemNames.add(item.getName());
 		if(item.getParent() != this)
 			item.setParent(this, false);
-		for(BranchListener<DataItem> l : fListeners) {l.branchLeafAdded(this, item, position);}
+		for(BranchListener<DataItem,Folder> l : fListeners) {l.branchLeafAdded(this, item, position);}
 		if(item instanceof Folder && ((Folder) item).policy == null)
 			((Folder) item).setPolicy(policy);
 		
@@ -103,7 +102,7 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	public void setPolicy(FolderPolicy policy)
 	{
 		this.policy = policy;
-		for(Leaf<DataItem> item : items)
+		for(DataItem item : items)
 		{
 			if(item instanceof Folder && ((Folder) item).policy == null)
 				((Folder) item).setPolicy(policy);
@@ -116,15 +115,15 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	}
 	
 	@Override
-	public ArrayList<Leaf<DataItem>> getItems()
+	public ArrayList<DataItem> getItems()
 	{
 		return items;
 	}
 	
 	@Override
-	public Leaf<DataItem> getItemByName(String name)
+	public DataItem getItemByName(String name)
 	{
-		for(Leaf<DataItem> item : items)
+		for(DataItem item : items)
 		{
 			if(item.getName().equals(name))
 				return item;
@@ -134,7 +133,7 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	}
 	
 	@Override
-	public Leaf<DataItem> getItemAt(int position)
+	public DataItem getItemAt(int position)
 	{
 		if(position < 0 || position >= items.size())
 			return null;
@@ -143,13 +142,13 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	}
 	
 	@Override
-	public int indexOfItem(Leaf<DataItem> item)
+	public int indexOfItem(DataItem item)
 	{
 		return items.indexOf(item);
 	}
 	
 	@Override
-	public void removeItem(Leaf<DataItem> item)
+	public void removeItem(DataItem item)
 	{
 		if(Lang.or(policy, DEFAULT_POLICY).duplicateItemNamesAllowed || itemNames.contains(item.getName()))
 		{
@@ -160,7 +159,7 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 				items.remove(item);
 				item.setParent(null, false);
 				itemNames.remove(item.getName());
-				for(BranchListener<DataItem> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
+				for(BranchListener<DataItem,Folder> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
 			
 				setDirty(true);
 			}
@@ -184,21 +183,21 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 //	}
 	
 	@Override
-	public boolean hasItem(Leaf<DataItem> item)
+	public boolean hasItem(DataItem item)
 	{
 		return items.contains(item);
 	}
 	
 	public void unload()
 	{
-		for(Leaf<DataItem> item : items)
+		for(DataItem item : items)
 		{
 			if(item instanceof Folder)
 			{
 				((Folder) item).unload();
 			}
 		}
-		items = new ArrayList<Leaf<DataItem>>();
+		items = new ArrayList<DataItem>();
 		itemNames = new HashSet<String>();
 		super.setDirty(false);
 	}
@@ -209,8 +208,8 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 		super.setDirty(value);
 		
 		if(!value)
-			for(Leaf<DataItem> item : items)
-				((DataItem) item).setDirty(false);
+			for(DataItem item : items)
+				item.setDirty(false);
 	}
 
 	@Override
@@ -225,9 +224,9 @@ public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 	\*================================================*/
 	
 	@Override
-	public final boolean canAcceptItem(Leaf<DataItem> item)
+	public final boolean canAcceptItem(DataItem item)
 	{
-		return Lang.or(policy, DEFAULT_POLICY).canAcceptItem(this, (DataItem) item);
+		return Lang.or(policy, DEFAULT_POLICY).canAcceptItem(this, item);
 	}
 	
 	@Override

@@ -13,15 +13,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.polydes.common.comp.StatusBar;
 import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.darktree.DTreeSelectionListener;
 import com.polydes.common.ui.darktree.DTreeSelectionState;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.common.ui.darktree.DefaultNodeCreator;
+import com.polydes.common.ui.darktree.TNode;
 import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
@@ -38,7 +37,7 @@ import com.polydes.datastruct.ui.list.ListUtils;
 import stencyl.sw.SW;
 import stencyl.sw.util.UI;
 
-public class StructurePage extends JPanel implements DTreeSelectionListener<DataItem>
+public class StructurePage extends JPanel implements DTreeSelectionListener<DataItem,Folder>
 {
 	private static StructurePage _instance;
 	
@@ -46,10 +45,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 	
 	private Boolean listEditEnabled;
 	
-	private HierarchyModel<DataItem> folderModel;
-	private DarkTree<DataItem> tree;
+	private HierarchyModel<DataItem,Folder> folderModel;
+	private DarkTree<DataItem,Folder> tree;
 	
-	private DTreeSelectionState<DataItem> selectionState;
+	private DTreeSelectionState<DataItem,Folder> selectionState;
 	
 	private JScrollPane multiScroller;
 	private JPanel multiPage;
@@ -66,8 +65,8 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 	{
 		super(new BorderLayout());
 		
-		folderModel = new HierarchyModel<DataItem>(rootFolder);
-		tree = new DarkTree<DataItem>(folderModel);
+		folderModel = new HierarchyModel<DataItem,Folder>(rootFolder);
+		tree = new DarkTree<DataItem,Folder>(folderModel);
 		tree.addTreeListener(this);
 		tree.expandLevel(1);
 		
@@ -126,7 +125,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 		folderModel.setUniqueLeafNames(true);
 		
 		tree.enablePropertiesButton();
-		tree.setNodeCreator(new DefaultNodeCreator<DataItem>()
+		tree.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
 		{
 			//For our purposes here, the object these folders point to is a type limiter.
 			
@@ -145,7 +144,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 			}
 			
 			@Override
-			public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
+			public DataItem createNode(PopupItem selected, String nodeName)
 			{
 				if(selected.text.equals("Folder"))
 					return new StructureFolder(nodeName);
@@ -160,10 +159,10 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 			}
 			
 			@Override
-			public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
+			public boolean attemptRemove(List<DataItem> toRemove)
 			{
 				int numStructuresToRemove = 0;
-				for(Leaf<DataItem> item : toRemove)
+				for(DataItem item : toRemove)
 					if(!(item instanceof Folder))
 						++numStructuresToRemove;
 				
@@ -180,11 +179,11 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 			}
 			
 			@Override
-			public void nodeRemoved(Leaf<DataItem> toRemove)
+			public void nodeRemoved(DataItem toRemove)
 			{
-				if(((DataItem) toRemove).getObject() instanceof Structure)
+				if(toRemove.getObject() instanceof Structure)
 				{
-					Structure s = (Structure) ((DataItem) toRemove).getObject();
+					Structure s = (Structure) toRemove.getObject();
 					Structures.structures.get(s.getTemplate()).remove(s);
 					Structures.structuresByID.remove(s.getID());
 					s.dispose();
@@ -192,7 +191,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 			}
 			
 			@Override
-			public void editNode(Leaf<DataItem> toEdit)
+			public void editNode(DataItem toEdit)
 			{
 				if(!(toEdit instanceof StructureFolder))
 					return;
@@ -237,7 +236,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 		return _instance;
 	}
 	
-	public HierarchyModel<DataItem> getFolderModel()
+	public HierarchyModel<DataItem,Folder> getFolderModel()
 	{
 		return folderModel;
 	}
@@ -258,9 +257,9 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 		
 		ArrayList<ViewableObject> toView = new ArrayList<ViewableObject>();
 		
-		for(DefaultMutableTreeNode node : selectionState.nodes)
+		for(TNode<DataItem,Folder> node : selectionState.nodes)
 		{
-			DataItem uo = (DataItem) node.getUserObject();
+			DataItem uo = node.getUserObject();
 			if(uo == null)
 				continue;
 			if(uo instanceof Folder)
@@ -311,7 +310,7 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 	}
 	
 	@Override
-	public void setSelectionState(DTreeSelectionState<DataItem> state)
+	public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
 	{
 		this.selectionState = state;
 	}

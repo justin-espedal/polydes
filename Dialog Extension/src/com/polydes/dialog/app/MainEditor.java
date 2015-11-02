@@ -15,13 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
-import stencyl.sw.lnf.Theme;
 
 import com.polydes.dialog.app.editors.text.TextArea;
 import com.polydes.dialog.app.pages.DialogPage;
 import com.polydes.dialog.app.pages.MacrosPage;
 import com.polydes.dialog.res.Resources;
 
+import stencyl.sw.lnf.Theme;
 public class MainEditor extends JPanel
 {
 	private static MainEditor _instance;

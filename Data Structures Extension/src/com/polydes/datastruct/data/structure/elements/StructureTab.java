@@ -144,7 +144,7 @@ public class StructureTab extends SDE
 		private Deck getFirstDeckParent(PropertiesSheet sheet, DataItem n)
 		{
 			while(!(n.getObject() instanceof StructureTabset))
-				n = (DataItem) n.getParent();
+				n = n.getParent();
 			
 			return (Deck) ((RowGroup) sheet.guiMap.get(n)).rows[3].components[0].getComponent(0);
 		}

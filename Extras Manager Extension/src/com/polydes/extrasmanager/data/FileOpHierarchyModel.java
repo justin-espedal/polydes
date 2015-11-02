@@ -4,43 +4,41 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
 import com.polydes.extrasmanager.io.FileOperations;
 
-public class FileOpHierarchyModel extends HierarchyModel<SysFile>
+public class FileOpHierarchyModel extends HierarchyModel<SysFile,SysFolder>
 {
-	public FileOpHierarchyModel(Branch<SysFile> rootBranch)
+	public FileOpHierarchyModel(SysFolder rootBranch)
 	{
 		super(rootBranch);
 	}
 	
 	@Override
-	public void addItem(Leaf<SysFile> item, Branch<SysFile> target, int position)
+	public void addItem(SysFile item, SysFolder target, int position)
 	{
 		
 	}
 	
 	@Override
-	public void removeItem(Leaf<SysFile> item, Branch<SysFile> target)
+	public void removeItem(SysFile item, SysFolder target)
 	{
 		
 	}
 	
 	@Override
-	public void massMove(Leaf<SysFile>[] transferItems, Branch<SysFile> target, int position)
+	public void massMove(List<SysFile> transferItems, SysFolder target, int position)
 	{
 		List<File> toMove = new ArrayList<File>();
 		
-		for(Leaf<SysFile> item : transferItems)
+		for(SysFile item : transferItems)
 			if(item.getParent() != target)
-				toMove.add(((SysFile) item).getFile());
+				toMove.add(item.getFile());
 		if(toMove.isEmpty())
 			return;
 		
-		FileOperations.moveFiles(toMove, ((SysFolder) target).getFile());
+		FileOperations.moveFiles(toMove, target.getFile());
 	}
 }

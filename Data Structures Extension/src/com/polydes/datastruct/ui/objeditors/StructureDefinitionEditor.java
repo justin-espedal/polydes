@@ -13,7 +13,6 @@ import javax.swing.KeyStroke;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.common.ui.darktree.DefaultNodeCreator;
@@ -23,11 +22,11 @@ import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.PreviewStructure;
+import com.polydes.datastruct.data.structure.SDE;
+import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.SDE;
-import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureTable;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
@@ -41,8 +40,8 @@ import com.polydes.datastruct.ui.list.ListUtils;
 public class StructureDefinitionEditor extends JPanel
 {
 	public StructureDefinition def;
-	public HierarchyModel<DataItem> model;
-	public DarkTree<DataItem> tree;
+	public HierarchyModel<DataItem,Folder> model;
+	public DarkTree<DataItem,Folder> tree;
 	public JComponent treeView;
 	public Structure preview;
 	
@@ -50,7 +49,7 @@ public class StructureDefinitionEditor extends JPanel
 	{
 		int insertPosition;
 		
-		ArrayList<TNode<DataItem>> selNodes = tree.getSelectionState().nodes;
+		ArrayList<TNode<DataItem,Folder>> selNodes = tree.getSelectionState().nodes;
 		
 		if(tree.getSelectionState().type == SelectionType.FOLDERS && !(parent.getObject() instanceof StructureTabset))
 			insertPosition = parent.getItems().size();
@@ -65,7 +64,7 @@ public class StructureDefinitionEditor extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			Folder newNodeFolder = tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
 			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureField.class), newNodeFolder, insertPosition);
 		}
@@ -76,7 +75,7 @@ public class StructureDefinitionEditor extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			Folder newNodeFolder = tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
 			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureHeader.class), newNodeFolder, insertPosition);
 		}
@@ -87,7 +86,7 @@ public class StructureDefinitionEditor extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			Folder newNodeFolder = tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
 			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureText.class), newNodeFolder, insertPosition);
 		}
@@ -98,12 +97,12 @@ public class StructureDefinitionEditor extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			Folder newNodeFolder =  tree.getCreationParentFolder(tree.getSelectionState());
 			if(newNodeFolder.getObject() instanceof StructureTabset) 
 				tree.createNewItem(SDETypes.asPopupItem.get(StructureTab.class));
 			else if(newNodeFolder.getObject() instanceof StructureTab && !(newNodeFolder.getObject() instanceof StructureTable))
 			{
-				Folder tabset = (Folder) newNodeFolder.getParent();
+				Folder tabset = newNodeFolder.getParent();
 				int insertPosition = tabset.indexOfItem(newNodeFolder) + 1;
 				tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureTab.class), tabset, insertPosition);
 			}
@@ -117,7 +116,7 @@ public class StructureDefinitionEditor extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			Folder newNodeFolder = (Folder) tree.getCreationParentFolder(tree.getSelectionState());
+			Folder newNodeFolder = tree.getCreationParentFolder(tree.getSelectionState());
 			int insertPosition = getPosAvoidingTabsetParent(newNodeFolder);
 			tree.createNewItemFromFolder(SDETypes.asPopupItem.get(StructureCondition.class), newNodeFolder, insertPosition);
 		}
@@ -130,30 +129,30 @@ public class StructureDefinitionEditor extends JPanel
 		
 		this.def = def;
 		
-		model = new HierarchyModel<DataItem>(def.guiRoot);
+		model = new HierarchyModel<DataItem,Folder>(def.guiRoot);
 		
-		model.getRootBranch().addListener(new LeafListener<DataItem>()
+		model.getRootBranch().addListener(new LeafListener<DataItem,Folder>()
 		{
 			@Override
-			public void leafStateChanged(Leaf<DataItem> source)
+			public void leafStateChanged(DataItem source)
 			{
 				if(source.isDirty())
 					def.setDirty(true);
 			}
 			
 			@Override
-			public void leafNameChanged(Leaf<DataItem> source, String oldName)
+			public void leafNameChanged(DataItem source, String oldName)
 			{
 			}
 		});
 		
 		model.setUniqueLeafNames(false);
 		
-		tree = new DarkTree<DataItem>(model);
+		tree = new DarkTree<DataItem,Folder>(model);
 		
 		tree.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setListEditEnabled(true);
-		tree.setNodeCreator(new DefaultNodeCreator<DataItem>()
+		tree.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
 		{
 			@Override
 			public Collection<PopupItem> getCreatableNodeList()
@@ -161,7 +160,7 @@ public class StructureDefinitionEditor extends JPanel
 				if(selectionState.nodes.size() < 1)
 					return null;
 				
-				Folder parent = (Folder) tree.getCreationParentFolder(selectionState);
+				Folder parent = tree.getCreationParentFolder(selectionState);
 				SDE o = (SDE) parent.getObject();
 				SDEType<?> type = SDETypes.fromClass(o.getClass());
 				
@@ -171,7 +170,7 @@ public class StructureDefinitionEditor extends JPanel
 			}
 			
 			@Override
-			public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
+			public DataItem createNode(PopupItem selected, String nodeName)
 			{
 				@SuppressWarnings("unchecked")
 				Class<? extends SDE> cls = (Class<? extends SDE>) selected.data;
@@ -185,17 +184,17 @@ public class StructureDefinitionEditor extends JPanel
 			}
 			
 			@Override
-			public void nodeRemoved(Leaf<DataItem> toRemove)
+			public void nodeRemoved(DataItem toRemove)
 			{
 				if(toRemove instanceof Folder)
 				{
-					for(Leaf<DataItem> item : ((Folder) toRemove).getItems())
+					for(DataItem item : ((Folder) toRemove).getItems())
 						nodeRemoved(item);
 				}
 				else 
 				{
-					if(((DataItem) toRemove).getObject() instanceof StructureField)
-						def.removeField((StructureField) ((DataItem) toRemove).getObject(), preview);
+					if(toRemove.getObject() instanceof StructureField)
+						def.removeField((StructureField) toRemove.getObject(), preview);
 				}
 			}
 		});

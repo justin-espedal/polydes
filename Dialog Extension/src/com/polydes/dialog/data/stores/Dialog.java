@@ -2,7 +2,6 @@ package com.polydes.dialog.data.stores;
 
 import java.io.File;
 
-import com.polydes.common.nodes.Leaf;
 import com.polydes.dialog.data.DataItem;
 import com.polydes.dialog.data.Folder;
 import com.polydes.dialog.data.TextSource;
@@ -61,19 +60,19 @@ public class Dialog extends TextStore
 		if(isDirty())
 		{
 			TextFolder toWrite = new TextFolder("root");
-			for(Leaf<DataItem> item : getItems())
+			for(DataItem item : getItems())
 				save(item, toWrite);
 			Text.writeSectionedText(file, toWrite, "#");
 		}
 		setClean();
 	}
 	
-	public void save(Leaf<DataItem> item, TextFolder f)
+	public void save(DataItem item, TextFolder f)
 	{
 		if(item instanceof Folder)
 		{
 			TextFolder newFolder = new TextFolder(item.getName());
-			for(Leaf<DataItem> d : ((Folder) item).getItems())
+			for(DataItem d : ((Folder) item).getItems())
 				save(d, newFolder);
 			f.add(newFolder);
 		}

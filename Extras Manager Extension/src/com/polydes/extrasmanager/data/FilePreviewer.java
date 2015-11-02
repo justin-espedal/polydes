@@ -19,11 +19,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.FileHelper;
-import stencyl.sw.util.Fonts;
-import stencyl.sw.util.comp.GroupButton;
-
 import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.swing.PaintPanel;
 import com.polydes.extrasmanager.ExtrasManagerExtension;
@@ -32,6 +27,11 @@ import com.polydes.extrasmanager.app.pages.MainPage;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
 import com.polydes.extrasmanager.res.Resources;
+
+import stencyl.sw.lnf.Theme;
+import stencyl.sw.util.FileHelper;
+import stencyl.sw.util.Fonts;
+import stencyl.sw.util.comp.GroupButton;
 
 public class FilePreviewer
 {
@@ -193,7 +193,7 @@ public class FilePreviewer
 					i -= 1;
 					if(i < 0) i = model.getSize() - 1;
 					if(i == model.getSize()) i = 0;
-					next = (SysFile) model.get(i);
+					next = model.get(i);
 				}
 				if(next != null)
 					MainPage.get().setViewedFile(next);
@@ -215,7 +215,7 @@ public class FilePreviewer
 					i += 1;
 					if(i < 0) i = model.getSize() - 1;
 					if(i == model.getSize()) i = 0;
-					next = (SysFile) model.get(i);
+					next = model.get(i);
 				}
 				if(next != null)
 					MainPage.get().setViewedFile(next);

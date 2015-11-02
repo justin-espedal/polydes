@@ -16,7 +16,7 @@ import javax.swing.tree.TreeCellRenderer;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 
-public class DTreeCellRenderer<T extends Leaf<T>> extends JPanel implements TreeCellRenderer
+public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel implements TreeCellRenderer
 {
 	private JLabel text;
 	
@@ -50,8 +50,8 @@ public class DTreeCellRenderer<T extends Leaf<T>> extends JPanel implements Tree
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean isExpanded, boolean isLeaf, int row, boolean hasFocus)
 	{
 		@SuppressWarnings("unchecked")
-		TNode<T> node = (TNode<T>) value;
-		Leaf<T> item = node.getUserObject();
+		TNode<T,U> node = (TNode<T,U>) value;
+		T item = node.getUserObject();
 		
 		text.setText(tree.convertValueToText(value, isSelected, isExpanded, isLeaf, row, hasFocus));
 		text.setIcon(item.getIcon());

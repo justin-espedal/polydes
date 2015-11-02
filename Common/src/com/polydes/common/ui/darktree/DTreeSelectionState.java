@@ -6,11 +6,11 @@ import java.util.HashSet;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 
-public class DTreeSelectionState<T extends Leaf<T>>
+public class DTreeSelectionState<T extends Leaf<T,U>, U extends Branch<T,U>>
 {
 	public SelectionType type;
-	public ArrayList<TNode<T>> nodes;
-	public ArrayList<TNode<T>> nodesForTransfer;
+	public ArrayList<TNode<T,U>> nodes;
+	public ArrayList<TNode<T,U>> nodesForTransfer;
 	
 	public DTreeSelectionState()
 	{
@@ -18,23 +18,24 @@ public class DTreeSelectionState<T extends Leaf<T>>
 	}
 	
 	//called in transfer handler when needed
+	@SuppressWarnings("unchecked")
 	public void prepareNodesForTransfer()
 	{
-		nodesForTransfer = new ArrayList<TNode<T>>();
-		HashSet<Branch<T>> folders = new HashSet<Branch<T>>();
-		for(TNode<T> node : nodes)
+		nodesForTransfer = new ArrayList<TNode<T,U>>();
+		HashSet<U> folders = new HashSet<U>();
+		for(TNode<T,U> node : nodes)
 		{
 			if(node.getUserObject() instanceof Branch)
-				folders.add((Branch<T>) node.getUserObject());
+				folders.add((U) node.getUserObject());
 		}
 		
-		for(TNode<T> node : nodes)
+		for(TNode<T,U> node : nodes)
 		{
 			boolean ignored = false;
-			Leaf<T> item = node.getUserObject();
-			while((item = item.getParent()) != null)
+			T item = node.getUserObject();
+			while((item = (T) item.getParent()) != null)
 			{
-				if(folders.contains((Branch<T>) item))
+				if(folders.contains((U) item))
 				{
 					ignored = true;
 					break;

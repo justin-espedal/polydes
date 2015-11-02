@@ -12,9 +12,7 @@ import java.util.HashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
@@ -25,7 +23,7 @@ import stencyl.sw.app.lists.AbstractListIcon.OverlayIcon;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.gfx.ImageUtil;
 
-public class DataItemList extends JList<DataItem> implements BranchListener<DataItem>
+public class DataItemList extends JList<DataItem> implements BranchListener<DataItem,Folder>
 {
 	Folder folder;
 	DefaultListModel<DataItem> listModel;
@@ -81,8 +79,8 @@ public class DataItemList extends JList<DataItem> implements BranchListener<Data
 	{
 		removeAll();
 		
-		for(Leaf<DataItem> l : folder.getItems())
-			listModel.addElement((DataItem) l);
+		for(DataItem l : folder.getItems())
+			listModel.addElement(l);
 	}
 	
 	@Override
@@ -151,13 +149,13 @@ public class DataItemList extends JList<DataItem> implements BranchListener<Data
 	\*================================================*/
 	
 	@Override
-	public void branchLeafAdded(Branch<DataItem> folder, Leaf<DataItem> item, int position)
+	public void branchLeafAdded(Folder folder, DataItem item, int position)
 	{
-		listModel.add(position, (DataItem) item);
+		listModel.add(position, item);
 	}
 
 	@Override
-	public void branchLeafRemoved(Branch<DataItem> folder, Leaf<DataItem> item, int position)
+	public void branchLeafRemoved(Folder folder, DataItem item, int position)
 	{
 		listModel.remove(position);
 	}

@@ -2,20 +2,18 @@ package com.polydes.extrasmanager.app.list;
 
 import javax.swing.DefaultListModel;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
 
-public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements HierarchyRepresentation<SysFile> 
+public class FileListModel extends DefaultListModel<SysFile> implements HierarchyRepresentation<SysFile,SysFolder> 
 {
-	HierarchyModel<SysFile> model;
+	HierarchyModel<SysFile,SysFolder> model;
 	public SysFolder currView;
 	public FileListModelListener listener;
 	
-	public FileListModel(HierarchyModel<SysFile> model)
+	public FileListModel(HierarchyModel<SysFile,SysFolder> model)
 	{
 		this.model = model;
 		model.addRepresentation(this);
@@ -43,7 +41,7 @@ public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements Hi
 		
 		//HashSet<String> toExclude = (path == Main.getModel().getRootBranch()) ? Main.ownedFolderNames : null;
 		
-		for(Leaf<SysFile> f : path.getItems())
+		for(SysFile f : path.getItems())
 		{
 			addElement(f);
 		}
@@ -55,7 +53,7 @@ public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements Hi
 	}
 
 	@Override
-	public void leafStateChanged(Leaf<SysFile> source)
+	public void leafStateChanged(SysFile source)
 	{
 		if(source.getParent() == currView)
 		{
@@ -65,7 +63,7 @@ public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements Hi
 	}
 	
 	@Override
-	public void leafNameChanged(Leaf<SysFile> source, String oldName)
+	public void leafNameChanged(SysFile source, String oldName)
 	{
 		if(source.getParent() == currView)
 		{
@@ -75,7 +73,7 @@ public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements Hi
 	}
 	
 	@Override
-	public void itemAdded(Branch<SysFile> folder, Leaf<SysFile> item, int position)
+	public void itemAdded(SysFolder folder, SysFile item, int position)
 	{
 		if(folder == currView)
 		{
@@ -85,7 +83,7 @@ public class FileListModel extends DefaultListModel<Leaf<SysFile>> implements Hi
 	}
 
 	@Override
-	public void itemRemoved(Branch<SysFile> folder, Leaf<SysFile> item, int position)
+	public void itemRemoved(SysFolder folder, SysFile item, int position)
 	{
 		if(folder == currView)
 		{

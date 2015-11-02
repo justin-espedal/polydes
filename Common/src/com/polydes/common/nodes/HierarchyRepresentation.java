@@ -1,10 +1,10 @@
 package com.polydes.common.nodes;
 
 
-public interface HierarchyRepresentation<T extends Leaf<T>>
+public interface HierarchyRepresentation<T extends Leaf<T,U>, U extends Branch<T,U>>
 {
-	public void leafStateChanged(Leaf<T> source);
-	public void leafNameChanged(Leaf<T> source, String oldName);
-	public void itemAdded(Branch<T> folder, Leaf<T> item, int position);
-	public void itemRemoved(Branch<T> folder, Leaf<T> item, int oldPosition);
+	public void leafStateChanged(T source);
+	public void leafNameChanged(T source, String oldName);
+	public void itemAdded(U folder, T item, int position);
+	public void itemRemoved(U folder, T item, int oldPosition);
 }

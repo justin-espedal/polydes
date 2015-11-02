@@ -4,21 +4,20 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 
-public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
+public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>
 {
-	protected ArrayList<LeafListener<DataItem>> listeners;
-	protected Branch<DataItem> parent;
+	protected ArrayList<LeafListener<DataItem,Folder>> listeners;
+	protected Folder parent;
 	protected String name;
 	protected Object contents;
 	protected boolean modified;
 	
 	public DataItem(String name)
 	{
-		listeners = new ArrayList<LeafListener<DataItem>>();
+		listeners = new ArrayList<LeafListener<DataItem,Folder>>();
 		parent = null;
 		this.name = name;
 		contents = null;
@@ -26,19 +25,19 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	}
 	
 	@Override
-	public void addListener(LeafListener<DataItem> l)
+	public void addListener(LeafListener<DataItem,Folder> l)
 	{
 		listeners.add(l);
 	}
 	
 	@Override
-	public void removeListener(LeafListener<DataItem> l)
+	public void removeListener(LeafListener<DataItem,Folder> l)
 	{
 		listeners.remove(l);
 	}
 	
 	@Override
-	public void setParent(Branch<DataItem> parent, boolean addToParent)
+	public void setParent(Folder parent, boolean addToParent)
 	{
 		if(this.parent == parent)
 			return;
@@ -54,7 +53,7 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	}
 	
 	@Override
-	public Branch<DataItem> getParent()
+	public Folder getParent()
 	{
 		return parent;
 	}
@@ -66,7 +65,7 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 		{
 			String oldName = this.name;
 			this.name = name;
-			for(LeafListener<DataItem> l : listeners) {l.leafNameChanged(this, oldName);}
+			for(LeafListener<DataItem,Folder> l : listeners) {l.leafNameChanged(this, oldName);}
 			
 			if(parent != null)
 				parent.registerNameChange(oldName, name);
@@ -114,10 +113,10 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	public void setDirty(boolean value)
 	{
 		modified = value;
-		for(LeafListener<DataItem> l : listeners) {l.leafStateChanged(this);}
+		for(LeafListener<DataItem,Folder> l : listeners) {l.leafStateChanged(this);}
 		
 		if(modified && parent != null && !parent.isDirty())
-			((Folder) parent).setDirty();
+			parent.setDirty();
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 	private static final Color invalidColor = Color.RED;
 	private static final Color selectedColor = new Color(102, 102, 102);
 	
-	private DarkTree<?> dtree;
+	private DarkTree<?,?> dtree;
 	private JTree tree;
 	private boolean valid;
 	private JLabel label;
@@ -43,7 +43,7 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 	private int treeX;
 	private int treeWidth;
 
-	public InlineTreeInput(DarkTree<?> dtree)
+	public InlineTreeInput(DarkTree<?,?> dtree)
 	{
 		super(new BorderLayout());
 

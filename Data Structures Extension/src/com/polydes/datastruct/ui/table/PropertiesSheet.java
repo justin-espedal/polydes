@@ -15,20 +15,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
+import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.DataEditor;
 
-public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem>
+public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem,Folder>
 {
 	public Card getFirstCardParent(DataItem n)
 	{
@@ -41,7 +39,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 			if(o instanceof RowGroup && ((RowGroup) o).hasSubcard())
 				return ((RowGroup) o).getSubcard();
 			
-			n = (DataItem) n.getParent();
+			n = n.getParent();
 			if(n == null)
 				break;
 		}
@@ -54,12 +52,12 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	{
 		if(list == null)
 			list = new ArrayList<T>();
-		for(Leaf<DataItem> n2 : n.getItems())
+		for(DataItem n2 : n.getItems())
 		{
 			if(n2 instanceof Folder)
 				allDescendentsOfType(cls, list, (Folder) n2);
-			if(cls.isAssignableFrom(((DataItem) n2).getObject().getClass()))
-				list.add((T) ((DataItem) n2).getObject());
+			if(cls.isAssignableFrom(n2.getObject().getClass()))
+				list.add((T) n2.getObject());
 		}
 		return list;
 	}
@@ -78,7 +76,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	/**
 	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DataItem> folderModel)
+	public PropertiesSheet(Structure model, HierarchyModel<DataItem,Folder> folderModel)
 	{
 		this(model, folderModel, PropertiesSheetStyle.DARK);
 	}
@@ -88,7 +86,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	/**
 	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DataItem> folderModel, PropertiesSheetStyle style)
+	public PropertiesSheet(Structure model, HierarchyModel<DataItem,Folder> folderModel, PropertiesSheetStyle style)
 	{
 		root = new Table(style);
 		this.style = style;
@@ -259,34 +257,34 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	\*================================================*/
 	
 	@Override
-	public void leafStateChanged(Leaf<DataItem> source)
+	public void leafStateChanged(DataItem source)
 	{
 		
 	}
 	
 	@Override
-	public void leafNameChanged(Leaf<DataItem> source, String oldName)
+	public void leafNameChanged(DataItem source, String oldName)
 	{
 		
 	}
 	
 	@Override
-	public void itemAdded(Branch<DataItem> folder, Leaf<DataItem> item,	int position)
+	public void itemAdded(Folder folder, DataItem item, int position)
 	{
-		addDataItem((Folder) folder, (DataItem) item, position);
+		addDataItem(folder, item, position);
 	}
 
 	@Override
-	public void itemRemoved(Branch<DataItem> folder, Leaf<DataItem> item, int oldPosition)
+	public void itemRemoved(Folder folder, DataItem item, int oldPosition)
 	{
-		removeDataItem((DataItem) item);
+		removeDataItem(item);
 	}
 	
 	public void buildSheetFromFolder(Folder folder)
 	{
 		for(int i = 0; i < folder.getItems().size(); ++i)
 		{
-			DataItem d = (DataItem) folder.getItemAt(i);
+			DataItem d = folder.getItemAt(i);
 			addDataItem(folder, d, i);
 			if(d instanceof Folder)
 				buildSheetFromFolder((Folder) d); 

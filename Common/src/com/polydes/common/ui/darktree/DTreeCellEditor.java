@@ -19,22 +19,22 @@ import javax.swing.tree.TreeCellEditor;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 
-public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyListener, DocumentListener, FocusListener
+public class DTreeCellEditor<T extends Leaf<T,U>, U extends Branch<T,U>> implements TreeCellEditor, KeyListener, DocumentListener, FocusListener
 {
-	private DarkTree<T> dtree;
+	private DarkTree<T,U> dtree;
 	
 	private InlineTreeInput input;
 	private ArrayList<CellEditorListener> listeners;
 	
-	private Leaf<T> value;
-	private Leaf<T> previousValue;
+	private T value;
+	private T previousValue;
 	private String previousTextValue;
 	
 	private CellEditValidator validator;
 	
 	private boolean forceEdit = false;
 	
-	public DTreeCellEditor(DarkTree<T> dtree)
+	public DTreeCellEditor(DarkTree<T,U> dtree)
 	{
 		input = new InlineTreeInput(dtree);
 		input.addKeyListener(this);
@@ -64,7 +64,7 @@ public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyLi
 	}
 
 	@Override
-	public Leaf<T> getCellEditorValue()
+	public T getCellEditorValue()
 	{
 		return value;
 	}
@@ -101,11 +101,11 @@ public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyLi
 		
 		JTree tree = (JTree) e.getSource();
 		@SuppressWarnings("unchecked")
-		TNode<T> node = (TNode<T>) tree.getLastSelectedPathComponent();
+		TNode<T,U> node = (TNode<T,U>) tree.getLastSelectedPathComponent();
 		if(node == null)
 			return false;
 		
-		Leaf<T> item = node.getUserObject();
+		T item = node.getUserObject();
 		if(!item.canEditName())
 			return false;
 		
@@ -154,7 +154,7 @@ public class DTreeCellEditor<T extends Leaf<T>> implements TreeCellEditor, KeyLi
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row)
 	{
 		@SuppressWarnings("unchecked")
-		Leaf<T> uo = ((TNode<T>) value).getUserObject();
+		T uo = ((TNode<T,U>) value).getUserObject();
 		
 		input.setNodeType(!(uo instanceof Branch));
 		input.setText(uo.getName());

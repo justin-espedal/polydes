@@ -2,6 +2,7 @@ package com.polydes.common.nodes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -12,20 +13,20 @@ import com.polydes.common.nodes.NodeUtils.LeafRunnable;
  * Changes to branches and leaves within this root's structure are reflected in
  * representative models.
  */
-public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, BranchListener<T>
+public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements LeafListener<T,U>, BranchListener<T,U>
 {
-	private Branch<T> rootBranch;
-	private HierarchyRepresentation<T>[] reps;
+	private U rootBranch;
+	private HierarchyRepresentation<T,U>[] reps;
 	
 	private HashSet<String> leafNames;
 	private boolean simpleMove;
 	private boolean uniqueLeafNames;
 	
 	@SuppressWarnings("unchecked")
-	public HierarchyModel(Branch<T> rootBranch)
+	public HierarchyModel(U rootBranch)
 	{
 		this.rootBranch = rootBranch;
-		NodeUtils.installListenersRecursive(rootBranch, this, this);
+		NodeUtils.installListenersRecursive((T) rootBranch, this, this);
 		
 		leafNames = new HashSet<String>();
 		simpleMove = false;
@@ -33,10 +34,10 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		
 		reps = new HierarchyRepresentation[0];
 		
-		NodeUtils.recursiveRun(rootBranch, new LeafRunnable<T>()
+		NodeUtils.recursiveRun((T) rootBranch, new LeafRunnable<T,U>()
 		{
 			@Override
-			public void run(Leaf<T> item)
+			public void run(T item)
 			{
 				if(!(item instanceof Branch))
 					leafNames.add(item.getName());
@@ -44,23 +45,25 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		});
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void dispose()
 	{
-		NodeUtils.uninstallListenersRecursive(rootBranch, this, this);
+		NodeUtils.uninstallListenersRecursive((T) rootBranch, this, this);
 		leafNames.clear();
 		rootBranch = null;
 	}
 	
-	public ArrayList<Leaf<T>> getPath(Leaf<T> leaf)
+	@SuppressWarnings("unchecked")
+	public ArrayList<T> getPath(T leaf)
 	{
-		ArrayList<Leaf<T>> list = new ArrayList<Leaf<T>>();
+		ArrayList<T> list = new ArrayList<T>();
 		while(leaf != null)
 		{
 			list.add(0, leaf);
 			if(leaf == rootBranch)
 				return list;
 			
-			leaf = leaf.getParent();
+			leaf = (T) leaf.getParent();
 		}
 		
 		return null;
@@ -76,7 +79,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		this.uniqueLeafNames = uniqueLeafNames;
 	}
 
-	public Branch<T> getRootBranch()
+	public U getRootBranch()
 	{
 		return rootBranch;
 	}
@@ -86,7 +89,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	\*================================================*/
 	
 	@Override
-	public void branchLeafAdded(Branch<T> folder, Leaf<T> item, int position)
+	public void branchLeafAdded(U folder, T item, int position)
 	{
 //		System.out.println("Folder Item Added: " + folder + ", " + item);
 		if(!simpleMove)
@@ -96,7 +99,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	}
 
 	@Override
-	public void branchLeafRemoved(Branch<T> folder, Leaf<T> item, int position)
+	public void branchLeafRemoved(U folder, T item, int position)
 	{
 //		System.out.println("Folder Item Removed: " + folder + ", " + item);
 		if(!simpleMove)
@@ -106,16 +109,16 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	}
 	
 	@Override
-	public void leafStateChanged(Leaf<T> source)
+	public void leafStateChanged(T source)
 	{
 //		System.out.println("Data Item State Changed: " + source);
 		
-		for(HierarchyRepresentation<T> rep : reps)
+		for(HierarchyRepresentation<T,U> rep : reps)
 			rep.leafStateChanged(source);
 	}
 
 	@Override
-	public void leafNameChanged(Leaf<T> source, String oldName)
+	public void leafNameChanged(T source, String oldName)
 	{
 //		System.out.println("Data Item Name Changed: " + source + ", " + oldName);
 		
@@ -125,7 +128,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 			leafNames.add(source.getName());
 		}
 		
-		for(HierarchyRepresentation<T> rep : reps)
+		for(HierarchyRepresentation<T,U> rep : reps)
 			rep.leafNameChanged(source, oldName);
 	}
 	
@@ -133,16 +136,16 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	 | Hierarchy Modification API
 	\*================================================*/
 	
-	public boolean canMoveItem(Leaf<T> item, Branch<T> target)
+	public boolean canMoveItem(T item, U target)
 	{
 		//check against moving some folder into itself
-		Branch<T> parent = target;
+		U parent = target;
 		do
 		{
 			if(parent == item)
 				return false;
 		}
-		while((parent = parent.getParent()) != null);
+		while((parent = (U) parent.getParent()) != null);
 		
 		//already in this folder, just moving it.
 		if(target == item.getParent())
@@ -151,12 +154,12 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		return target.canAcceptItem(item);
 	}
 	
-	public void massMove(Leaf<T>[] transferItems, Branch<T> target, int position)
+	public void massMove(List<T> transferItems, U target, int position)
 	{
 		simpleMove = true;
-		for(Leaf<T> item : transferItems)
+		for(T item : transferItems)
 			item.getParent().removeItem(item);
-		for(Leaf<T> item : transferItems)
+		for(T item : transferItems)
 			target.addItem(item, position++);
 		simpleMove = false;
 	}
@@ -175,19 +178,19 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 //		simpleMove = false;
 //	}
 	
-	public void copyItem(Leaf<T> item, Branch<T> target, int position)
+	public void copyItem(T item, U target, int position)
 	{
 		
 	}
 	
-	public void addItem(Leaf<T> item, Branch<T> target, int position)
+	public void addItem(T item, U target, int position)
 	{
 		target.addItem(item, position);
 		if(!(item instanceof Branch))
 			leafNames.add(item.getName());
 	}
 	
-	public void removeItem(Leaf<T> item, Branch<T> target)
+	public void removeItem(T item, U target)
 	{
 		target.removeItem(item);
 		if(!(item instanceof Branch))
@@ -198,12 +201,12 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	 | Folder Hierarchy Representation
 	\*================================================*/
 	
-	public void addRepresentation(HierarchyRepresentation<T> rep)
+	public void addRepresentation(HierarchyRepresentation<T,U> rep)
 	{
 		reps = ArrayUtils.add(reps, rep);
 	}
 	
-	public void removeRepresentation(HierarchyRepresentation<T> rep)
+	public void removeRepresentation(HierarchyRepresentation<T,U> rep)
 	{
 		reps = ArrayUtils.removeElement(reps, rep);
 	}
@@ -213,15 +216,15 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		return simpleMove;
 	}
 	
-	private void modelAddLeaf(Branch<T> folder, Leaf<T> item, int position)
+	private void modelAddLeaf(U folder, T item, int position)
 	{
-		for(HierarchyRepresentation<T> rep : reps)
+		for(HierarchyRepresentation<T,U> rep : reps)
 			rep.itemAdded(folder, item, position);
 	}
 	
-	private void modelRemoveLeaf(Branch<T> folder, Leaf<T> item, int position)
+	private void modelRemoveLeaf(U folder, T item, int position)
 	{
-		for(HierarchyRepresentation<T> rep : reps)
+		for(HierarchyRepresentation<T,U> rep : reps)
 			rep.itemRemoved(folder, item, position);
 	}
 }

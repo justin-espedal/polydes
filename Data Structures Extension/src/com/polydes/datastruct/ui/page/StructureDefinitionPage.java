@@ -19,7 +19,6 @@ import javax.swing.tree.TreeSelectionModel;
 import com.polydes.common.comp.MiniSplitPane;
 import com.polydes.common.comp.StatusBar;
 import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.darktree.DTreeSelectionListener;
 import com.polydes.common.ui.darktree.DTreeSelectionState;
 import com.polydes.common.ui.darktree.DarkTree;
@@ -48,20 +47,20 @@ public class StructureDefinitionPage extends JPanel
 	public MiniSplitPane splitPane;
 	private JPanel emptySidebarBottom;
 	
-	private HierarchyModel<DataItem> definitionsfm;
+	private HierarchyModel<DataItem,Folder> definitionsfm;
 	
-	private DarkTree<DataItem> definitionTree;
-	private DarkTree<DataItem> editorTree;
+	private DarkTree<DataItem,Folder> definitionTree;
+	private DarkTree<DataItem,Folder> editorTree;
 	private JComponent definitionTreeView;
 	
-	private DTreeSelectionState<DataItem> selectionState;
+	private DTreeSelectionState<DataItem,Folder> selectionState;
 	
 	protected JScrollPane scroller;
 	protected JPanel page;
 	
 	private StructureDefinitionEditor editor;
 	
-	private DTreeSelectionListener<DataItem> definitionStateListener = new DTreeSelectionListener<DataItem>()
+	private DTreeSelectionListener<DataItem,Folder> definitionStateListener = new DTreeSelectionListener<DataItem,Folder>()
 	{
 		@Override
 		public void selectionStateChanged()
@@ -78,7 +77,7 @@ public class StructureDefinitionPage extends JPanel
 				splitPane.setDividerLocation(dl);
 				return;
 			}
-			DataItem di = (DataItem) selectionState.nodes.get(0).getUserObject();
+			DataItem di = selectionState.nodes.get(0).getUserObject();
 			StructureDefinition toEdit = (StructureDefinition) di.getObject();
 			editor = toEdit.getEditor();
 			editor.setAlignmentX(LEFT_ALIGNMENT);
@@ -102,18 +101,18 @@ public class StructureDefinitionPage extends JPanel
 		}
 		
 		@Override
-		public void setSelectionState(DTreeSelectionState<DataItem> state)
+		public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
 		{
 			selectionState = state;
 		}
 	};
 	
-	private DTreeSelectionState<DataItem> editorState;
+	private DTreeSelectionState<DataItem,Folder> editorState;
 	
-	private DTreeSelectionListener<DataItem> editorStateListener = new DTreeSelectionListener<DataItem>()
+	private DTreeSelectionListener<DataItem,Folder> editorStateListener = new DTreeSelectionListener<DataItem,Folder>()
 	{
 		@Override
-		public void setSelectionState(DTreeSelectionState<DataItem> state)
+		public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
 		{
 			editorState = state;
 		}
@@ -123,7 +122,7 @@ public class StructureDefinitionPage extends JPanel
 		{
 			PropertiesWindow propsWindow = StructureDefinitionsWindow.get().getPropsWindow();
 			
-			DataItem di = (DataItem) editorState.nodes.get(0).getUserObject();
+			DataItem di = editorState.nodes.get(0).getUserObject();
 			EditableObject selected = (di == null) ? null : di.getObject();
 			if(selected != null)
 			{
@@ -186,8 +185,8 @@ public class StructureDefinitionPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		definitionsfm = new HierarchyModel<DataItem>(StructureDefinitions.root);
-		definitionTree = new DarkTree<DataItem>(definitionsfm);
+		definitionsfm = new HierarchyModel<DataItem,Folder>(StructureDefinitions.root);
+		definitionTree = new DarkTree<DataItem,Folder>(definitionsfm);
 		definitionTree.setNamingEditingAllowed(false);
 		definitionTree.addTreeListener(definitionStateListener);
 		definitionTree.expand((Folder) StructureDefinitions.root.getItemByName("My Structures"));
@@ -211,7 +210,7 @@ public class StructureDefinitionPage extends JPanel
 		definitionTree.enablePropertiesButton();
 		definitionsfm.setUniqueLeafNames(true);
 		
-		definitionTree.setNodeCreator(new DefaultNodeCreator<DataItem>()
+		definitionTree.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
 		{
 			@Override
 			public Collection<PopupItem> getCreatableNodeList()
@@ -220,7 +219,7 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public Leaf<DataItem> createNode(PopupItem item, String nodeName)
+			public DataItem createNode(PopupItem item, String nodeName)
 			{
 				if(item.text.equals("Folder"))
 					return new Folder(nodeName);
@@ -238,26 +237,26 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public void editNode(Leaf<DataItem> toEdit)
+			public void editNode(DataItem toEdit)
 			{
 				if(toEdit instanceof Folder)
 					return;
 				
-				if(!(((DataItem) toEdit).getObject() instanceof StructureDefinition))
+				if(!(toEdit.getObject() instanceof StructureDefinition))
 					return;
 				
 				CreateStructureDefinitionDialog dg = new CreateStructureDefinitionDialog();
-				dg.setDefinition((StructureDefinition) ((DataItem) toEdit).getObject());
+				dg.setDefinition((StructureDefinition) toEdit.getObject());
 				dg.dispose();
 				definitionTree.repaint();
 			}
 			
 			@Override
-			public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
+			public boolean attemptRemove(List<DataItem> toRemove)
 			{
-				if(toRemove.size() > 0 && ((DataItem) toRemove.get(0)).getObject() instanceof StructureDefinition)
+				if(toRemove.size() > 0 && toRemove.get(0).getObject() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) ((DataItem) toRemove.get(0)).getObject();
+					StructureDefinition def = (StructureDefinition) toRemove.get(0).getObject();
 					UI.Choice result =
 						UI.showYesCancelPrompt(
 							"Remove Structure Definition",
@@ -271,11 +270,11 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public void nodeRemoved(Leaf<DataItem> toRemove)
+			public void nodeRemoved(DataItem toRemove)
 			{
-				if(((DataItem) toRemove).getObject() instanceof StructureDefinition)
+				if(toRemove.getObject() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) ((DataItem) toRemove).getObject();
+					StructureDefinition def = (StructureDefinition) toRemove.getObject();
 					def.remove();
 				}
 			}

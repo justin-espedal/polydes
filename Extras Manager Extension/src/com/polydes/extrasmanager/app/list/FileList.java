@@ -37,18 +37,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
-import stencyl.sw.SW;
-import stencyl.sw.app.lists.AbstractItemRenderer;
-import stencyl.sw.app.lists.ListListener;
-import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.Fonts;
-import stencyl.sw.util.Util;
-import stencyl.sw.util.comp.GroupButton;
-import stencyl.thirdparty.misc.comp.FileDrop;
-
 import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.swing.PaintPanel;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.darktree.DTreeSelectionListener;
 import com.polydes.common.ui.darktree.DTreeSelectionState;
 import com.polydes.common.ui.darktree.DarkTree;
@@ -62,7 +52,16 @@ import com.polydes.extrasmanager.data.folder.SysFolder;
 import com.polydes.extrasmanager.io.FileOperations;
 import com.polydes.extrasmanager.res.Resources;
 
-public class FileList extends JList<Leaf<SysFile>> implements MouseListener, MouseMotionListener, FileClipboard.Listener
+import stencyl.sw.SW;
+import stencyl.sw.app.lists.AbstractItemRenderer;
+import stencyl.sw.app.lists.ListListener;
+import stencyl.sw.lnf.Theme;
+import stencyl.sw.util.Fonts;
+import stencyl.sw.util.Util;
+import stencyl.sw.util.comp.GroupButton;
+import stencyl.thirdparty.misc.comp.FileDrop;
+
+public class FileList extends JList<SysFile> implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {
 	private static final Logger log = Logger.getLogger(FileList.class);
 	
@@ -103,7 +102,7 @@ public class FileList extends JList<Leaf<SysFile>> implements MouseListener, Mou
 	
 	//---
 	
-	public FileList(final FileListRenderer renderer, ListListener listener, final FileListModel model, final DarkTree<SysFile> tree)
+	public FileList(final FileListRenderer renderer, ListListener listener, final FileListModel model, final DarkTree<SysFile,SysFolder> tree)
 	{
 		super(model);
 		
@@ -154,12 +153,12 @@ public class FileList extends JList<Leaf<SysFile>> implements MouseListener, Mou
 		
 		//---
 		
-		tree.addTreeListener(new DTreeSelectionListener<SysFile>()
+		tree.addTreeListener(new DTreeSelectionListener<SysFile,SysFolder>()
 		{
-			DTreeSelectionState<SysFile> state;
+			DTreeSelectionState<SysFile,SysFolder> state;
 			
 			@Override
-			public void setSelectionState(DTreeSelectionState<SysFile> state)
+			public void setSelectionState(DTreeSelectionState<SysFile,SysFolder> state)
 			{
 				this.state = state;
 			}
@@ -708,23 +707,23 @@ public class FileList extends JList<Leaf<SysFile>> implements MouseListener, Mou
 	@Override
 	public SysFile getSelectedValue()
 	{
-		return (SysFile) super.getSelectedValue();
+		return super.getSelectedValue();
 	}
 	
 	@Override
 	public SysFile[] getSelectedValues()
 	{
-		List<Leaf<SysFile>> selected = getSelectedValuesList();
+		List<SysFile> selected = getSelectedValuesList();
 		return selected.toArray(new SysFile[selected.size()]);
 	}
 	
 	public List<File> getSelectedFiles()
 	{
-		List<Leaf<SysFile>> selected = getSelectedValuesList();
+		List<SysFile> selected = getSelectedValuesList();
 		
 		ArrayList<File> files = new ArrayList<File>(selected.size());
-		for(Leaf<SysFile> o : selected)
-			files.add(((SysFile) o).getFile());
+		for(SysFile o : selected)
+			files.add(o.getFile());
 		return files;
 	}
 

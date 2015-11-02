@@ -7,60 +7,59 @@ import java.util.List;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
-import com.polydes.common.nodes.Leaf;
 
-public class SysFolder extends SysFile implements Branch<SysFile>
+public class SysFolder extends SysFile implements Branch<SysFile,SysFolder>
 {
-	private ArrayList<BranchListener<SysFile>> flisteners;
-	private ArrayList<Leaf<SysFile>> items;
+	private ArrayList<BranchListener<SysFile,SysFolder>> flisteners;
+	private ArrayList<SysFile> items;
 	private HashSet<String> itemNames;
 	
 	public SysFolder(File file)
 	{
 		super(file);
-		flisteners = new ArrayList<BranchListener<SysFile>>();
-		items = new ArrayList<Leaf<SysFile>>();
+		flisteners = new ArrayList<BranchListener<SysFile,SysFolder>>();
+		items = new ArrayList<SysFile>();
 		itemNames = new HashSet<String>();
 	}
 
 	@Override
-	public List<Leaf<SysFile>> getItems()
+	public List<SysFile> getItems()
 	{
 		return items;
 	}
 
 	@Override
-	public void addFolderListener(BranchListener<SysFile> l)
+	public void addFolderListener(BranchListener<SysFile,SysFolder> l)
 	{
 		flisteners.add(l);
 	}
 
 	@Override
-	public void removeFolderListener(BranchListener<SysFile> l)
+	public void removeFolderListener(BranchListener<SysFile,SysFolder> l)
 	{
 		flisteners.remove(l);
 	}
 
 	@Override
-	public void addItem(Leaf<SysFile> item)
+	public void addItem(SysFile item)
 	{
 		addItem(item, items.size());
 	}
 
 	@Override
-	public void addItem(Leaf<SysFile> item, int position)
+	public void addItem(SysFile item, int position)
 	{
 		items.add(position, item);
 		itemNames.add(item.getName());
 		if(item.getParent() != this)
 			item.setParent(this, false);
-		for(BranchListener<SysFile> l : flisteners) {l.branchLeafAdded(this, item, position);}
+		for(BranchListener<SysFile,SysFolder> l : flisteners) {l.branchLeafAdded(this, item, position);}
 	}
 
 	@Override
-	public Leaf<SysFile> getItemByName(String name)
+	public SysFile getItemByName(String name)
 	{
-		for(Leaf<SysFile> item : items)
+		for(SysFile item : items)
 		{
 			if(item.getName().equals(name))
 				return item;
@@ -70,7 +69,7 @@ public class SysFolder extends SysFile implements Branch<SysFile>
 	}
 
 	@Override
-	public Leaf<SysFile> getItemAt(int position)
+	public SysFile getItemAt(int position)
 	{
 		if(position < 0 || position >= items.size())
 			return null;
@@ -79,7 +78,7 @@ public class SysFolder extends SysFile implements Branch<SysFile>
 	}
 
 	@Override
-	public int indexOfItem(Leaf<SysFile> item)
+	public int indexOfItem(SysFile item)
 	{
 		return items.indexOf(item);
 	}
@@ -90,7 +89,7 @@ public class SysFolder extends SysFile implements Branch<SysFile>
 		
 		for(i = 0; i < items.size(); ++i)
 		{
-			SysFile current = (SysFile) items.get(i);
+			SysFile current = items.get(i);
 			if(isFolder)
 			{
 				if(!(current instanceof SysFolder))
@@ -110,17 +109,17 @@ public class SysFolder extends SysFile implements Branch<SysFile>
 	}
 
 	@Override
-	public void removeItem(Leaf<SysFile> item)
+	public void removeItem(SysFile item)
 	{
 		int pos = items.indexOf(item);
 		items.remove(item);
 		item.setParent(null, false);
 		itemNames.remove(item.getName());
-		for(BranchListener<SysFile> l : flisteners) {l.branchLeafRemoved(this, item, pos);}
+		for(BranchListener<SysFile,SysFolder> l : flisteners) {l.branchLeafRemoved(this, item, pos);}
 	}
 
 	@Override
-	public boolean hasItem(Leaf<SysFile> item)
+	public boolean hasItem(SysFile item)
 	{
 		return items.contains(item);
 	}
@@ -133,7 +132,7 @@ public class SysFolder extends SysFile implements Branch<SysFile>
 	}
 
 	@Override
-	public boolean canAcceptItem(Leaf<SysFile> item)
+	public boolean canAcceptItem(SysFile item)
 	{
 		return getItemByName(item.getName()) == null;
 	}

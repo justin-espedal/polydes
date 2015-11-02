@@ -29,9 +29,9 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 	public static JPanel highlighter = null;
 	public static final Color highlightColor = new Color(102, 102, 102);
 
-	private DarkTree<?> dtree;
+	private DarkTree<?,?> dtree;
 
-	public DTreeUI(DarkTree<?> dtree)
+	public DTreeUI(DarkTree<?,?> dtree)
 	{
 		super();
 
@@ -95,7 +95,7 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 		Object value = path.getLastPathComponent();
 		if (((DefaultMutableTreeNode) value).getUserObject() instanceof Branch)
 		{
-			Branch<?> f = (Branch<?>) ((DefaultMutableTreeNode) value)
+			Branch<?,?> f = (Branch<?,?>) ((DefaultMutableTreeNode) value)
 					.getUserObject();
 
 			int middleXOfKnob = bounds.x - getRightChildIndent() + 1;

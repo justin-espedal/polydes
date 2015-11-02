@@ -13,7 +13,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.folder.FolderPolicy;
@@ -172,7 +171,7 @@ public class StructureDefinitions
 				FileUtils.deleteDirectory(temp);
 				temp.mkdirs();
 				
-				for(Leaf<DataItem> d : dsfolder.getItems())
+				for(DataItem d : dsfolder.getItems())
 					save(d, temp);
 				
 				FileUtils.deleteDirectory(fsfolder);
@@ -183,7 +182,7 @@ public class StructureDefinitions
 		root.setDirty(false);
 	}
 	
-	public void save(Leaf<DataItem> item, File file) throws IOException
+	public void save(DataItem item, File file) throws IOException
 	{
 		if(item instanceof Folder)
 		{
@@ -191,12 +190,12 @@ public class StructureDefinitions
 			if(!saveDir.exists())
 				saveDir.mkdirs();
 			
-			for(Leaf<DataItem> d : ((Folder) item).getItems())
+			for(DataItem d : ((Folder) item).getItems())
 				save(d, saveDir);
 		}
 		else
 		{
-			StructureDefinition def = (StructureDefinition) ((DataItem) item).getObject();
+			StructureDefinition def = (StructureDefinition) item.getObject();
 			
 			Document doc = FileHelper.newDocument();
 			Element e = doc.createElement("structure");
@@ -236,7 +235,7 @@ public class StructureDefinitions
 		{
 			Folder fromFolder = (item instanceof Folder) ?
 						(Folder) item :
-						(Folder) item.getParent();
+						item.getParent();
 			
 			boolean sameRoot = (fromFolder.getPolicy() == this);
 			

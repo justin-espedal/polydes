@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.polydes.common.collections.CollectionPredicate;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
@@ -98,8 +97,8 @@ public class StructureType extends DataType<Structure>
 		
 		if(d instanceof Folder)
 		{
-			for(Leaf<DataItem> item : ((Folder) d).getItems())
-				runCustomCodeInjector((DataItem) item, builder);
+			for(DataItem item : ((Folder) d).getItems())
+				runCustomCodeInjector(item, builder);
 		}
 	}
 	

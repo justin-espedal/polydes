@@ -17,15 +17,15 @@ import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.paint.data.DataItem;
 import com.polydes.paint.data.Folder;
 
-public class BasicPage extends JPanel implements DTreeSelectionListener<DataItem>
+public class BasicPage extends JPanel implements DTreeSelectionListener<DataItem,Folder>
 {
 	protected Boolean listEditEnabled;
 	
 	protected MiniSplitPane splitPane;
-	protected HierarchyModel<DataItem> folderModel;
-	protected DarkTree<DataItem> tree;
+	protected HierarchyModel<DataItem,Folder> folderModel;
+	protected DarkTree<DataItem,Folder> tree;
 	
-	protected DTreeSelectionState<DataItem> selectionState;
+	protected DTreeSelectionState<DataItem,Folder> selectionState;
 	
 	protected BasicPage()
 	{
@@ -36,8 +36,8 @@ public class BasicPage extends JPanel implements DTreeSelectionListener<DataItem
 	{
 		super(new BorderLayout());
 		
-		folderModel = new HierarchyModel<DataItem>(rootFolder);
-		tree = new DarkTree<DataItem>(folderModel);
+		folderModel = new HierarchyModel<DataItem,Folder>(rootFolder);
+		tree = new DarkTree<DataItem,Folder>(folderModel);
 		tree.addTreeListener(this);
 		
 		splitPane = new MiniSplitPane();
@@ -84,7 +84,7 @@ public class BasicPage extends JPanel implements DTreeSelectionListener<DataItem
 	}
 
 	@Override
-	public void setSelectionState(DTreeSelectionState<DataItem> state)
+	public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
 	{
 		this.selectionState = state;
 	}

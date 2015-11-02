@@ -3,7 +3,6 @@ package com.polydes.paint.data.stores;
 import java.io.File;
 import java.util.Stack;
 
-import com.polydes.common.nodes.Leaf;
 import com.polydes.paint.data.DataItem;
 import com.polydes.paint.data.Folder;
 import com.polydes.paint.data.LinkedDataItem;
@@ -62,13 +61,13 @@ public abstract class TextStore extends Folder
 		setClean();
 	}
 	
-	private void trimItem(Leaf<DataItem> item)
+	private void trimItem(DataItem item)
 	{
 		if(item instanceof TextSource)
 			((TextSource) item).trimLeadingTailingNewlines();
 		else if(item instanceof Folder)
 		{
-			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
+			for(DataItem curItem : ((Folder) item).getItems())
 			{
 				trimItem(curItem);
 			}
@@ -82,7 +81,7 @@ public abstract class TextStore extends Folder
 		if(isDirty())
 		{
 			Text.startWriting(file);
-			for(Leaf<DataItem> item : getItems())
+			for(DataItem item : getItems())
 			{
 				writeItem(item, file, titleMarker, folderStartMarker, folderEndMarker);
 			}
@@ -92,7 +91,7 @@ public abstract class TextStore extends Folder
 		setClean();
 	}
 	
-	private void updateItem(Leaf<DataItem> item)
+	private void updateItem(DataItem item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -104,20 +103,20 @@ public abstract class TextStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
+			for(DataItem curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}
 		}
 	}
 	
-	private void writeItem(Leaf<DataItem> item, File file, String titleMarker, String folderStartMarker, String folderEndMarker)
+	private void writeItem(DataItem item, File file, String titleMarker, String folderStartMarker, String folderEndMarker)
 	{
 		if(item instanceof Folder)
 		{
 			Text.writeLine(file, folderStartMarker + item.getName());
 			
-			for(Leaf<DataItem> currItem : ((Folder) item).getItems())
+			for(DataItem currItem : ((Folder) item).getItems())
 			{
 				writeItem(currItem, file, titleMarker, folderStartMarker, folderEndMarker);
 			}

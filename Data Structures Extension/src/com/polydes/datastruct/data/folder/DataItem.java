@@ -4,15 +4,14 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 
 
-public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
+public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>
 {
-	protected ArrayList<LeafListener<DataItem>> listeners;
-	protected Branch<DataItem> parent;
+	protected ArrayList<LeafListener<DataItem,Folder>> listeners;
+	protected Folder parent;
 	
 	protected String name;
 	protected ImageIcon icon;
@@ -21,7 +20,7 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	
 	public DataItem(String name, EditableObject object)
 	{
-		listeners = new ArrayList<LeafListener<DataItem>>();
+		listeners = new ArrayList<LeafListener<DataItem,Folder>>();
 		parent = null;
 		this.name = name;
 		this.object = object;
@@ -33,26 +32,26 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	}
 	
 	@Override
-	public void addListener(LeafListener<DataItem> l)
+	public void addListener(LeafListener<DataItem,Folder> l)
 	{
 		listeners.add(l);
 	}
 	
 	@Override
-	public void removeListener(LeafListener<DataItem> l)
+	public void removeListener(LeafListener<DataItem,Folder> l)
 	{
 		listeners.remove(l);
 	}
 	
 	@Override
-	public void setParent(Branch<DataItem> parent, boolean addToParent)
+	public void setParent(Folder parent, boolean addToParent)
 	{
 		if(this.parent == parent)
 			return;
 		
 		if(this.parent != null)
 		{
-			Branch<DataItem> oldParent = this.parent;
+			Folder oldParent = this.parent;
 			this.parent = null;
 			oldParent.removeItem(this);
 		}
@@ -65,7 +64,7 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 	}
 	
 	@Override
-	public Branch<DataItem> getParent()
+	public Folder getParent()
 	{
 		return parent;
 	}
@@ -77,7 +76,7 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 		{
 			String oldName = this.name;
 			this.name = name;
-			for(LeafListener<DataItem> l : listeners) {l.leafNameChanged(this, oldName);}
+			for(LeafListener<DataItem,Folder> l : listeners) {l.leafNameChanged(this, oldName);}
 			
 			if(parent != null)
 				parent.registerNameChange(oldName, name);
@@ -131,10 +130,10 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem>
 			return;
 		
 		object.setDirty(value);
-		for(LeafListener<DataItem> l : listeners) {l.leafStateChanged(this);}
+		for(LeafListener<DataItem,Folder> l : listeners) {l.leafStateChanged(this);}
 		
 		if(value && parent != null && !parent.isDirty())
-			((Folder) parent).setDirty(true);
+			parent.setDirty(true);
 	}
 	
 	@Override

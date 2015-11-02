@@ -41,7 +41,7 @@ public class MainPage extends JPanel
 	protected ListListener flistlistener;
 	
 	protected JScrollPane ftreescroller;
-	protected DarkTree<SysFile> ftree;
+	protected DarkTree<SysFile,SysFolder> ftree;
 	
 	protected MiniSplitPane splitPane;
 	
@@ -91,7 +91,7 @@ public class MainPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		ftree = new DarkTree<SysFile>(ExtrasManagerExtension.getModel());
+		ftree = new DarkTree<SysFile,SysFolder>(ExtrasManagerExtension.getModel());
 		ftree.getTree().setRootVisible(true);
 		ftree.disableButtonBar();
 		ftreescroller = UI.createScrollPane(ftree);

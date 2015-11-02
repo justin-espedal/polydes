@@ -3,7 +3,6 @@ package com.polydes.paint.data.stores;
 import java.io.File;
 import java.io.IOException;
 
-import com.polydes.common.nodes.Leaf;
 import com.polydes.paint.data.DataItem;
 import com.polydes.paint.data.Folder;
 import com.polydes.paint.data.ImageSource;
@@ -41,7 +40,7 @@ public abstract class ImageStore extends Folder
 	{
 		updateItem(this);
 		
-		for(Leaf<DataItem> item : getItems())
+		for(DataItem item : getItems())
 		{
 			System.out.println(item.getName());
 			
@@ -63,7 +62,7 @@ public abstract class ImageStore extends Folder
 		setClean();
 	}
 	
-	private void updateItem(Leaf<DataItem> item)
+	private void updateItem(DataItem item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
@@ -75,7 +74,7 @@ public abstract class ImageStore extends Folder
 			if(item.isDirty())
 				setDirty();
 			
-			for(Leaf<DataItem> curItem : ((Folder) item).getItems())
+			for(DataItem curItem : ((Folder) item).getItems())
 			{
 				updateItem(curItem);
 			}

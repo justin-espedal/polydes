@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
@@ -43,14 +42,14 @@ public class StructureDefinitionWriter
 		root.setAttribute("classname", def.getFullClassname());
 		if(def.parent != null)
 			root.setAttribute("extends", def.parent.getFullClassname());
-		for(Leaf<DataItem> n : def.guiRoot.getItems())
+		for(DataItem n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <S extends SDE> void writeNode(Document doc, Element parent, Leaf<DataItem> gui)
+	public static <S extends SDE> void writeNode(Document doc, Element parent, DataItem gui)
 	{
-		S obj = (S) ((DataItem) gui).getObject();
+		S obj = (S) gui.getObject();
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(obj.getClass());
 		
 		String namespace = (obj instanceof StructureUnknown) ?
@@ -62,7 +61,7 @@ public class StructureDefinitionWriter
 		type.write(obj, e);
 		
 		if(gui instanceof Folder)
-			for(Leaf<DataItem> n : ((Folder) gui).getItems())
+			for(DataItem n : ((Folder) gui).getItems())
 				writeNode(doc, e, n);
 		
 		parent.appendChild(e);

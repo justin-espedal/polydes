@@ -2,63 +2,80 @@ package com.polydes.common.nodes;
 
 public class NodeUtils
 {
-	public static final <T extends Leaf<T>> void installListenersRecursive(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void installListenersRecursive(T item, LeafListener<T,U> l, BranchListener<T,U> fl)
 	{
 		if(l != null)
 			item.addListener(l);
 		if(item instanceof Branch)
 		{
 			if(fl != null)
-				((Branch<T>) item).addFolderListener(fl);
-			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
+				((U) item).addFolderListener(fl);
+			for(T curItem : ((U) item).getItems())
 			{
 				installListenersRecursive(curItem, l, fl);
 			}
 		}
 	}
 	
-	public static final <T extends Leaf<T>> void uninstallListenersRecursive(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void uninstallListenersRecursive(T item, LeafListener<T,U> l, BranchListener<T,U> fl)
 	{
 		if(l != null)
 			item.removeListener(l);
 		if(item instanceof Branch)
 		{
 			if(fl != null)
-				((Branch<T>) item).removeFolderListener(fl);
-			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
+				((U) item).removeFolderListener(fl);
+			for(T curItem : ((U) item).getItems())
 			{
 				uninstallListenersRecursive(curItem, l, fl);
 			}
 		}
 	}
 	
-	public static final <T extends Leaf<T>> void recursiveRun(Leaf<T> item, LeafRunnable<T> runnable)
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void recursiveRun(T item, LeafRunnable<T,U> runnable)
 	{
 		runnable.run(item);
 		if(item instanceof Branch)
-			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
+			for(T curItem : ((U) item).getItems())
 				recursiveRun(curItem, runnable);
 	}
 	
-	public static final <T extends Leaf<T>> void recursiveRunPost(Leaf<T> item, LeafRunnable<T> runnable)
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void recursiveRunPost(T item, LeafRunnable<T,U> runnable)
 	{
 		if(item instanceof Branch)
-			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
+			for(T curItem : ((U) item).getItems())
 				recursiveRun(curItem, runnable);
 		runnable.run(item);
 	}
 	
-	public static interface LeafRunnable<T extends Leaf<T>>
+	public static interface LeafRunnable<T extends Leaf<T,U>, U extends Branch<T,U>>
 	{
-		public void run(Leaf<T> item);
+		public void run(T item);
 	}
 	
-	public static final <T extends Leaf<T>> boolean isDescendantOf(Leaf<T> item, Branch<T> parent)
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> boolean isDescendantOf(T item, U parent)
 	{
-		while((item = item.getParent()) != null)
+		while((item = (T) (item.getParent())) != null)
 			if(item == parent)
 				return true;
 		
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> int getDepth(T l)
+	{
+		int d = 0;
+		while(l != null)
+		{
+			l = (T) l.getParent();
+			++d;
+		}
+		return d;
 	}
 }
