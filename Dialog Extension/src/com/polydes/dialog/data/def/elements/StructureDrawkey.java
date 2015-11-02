@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
@@ -152,12 +151,9 @@ public class StructureDrawkey extends SDE
 			int offset = 1;
 			
 			Folder extF = ((Folder) parent.getParent());
-			for(Leaf<DataItem> ldi : extF.getItems())
-			{
-				Object o = ((DataItem) ldi).getObject();
-				if(o instanceof StructureCommands)
-					offset += ((Folder) ldi).getItems().size();
-			}
+			for(DataItem di : extF.getItems())
+				if(di.getObject() instanceof StructureCommands)
+					offset += ((Folder) di).getItems().size();
 			
 			RowGroup extGroup = (RowGroup) sheet.guiMap.get(parent.getParent());
 			Card parentCard = extGroup.getSubcard();

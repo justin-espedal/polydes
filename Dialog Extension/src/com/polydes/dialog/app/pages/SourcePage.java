@@ -16,9 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import stencyl.sw.util.UI;
-
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.darktree.DTreeNodeCreator;
 import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.common.util.PopupUtil.PopupItem;
@@ -34,7 +31,9 @@ import com.polydes.dialog.data.LinkedDataItem;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.res.Resources;
 
-public class SourcePage<T extends LinkedDataItem> extends BasicPage implements DTreeNodeCreator<DataItem>
+import stencyl.sw.util.UI;
+
+public class SourcePage<T extends LinkedDataItem> extends BasicPage implements DTreeNodeCreator<DataItem,Folder>
 {
 	private Class<T> cls;
 	
@@ -188,7 +187,7 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 	}
 
 	@Override
-	public Leaf<DataItem> createNode(PopupItem selected, String nodeName)
+	public DataItem createNode(PopupItem selected, String nodeName)
 	{
 		if(selected.text.equals("Folder"))
 			return new Folder(nodeName);
@@ -197,19 +196,19 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 	}
 
 	@Override
-	public void editNode(Leaf<DataItem> dataItem)
+	public void editNode(DataItem dataItem)
 	{
 		
 	}
 
 	@Override
-	public void nodeRemoved(Leaf<DataItem> toRemove)
+	public void nodeRemoved(DataItem toRemove)
 	{
 		
 	}
 
 	@Override
-	public boolean attemptRemove(List<Leaf<DataItem>> toRemove)
+	public boolean attemptRemove(List<DataItem> toRemove)
 	{
 		return true;
 	}
