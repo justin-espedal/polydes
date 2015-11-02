@@ -45,7 +45,7 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
 import com.polydes.common.nodes.Leaf;
-import com.polydes.common.nodes.LeafWalker;
+import com.polydes.common.nodes.NodeUtils;
 import com.polydes.common.res.ResourceLoader;
 import com.polydes.common.util.PopupUtil;
 import com.polydes.common.util.PopupUtil.PopupItem;
@@ -449,7 +449,7 @@ public class DarkTree<T extends Leaf<T>> extends JPanel implements TreeSelection
 		//Remove any objects that are under parents that will be deleted.
 		final HashSet<Leaf<T>> toRemoveDiSet = new HashSet<Leaf<T>>();
 		for(TNode<T> toRemoveNode : toRemoveList)
-			LeafWalker.recursiveRun(toRemoveNode.getUserObject(), (item) -> toRemoveDiSet.add(item));
+			NodeUtils.recursiveRun(toRemoveNode.getUserObject(), (item) -> toRemoveDiSet.add(item));
 		
 		//Sort it so that the deepest items in hierarchy are removed one by one before their parents.
 		ArrayList<Leaf<T>> toRemoveDiList = new ArrayList<>(toRemoveDiSet);

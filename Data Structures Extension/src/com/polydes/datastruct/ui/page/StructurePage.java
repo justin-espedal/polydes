@@ -22,10 +22,10 @@ import com.polydes.common.ui.darktree.DTreeSelectionListener;
 import com.polydes.common.ui.darktree.DTreeSelectionState;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.common.ui.darktree.DefaultNodeCreator;
-import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.datastruct.data.folder.ViewableObject;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
@@ -34,7 +34,6 @@ import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.list.ListUtils;
-import com.polydes.datastruct.ui.objeditors.StructureEditor;
 
 import stencyl.sw.SW;
 import stencyl.sw.util.UI;
@@ -251,49 +250,44 @@ public class StructurePage extends JPanel implements DTreeSelectionListener<Data
 	@Override
 	public void selectionStateChanged()
 	{
-		if(currView == folderPage && (selectionState.type == SelectionType.FOLDERS))
-			return;
-		
 		if(currView != null)
 			remove(currView);
 		
 		multiPage.removeAll();
 		currPages.clear();
 		
-		currView = null;
+		ArrayList<ViewableObject> toView = new ArrayList<ViewableObject>();
 		
-		if(selectionState.type == SelectionType.FOLDERS)
-			currView = folderPage;
-		else
+		for(DefaultMutableTreeNode node : selectionState.nodes)
 		{
-			ArrayList<Structure> toEdit = new ArrayList<Structure>();
-			
-			for(DefaultMutableTreeNode node : selectionState.nodes)
-			{
-				DataItem uo = (DataItem) node.getUserObject();
-				if(uo == null)
-					continue;
-				if(uo.getObject() instanceof Structure)
-					toEdit.add((Structure) uo.getObject());
-			}
-			
-			StructureEditor editor;
-			
-			for(int i = 0; i < toEdit.size(); ++i)
-			{
-				editor = toEdit.get(i).getEditor();
-				currPages.add(editor);
-				multiPage.add(editor);
-				editor.setAlignmentX(LEFT_ALIGNMENT);
-				
-				if(i + 1 < toEdit.size())
-					multiPage.add(new HorizontalDivider(2));
-			}
-			
-			currView = multiScroller;
+			DataItem uo = (DataItem) node.getUserObject();
+			if(uo == null)
+				continue;
+			if(uo instanceof Folder)
+				toView.add((Folder) uo);
+			else
+				toView.add((ViewableObject) uo.getObject());
 		}
-
-		if (currView != null)
+		
+		JPanel editor;
+		
+		for(int i = 0; i < toView.size(); ++i)
+		{
+			editor = toView.get(i).getView();
+			currPages.add(editor);
+			multiPage.add(editor);
+			editor.setAlignmentX(LEFT_ALIGNMENT);
+			
+			if(i + 1 < toView.size())
+				multiPage.add(new HorizontalDivider(2));
+		}
+		
+		if(toView.isEmpty())
+			currView = null;
+		else
+			currView = multiScroller;
+		
+		if(currView != null)
 			add(currView, BorderLayout.CENTER);
 		
 		revalidate();

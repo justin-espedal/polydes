@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.polydes.common.nodes.LeafWalker.LeafRunnable;
+import com.polydes.common.nodes.NodeUtils.LeafRunnable;
 
 /**
  * Branch that can be represented as the root of a hierarchical tree system.
@@ -25,7 +25,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	public HierarchyModel(Branch<T> rootBranch)
 	{
 		this.rootBranch = rootBranch;
-		LeafWalker.installListeners(rootBranch, this, this);
+		NodeUtils.installListenersRecursive(rootBranch, this, this);
 		
 		leafNames = new HashSet<String>();
 		simpleMove = false;
@@ -33,7 +33,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 		
 		reps = new HierarchyRepresentation[0];
 		
-		LeafWalker.recursiveRun(rootBranch, new LeafRunnable<T>()
+		NodeUtils.recursiveRun(rootBranch, new LeafRunnable<T>()
 		{
 			@Override
 			public void run(Leaf<T> item)
@@ -46,7 +46,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	
 	public void dispose()
 	{
-		LeafWalker.uninstallListeners(rootBranch, this, this);
+		NodeUtils.uninstallListenersRecursive(rootBranch, this, this);
 		leafNames.clear();
 		rootBranch = null;
 	}
@@ -90,7 +90,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	{
 //		System.out.println("Folder Item Added: " + folder + ", " + item);
 		if(!simpleMove)
-			LeafWalker.installListeners(item, this, this);
+			NodeUtils.installListenersRecursive(item, this, this);
 		
 		modelAddLeaf(folder, item, position);
 	}
@@ -100,7 +100,7 @@ public class HierarchyModel<T extends Leaf<T>> implements LeafListener<T>, Branc
 	{
 //		System.out.println("Folder Item Removed: " + folder + ", " + item);
 		if(!simpleMove)
-			LeafWalker.uninstallListeners(item, this, this);
+			NodeUtils.uninstallListenersRecursive(item, this, this);
 		
 		modelRemoveLeaf(folder, item, position);
 	}

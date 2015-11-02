@@ -2,7 +2,7 @@ package com.polydes.datastruct.data.folder;
 
 import javax.swing.JPanel;
 
-public abstract class EditableObject
+public abstract class EditableObject implements ViewableObject
 {
 	public static JPanel BLANK_EDITOR = new JPanel();
 	
@@ -20,5 +20,17 @@ public abstract class EditableObject
 	public boolean isDirty()
 	{
 		return dirty;
+	}
+	
+	@Override
+	public final JPanel getView()
+	{
+		return getEditor();
+	}
+	
+	@Override
+	public final void disposeView()
+	{
+		disposeEditor();
 	}
 }

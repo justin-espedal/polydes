@@ -3,15 +3,18 @@ package com.polydes.datastruct.data.folder;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.Lang;
+import com.polydes.datastruct.res.Resources;
+import com.polydes.datastruct.ui.page.FolderPage;
 
 
-public class Folder extends DataItem implements Branch<DataItem>
+public class Folder extends DataItem implements Branch<DataItem>, ViewableObject
 {
 	public static FolderPolicy DEFAULT_POLICY;
 	static
@@ -24,6 +27,8 @@ public class Folder extends DataItem implements Branch<DataItem>
 		DEFAULT_POLICY.itemRemovalEnabled = true;
 	}
 	protected FolderPolicy policy;
+	
+	public static final ImageIcon folderIcon = Resources.loadIcon("page/folder-small.png");
 	
 	protected ArrayList<BranchListener<DataItem>> fListeners;
 	private ArrayList<Leaf<DataItem>> items;
@@ -253,5 +258,23 @@ public class Folder extends DataItem implements Branch<DataItem>
 	public final boolean isItemEditingEnabled()
 	{
 		return Lang.or(policy, DEFAULT_POLICY).itemEditingEnabled;
+	}
+
+	private FolderPage view;
+	
+	@Override
+	public JPanel getView()
+	{
+		if(view == null)
+			view = new FolderPage(this);
+		return view;
+	}
+
+	@Override
+	public void disposeView()
+	{
+		if(view != null)
+			view.dispose();
+		view = null;
 	}
 }

@@ -1,9 +1,8 @@
 package com.polydes.common.nodes;
 
-
-public class LeafWalker
+public class NodeUtils
 {
-	public static final <T extends Leaf<T>> void installListeners(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
+	public static final <T extends Leaf<T>> void installListenersRecursive(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
 	{
 		if(l != null)
 			item.addListener(l);
@@ -13,12 +12,12 @@ public class LeafWalker
 				((Branch<T>) item).addFolderListener(fl);
 			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
 			{
-				installListeners(curItem, l, fl);
+				installListenersRecursive(curItem, l, fl);
 			}
 		}
 	}
 	
-	public static final <T extends Leaf<T>> void uninstallListeners(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
+	public static final <T extends Leaf<T>> void uninstallListenersRecursive(Leaf<T> item, LeafListener<T> l, BranchListener<T> fl)
 	{
 		if(l != null)
 			item.removeListener(l);
@@ -28,7 +27,7 @@ public class LeafWalker
 				((Branch<T>) item).removeFolderListener(fl);
 			for(Leaf<T> curItem : ((Branch<T>) item).getItems())
 			{
-				uninstallListeners(curItem, l, fl);
+				uninstallListenersRecursive(curItem, l, fl);
 			}
 		}
 	}
@@ -52,5 +51,14 @@ public class LeafWalker
 	public static interface LeafRunnable<T extends Leaf<T>>
 	{
 		public void run(Leaf<T> item);
+	}
+	
+	public static final <T extends Leaf<T>> boolean isDescendantOf(Leaf<T> item, Branch<T> parent)
+	{
+		while((item = item.getParent()) != null)
+			if(item == parent)
+				return true;
+		
+		return false;
 	}
 }
