@@ -2,6 +2,7 @@ package com.polydes.common.data.types;
 
 import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.core.DataSetSources;
+import com.polydes.common.data.types.builtin.ResourceFolderType;
 import com.polydes.common.data.types.builtin.StencylResourceType;
 import com.polydes.common.data.types.builtin.UnknownDataType;
 import com.polydes.common.data.types.builtin.basic.ArrayType;
@@ -18,9 +19,10 @@ import com.polydes.common.data.types.hidden.DataTypeType;
 import com.polydes.common.ext.ObjectRegistry;
 
 import stencyl.core.engine.actor.IActorType;
+import stencyl.core.engine.snippet.ISnippet;
 import stencyl.core.engine.sound.ISoundClip;
-import stencyl.core.lib.Game;
 import stencyl.core.lib.ResourceTypes;
+import stencyl.core.lib.scene.SceneModel;
 import stencyl.sw.data.EditableBackground;
 import stencyl.sw.data.EditableFont;
 import stencyl.sw.data.EditableTileset;
@@ -45,9 +47,11 @@ public class Types extends ObjectRegistry<DataType<?>>
 	public static StencylResourceType<IActorType> _Actor = new StencylResourceType<>(ResourceTypes.actor);
 	public static StencylResourceType<EditableBackground> _Background = new StencylResourceType<>(ResourceTypes.background);
 	public static StencylResourceType<EditableFont> _Font = new StencylResourceType<>(ResourceTypes.font);
-//	public static StencylResourceType<SceneModel> _Scene = new StencylResourceType<>(ResourceTypes.scene);
+	public static StencylResourceType<SceneModel> _Scene = new StencylResourceType<>(ResourceTypes.scene);
+	public static StencylResourceType<ISnippet> _Snippet = new StencylResourceType<>(ResourceTypes.snippet);
 	public static StencylResourceType<ISoundClip> _Sound = new StencylResourceType<>(ResourceTypes.sound);
 	public static StencylResourceType<EditableTileset> _Tileset = new StencylResourceType<>(ResourceTypes.tileset);
+	public static ResourceFolderType _ResourceFolder = new ResourceFolderType();
 	
 	public static StencylResourceType<?>[] srts;
 	static
@@ -57,7 +61,8 @@ public class Types extends ObjectRegistry<DataType<?>>
 			_Actor,
 			_Background,
 			_Font,
-//			_Scene,
+			_Scene,
+			_Snippet,
 			_Sound,
 			_Tileset
 		};
@@ -100,12 +105,13 @@ public class Types extends ObjectRegistry<DataType<?>>
 		
 		//Stencyl types
 		registerItem(_Control);
+		registerItem(_ResourceFolder);
 		
 		for(StencylResourceType<?> srt : srts)
 		{
 			//TODO: Add structure types from DSExtension
 			registerItem(srt);
-			DataSetSources.get().registerItem(new DataSetSource(srt.id, srt, () -> Game.getGame().getResources().getResourcesByType(srt.javaType)));
+			DataSetSources.get().registerItem(new DataSetSource(srt.id, srt, () -> srt.getList()));
 		}
 	}
 	

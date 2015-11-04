@@ -4,6 +4,7 @@ import static com.polydes.common.util.Lang.array;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 import javax.swing.JComponent;
 
@@ -14,11 +15,13 @@ import com.polydes.common.data.types.ExtraProperties;
 import com.polydes.common.data.types.ExtrasMap;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
+import stencyl.core.lib.AbstractResource;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
 import stencyl.core.lib.ResourceType;
+import stencyl.core.lib.ResourceTypes;
 
-public class StencylResourceType<T extends Resource> extends DataType<T>
+public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 {
 	ResourceType stencylResourceType;
 	
@@ -94,7 +97,7 @@ public class StencylResourceType<T extends Resource> extends DataType<T>
 		return emap;
 	}
 	
-	public static class Extras<T extends Resource> extends ExtraProperties
+	public static class Extras<T extends AbstractResource> extends ExtraProperties
 	{
 		public T defaultValue;
 		
@@ -105,13 +108,26 @@ public class StencylResourceType<T extends Resource> extends DataType<T>
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Collection<T> getList()
+	{
+		Collection<?> list =
+			stencylResourceType == ResourceTypes.scene ?
+			Game.getGame().getScenes() :
+				stencylResourceType == ResourceTypes.snippet ?
+				Game.getGame().getSnippets() :
+					Game.getGame().getResources().getResourcesByType((Class<Resource>) javaType);
+		
+		return (Collection<T>) list;
+	}
+	
 	public class DropdownResourceEditor extends DataEditor<T>
 	{
 		UpdatingCombo<T> editor;
 		
 		public DropdownResourceEditor()
 		{
-			editor = new UpdatingCombo<T>(Game.getGame().getResources().getResourcesByType(javaType), null);
+			editor = new UpdatingCombo<T>(getList(), null);
 			
 			editor.addActionListener(new ActionListener()
 			{
