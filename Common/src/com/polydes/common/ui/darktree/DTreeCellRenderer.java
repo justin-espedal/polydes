@@ -20,8 +20,6 @@ public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> exten
 {
 	private JLabel text;
 	
-	private static final Color selectedColor = new Color(102, 102, 102);
-	
 	private static final Font branchFont = UIManager.getFont("Label.font").deriveFont(Font.BOLD, 11.0f);
     private static final Font leafFont = UIManager.getFont("Label.font").deriveFont(11.0f);
 //	private static final Font leafSelectedFont = leafFont.deriveFont(Font.BOLD);
@@ -69,7 +67,7 @@ public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> exten
 		}
 		
 		if(isSelected)
-			setBackground(selectedColor);
+			setBackground(DTreeUI.highlightColor);
 		else
 			setBackground(null);
 		

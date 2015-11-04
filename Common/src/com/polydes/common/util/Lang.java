@@ -15,6 +15,12 @@ public class Lang
 		return item == null ? defaultValue : item;
 	}
 	
+	@SafeVarargs
+	public static final <T> T[] array(T... items)
+	{
+		return items;
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final <T> ArrayList<T> arraylist(Object... a)
 	{
