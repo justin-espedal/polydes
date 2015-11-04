@@ -1,5 +1,7 @@
 package com.polydes.common.data.types;
 
+import java.util.HashMap;
+
 import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.core.DataSetSources;
 import com.polydes.common.data.types.builtin.ResourceFolderType;
@@ -80,8 +82,19 @@ public class Types extends ObjectRegistry<DataType<?>>
 		return instance;
 	}
 	
+	//===
+	
+	private HashMap<Class<?>, DataType<?>> classMap;
+	
+	@SuppressWarnings("unchecked")
+	public <T> DataType<T> fromClass(Class<T> cls)
+	{
+		return (DataType<T>) classMap.get(cls);
+	}
+	
 	private Types()
 	{
+		classMap = new HashMap<>();
 		addBasicTypes();
 	}
 	
@@ -113,6 +126,21 @@ public class Types extends ObjectRegistry<DataType<?>>
 			registerItem(srt);
 			DataSetSources.get().registerItem(new DataSetSource(srt.id, srt, () -> srt.getList()));
 		}
+	}
+	
+	@Override
+	public void registerItem(DataType<?> object)
+	{
+		super.registerItem(object);
+		if(!classMap.containsKey(object.javaType))
+			classMap.put(object.javaType, object);
+	}
+	
+	@Override
+	public void unregisterItem(DataType<?> object)
+	{
+		super.unregisterItem(object);
+		classMap.remove(object.javaType);
 	}
 	
 	@Override
