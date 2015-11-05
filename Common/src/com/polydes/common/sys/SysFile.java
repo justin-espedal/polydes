@@ -1,11 +1,13 @@
 package com.polydes.common.sys;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import com.polydes.common.comp.TitledPanel;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.ui.object.ViewableObject;
@@ -158,7 +160,10 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 	public JPanel getView()
 	{
 		if(view == null)
-			view = FilePreviewer.getPreview(this);
+		{
+			view = new TitledPanel(getName(), null);
+			view.add(FilePreviewer.getPreview(this), BorderLayout.CENTER);
+		}
 		
 		return view;
 	}
