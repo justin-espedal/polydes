@@ -1,7 +1,6 @@
 package com.polydes.common.sys;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
@@ -13,12 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+
 import stencyl.sw.util.FileHelper;
 
 public class FilePreviewer
 {
-	private static Color BACKGROUND_COLOR = new Color(62, 62, 62);
-	
 	public static JPanel getPreview(SysFile f)
 	{
 		String type = Mime.get(f.getFile());
@@ -32,13 +31,16 @@ public class FilePreviewer
 		if(toPreview != null)
 		{
 			JPanel previewPanel = new JPanel();
-			previewPanel.setBackground(BACKGROUND_COLOR);
+			previewPanel.setBackground(PropertiesSheetStyle.DARK.pageBg);
 			previewPanel.add(toPreview);
 			
 			return previewPanel;
 		}
 		
-		return new JPanel();
+		JPanel filePanel = new JPanel();
+		filePanel.add(new JLabel(FileRenderer.fileThumb));
+		filePanel.setBackground(PropertiesSheetStyle.DARK.pageBg);
+		return filePanel;
 	}
 	
 	private static JComponent buildImagePreview(File f)

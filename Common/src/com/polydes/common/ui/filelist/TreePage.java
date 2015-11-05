@@ -2,8 +2,10 @@ package com.polydes.common.ui.filelist;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -11,6 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import com.polydes.common.comp.HorizontalDivider;
+import com.polydes.common.comp.ScrollablePanel;
+import com.polydes.common.comp.ScrollablePanel.ScrollableSizeHint;
 import com.polydes.common.comp.StatusBar;
 import com.polydes.common.comp.VerticalDivider;
 import com.polydes.common.nodes.Branch;
@@ -21,6 +25,7 @@ import com.polydes.common.ui.darktree.DTreeSelectionState;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.common.ui.darktree.TNode;
 import com.polydes.common.ui.object.ViewableObject;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.sw.util.UI;
 
@@ -34,7 +39,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	private DTreeSelectionState<T,U> selectionState;
 	
 	private JScrollPane multiScroller;
-	private JPanel multiPage;
+	private ScrollablePanel multiPage;
 	
 	protected JComponent currView;
 	
@@ -49,17 +54,19 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		tree.addTreeListener(this);
 		tree.expandLevel(1);
 		
-		multiPage = new JPanel();
+		multiPage = new ScrollablePanel();
+		multiPage.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
 		multiPage.setLayout(new BoxLayout(multiPage, BoxLayout.Y_AXIS));
-		multiPage.setBackground(PAGE_COLOR);
+		multiPage.setBackground(PropertiesSheetStyle.DARK.pageBg);
 		multiScroller = UI.createScrollPane(multiPage);
-		multiScroller.setBackground(null);
+		multiScroller.setBackground(PropertiesSheetStyle.DARK.pageBg);
 		multiScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		multiScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		multiScroller.getViewport().setBackground(PropertiesSheetStyle.DARK.pageBg);
 		
 		currPages = new ArrayList<JPanel>();
 		
-		setBackground(PAGE_COLOR);
+		setBackground(PropertiesSheetStyle.DARK.pageBg);
 		add(StatusBar.createStatusBar(), BorderLayout.SOUTH);
 		
 		currView = multiScroller;
@@ -143,10 +150,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 			
 			currPages.add(current.getView());
 			if(thisFill)
-			{
 				multiPage.add(current.getView());
-//				current.getView().setAlignmentX(LEFT_ALIGNMENT);
-			}
 			else
 				thisRow.add(current.getView());
 			
@@ -155,6 +159,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		if(!thisRow.isEmpty())
 			multiPage.add(createRow(thisRow));
 		thisRow.clear();
+		multiPage.add(Box.createVerticalGlue());
 		
 		if(toView.isEmpty())
 			currView = null;
@@ -168,21 +173,32 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		repaint();
 	}
 	
-	public JPanel createRow(ArrayList<JComponent> components)
+	public JComponent createRow(ArrayList<JComponent> components)
 	{
-		JPanel row = new JPanel();
+		ScrollablePanel row = new ScrollablePanel();
+		row.setScrollableWidth(ScrollableSizeHint.STRETCH);
 		row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
-		row.setBackground(null);
+		row.setBackground(PropertiesSheetStyle.DARK.pageBg);
 		for(int i = 0; i < components.size(); ++i)
 		{
 			JComponent c = components.get(i);
 			c.setMaximumSize(c.getMinimumSize());
 			c.setPreferredSize(c.getMinimumSize());
+			c.setAlignmentY(Component.TOP_ALIGNMENT);
 			row.add(c);
 			if(i < components.size() - 1)
 				row.add(new VerticalDivider(2));
 		}
-		return row;
+		row.add(Box.createHorizontalGlue());
+		return createScrollPane(row);
+	}
+	
+	private JScrollPane createScrollPane(JComponent comp)
+	{
+		JScrollPane pane = UI.createScrollPane(comp);
+		pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		return pane;
 	}
 	
 	@Override
