@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -68,11 +69,11 @@ public class PopupUtil
 			data = o;
 		}
 		
-		public PopupItem(String name, Object o, Icon icon)
+		public PopupItem(String name, Object o, ImageIcon icon)
 		{
 			super(name);
 			text = name;
-			setIcon(icon);
+			setIcon(IconUtil.getIcon(icon, 16));
 			data = o;
 		}
 	}

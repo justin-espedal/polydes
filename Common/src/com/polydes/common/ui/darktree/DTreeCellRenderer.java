@@ -15,10 +15,13 @@ import javax.swing.tree.TreeCellRenderer;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
+import com.polydes.common.util.IconUtil;
 
 public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel implements TreeCellRenderer
 {
 	private JLabel text;
+	
+	public static final int ICON_SIZE = 16;
 	
 	private static final Font branchFont = UIManager.getFont("Label.font").deriveFont(Font.BOLD, 11.0f);
     private static final Font leafFont = UIManager.getFont("Label.font").deriveFont(11.0f);
@@ -52,11 +55,11 @@ public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> exten
 		T item = node.getUserObject();
 		
 		text.setText(tree.convertValueToText(value, isSelected, isExpanded, isLeaf, row, hasFocus));
-		text.setIcon(item.getIcon());
 		
 		if(item instanceof Branch)
 		{
 			text.setFont(branchFont);
+			text.setIcon(null);
 		}
 		else
 		{
@@ -64,6 +67,7 @@ public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> exten
 //				text.setFont(leafSelectedFont);
 //			else
 				text.setFont(leafFont);
+			text.setIcon(IconUtil.getIcon(item.getIcon(), ICON_SIZE));
 		}
 		
 		if(isSelected)
