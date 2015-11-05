@@ -1,7 +1,8 @@
 package com.polydes.common.sys;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.TextArea;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
@@ -10,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import stencyl.sw.util.FileHelper;
 
@@ -24,7 +26,7 @@ public class FilePreviewer
 		
 		if(type.startsWith("image"))
 			toPreview = buildImagePreview(f.getFile());
-		else if(type.startsWith("text"))
+		else if(type.startsWith("text") || type.equals("application/octet-stream"))
 			toPreview = buildTextPreview(f.getFile());
 		
 		if(toPreview != null)
@@ -54,8 +56,13 @@ public class FilePreviewer
 	
 	private static JComponent buildTextPreview(File f)
 	{
-		JPanel panel = new JPanel();
-		TextArea preview = new TextArea();
+		JPanel panel = new JPanel(new BorderLayout());
+		JTextArea preview = new JTextArea();
+		preview.setEditable(false);
+		Dimension previewSize = new Dimension(380, 200);
+		preview.setMinimumSize(previewSize);
+		preview.setMaximumSize(previewSize);
+		preview.setPreferredSize(previewSize);
 		try
 		{
 			preview.setText(FileHelper.readFileToString(f));
@@ -64,7 +71,7 @@ public class FilePreviewer
 		{
 			e.printStackTrace();
 		}
-		panel.add(preview);
+		panel.add(preview, BorderLayout.CENTER);
 		
 		return panel;
 	}

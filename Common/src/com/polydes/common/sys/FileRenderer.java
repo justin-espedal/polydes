@@ -59,7 +59,7 @@ public class FileRenderer
 			return folderThumb;
 		else if(type.startsWith("image"))
 			return generateImageThumb(file);
-		else if (type.startsWith("text"))
+		else if (type.startsWith("text") || type.equals("application/octet-stream"))
 			return generateTextThumb(file);
 		else
 			return fileThumb;
