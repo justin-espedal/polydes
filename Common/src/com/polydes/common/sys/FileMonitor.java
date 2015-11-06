@@ -9,6 +9,7 @@ import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.log4j.Logger;
 
 import com.polydes.common.nodes.HierarchyModel;
 
@@ -18,6 +19,8 @@ import stencyl.sw.util.Locations;
 
 public class FileMonitor
 {
+	private static final Logger log = Logger.getLogger(FileMonitor.class);
+	
 	public static final int POLLING_INTERVAL = 5 * 1000;
 	
 	private static FileAlterationObserver observer;
@@ -39,7 +42,7 @@ public class FileMonitor
 			model = new HierarchyModel<SysFile, SysFolder>(registerOnRoot(extrasDir), SysFile.class, SysFolder.class)
 			{
 				@Override
-				public void massMove(java.util.List<SysFile> transferItems, SysFolder target, int position)
+				public void massMove(List<SysFile> transferItems, SysFolder target, int position)
 				{
 					List<File> toMove = new ArrayList<File>();
 					
@@ -61,7 +64,7 @@ public class FileMonitor
 	{
 		if(!folder.exists())
 		{
-			System.out.println("Couldn't begin file watcher, directory does not exist:\n" + folder.getAbsolutePath());
+			log.error("Couldn't begin file watcher, directory does not exist:\n" + folder.getAbsolutePath());
 			return null;
 		}
 		
@@ -77,7 +80,7 @@ public class FileMonitor
 			@Override
 			public void onFileCreate(File file)
 			{
-				System.out.println("File created: " + file.getAbsolutePath());
+				log.info("File created: " + file.getAbsolutePath());
 				
 				SysFile sysFile = getSysFile(file);
 				SysFolder parent = getParentSysFolder(file);
@@ -88,7 +91,7 @@ public class FileMonitor
 			@Override
 			public void onFileDelete(File file)
 			{
-				System.out.println("File deleted: " + file.getAbsolutePath());
+				log.info("File deleted: " + file.getAbsolutePath());
 				
 				SysFile toRemove = getSysFile(file);
 				if(toRemove != null && toRemove.getParent() != null)
@@ -100,7 +103,7 @@ public class FileMonitor
 			@Override
 			public void onFileChange(File file)
 			{
-				System.out.println("File changed: " + file.getAbsolutePath());
+				log.info("File changed: " + file.getAbsolutePath());
 				
 				getSysFile(file).notifyChanged();
 			}
@@ -108,7 +111,7 @@ public class FileMonitor
 			@Override
 			public void onDirectoryCreate(File directory)
 			{
-				System.out.println("Folder created: " + directory.getAbsolutePath());
+				log.info("Folder created: " + directory.getAbsolutePath());
 				
 				SysFile sysFile = getSysFile(directory);
 				SysFolder parent = getParentSysFolder(directory);
@@ -123,7 +126,7 @@ public class FileMonitor
 			@Override
 			public void onDirectoryDelete(File directory)
 			{
-				System.out.println("Folder deleted: " + directory.getAbsolutePath());
+				log.info("Folder deleted: " + directory.getAbsolutePath());
 				
 				SysFile toRemove = getSysFile(directory);
 				SysFolder parent = getParentSysFolder(directory);
@@ -139,7 +142,7 @@ public class FileMonitor
 			@Override
 			public void onDirectoryChange(File directory)
 			{
-				System.out.println("Folder changed: " + directory.getAbsolutePath());
+				log.info("Folder changed: " + directory.getAbsolutePath());
 			}
 		};
 

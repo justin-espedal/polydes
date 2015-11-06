@@ -6,10 +6,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.polydes.common.util.Lang;
-
 public class NodeUtils
 {
 	@SuppressWarnings("unchecked")
@@ -136,13 +132,10 @@ public class NodeUtils
 	{
 		ArrayList<T> lookup = new ArrayList<>();
 		lookup.add(child);
-//		System.out.println(parent + ", " + child);
-		System.out.println("Path lookup: " + parent.getName() + " --> " + child.getName());
+		
 		while(child != parent)
 			lookup.add(child = (T) child.getParent());
 		Collections.reverse(lookup);
-		
-		System.out.println("   Result: " + StringUtils.join(Lang.mapCA(lookup, String.class, i -> i.getName()), " -> "));
 		
 		return lookup.toArray();
 	}

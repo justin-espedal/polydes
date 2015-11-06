@@ -111,7 +111,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		// get the transfer nodes. removes any children of selected folders from
 		// selection.
 		dtree.getSelectionState().prepareNodesForTransfer();
-
+		
 		if (dtree.getSelectionState().nodesForTransfer.size() == 0)
 			return null;
 
@@ -191,8 +191,6 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		for(T item : transferItems)
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
-		
-//		System.out.println(StringUtils.join(transferItems, ", "));
 		
 		folderModel.massMove(transferItems, parentFolder, index);
 		
