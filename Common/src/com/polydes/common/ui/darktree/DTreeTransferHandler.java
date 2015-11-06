@@ -37,9 +37,9 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		{
 			String mimeType = DataFlavor.javaJVMLocalObjectMimeType
 					+ ";class=\""
-					+ Leaf.class.getName()
+					+ folderModel.leafClass.getName()
 					+ "\"";
-			nodesFlavor = new DataFlavor(mimeType, "DarkTree Node", Leaf.class.getClassLoader());
+			nodesFlavor = new DataFlavor(mimeType, "Leaf Node", folderModel.leafClass.getClassLoader());
 			flavors[0] = nodesFlavor;
 		}
 		catch (ClassNotFoundException e)
