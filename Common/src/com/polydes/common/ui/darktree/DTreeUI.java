@@ -13,8 +13,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicTreeUI;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import com.polydes.common.nodes.Branch;
@@ -70,7 +68,7 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 	{
 		Object value = path.getLastPathComponent();
 
-		if (!(((DefaultMutableTreeNode) value).getUserObject() instanceof Branch))
+		if (!(value instanceof Branch))
 			return false;
 		int depth = path.getPathCount() - 1;
 		if ((depth == 0 || (depth == 1 && !isRootVisible()))
@@ -93,11 +91,10 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 			boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)
 	{
 		Object value = path.getLastPathComponent();
-		if (((DefaultMutableTreeNode) value).getUserObject() instanceof Branch)
+		if (value instanceof Branch)
 		{
-			Branch<?,?> f = (Branch<?,?>) ((DefaultMutableTreeNode) value)
-					.getUserObject();
-
+			Branch<?,?> f = (Branch<?,?>) value;
+			
 			int middleXOfKnob = bounds.x - getRightChildIndent() + 1;
 			int middleYOfKnob = bounds.y + (bounds.height / 2);
 
@@ -225,7 +222,7 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 			if(multiEvent)
 				return;
 			else
-				tree.setSelectionPath(new TreePath(new TreeNode[] {dtree.getRoot()}));
+				tree.setSelectionPath(dtree.getRootPath());
 		}
 		else
 		{

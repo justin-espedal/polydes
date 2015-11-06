@@ -4,7 +4,9 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragGestureRecognizer;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 		TreePath dest = dl.getPath();
-		TNode<T,U> target = (TNode<T,U>) dest.getLastPathComponent();
+		T target = (T) dest.getLastPathComponent();
 
 		// don't allow dropping onto selection.
 		JTree tree = (JTree) support.getComponent();
@@ -81,19 +83,16 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		}
 
 		// don't allow dragging of anything into non-folder node
-		if (!(target.getUserObject() instanceof Branch))
+		if (!(target instanceof Branch))
 		{
 			return false;
 		}
 
-		U f = (U) target.getUserObject();
+		U f = (U) target;
 		
 		// name uniqueness check within target folder
-		ArrayList<TNode<T,U>> nodes = dtree.getSelectionState().nodesForTransfer;
-		T item;
-		for (TNode<T,U> node : nodes)
+		for (T item : dtree.getSelectionState().nodesForTransfer)
 		{
-			item = node.getUserObject();
 			if (!folderModel.canMoveItem(item, f))
 			{
 				return false;
@@ -103,6 +102,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Transferable createTransferable(JComponent c)
 	{
@@ -117,20 +117,19 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 
 		// name uniqueness check among all selected items.
 		HashSet<String> nodeNames = new HashSet<String>();
-		T item;
-
-		for (TNode<T,U> node : dtree.getSelectionState().nodesForTransfer)
+		
+		for (T item : dtree.getSelectionState().nodesForTransfer)
 		{
-			item = node.getUserObject();
 			if (nodeNames.contains(item.getName()))
 				return null;
 
 			nodeNames.add(item.getName());
 		}
-
-		@SuppressWarnings("unchecked")
-		TNode<T,U>[] nodes = dtree.getSelectionState().nodesForTransfer
-				.toArray(new TNode[0]);
+		
+		ArrayList<T> transfer = dtree.getSelectionState().nodesForTransfer;
+		T[] nodes = (T[]) Array.newInstance(dtree.getFolderModel().leafClass, transfer.size());
+		transfer.toArray(nodes);
+		
 		return new NodesTransferable(nodes);
 	}
 
@@ -156,11 +155,11 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 			return false;
 		
 		// Extract transfer data.
-		TNode<T,U>[] nodes = null;
+		T[] nodes = null;
 		try
 		{
 			Transferable t = support.getTransferable();
-			nodes = (TNode<T,U>[]) t.getTransferData(nodesFlavor);
+			nodes = (T[]) t.getTransferData(nodesFlavor);
 		}
 		catch (UnsupportedFlavorException ufe)
 		{
@@ -175,18 +174,16 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
 		int childIndex = dl.getChildIndex();
 		TreePath dest = dl.getPath();
-		TNode<T,U> parent = (TNode<T,U>) dest.getLastPathComponent();
+		T parent = (T) dest.getLastPathComponent();
 		
 		// Configure for drop mode.
 		int visibleIndex = childIndex; // DropMode.INSERT
 		if (childIndex == -1) // DropMode.ON
-			visibleIndex = parent.getChildCount();
+			visibleIndex = ((U) parent).getItems().size();
 		
 		// Build folder model representations.
-		U parentFolder = (U) parent.getUserObject();
-		List<T> transferItems = new ArrayList<T>(nodes.length);
-		for(int i = 0; i < nodes.length; i++)
-			transferItems.set(i, (T) nodes[i].getUserObject());
+		U parentFolder = (U) parent;
+		List<T> transferItems = Arrays.asList(nodes);
 		
 		int index = visibleIndex;
 		
@@ -211,9 +208,9 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 
 	public class NodesTransferable implements Transferable
 	{
-		TNode<T,U>[] nodes;
+		T[] nodes;
 
-		public NodesTransferable(TNode<T,U>[] nodes)
+		public NodesTransferable(T[] nodes)
 		{
 //			System.out.println("new nodesTransferable()");
 			this.nodes = nodes;

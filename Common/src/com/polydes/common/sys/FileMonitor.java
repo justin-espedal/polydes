@@ -36,7 +36,7 @@ public class FileMonitor
 			if(!extrasDir.exists())
 				extrasDir.mkdir();
 			
-			model = new HierarchyModel<SysFile, SysFolder>(registerOnRoot(extrasDir))
+			model = new HierarchyModel<SysFile, SysFolder>(registerOnRoot(extrasDir), SysFile.class, SysFolder.class)
 			{
 				@Override
 				public void massMove(java.util.List<SysFile> transferItems, SysFolder target, int position)

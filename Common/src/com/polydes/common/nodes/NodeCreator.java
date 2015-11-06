@@ -1,15 +1,13 @@
-package com.polydes.common.ui.darktree;
+package com.polydes.common.nodes;
 
 import java.util.Collection;
 import java.util.List;
 
-import com.polydes.common.nodes.Branch;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.PopupUtil.PopupItem;
 
-public interface DTreeNodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>>
+public interface NodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>>
 {
-	void setSelectionState(DTreeSelectionState<T,U> selectionState);
+	void setSelection(NodeSelection<T,U> selectionState);
 	
 	Collection<PopupItem> getCreatableNodeList();
 	T createNode(PopupItem selected, String nodeName);

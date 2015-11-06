@@ -101,12 +101,8 @@ public class DTreeCellEditor<T extends Leaf<T,U>, U extends Branch<T,U>> impleme
 		
 		JTree tree = (JTree) e.getSource();
 		@SuppressWarnings("unchecked")
-		TNode<T,U> node = (TNode<T,U>) tree.getLastSelectedPathComponent();
-		if(node == null)
-			return false;
-		
-		T item = node.getUserObject();
-		if(!item.canEditName())
+		T node = (T) tree.getLastSelectedPathComponent();
+		if(node == null || !node.canEditName() || node.getParent() == null)
 			return false;
 		
 		if(e instanceof MouseEvent)
@@ -154,7 +150,7 @@ public class DTreeCellEditor<T extends Leaf<T,U>, U extends Branch<T,U>> impleme
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row)
 	{
 		@SuppressWarnings("unchecked")
-		T uo = ((TNode<T,U>) value).getUserObject();
+		T uo = (T) value;
 		
 		input.setNodeType(!(uo instanceof Branch));
 		input.setText(uo.getName());

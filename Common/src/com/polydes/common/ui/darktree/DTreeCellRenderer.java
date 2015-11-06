@@ -51,8 +51,7 @@ public class DTreeCellRenderer<T extends Leaf<T,U>, U extends Branch<T,U>> exten
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean isExpanded, boolean isLeaf, int row, boolean hasFocus)
 	{
 		@SuppressWarnings("unchecked")
-		TNode<T,U> node = (TNode<T,U>) value;
-		T item = node.getUserObject();
+		T item = (T) value;
 		
 		text.setText(tree.convertValueToText(value, isSelected, isExpanded, isLeaf, row, hasFocus));
 		

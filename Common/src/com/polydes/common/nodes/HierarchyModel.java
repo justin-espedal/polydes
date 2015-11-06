@@ -15,6 +15,9 @@ import com.polydes.common.nodes.NodeUtils.LeafRunnable;
  */
 public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements LeafListener<T,U>, BranchListener<T,U>
 {
+	public final Class<T> leafClass;
+	public final Class<U> branchClass;
+	
 	private U rootBranch;
 	private HierarchyRepresentation<T,U>[] reps;
 	
@@ -23,9 +26,11 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	private boolean uniqueLeafNames;
 	
 	@SuppressWarnings("unchecked")
-	public HierarchyModel(U rootBranch)
+	public HierarchyModel(U rootBranch, Class<T> leafClass, Class<U> branchClass)
 	{
 		this.rootBranch = rootBranch;
+		this.leafClass = leafClass;
+		this.branchClass = branchClass;
 		NodeUtils.installListenersRecursive((T) rootBranch, this, this);
 		
 		leafNames = new HashSet<String>();

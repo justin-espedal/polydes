@@ -1,12 +1,10 @@
-package com.polydes.common.ui.darktree;
+package com.polydes.common.nodes;
 
 import java.util.List;
 
-import com.polydes.common.nodes.Branch;
-import com.polydes.common.nodes.Leaf;
 import com.polydes.common.util.PopupUtil.PopupItem;
 
-public abstract class DefaultNodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>> implements DTreeNodeCreator<T,U>
+public abstract class DefaultNodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>> implements NodeCreator<T,U>
 {
 	@Override
 	public abstract T createNode(PopupItem selected, String nodeName);
@@ -19,12 +17,12 @@ public abstract class DefaultNodeCreator<T extends Leaf<T,U>, U extends Branch<T
 	@Override
 	public abstract void nodeRemoved(T toRemove);
 	
-	protected DTreeSelectionState<T,U> selectionState;
+	protected NodeSelection<T,U> selection;
 	
 	@Override
-	public void setSelectionState(DTreeSelectionState<T,U> selectionState)
+	public void setSelection(NodeSelection<T,U> selection)
 	{
-		this.selectionState = selectionState;
+		this.selection = selection;
 	}
 	
 	@Override
