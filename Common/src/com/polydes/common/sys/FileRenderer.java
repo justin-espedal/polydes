@@ -67,32 +67,7 @@ public class FileRenderer
 
 	public static ImageIcon generateTextThumb(File file)
 	{
-		final int MAX_RENDER_STRINGS = 7;
-		
-		String[] renderLines = new String[MAX_RENDER_STRINGS];
-		
-		InputStream inputStream;
-		try
-		{
-			inputStream = new FileInputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			int i = 0;
-			while((renderLines[i++] = reader.readLine()) != null)
-			{
-				if(i == MAX_RENDER_STRINGS)
-					break;
-			}
-
-			reader.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		String[] renderLines = getLines(file, 7);
 		
 		Font font = new Font("Tahoma", Font.PLAIN, 11);
 		
@@ -121,6 +96,36 @@ public class FileRenderer
 		g.dispose();
 		
 		return new ImageIcon(image);
+	}
+	
+	public static String[] getLines(File f, int lines)
+	{
+		String[] renderLines = new String[lines];
+		
+		InputStream inputStream;
+		try
+		{
+			inputStream = new FileInputStream(f);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			int i = 0;
+			while((renderLines[i++] = reader.readLine()) != null)
+			{
+				if(i == lines)
+					break;
+			}
+
+			reader.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return renderLines;
 	}
 	
 	public static ImageIcon generateImageThumb(File file)

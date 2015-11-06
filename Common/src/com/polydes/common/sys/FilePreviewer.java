@@ -2,6 +2,7 @@ package com.polydes.common.sys;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,9 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
-import stencyl.sw.util.FileHelper;
+import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class FilePreviewer
 {
@@ -47,7 +50,10 @@ public class FilePreviewer
 	{
 		try
 		{
-			return new JLabel(new ImageIcon(ImageIO.read(f)));
+			BufferedImage previewImage = ImageIO.read(f);
+			if(previewImage.getWidth() > 500 || previewImage.getHeight() > 500)
+				previewImage = GraphicsUtilities.createThumbnail(previewImage, 500);
+			return new JLabel(new ImageIcon(previewImage));
 		}
 		catch (IOException e)
 		{
@@ -65,14 +71,10 @@ public class FilePreviewer
 		preview.setMinimumSize(previewSize);
 		preview.setMaximumSize(previewSize);
 		preview.setPreferredSize(previewSize);
-		try
-		{
-			preview.setText(FileHelper.readFileToString(f));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		
+		String[] previewLines = FileRenderer.getLines(f, 20);
+		preview.setText(StringUtils.join(previewLines,'\n'));
+		
 		panel.add(preview, BorderLayout.CENTER);
 		
 		return panel;
