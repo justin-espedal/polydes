@@ -97,35 +97,50 @@ public class DTreeModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements T
 		treeListeners.removeListener(l);
 	}
 
-	@SuppressWarnings("unchecked")
-	private TreeModelEvent generateChangeEvent(T source, int i)
-	{
-		int[] childIndices = new int[] {i};
-		Object[] children = new Object[] {source};
-		return new TreeModelEvent(this, NodeUtils.getPath(root, (T) source.getParent()), childIndices, children);
-	}
-	
 	@Override
 	public void leafStateChanged(T source)
 	{
-		treeListeners.fire().treeNodesChanged(generateChangeEvent(source, NodeUtils.getIndex(source)));
+		treeListeners.fire().treeNodesChanged(generateLeafModifyEvent(source));
 	}
 
 	@Override
 	public void leafNameChanged(T source, String oldName)
 	{
-		treeListeners.fire().treeNodesChanged(generateChangeEvent(source, NodeUtils.getIndex(source)));
+		treeListeners.fire().treeNodesChanged(generateLeafModifyEvent(source));
 	}
 
 	@Override
 	public void itemAdded(U folder, T item, int position)
 	{
-		treeListeners.fire().treeNodesChanged(generateChangeEvent(item, position));
+		treeListeners.fire().treeNodesInserted(generateLeafAddRemoveEvent(folder, item, position));
 	}
 
 	@Override
 	public void itemRemoved(U folder, T item, int oldPosition)
 	{
-		treeListeners.fire().treeNodesChanged(generateChangeEvent(item, oldPosition));
+		treeListeners.fire().treeNodesRemoved(generateLeafAddRemoveEvent(folder, item, oldPosition));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private TreeModelEvent generateLeafModifyEvent(T source)
+	{
+		if(source == root)
+			return new TreeModelEvent(this, (Object[]) null, (int[]) null, new Object[] {root});
+		
+		int[] childIndices = new int[] {NodeUtils.getIndex(source)};
+		Object[] children = new Object[] {source};
+		Object[] path = NodeUtils.getPath(root, (T) source.getParent());
+		
+		return new TreeModelEvent(this, path, childIndices, children);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private TreeModelEvent generateLeafAddRemoveEvent(U folder, T source, int pos)
+	{
+		int[] childIndices = new int[] {pos};
+		Object[] children = new Object[] {source};
+		Object[] path = NodeUtils.getPath(root, (T) folder);
+		
+		return new TreeModelEvent(this, path, childIndices, children);
 	}
 }
