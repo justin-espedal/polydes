@@ -105,7 +105,7 @@ public class NodeUtils
 					toRemove.add(node);
 					continue nodeIter;
 				}
-				parent = node.getParent();
+				parent = parent.getParent();
 			}
 		}
 		
