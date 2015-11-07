@@ -91,7 +91,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		U f = (U) target;
 		
 		// name uniqueness check within target folder
-		for (T item : dtree.getSelectionState().nodesForTransfer)
+		for (T item : dtree.getSelectionState().getNodesForTransfer())
 		{
 			if (!folderModel.canMoveItem(item, f))
 			{
@@ -112,13 +112,13 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		// selection.
 		dtree.getSelectionState().prepareNodesForTransfer();
 		
-		if (dtree.getSelectionState().nodesForTransfer.size() == 0)
+		if (dtree.getSelectionState().getNodesForTransfer().size() == 0)
 			return null;
 
 		// name uniqueness check among all selected items.
 		HashSet<String> nodeNames = new HashSet<String>();
 		
-		for (T item : dtree.getSelectionState().nodesForTransfer)
+		for (T item : dtree.getSelectionState().getNodesForTransfer())
 		{
 			if (nodeNames.contains(item.getName()))
 				return null;
@@ -126,7 +126,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 			nodeNames.add(item.getName());
 		}
 		
-		ArrayList<T> transfer = dtree.getSelectionState().nodesForTransfer;
+		ArrayList<T> transfer = dtree.getSelectionState().getNodesForTransfer();
 		T[] nodes = (T[]) Array.newInstance(dtree.getFolderModel().leafClass, transfer.size());
 		transfer.toArray(nodes);
 		

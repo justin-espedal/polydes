@@ -20,6 +20,7 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	
 	private U rootBranch;
 	private HierarchyRepresentation<T,U>[] reps;
+	private NodeSelection<T, U> selection;
 	
 	private HashSet<String> leafNames;
 	private boolean simpleMove;
@@ -38,6 +39,7 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		uniqueLeafNames = false;
 		
 		reps = new HierarchyRepresentation[0];
+		selection = new NodeSelection<>(this);
 		
 		NodeUtils.recursiveRun((T) rootBranch, new LeafRunnable<T,U>()
 		{
@@ -135,6 +137,11 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		
 		for(HierarchyRepresentation<T,U> rep : reps)
 			rep.leafNameChanged(source, oldName);
+	}
+	
+	public NodeSelection<T, U> getSelection()
+	{
+		return selection;
 	}
 	
 	/*================================================*\

@@ -21,8 +21,6 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.Document;
-import javax.swing.tree.AbstractLayoutCache;
-import javax.swing.tree.TreeSelectionModel;
 
 public class InlineTreeInput extends JPanel implements ComponentListener
 {
@@ -192,8 +190,8 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 	{
 		updateTreeWidth();
 
-		TreeSelectionModel model = tree.getSelectionModel();
-		((AbstractLayoutCache) model.getRowMapper()).invalidateSizes();
+//		TreeSelectionModel model = tree.getSelectionModel();
+//		((AbstractLayoutCache) model.getRowMapper()).invalidateSizes();
 		tree.treeDidChange();
 		
 		input.setSize(treeWidth - 16, DarkTree.ITEM_HEIGHT);

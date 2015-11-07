@@ -20,7 +20,7 @@ import com.polydes.common.comp.VerticalDivider;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
-import com.polydes.common.nodes.NodeSelection;
+import com.polydes.common.nodes.NodeSelectionEvent;
 import com.polydes.common.nodes.NodeSelectionListener;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.common.ui.object.ViewableObject;
@@ -35,8 +35,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	private HierarchyModel<T,U> folderModel;
 	private DarkTree<T,U> tree;
 	
-	private NodeSelection<T,U> selection;
-	
 	private JScrollPane multiScroller;
 	private ScrollablePanel multiPage;
 	
@@ -50,7 +48,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		
 		this.folderModel = folderModel;
 		tree = new DarkTree<T,U>(folderModel);
-		tree.addTreeListener(this);
 		
 		multiPage = new ScrollablePanel();
 		multiPage.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
@@ -71,6 +68,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		add(currView, BorderLayout.CENTER);
 		
 		tree.forceRerender();
+		folderModel.getSelection().addSelectionListener(this);
 		refreshSelected();
 	}
 	
@@ -86,11 +84,11 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	
 	public void refreshSelected()
 	{
-		selectionStateChanged();
+		selectionChanged(null);
 	}
 	
 	@Override
-	public void selectionStateChanged()
+	public void selectionChanged(NodeSelectionEvent<T, U> e)
 	{
 		if(currView != null)
 			remove(currView);
@@ -100,7 +98,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		
 		ArrayList<ViewableObject> toView = new ArrayList<ViewableObject>();
 		
-		for(T node : selection.nodes)
+		for(T node : folderModel.getSelection())
 		{
 			if(!(node instanceof ViewableObject))
 				continue;
@@ -181,12 +179,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		return pane;
-	}
-	
-	@Override
-	public void setSelectionState(NodeSelection<T,U> state)
-	{
-		this.selection = state;
 	}
 	
 	public void dispose()

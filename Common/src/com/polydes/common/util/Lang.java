@@ -21,10 +21,10 @@ public class Lang
 		return items;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final <T> ArrayList<T> arraylist(Object... a)
+	@SafeVarargs
+	public static final <T> ArrayList<T> arraylist(T... a)
 	{
-		ArrayList list = new ArrayList(a.length);
+		ArrayList<T> list = new ArrayList<T>(a.length);
 		for(int i = 0; i < a.length; ++i)
 			list.add(a[i]);
 		return list;
@@ -39,11 +39,11 @@ public class Lang
 		return map;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final <T> HashSet<T> hashset(Object... a)
+	@SuppressWarnings({ "unchecked" })
+	public static final <T> HashSet<T> hashset(T... a)
 	{
-		HashSet set = new HashSet();
-		for(Object o : a)
+		HashSet<T> set = new HashSet<T>();
+		for(T o : a)
 			set.add(o);
 		return set;
 	}
@@ -80,5 +80,23 @@ public class Lang
 			mapped[i] = mapper.apply(i, t[i]);
 		
 		return mapped;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T> T[] asArray(Collection<T> t, Class<T> c)
+	{
+		T[] a = (T[]) Array.newInstance(c, t.size());
+		
+		int i = 0;
+		for(T child : t)
+			a[i++] = child;
+		
+		return a;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T> T[] newarray(Class<T> c, int size)
+	{
+		return (T[]) Array.newInstance(c, size);
 	}
 }

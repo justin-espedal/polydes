@@ -116,10 +116,10 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 			Rectangle bounds, TreePath path, int row, boolean isExpanded,
 			boolean hasBeenExpanded, boolean isLeaf)
 	{
-		if (tree.isRowSelected(row))
+		if (tree.isPathSelected(path))
 		{
 			// paint highlight
-			Rectangle b = getHighlightBounds(row);
+			Rectangle b = getHighlightBounds(path);
 			rendererPane.paintComponent(g, null, highlighter, b.x, b.y,
 					b.width, b.height, false);
 		}
@@ -130,22 +130,22 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 					isExpanded, hasBeenExpanded, isLeaf);
 
 		// Don't paint the renderer if editing this row.
-		if (editingComponent != null && editingRow == row)
+		if (editingComponent != null && editingPath == path)
 			return;
-
+		
 		Component component;
 
 		component = currentCellRenderer.getTreeCellRendererComponent(tree,
-				path.getLastPathComponent(), tree.isRowSelected(row),
+				path.getLastPathComponent(), tree.isPathSelected(path),
 				isExpanded, isLeaf, row, false);
 
 		rendererPane.paintComponent(g, component, tree, bounds.x, bounds.y,
 				bounds.width, bounds.height, true);
 	}
 
-	private Rectangle getHighlightBounds(int row)
+	private Rectangle getHighlightBounds(TreePath path)
 	{
-		return new Rectangle(treeX, tree.getRowBounds(row).y, treeWidth, DarkTree.ITEM_HEIGHT);
+		return new Rectangle(treeX, tree.getPathBounds(path).y, treeWidth, DarkTree.ITEM_HEIGHT);
 	}
 
 	@Override
@@ -199,13 +199,12 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 	{
 		int x = e.getX();
 		int y = e.getY();
-		int row = tree.getClosestRowForLocation(x, y);
 		TreePath path = tree.getClosestPathForLocation(x, y);
 		
-		if(row == -1)
+		if(path == null)
 			return;
 		
-		if(tree.getRowBounds(row).contains(e.getPoint()))
+		if(tree.getPathBounds(path).contains(e.getPoint()))
 			return;
 		
 		if(SwingUtilities.isLeftMouseButton(e))
@@ -216,7 +215,7 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 		
 		boolean multiEvent = (isMultiSelectEvent(e) || isToggleSelectionEvent(e));
 		
-		Rectangle b = tree.getRowBounds(row);
+		Rectangle b = tree.getPathBounds(path);
 		if(b.y > y || b.y + b.height < y)
 		{
 			if(multiEvent)
@@ -226,7 +225,6 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 		}
 		else
 		{
-			
 			if(!startEditing(path, e))
 				selectPathForEvent(path, e);
 		}

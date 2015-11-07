@@ -6,6 +6,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.polydes.common.util.Lang;
+
 public class NodeUtils
 {
 	@SuppressWarnings("unchecked")
@@ -73,6 +77,10 @@ public class NodeUtils
 		return false;
 	}
 	
+	/**
+	 * null -> 0<br/>
+	 * root -> 1
+	 */
 	@SuppressWarnings("unchecked")
 	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> int getDepth(T l)
 	{
@@ -140,8 +148,27 @@ public class NodeUtils
 		return lookup.toArray();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> int[] getIndexPath(U parent, T child)
+	{
+		ArrayList<T> lookup = new ArrayList<>();
+		lookup.add(child);
+		
+		while(child != parent)
+			lookup.add(child = (T) child.getParent());
+		
+		int[] path = new int[lookup.size()];
+		path[0] = 0;
+		for(int i = 0; i < path.length - 1; ++i)
+			path[i + 1] = ((U) lookup.get(path.length - i - 1)).indexOfItem(lookup.get(path.length - i - 2));
+		
+		return path;
+	}
+	
 	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> int getIndex(T child)
 	{
+		if(child.getParent() == null)
+			return 0;
 		return child.getParent().getItems().indexOf(child);
 	}
 	
@@ -163,5 +190,10 @@ public class NodeUtils
 			return null;
 		
 		return parent.getItemAt(i - 1);
+	}
+	
+	public static final void print(Collection<? extends Leaf<?,?>> c)
+	{
+		System.out.println(StringUtils.join(Lang.mapCA(c, String.class, i -> i.getName()), ','));
 	}
 }
