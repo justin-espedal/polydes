@@ -147,27 +147,19 @@ public class SortedNodeCollection<T extends Leaf<T,U>, U extends Branch<T,U>> im
 		return Collections.binarySearch(list, node, comparator);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public class NodeOrderComparator implements Comparator<T>
 	{
 		@Override
 		public int compare(T o1, T o2)
 		{
-			int[] path = NodeUtils.getIndexPath(root, o1);
+			int[] path1 = NodeUtils.getIndexPath(root, o1);
+			int[] path2 = NodeUtils.getIndexPath(root, o2);
 			
-			int origDepth = NodeUtils.getDepth(o2);
-			int depth = origDepth;
-			while(depth > path.length)
-			{
-				o2 = (T) o2.getParent();
-				--depth;
-			}
-			int pos = NodeUtils.getIndex(o2);
+			for(int i = 0, n = Math.min(path1.length, path2.length); i < n; ++i)
+				if(path1[i] != path2[i])
+					return Integer.compare(path1[i], path2[i]);
 			
-			if(path[depth - 1] != pos)
-				return Integer.compare(path[depth - 1], pos);
-			
-			return Integer.compare(path.length, origDepth);
+			return Integer.compare(path1.length, path2.length);
 		}
 	}
 }
