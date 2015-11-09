@@ -262,6 +262,45 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		return true;
 	}
 	
+	public boolean change(T[] toAdd, T[] toRemove)
+	{
+		List<T> additions = new ArrayList<>();
+		List<T> removals = new ArrayList<>();
+		
+		for(T node : toAdd)
+			if(nodes.add(node))
+				additions.add(node);
+		for(T node : toRemove)
+			if(nodes.remove(node))
+				removals.add(node);
+		
+		int changeCount = additions.size() + removals.size();
+		if(changeCount == 0)
+			return false;
+		
+		T[] changedNodes = newarray(leafClass, changeCount);
+		boolean[] areNew = new boolean[changeCount];
+		int i = 0;
+		for(T node : additions)
+		{
+			changedNodes[i] = node;
+			areNew[i] = true;
+			++i;
+		}
+		for(T node : removals)
+		{
+			changedNodes[i] = node;
+			areNew[i] = false;
+			++i;
+		}
+		
+		T oldLead = lead;
+		if(!nodes.contains(lead))
+			lead = lastNode();
+		fireSelection(changedNodes, areNew, oldLead, lead);
+		return true;
+	}
+	
 	public boolean clear()
 	{
 		if(nodes.isEmpty())
