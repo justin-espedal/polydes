@@ -56,10 +56,17 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 			if(i >= i0 && i <= i1)
 				toAdd.add(folder.getItemAt(i));
 			else
-				toRemove.add(folder.getItemAt(i));
+				removeRecursively(toRemove, folder.getItemAt(i));
 		}
 		
 		selection.change(asArray(toAdd,  leafClass), asArray(toRemove, leafClass));
+	}
+	
+	private void removeRecursively(ArrayList<T> toRemove, T rootLeaf)
+	{
+		NodeUtils.recursiveRun(rootLeaf, (T leaf) -> {
+			toRemove.add(leaf);
+		});
 	}
 
 	@Override
@@ -87,7 +94,7 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 		
 		fori(folder.getItems(), (i, node) -> {
 			if(i >= i0 && i <= i1)
-				toRemove.add(node);
+				removeRecursively(toRemove, node);
 		});
 		
 		selection.removeAll(asArray(toRemove, leafClass));
@@ -146,7 +153,13 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 	@Override
 	public void clearSelection()
 	{
-		selection.removeAll(asArray(folder.getItems(), leafClass));
+		ArrayList<T> toRemove = new ArrayList<>();
+		
+		fori(folder.getItems(), (i, node) -> {
+			removeRecursively(toRemove, node);
+		});
+		
+		selection.removeAll(asArray(toRemove, leafClass));
 	}
 
 	@Override
@@ -212,9 +225,6 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 		nodes.retainAll(folder.getItems());
 		if(nodes.isEmpty())
 			return;
-		
-		System.out.print(folder.getName() + ": nodes in this list that changed: ");
-		NodeUtils.print(nodes);
 		
 		boolean oldAdjusting = adjusting;
 		adjusting = true;

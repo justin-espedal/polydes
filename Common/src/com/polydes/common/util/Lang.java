@@ -82,6 +82,19 @@ public class Lang
 		return mapped;
 	}
 	
+	public static final <T> void fori(Iterable<T> it, IteratorFunction<T> fun)
+	{
+		int i = 0;
+		for(T e : it)
+			fun.apply(i++, e);
+	}
+	
+	@FunctionalInterface
+	public static interface IteratorFunction<T>
+	{
+		void apply(int i, T t);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static final <T> T[] asArray(Collection<T> t, Class<T> c)
 	{

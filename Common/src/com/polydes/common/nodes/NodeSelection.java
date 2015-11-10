@@ -1,12 +1,10 @@
 package com.polydes.common.nodes;
 
+import static com.polydes.common.util.Lang.array;
 import static com.polydes.common.util.Lang.asArray;
-import static com.polydes.common.util.Lang.hashset;
 import static com.polydes.common.util.Lang.newarray;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -110,70 +108,22 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 	
 	public boolean add(T t)
 	{
-		if(!nodes.add(t))
-			return false;
-		
-		T oldLead = lead;
-		lead = t;
-		fireSelection(t, true, oldLead, lead);
-		return true;
+		return change(array(t), null);
 	}
 	
 	public boolean addAll(T[] newSelection)
 	{
-		List<T> added = new ArrayList<>();
-		for(T t : newSelection)
-			if(nodes.add(t))
-				added.add(t);
-		
-		boolean changed = !added.isEmpty();
-		if(!changed)
-			return false;
-		
-		T oldLead = lead;
-		lead = added.get(added.size() - 1);
-		
-		newSelection = asArray(added, leafClass);
-		boolean[] areNew = new boolean[added.size()];
-		Arrays.fill(areNew, true);
-		
-		fireSelection(newSelection, areNew, oldLead, lead);
-		return true;
+		return change(newSelection, null);
 	}
 	
 	public boolean remove(T t)
 	{
-		if(!nodes.remove(t))
-			return false;
-		
-		T oldLead = lead;
-		if(!nodes.contains(lead))
-			lead = lastNode();
-		fireSelection(t, false, oldLead, lead);
-		return true;
+		return change(null, array(t));
 	}
 	
 	public boolean removeAll(T[] oldSelection)
 	{
-		List<T> removed = new ArrayList<>();
-		for(T t : oldSelection)
-			if(nodes.remove(t))
-				removed.add(t);
-		
-		boolean changed = !removed.isEmpty();
-		if(!changed)
-			return false;
-		
-		T oldLead = lead;
-		if(!nodes.contains(lead))
-			lead = lastNode();
-		
-		oldSelection = asArray(removed, leafClass);
-		boolean[] areNew = new boolean[removed.size()];
-		Arrays.fill(areNew, false);
-		
-		fireSelection(oldSelection, areNew, oldLead, lead);
-		return true;
+		return change(null, oldSelection);
 	}
 	
 	public boolean set(T newSelection)
@@ -181,85 +131,17 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		if(newSelection == null)
 			return clear();
 		
-		if(nodes.isEmpty())
-			return add(newSelection);
+		nodes.remove(newSelection);
 		
-		boolean alreadySelected = nodes.contains(newSelection);
-		int changeCount = nodes.size() + (alreadySelected ? -1 : 1);
-		if(changeCount == 0)
-			return false;
-		
-		T[] changedNodes = newarray(leafClass, changeCount);
-		boolean[] areNew = new boolean[changeCount];
-		int i = 0;
-		for(T node : nodes)
-		{
-			if(node == newSelection)
-				continue;
-			changedNodes[i] = nodes.get(i);
-			areNew[i] = false;
-			++i;
-		}
-		if(!alreadySelected)
-		{
-			changedNodes[i] = newSelection;
-			areNew[i] = true;
-		}
-		
-		nodes.clear();
-		nodes.add(newSelection);
-		
-		T oldLead = lead;
-		if(!nodes.contains(lead))
-			lead = lastNode();
-		fireSelection(changedNodes, areNew, oldLead, lead);
-		return true;
+		return change(array(newSelection), asArray(nodes, leafClass));
 	}
 	
 	public boolean setAll(T[] newSelection)
 	{
-		if(nodes.isEmpty())
-			return addAll(newSelection);
-		
-		HashSet<T> newSelSet = hashset(newSelection);
-		List<T> additions = new ArrayList<>();
-		List<T> removals = new ArrayList<>();
-		
-		for(T node : nodes)
-			if(!newSelSet.contains(node))
-				removals.add(node);
 		for(T node : newSelection)
-			if(!nodes.contains(node))
-				additions.add(node);
+			nodes.remove(node);
 		
-		int changeCount = additions.size() + removals.size();
-		if(changeCount == 0)
-			return false;
-		
-		T[] changedNodes = newarray(leafClass, changeCount);
-		boolean[] areNew = new boolean[changeCount];
-		int i = 0;
-		for(T node : additions)
-		{
-			changedNodes[i] = node;
-			areNew[i] = true;
-			++i;
-		}
-		for(T node : removals)
-		{
-			changedNodes[i] = node;
-			areNew[i] = false;
-			++i;
-		}
-		
-		nodes.clear();
-		nodes.addAll(newSelSet);
-		
-		T oldLead = lead;
-		if(!nodes.contains(lead))
-			lead = lastNode();
-		fireSelection(changedNodes, areNew, oldLead, lead);
-		return true;
+		return change(newSelection, asArray(nodes, leafClass));
 	}
 	
 	public boolean change(T[] toAdd, T[] toRemove)
@@ -267,13 +149,34 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		List<T> additions = new ArrayList<>();
 		List<T> removals = new ArrayList<>();
 		
-		for(T node : toAdd)
-			if(nodes.add(node))
-				additions.add(node);
-		for(T node : toRemove)
-			if(nodes.remove(node))
-				removals.add(node);
+		if(toAdd != null)
+			for(T node : toAdd)
+				if(nodes.add(node))
+					additions.add(node);
+		if(toRemove != null)
+			for(T node : toRemove)
+				if(nodes.remove(node))
+					removals.add(node);
 		
+		updateSelection(additions, removals);
+		return _change(additions, removals);
+	}
+	
+	public boolean clear()
+	{
+		if(nodes.isEmpty())
+			return false;
+		
+		List<T> additions = new ArrayList<>();
+		List<T> removals = copyList();
+		nodes.clear();
+		
+		updateSelection(additions, removals);
+		return _change(additions, removals);
+	}
+	
+	private boolean _change(List<T> additions, List<T> removals)
+	{
 		int changeCount = additions.size() + removals.size();
 		if(changeCount == 0)
 			return false;
@@ -295,38 +198,49 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		}
 		
 		T oldLead = lead;
-		if(!nodes.contains(lead))
+		if(lead == null || !nodes.contains(lead))
 			lead = lastNode();
 		fireSelection(changedNodes, areNew, oldLead, lead);
 		return true;
 	}
 	
-	public boolean clear()
+	@SuppressWarnings("unchecked")
+	private void updateSelection(List<T> additions, List<T> removals)
 	{
 		if(nodes.isEmpty())
-			return false;
+		{
+			nodes.add((T) root);
+			if(!additions.contains(root))
+				additions.add((T) root);
+			if(removals.contains(root))
+				removals.remove(root);
+		}
 		
-		T[] changedNodes = asArray(nodes, leafClass);
-		boolean[] areNew = new boolean[changedNodes.length];
-		Arrays.fill(areNew, false);
-		nodes.clear();
-		T oldLead = lead;
-		lead = null;
-		fireSelection(changedNodes, areNew, oldLead, lead);
-		return true;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void fireSelection(T change, boolean isNew, T oldLead, T newLead)
-	{
-		NodeSelectionEvent<T, U> e = new NodeSelectionEvent<>(this, change, isNew, oldLead, newLead);
-		selectionEvents.fire().selectionChanged(e);
+		int folderCounter = 0;
+		int itemCounter = 0;
+		
+		for(T node : nodes)
+		{
+			if(node instanceof Branch)
+				++folderCounter;
+			else
+				++itemCounter;
+		}
+		
+		if(folderCounter > 0 && itemCounter > 0)
+			type = SelectionType.MIX;
+		else if(folderCounter > 0)
+			type = SelectionType.FOLDERS;
+		else
+			type = SelectionType.ITEMS;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void fireSelection(T[] changes, boolean[] areNew, T oldLead, T newLead)
 	{
-		NodeSelectionEvent<T, U> e = new NodeSelectionEvent<>(this, changes, areNew, oldLead, newLead);
+		NodeSelectionEvent<T, U> e = changes.length > 1 ?
+				new NodeSelectionEvent<>(this, changes, areNew, oldLead, newLead) :
+				new NodeSelectionEvent<>(this, changes[0], areNew[0], oldLead, newLead);
 		selectionEvents.fire().selectionChanged(e);
 	}
 	

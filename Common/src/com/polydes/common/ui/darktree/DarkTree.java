@@ -129,9 +129,6 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		((DTreeUI) tree.getUI()).setLeftChildIndent(7);
 		((DTreeUI) tree.getUI()).setRightChildIndent(8);
 		
-		selection = folderModel.getSelection();
-		tree.setSelectionModel(new DTreeSelectionModel<>(folderModel));
-		tree.addTreeSelectionListener(this);
 		tree.addKeyListener(this);
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
@@ -166,7 +163,11 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		setOpaque(true);
 		setBorder(null);
 		
+		selection = folderModel.getSelection();
+		tree.setSelectionModel(new DTreeSelectionModel<>(folderModel));
+		tree.addTreeSelectionListener(this);
 		tree.setSelectionPath(treeModel.getPath(root));
+		
 		refreshDisplay();
 	}
 	
@@ -235,31 +236,9 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		return nameEditingAllowed;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
-		if(selection.isEmpty())
-			selection.add((T) root);
-		
-//		int folderCounter = 0;
-//		int itemCounter = 0;
-//		
-//		for(T node : selection)
-//		{
-//			if(node instanceof Branch)
-//				++folderCounter;
-//			else
-//				++itemCounter;
-//		}
-//		
-//		if(folderCounter > 0 && itemCounter > 0)
-//			selection.type = SelectionType.MIX;
-//		else if(folderCounter > 0)
-//			selection.type = SelectionType.FOLDERS;
-//		else
-//			selection.type = SelectionType.ITEMS;
-		
 		U newNodeFolder = getCreationParentFolder(selection);
 		if(newNodeFolder == null)
 			return;
