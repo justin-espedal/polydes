@@ -37,20 +37,19 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 
 		// don't allow dropping onto selection.
 		JTree tree = (JTree) support.getComponent();
-		int dropRow = tree.getRowForPath(dl.getPath());
-		int[] selRows = tree.getSelectionRows();
-		if(selRows == null)
+		TreePath[] selPaths = tree.getSelectionPaths();
+		if(selPaths == null)
 		{
 			return false;
 		}
-		for(int i = 0; i < selRows.length; i++)
+		for(int i = 0; i < selPaths.length; i++)
 		{
-			if(selRows[i] == dropRow)
+			if(selPaths[i].getLastPathComponent() == dl.getPath().getLastPathComponent())
 			{
 				return false;
 			}
 		}
-
+		
 		// don't allow dragging of anything into non-folder node
 		if (!(target instanceof Branch))
 		{
@@ -100,6 +99,8 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		for(T item : transferItems)
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
+		
+		dtree.getSelectionState().clear();
 		
 		folderModel.massMove(transferItems, parentFolder, index);
 		
