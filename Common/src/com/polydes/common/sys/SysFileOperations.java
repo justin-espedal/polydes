@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import stencyl.sw.util.FileHelper;
 
-public class FileOperations
+public class SysFileOperations
 {
 	public static void moveFiles(List<File> files, File targetParent)
 	{
@@ -45,7 +45,7 @@ public class FileOperations
 	 * @param targetDir Folder to create the new file in
 	 * @return String: the original name plus any numbering needed to make it unique (New Document (1).txt)
 	 */
-	private static String getUnusedName(String name, File targetDir)
+	public static String getUnusedName(String name, File targetDir)
 	{
 		String[] nameParts = getNameParts(name);
 		
