@@ -11,10 +11,13 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
+import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 
 import stencyl.sw.app.lists.AbstractItemRenderer;
@@ -27,24 +30,22 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 {
 	U folder;
 	DefaultListModel<T> listModel;
+	LeafListTransferHandler<T, U> transferHandler;
 	
-	public LeafList(U folder, LeafRenderer<T,U> renderer)
+	public LeafList(U folder, HierarchyModel<T, U> folderModel)
 	{
 		super(new DefaultListModel<>());
 		listModel = (DefaultListModel<T>) getModel();
 		
-		if(renderer == null)
-			renderer = new LeafRenderer<T,U>(60, 48, 24, 24);
-				
 		setBackground(null);
-		setCellRenderer(renderer);
+		setCellRenderer(new LeafRenderer<T,U>(60, 48, 24, 24));
 		setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		setVisibleRowCount(-1);
+		setSelectionModel(new LeafListSelectionModel<T, U>(folderModel, folder));
 		
-		Dimension cellSize = renderer.getCellSize();
-		
-		setFixedCellWidth(AbstractList.H_PADDING + cellSize.width);
-		setFixedCellHeight(AbstractList.V_PADDING + cellSize.height);
+		setDragEnabled(true);
+		setDropMode(DropMode.ON_OR_INSERT);
+		setTransferHandler(transferHandler = new LeafListTransferHandler<>(folderModel, this));
 		
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 		
@@ -69,10 +70,25 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		refresh();
 	}
 	
+	@Override
+	public void setCellRenderer(ListCellRenderer<? super T> cellRenderer)
+	{
+		super.setCellRenderer(cellRenderer);
+		
+		if(cellRenderer instanceof LeafRenderer)
+		{
+			Dimension cellSize = ((LeafRenderer<?,?>) cellRenderer).getCellSize();
+			
+			setFixedCellWidth(AbstractList.H_PADDING + cellSize.width);
+			setFixedCellHeight(AbstractList.V_PADDING + cellSize.height);
+		}
+	}
+	
 	public void dispose()
 	{
 		folder.removeFolderListener(this);
 		folder = null;
+		transferHandler.dispose();
 	}
 	
 	public void refresh()
@@ -81,6 +97,11 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		
 		for(T l : folder.getItems())
 			listModel.addElement(l);
+	}
+	
+	public U getFolder()
+	{
+		return folder;
 	}
 	
 	@Override

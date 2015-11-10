@@ -1,24 +1,23 @@
-package com.polydes.common.ui.darktree;
+package com.polydes.common.ui.filelist;
 
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
+import javax.swing.JList;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafTransferHandler;
 
-public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> extends LeafTransferHandler<T,U>
+public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> extends LeafTransferHandler<T,U>
 {
-	DarkTree<T,U> dtree;
-
-	public DTreeTransferHandler(HierarchyModel<T,U> folderModel, DarkTree<T,U> dtree)
+	LeafList<T,U> leafList;
+	
+	public LeafListTransferHandler(HierarchyModel<T,U> folderModel, LeafList<T,U> leafList)
 	{
-		super(folderModel, dtree.getTree());
-		this.dtree = dtree;
+		super(folderModel, leafList);
+		this.leafList = leafList;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -31,36 +30,22 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 			return false;
 		support.setShowDropLocation(true);
 		
-		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
-		TreePath dest = dl.getPath();
-		T target = (T) dest.getLastPathComponent();
-
+		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
+		int dropIndex = dl.getIndex();
+		T target = leafList.getFolder().getItemAt(dropIndex);
+		
 		// don't allow dropping onto selection.
-		JTree tree = (JTree) support.getComponent();
-		int dropRow = tree.getRowForPath(dl.getPath());
-		int[] selRows = tree.getSelectionRows();
-		if(selRows == null)
-		{
+		if(leafList.isSelectedIndex(dropIndex))
 			return false;
-		}
-		for(int i = 0; i < selRows.length; i++)
-		{
-			if(selRows[i] == dropRow)
-			{
-				return false;
-			}
-		}
-
+		
 		// don't allow dragging of anything into non-folder node
 		if (!(target instanceof Branch))
-		{
 			return false;
-		}
-
+		
 		U f = (U) target;
 		
 		// name uniqueness check within target folder
-		for (T item : dtree.getSelectionState().getNodesForTransfer())
+		for (T item : folderModel.getSelection().getNodesForTransfer())
 		{
 			if (!folderModel.canMoveItem(item, f))
 			{
@@ -80,28 +65,26 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 			return false;
 		
 		// Get drop location info.
-		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
-		int childIndex = dl.getChildIndex();
-		TreePath dest = dl.getPath();
-		T parent = (T) dest.getLastPathComponent();
+		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
+		int dropIndex = dl.getIndex();
+		U parent = (U) leafList.getFolder().getItemAt(dropIndex);
 		
 		// Configure for drop mode.
-		int visibleIndex = childIndex; // DropMode.INSERT
-		if (childIndex == -1) // DropMode.ON
+		int visibleIndex = dropIndex; // DropMode.INSERT
+		if (dropIndex == -1) // DropMode.ON
 			visibleIndex = ((U) parent).getItems().size();
 		
 		// Build folder model representations.
-		U parentFolder = (U) parent;
 		List<T> transferItems = Arrays.asList(nodes);
 		
 		int index = visibleIndex;
 		
 		//for all transferring nodes within target folder and pos < visibleChildIndex, decrement childIndex
 		for(T item : transferItems)
-			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
+			if(item.getParent() == parent && parent.getItems().indexOf(item) < visibleIndex)
 				--index;
 		
-		folderModel.massMove(transferItems, parentFolder, index);
+		folderModel.massMove(transferItems, parent, index);
 		
 		return true;
 	}
@@ -116,6 +99,6 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 	public void dispose()
 	{
 		super.dispose();
-		dtree = null;
+		leafList = null;
 	}
 }

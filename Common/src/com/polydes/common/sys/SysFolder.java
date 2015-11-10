@@ -183,7 +183,11 @@ public class SysFolder extends SysFile implements Branch<SysFile,SysFolder>
 	public JPanel getView()
 	{
 		if(view == null)
-			view = new BranchPage<SysFile,SysFolder>(this, renderer);
+		{
+			BranchPage<SysFile, SysFolder> branchPage = new BranchPage<SysFile,SysFolder>(this, FileMonitor.getExtrasModel());
+			branchPage.getList().setCellRenderer(renderer);
+			view = branchPage;
+		}
 		
 		return view;
 	}

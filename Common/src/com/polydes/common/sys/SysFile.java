@@ -113,13 +113,14 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 
 	public void notifyChanged()
 	{
+		disposeView();
+		cachedIcon = null;
+		//propagate this to anywhere it's been cached by having caches listen
+		//for leafStateChanged (either through a leaf listener or as a
+		//hierarchy representation).
+		
 		for(LeafListener<SysFile,SysFolder> l : listeners)
 			l.leafStateChanged(this);
-		
-		//TODO reimplement this in ExtrasManager
-//		if(FilePreviewer.getPreviewFile() == this)
-//			FilePreviewer.preview(this);
-//		FileRenderer.clearThumbnail(file);
 	}
 	
 	private ImageIcon cachedIcon = null;
