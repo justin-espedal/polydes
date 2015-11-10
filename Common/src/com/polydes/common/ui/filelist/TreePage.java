@@ -3,6 +3,7 @@ package com.polydes.common.ui.filelist;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -11,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import com.polydes.common.comp.HorizontalDivider;
 import com.polydes.common.comp.ScrollablePanel;
@@ -157,6 +159,7 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	{
 		ScrollablePanel row = new ScrollablePanel();
 		row.setScrollableWidth(ScrollableSizeHint.STRETCH);
+		
 		row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
 		row.setBackground(PropertiesSheetStyle.DARK.pageBg);
 		for(int i = 0; i < components.size(); ++i)
@@ -170,7 +173,23 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 				row.add(new VerticalDivider(2));
 		}
 		row.add(Box.createHorizontalGlue());
-		return createScrollPane(row);
+		
+		JScrollPane scroller = createScrollPane(row);
+		
+		row.addMouseWheelListener(event -> {
+			if(event.isShiftDown())
+			{
+				event = (MouseWheelEvent) SwingUtilities.convertMouseEvent(this, event, scroller);
+				scroller.dispatchEvent(event);
+			}
+			else
+			{
+				event = (MouseWheelEvent) SwingUtilities.convertMouseEvent(this, event, multiPage);
+				multiPage.dispatchEvent(event);
+			}
+		});
+		
+		return scroller;
 	}
 	
 	private JScrollPane createScrollPane(JComponent comp)
