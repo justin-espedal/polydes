@@ -1,5 +1,7 @@
 package com.polydes.common.ui.darktree;
 
+import static com.polydes.common.util.Lang.asArray;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,7 +39,6 @@ import com.polydes.common.comp.StatusBar;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
-import com.polydes.common.nodes.NodeCreator;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeUtils;
 import com.polydes.common.res.ResourceLoader;
@@ -61,7 +62,6 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	private U root;
 	private HierarchyModel<T,U> folderModel;
 	
-	private NodeCreator<T,U> nodeCreator;
 	private DTreeCellRenderer<T,U> renderer;
 	private DTreeCellEditor<T,U> editor;
 	private NodeSelection<T,U> selection;
@@ -183,7 +183,6 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		
 		editor = null;
 		renderer = null;
-		nodeCreator = null;
 		selection = null;
 		transferHandler = null;
 		folderModel = null;
@@ -239,23 +238,12 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	@Override
 	public void valueChanged(TreeSelectionEvent e)
 	{
-		U newNodeFolder = getCreationParentFolder(selection);
+		U newNodeFolder = folderModel.getCreationParentFolder(selection);
 		if(newNodeFolder == null)
 			return;
 		newItemButton.setEnabled(newNodeFolder.isFolderCreationEnabled() || newNodeFolder.isItemCreationEnabled());
 		removeItemButton.setEnabled(newNodeFolder.isItemRemovalEnabled());
 		propertiesButton.setEnabled(newNodeFolder.isItemEditingEnabled() && selection.size() == 1 && selection.firstNode() != root);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public U getCreationParentFolder(NodeSelection<T,U> state)
-	{
-		if(selection.getType() == SelectionType.FOLDERS)
-			return (U) selection.lastNode();
-		else if(!selection.isEmpty())
-			return (U) selection.lastNode().getParent();
-		else
-			return null;
 	}
 
 	@Override
@@ -263,15 +251,15 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	{
 		if(e.getSource() == newItemButton)
 		{
-			U newNodeFolder = getCreationParentFolder(selection);
+			U newNodeFolder = folderModel.getCreationParentFolder(selection);
 			
 			ArrayList<PopupItem> items = new ArrayList<PopupItem>();
 			if(newNodeFolder.isFolderCreationEnabled())
 				items.add(new PopupItem("Folder", null, folderIcon));
-			items.addAll(nodeCreator.getCreatableNodeList());
+			items.addAll(folderModel.getNodeCreator().getCreatableNodeList());
 			
 			if(items.size() == 1)
-				createNewItem(items.get(0));
+				folderModel.createNewItem(items.get(0));
 			else
 			{
 				JPopupMenu menu = PopupUtil.buildPopup(items, new PopupSelectionListener()
@@ -279,7 +267,7 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 					@Override
 					public void itemSelected(PopupItem item)
 					{
-						createNewItem(item);
+						folderModel.createNewItem(item);
 					}
 				});
 				Point p = getMousePosition(true);
@@ -297,52 +285,7 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		}
 		else if(e.getSource() == propertiesButton)
 		{
-			nodeCreator.editNode(selection.firstNode());
-		}
-	}
-	
-	public void createNewItem(PopupItem item)
-	{
-		U newNodeFolder = getCreationParentFolder(selection);
-		
-		int insertPosition;
-		
-		if(selection.getType() == SelectionType.FOLDERS)
-			insertPosition = newNodeFolder.getItems().size();
-		else
-			insertPosition = NodeUtils.getIndex(selection.lastNode()) + 1;
-		
-		createNewItemFromFolder(item, newNodeFolder, insertPosition);
-	}
-	
-	public void createNewItemFromFolder(PopupItem item, U newNodeFolder, int insertPosition)
-	{
-		T newNodeObject;
-		
-		if (nodeCreator == null)
-			return;
-		
-		String newName = "New " + item.text + " "; 
-		int i = 1;
-		
-		while(!newNodeFolder.canCreateItemWithName(newName + i))
-			++i;
-		newName = newName + i;
-		
-		newNodeObject = nodeCreator.createNode(item, newName);
-		if(newNodeObject == null)
-			return;
-		
-		folderModel.addItem(newNodeObject, newNodeFolder, insertPosition);
-		
-		TreePath path = treeModel.getPath(newNodeObject);
-		tree.setSelectionPath(path);
-		
-		if(nameEditingAllowed && newNodeObject.canEditName())
-		{
-			editor.allowEdit();
-			tree.startEditingAtPath(path);
-			editor.clearText();
+			folderModel.editItem(selection.firstNode());
 		}
 	}
 	
@@ -361,14 +304,16 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		NodeUtils.includeDescendants(toRemoveList);
 		NodeUtils.depthSort(toRemoveList);
 		
-		if(nodeCreator.attemptRemove(toRemoveList))
+		if(folderModel.getNodeCreator().attemptRemove(toRemoveList))
 		{
+			selection.removeAll(asArray(toRemoveList, folderModel.leafClass));
+			
 			for(T toRemove : toRemoveList)
 			{
 				U parent = (U) toRemove.getParent();
 				
 				folderModel.removeItem(toRemove, parent);
-				nodeCreator.nodeRemoved(toRemove);
+				folderModel.getNodeCreator().nodeRemoved(toRemove);
 			}
 			
 			if(reselectNode != null)
@@ -413,14 +358,6 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	@Override
 	public void keyTyped(KeyEvent arg0)
 	{
-	}
-	
-	public void setNodeCreator(NodeCreator<T,U> nodeCreator)
-	{
-		this.nodeCreator = nodeCreator;
-		
-		if (nodeCreator != null)
-			nodeCreator.setSelection(selection);
 	}
 	
 	public void setListEditEnabled(Boolean value)
@@ -553,6 +490,9 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	@Override
 	public boolean validate(String newName)
 	{
+		if(selection.isEmpty() || selection.firstNode() == root)
+			return false;
+		
 		return selection.firstNode().getParent().canCreateItemWithName(newName);
 	}
 

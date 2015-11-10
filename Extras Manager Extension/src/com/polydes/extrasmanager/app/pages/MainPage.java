@@ -73,7 +73,8 @@ public class MainPage extends JPanel
 		treePage = new TreePage<SysFile, SysFolder>(ExtrasManagerExtension.getModel());
 		
 		treePage.getTree().getTree().setRootVisible(true);
-		treePage.getTree().disableButtonBar();
+		treePage.getTree().setListEditEnabled(true);
+//		treePage.getTree().disableButtonBar();
 		
 		JScrollPane treescroller = UI.createScrollPane(treePage.getTree());
 		treescroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);

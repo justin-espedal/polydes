@@ -17,14 +17,6 @@ public abstract class DefaultNodeCreator<T extends Leaf<T,U>, U extends Branch<T
 	@Override
 	public abstract void nodeRemoved(T toRemove);
 	
-	protected NodeSelection<T,U> selection;
-	
-	@Override
-	public void setSelection(NodeSelection<T,U> selection)
-	{
-		this.selection = selection;
-	}
-	
 	@Override
 	public boolean attemptRemove(List<T> toRemove)
 	{

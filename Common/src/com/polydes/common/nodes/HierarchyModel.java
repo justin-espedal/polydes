@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.common.nodes.NodeUtils.LeafRunnable;
+import com.polydes.common.ui.darktree.SelectionType;
+import com.polydes.common.util.PopupUtil.PopupItem;
 
 /**
  * Branch that can be represented as the root of a hierarchical tree system.
@@ -20,7 +22,8 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	
 	private U rootBranch;
 	private HierarchyRepresentation<T,U>[] reps;
-	private NodeSelection<T, U> selection;
+	private NodeSelection<T,U> selection;
+	private NodeCreator<T,U> nodeCreator;
 	
 	private HashSet<String> leafNames;
 	private boolean simpleMove;
@@ -91,8 +94,88 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		return rootBranch;
 	}
 	
+	public NodeSelection<T, U> getSelection()
+	{
+		return selection;
+	}
+	
+	public void setNodeCreator(NodeCreator<T, U> nodeCreator)
+	{
+		this.nodeCreator = nodeCreator;
+	}
+	
+	public NodeCreator<T, U> getNodeCreator()
+	{
+		return nodeCreator;
+	}
+	
 	/*================================================*\
-	 | Lead/Branch Listening
+	 | Interface Actions - Hook up to buttons and keys
+	\*================================================*/
+	
+	public void createNewItem(PopupItem item)
+	{
+		U newNodeFolder = getCreationParentFolder(selection);
+		
+		int insertPosition;
+		
+		if(selection.getType() == SelectionType.FOLDERS)
+			insertPosition = newNodeFolder.getItems().size();
+		else
+			insertPosition = NodeUtils.getIndex(selection.lastNode()) + 1;
+		
+		createNewItemFromFolder(item, newNodeFolder, insertPosition);
+	}
+	
+	public void createNewItemFromFolder(PopupItem item, U newNodeFolder, int insertPosition)
+	{
+		T newNodeObject;
+		
+		if (nodeCreator == null)
+			return;
+		
+		String newName = "New " + item.text + " "; 
+		int i = 1;
+		
+		while(!newNodeFolder.canCreateItemWithName(newName + i))
+			++i;
+		newName = newName + i;
+		
+		newNodeObject = nodeCreator.createNode(item, newName);
+		if(newNodeObject == null)
+			return;
+		
+		addItem(newNodeObject, newNodeFolder, insertPosition);
+		
+//		TreePath path = treeModel.getPath(newNodeObject);
+//		tree.setSelectionPath(path);
+//		
+//		if(nameEditingAllowed && newNodeObject.canEditName())
+//		{
+//			editor.allowEdit();
+//			tree.startEditingAtPath(path);
+//			editor.clearText();
+//		}
+	}
+	
+	public void editItem(T item)
+	{
+		nodeCreator.editNode(item);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public U getCreationParentFolder(NodeSelection<T,U> state)
+	{
+		if(selection.getType() == SelectionType.FOLDERS)
+			return (U) selection.lastNode();
+		else if(!selection.isEmpty())
+			return (U) selection.lastNode().getParent();
+		else
+			return null;
+	}
+	
+	/*================================================*\
+	 | Internal - Leaf/Branch Listening
 	\*================================================*/
 	
 	@Override
@@ -139,14 +222,14 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 			rep.leafNameChanged(source, oldName);
 	}
 	
-	public NodeSelection<T, U> getSelection()
-	{
-		return selection;
-	}
-	
 	/*================================================*\
 	 | Hierarchy Modification API
 	\*================================================*/
+	
+	/*
+	 * There are the safest methods to call in order to modify the tree.
+	 * Usually called by direct user action.
+	 */
 	
 	public boolean canMoveItem(T item, U target)
 	{

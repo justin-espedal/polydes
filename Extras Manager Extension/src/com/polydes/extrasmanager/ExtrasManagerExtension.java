@@ -12,6 +12,7 @@ import com.polydes.common.sys.FileMonitor;
 import com.polydes.common.sys.SysFile;
 import com.polydes.common.sys.SysFolder;
 import com.polydes.extrasmanager.app.MainEditor;
+import com.polydes.extrasmanager.data.ExtrasNodeCreator;
 import com.polydes.extrasmanager.data.FileEditor;
 import com.polydes.extrasmanager.io.FileOperations;
 
@@ -131,6 +132,7 @@ public class ExtrasManagerExtension extends BaseExtension
 			extrasFile.mkdir();
 		
 		model = FileMonitor.getExtrasModel();
+		model.setNodeCreator(new ExtrasNodeCreator(model));
 		
 		File templatesFile = new File(Locations.getExtensionGameDataLocation(game, getManifest().id), "templates");
 		
@@ -140,7 +142,7 @@ public class ExtrasManagerExtension extends BaseExtension
 			loadDefaults(templatesFile);
 		}
 		
-		FileOperations.templates = templatesFile.listFiles();
+		FileOperations.templatesFile = templatesFile;
 		
 		String input = readData();
 		
@@ -162,12 +164,12 @@ public class ExtrasManagerExtension extends BaseExtension
 		{
 			FileHelper.writeStringToFile
 			(
-				new File(templates, "New Text.txt").getAbsolutePath(),
+				new File(templates, "File.txt").getAbsolutePath(),
 				""
 			);
 			FileHelper.writeToPNG
 			(
-				new File(templates, "New Image.png").getAbsolutePath(),
+				new File(templates, "Image.png").getAbsolutePath(),
 				new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB)
 			);
 		}

@@ -35,8 +35,13 @@ public class FileRenderer
 	
 	public static ImageIcon fetchMiniIcon(SysFile file)
 	{
-		System.out.println(file.getFile().getAbsolutePath());
-		ImageIcon img = generateThumb(file.getFile());
+		return fetchMiniIcon(file.getFile());
+	}
+	
+	public static ImageIcon fetchMiniIcon(File file)
+	{
+		System.out.println(file.getAbsolutePath());
+		ImageIcon img = generateThumb(file);
 		int small = Math.min(img.getImage().getWidth(null), img.getImage().getHeight(null));
 		img = new ImageIcon(GraphicsUtilities.createThumbnail(ImageUtil.getBufferedImage(img.getImage()), Math.min(MINI_SIZE, small)));
 		return img;
