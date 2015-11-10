@@ -78,7 +78,7 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 	@SuppressWarnings("unchecked")
 	public boolean importData(TransferSupport support)
 	{
-		T[] nodes = getTransferData(support).nodes;
+		NodeDragData data = getTransferData(support);
 		
 		// Get drop location info.
 		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
@@ -88,7 +88,7 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 				(U) leafList.getFolder().getItemAt(dl.getIndex());
 		
 		// Build folder model representations.
-		List<T> transferItems = Arrays.asList(nodes);
+		List<T> transferItems = Arrays.asList(data.nodes);
 		
 		int index = dl.getIndex();
 		
@@ -102,7 +102,8 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 		else
 			index = parent.getItems().size();
 		
-		leafList.clearSelection();
+		folderModel.getSelection().removeAll(data.nodes);
+		
 		folderModel.massMove(transferItems, parent, index);
 		
 		return true;
