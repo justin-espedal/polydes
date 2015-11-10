@@ -122,12 +122,10 @@ public class NodeUtils
 		final HashSet<T> set = new HashSet<T>();
 		for(T node : list)
 			NodeUtils.recursiveRun(node, (T item) -> {
-				if(!set.contains(item))
-				{
-					set.add(item);
-					list.add(item);
-				}
+				set.add(item);
 			});
+		list.clear();
+		list.addAll(set);
 	}
 	
 	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void depthSort(List<T> list)
