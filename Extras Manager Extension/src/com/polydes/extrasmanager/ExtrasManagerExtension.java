@@ -8,12 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.polydes.common.nodes.HierarchyModel;
+import com.polydes.common.sys.FileMonitor;
+import com.polydes.common.sys.SysFile;
+import com.polydes.common.sys.SysFolder;
 import com.polydes.extrasmanager.app.MainEditor;
 import com.polydes.extrasmanager.data.FileEditor;
-import com.polydes.extrasmanager.data.FileOpHierarchyModel;
-import com.polydes.extrasmanager.data.folder.SysFile;
-import com.polydes.extrasmanager.data.folder.SysFolder;
-import com.polydes.extrasmanager.io.FileMonitor;
 import com.polydes.extrasmanager.io.FileOperations;
 
 import stencyl.core.lib.Game;
@@ -131,8 +130,7 @@ public class ExtrasManagerExtension extends BaseExtension
 		if(!extrasFile.exists())
 			extrasFile.mkdir();
 		
-		SysFolder rootFolder = FileMonitor.registerOnRoot(extrasFile);
-		model = new FileOpHierarchyModel(rootFolder);
+		model = FileMonitor.getExtrasModel();
 		
 		File templatesFile = new File(Locations.getExtensionGameDataLocation(game, getManifest().id), "templates");
 		

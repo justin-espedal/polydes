@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.polydes.common.sys.FileMonitor;
 import com.polydes.extrasmanager.app.FileCreateDialog;
 import com.polydes.extrasmanager.data.FileClipboard;
 
@@ -65,34 +66,6 @@ public class FileOperations
 		};
 		
 		FileClipboard.clear();
-		FileMonitor.refresh();
-	}
-	
-	public static void moveFiles(List<File> files, File targetParent)
-	{
-		for(File f : files)
-		{
-			try
-			{
-				String newName = getUnusedName(f.getName(), targetParent);
-				File target = new File(targetParent, newName);
-				if(f.isDirectory())
-				{
-					ArrayList<File> exclude = new ArrayList<File>();
-					exclude.add(target);
-					FileHelper.copyDirectory(f, target, exclude);
-				}
-				else
-					FileUtils.copyFile(f, target);
-				
-				FileHelper.delete(f);
-			}
-			catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
-		};
-		
 		FileMonitor.refresh();
 	}
 	

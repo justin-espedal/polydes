@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.polydes.common.sys.Mime;
+
 public class FileEditor
 {
 	public static HashMap<String, String> typeProgramMap = new HashMap<String, String>();

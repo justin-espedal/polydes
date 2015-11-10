@@ -8,19 +8,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.TreePath;
 
 import com.polydes.common.comp.MiniSplitPane;
-import com.polydes.common.ui.darktree.DarkTree;
+import com.polydes.common.sys.SysFile;
+import com.polydes.common.sys.SysFolder;
+import com.polydes.common.ui.filelist.TreePage;
 import com.polydes.extrasmanager.ExtrasManagerExtension;
-import com.polydes.extrasmanager.app.list.FileList;
-import com.polydes.extrasmanager.app.list.FileListModel;
-import com.polydes.extrasmanager.app.list.FileListRenderer;
 import com.polydes.extrasmanager.data.FilePreviewer;
-import com.polydes.extrasmanager.data.folder.SysFile;
-import com.polydes.extrasmanager.data.folder.SysFolder;
 
-import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.util.UI;
 
 public class MainPage extends JPanel
@@ -33,15 +28,9 @@ public class MainPage extends JPanel
 	protected JComponent currView;
 	public JPanel navwindow;
 	public JPanel navbar;
+	public JPanel sidebar;
 	
-	protected JScrollPane flistscroller;
-	protected FileList flist;
-	private FileListModel flistmodel;
-	protected FileListRenderer flistrenderer;
-	protected ListListener flistlistener;
-	
-	protected JScrollPane ftreescroller;
-	protected DarkTree<SysFile,SysFolder> ftree;
+	public TreePage<SysFile,SysFolder> treePage;
 	
 	protected MiniSplitPane splitPane;
 	
@@ -64,25 +53,15 @@ public class MainPage extends JPanel
 	{
 		removeAll();
 		
-		ftree.dispose();
-		flist.dispose();
-		flistmodel.dipose();
-		ftree = null;
-		flist = null;
-		flistmodel = null;
+		treePage.dispose();
 		
-		flistrenderer = null;
-		flistlistener = null;
 		currView = null;
 		navwindow = null;
 		navbar = null;
+		sidebar = null;
 		
 		splitPane.removeAll();
-		flistscroller.removeAll();
-		ftreescroller.removeAll();
 		splitPane = null;
-		flistscroller = null;
-		ftreescroller = null;
 		
 		FilePreviewer.endPreview();
 	}
@@ -91,93 +70,27 @@ public class MainPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		ftree = new DarkTree<SysFile,SysFolder>(ExtrasManagerExtension.getModel());
-		ftree.getTree().setRootVisible(true);
-		ftree.disableButtonBar();
-		ftreescroller = UI.createScrollPane(ftree);
-		ftreescroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		treePage = new TreePage<SysFile, SysFolder>(ExtrasManagerExtension.getModel());
 		
-		flistmodel = new FileListModel(ExtrasManagerExtension.getModel());
-		flistrenderer = new FileListRenderer(-1, -1);
-		flistlistener = new ListListener()
-		{
-			@Override public void pickedItem(Object item)
-			{
-				setViewedFile((SysFile) item);
-			}
-		};
+		treePage.getTree().getTree().setRootVisible(true);
+		treePage.getTree().disableButtonBar();
 		
-		flist = new FileList(flistrenderer, flistlistener, flistmodel, ftree);
-		flistscroller = UI.createScrollPane(flist);
-		flistscroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane treescroller = UI.createScrollPane(treePage.getTree());
+		treescroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
 		navwindow = new JPanel(new BorderLayout());
+		navwindow.add(currView = treePage, BorderLayout.CENTER);
 		
-		setView(flistscroller, flist.getTitlePanel());
+		revalidate();
+		repaint();
 		
 		splitPane = new MiniSplitPane();
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setLeftComponent(ftreescroller);
+		splitPane.setLeftComponent(treescroller);
 		splitPane.setRightComponent(navwindow);
 		
 		add(splitPane);
 		
 		splitPane.setDividerLocation(DEFAULT_SPLITPANE_WIDTH);
-	}
-	
-	public void setView(JComponent view, JPanel nav)
-	{
-		if(currView != null)
-			navwindow.remove(currView);
-		if(navbar != null)
-			navwindow.remove(navbar);
-		
-		navbar = nav;
-		currView = view;
-		
-		if(nav != null)
-			navwindow.add(nav, BorderLayout.NORTH);
-		if(currView != null)
-			navwindow.add(view, BorderLayout.CENTER);
-		
-		revalidate();
-		repaint();
-	}
-	
-	public SysFolder getViewedFolder()
-	{
-		return flistmodel.currView;
-	}
-	
-	public void setViewedFile(SysFile f)
-	{
-		if(f instanceof SysFolder)
-		{
-			flistmodel.refresh((SysFolder) f);
-			setView(flistscroller, flist.getTitlePanel());
-			FilePreviewer.endPreview();
-		}
-		else
-		{
-			if(flistmodel.currView != f.getParent())
-				flistmodel.refresh((SysFolder) f.getParent());
-			FilePreviewer.preview(f);
-		}
-		ftree.getTree().setSelectionPath(new TreePath(ftree.getNode(f).getPath()));
-	}
-	
-	public void update(SysFolder f)
-	{
-		if(f == flistmodel.currView)
-			flistmodel.refresh(f);
-	}
-	
-	public FileListModel getFlistmodel()
-	{
-		return flistmodel;
-	}
-
-	public void setFlistmodel(FileListModel flistmodel)
-	{
-		this.flistmodel = flistmodel;
 	}
 }

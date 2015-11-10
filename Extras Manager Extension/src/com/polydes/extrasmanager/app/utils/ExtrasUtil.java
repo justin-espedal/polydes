@@ -42,6 +42,4 @@ public class ExtrasUtil
 		folders.addAll(files);
 		return folders;
 	}
-	
-	
 }
