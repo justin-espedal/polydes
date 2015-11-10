@@ -18,6 +18,7 @@ import javax.swing.tree.TreeCellEditor;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.Leaf;
+import com.polydes.common.util.IconUtil;
 
 public class DTreeCellEditor<T extends Leaf<T,U>, U extends Branch<T,U>> implements TreeCellEditor, KeyListener, DocumentListener, FocusListener
 {
@@ -154,8 +155,11 @@ public class DTreeCellEditor<T extends Leaf<T,U>, U extends Branch<T,U>> impleme
 		
 		input.setNodeType(!(uo instanceof Branch));
 		input.setText(uo.getName());
-		input.setIcon(uo.getIcon());
-		
+		if(uo instanceof Branch)
+			input.setIcon(null);
+		else
+			input.setIcon(IconUtil.getIcon(uo.getIcon(), DTreeCellRenderer.ICON_SIZE));
+			
 		previousValue = uo;
 		previousTextValue = uo.getName();
 		
