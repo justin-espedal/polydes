@@ -29,8 +29,6 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 	
 	private T lead;
 
-	private ArrayList<T> nodesForTransfer;
-	
 	public NodeSelection(HierarchyModel<T, U> model)
 	{
 		this.root = model.getRootBranch();
@@ -249,14 +247,6 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		return type;
 	}
 	
-	//called in transfer handler when needed
-	public void prepareNodesForTransfer()
-	{
-		nodesForTransfer = new ArrayList<>();
-		nodesForTransfer.addAll(nodes);
-		NodeUtils.removeNodesWithContainedParents(nodesForTransfer);
-	}
-
 	public void addSelectionListener(NodeSelectionListener<T, U> l)
 	{
 		selectionEvents.addListener(l);
@@ -265,10 +255,5 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 	public void removeSelectionListener(NodeSelectionListener<T, U> l)
 	{
 		selectionEvents.removeListener(l);
-	}
-
-	public ArrayList<T> getNodesForTransfer()
-	{
-		return nodesForTransfer;
 	}
 }

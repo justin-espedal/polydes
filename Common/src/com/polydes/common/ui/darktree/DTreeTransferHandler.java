@@ -1,5 +1,8 @@
 package com.polydes.common.ui.darktree;
 
+import static com.polydes.common.util.Lang.asArray;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +13,7 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafTransferHandler;
+import com.polydes.common.nodes.NodeUtils;
 
 public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> extends LeafTransferHandler<T,U>
 {
@@ -19,6 +23,14 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 	{
 		super(folderModel, dtree.getTree());
 		this.dtree = dtree;
+	}
+	
+	@Override
+	protected T[] getNodesToTransfer()
+	{
+		ArrayList<T> selected = dtree.getSelectionState().copyList();
+		NodeUtils.removeNodesWithContainedParents(selected);
+		return asArray(selected, folderModel.leafClass);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -59,13 +71,9 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 		U f = (U) target;
 		
 		// name uniqueness check within target folder
-		for (T item : dtree.getSelectionState().getNodesForTransfer())
-		{
+		for (T item : getTransferData(support).nodes)
 			if (!folderModel.canMoveItem(item, f))
-			{
 				return false;
-			}
-		}
 		
 		return true;
 	}
@@ -74,9 +82,7 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 	@SuppressWarnings("unchecked")
 	public boolean importData(TransferSupport support)
 	{
-		T[] nodes = getTransferData(support);
-		if(nodes == null)
-			return false;
+		T[] nodes = getTransferData(support).nodes;
 		
 		// Get drop location info.
 		JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();

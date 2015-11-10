@@ -5,8 +5,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragGestureRecognizer;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +17,7 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Logger;
 
-public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> extends TransferHandler
+public abstract class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> extends TransferHandler
 {
 	private static final Logger log = Logger.getLogger(LeafTransferHandler.class);
 
@@ -55,34 +53,28 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 		
 		return true;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	protected Transferable createTransferable(JComponent c)
 	{
-		folderModel.getSelection().prepareNodesForTransfer();
-
-		if(folderModel.getSelection().getNodesForTransfer().isEmpty())
+		T[] toTransfer = getNodesToTransfer();
+		if(toTransfer == null)
 			return null;
-
+		
 		// name uniqueness check among all selected items.
 		HashSet<String> nodeNames = new HashSet<String>();
-
-		for(T item : folderModel.getSelection().getNodesForTransfer())
+		
+		for(T item : toTransfer)
 		{
 			if(nodeNames.contains(item.getName()))
 				return null;
-
+			
 			nodeNames.add(item.getName());
 		}
-
-		ArrayList<T> transfer = folderModel.getSelection().getNodesForTransfer();
-		T[] nodes = (T[]) Array.newInstance(folderModel.leafClass, transfer.size());
-		transfer.toArray(nodes);
-
-		return new NodesTransferable(nodes);
+		
+		return new NodesTransferable(installedOn, toTransfer);
 	}
-
+	
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action)
 	{
@@ -96,15 +88,15 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 	}
 
 	@SuppressWarnings("unchecked")
-	protected T[] getTransferData(TransferSupport support)
+	protected NodeDragData getTransferData(TransferSupport support)
 	{
-		if(!canImport(support))
+		if(!support.isDataFlavorSupported(nodesFlavor))
 			return null;
-
+		
 		try
 		{
 			Transferable t = support.getTransferable();
-			return (T[]) t.getTransferData(nodesFlavor);
+			return (NodeDragData) t.getTransferData(nodesFlavor);
 		}
 		catch(UnsupportedFlavorException | IOException e)
 		{
@@ -113,6 +105,8 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 
 		return null;
 	}
+	
+	protected abstract T[] getNodesToTransfer();
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -169,11 +163,11 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 
 	public class NodesTransferable implements Transferable
 	{
-		T[] nodes;
+		NodeDragData data;
 
-		public NodesTransferable(T[] nodes)
+		public NodesTransferable(JComponent source, T[] nodes)
 		{
-			this.nodes = nodes;
+			data = new NodeDragData(source, nodes);
 		}
 
 		@Override
@@ -181,7 +175,7 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 		{
 			if(!isDataFlavorSupported(flavor))
 				throw new UnsupportedFlavorException(flavor);
-			return nodes;
+			return data;
 		}
 
 		@Override
@@ -194,6 +188,18 @@ public class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch<T, U>> e
 		public boolean isDataFlavorSupported(DataFlavor flavor)
 		{
 			return nodesFlavor.equals(flavor);
+		}
+	}
+	
+	public class NodeDragData
+	{
+		public JComponent source;
+		public T[] nodes;
+		
+		public NodeDragData(JComponent source, T[] nodes)
+		{
+			this.source = source;
+			this.nodes = nodes;
 		}
 	}
 

@@ -1,6 +1,11 @@
 package com.polydes.common.ui.filelist;
 
+import static com.polydes.common.util.Lang.asArray;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JList;
@@ -31,12 +36,16 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 		support.setShowDropLocation(true);
 		
 		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-		int dropIndex = dl.getIndex();
-		T target = leafList.getFolder().getItemAt(dropIndex);
+		NodeDragData data = getTransferData(support);
 		
 		// don't allow dropping onto selection.
-		if(leafList.isSelectedIndex(dropIndex))
+		if(!dl.isInsert() && data.source == leafList &&
+			leafList.isSelectedIndex(dl.getIndex()))
 			return false;
+		
+		T target = dl.isInsert() ?
+			(T) leafList.getFolder() :
+			leafList.getFolder().getItemAt(dl.getIndex());
 		
 		// don't allow dragging of anything into non-folder node
 		if (!(target instanceof Branch))
@@ -45,45 +54,55 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 		U f = (U) target;
 		
 		// name uniqueness check within target folder
-		for (T item : folderModel.getSelection().getNodesForTransfer())
-		{
+		for (T item : data.nodes)
 			if (!folderModel.canMoveItem(item, f))
-			{
 				return false;
-			}
-		}
 		
 		return true;
+	}
+	
+	@Override
+	protected T[] getNodesToTransfer()
+	{
+		ArrayList<T> selected = folderModel.getSelection().copyList();
+		
+		HashSet<T> thisFoldersNodes = new HashSet<T>(leafList.folder.getItems());
+		for(Iterator<T> nodeItr = selected.iterator(); nodeItr.hasNext();)
+			if(!thisFoldersNodes.contains(nodeItr.next()))
+				nodeItr.remove();
+		
+		return asArray(selected, folderModel.leafClass);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean importData(TransferSupport support)
 	{
-		T[] nodes = getTransferData(support);
-		if(nodes == null)
-			return false;
+		T[] nodes = getTransferData(support).nodes;
 		
 		// Get drop location info.
 		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-		int dropIndex = dl.getIndex();
-		U parent = (U) leafList.getFolder().getItemAt(dropIndex);
 		
-		// Configure for drop mode.
-		int visibleIndex = dropIndex; // DropMode.INSERT
-		if (dropIndex == -1) // DropMode.ON
-			visibleIndex = ((U) parent).getItems().size();
+		U parent = dl.isInsert() ?
+				leafList.getFolder() :
+				(U) leafList.getFolder().getItemAt(dl.getIndex());
 		
 		// Build folder model representations.
 		List<T> transferItems = Arrays.asList(nodes);
 		
-		int index = visibleIndex;
+		int index = dl.getIndex();
 		
-		//for all transferring nodes within target folder and pos < visibleChildIndex, decrement childIndex
-		for(T item : transferItems)
-			if(item.getParent() == parent && parent.getItems().indexOf(item) < visibleIndex)
-				--index;
+		if(dl.isInsert())
+		{
+			//for all transferring nodes within target folder and pos < visibleChildIndex, decrement childIndex
+			for(T item : transferItems)
+				if(item.getParent() == parent && parent.getItems().indexOf(item) < dl.getIndex())
+					--index;
+		}
+		else
+			index = parent.getItems().size();
 		
+		leafList.clearSelection();
 		folderModel.massMove(transferItems, parent, index);
 		
 		return true;
