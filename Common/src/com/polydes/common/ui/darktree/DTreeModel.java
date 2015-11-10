@@ -49,6 +49,9 @@ public class DTreeModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements T
 	@Override
 	public int getChildCount(Object parent)
 	{
+		if(!(parent instanceof Branch))
+			return 0;
+		
 		return ((U) parent).getItems().size();
 	}
 
