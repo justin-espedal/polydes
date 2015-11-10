@@ -77,6 +77,9 @@ public class SortedNodeCollection<T extends Leaf<T,U>, U extends Branch<T,U>> im
 	@Override
 	public boolean add(T e)
 	{
+		if(e == null)
+			return false;
+		
 		int i = binarySearch(e);
 		if(i >= 0)
 			return false;
@@ -90,6 +93,9 @@ public class SortedNodeCollection<T extends Leaf<T,U>, U extends Branch<T,U>> im
 	@Override
 	public boolean remove(Object o)
 	{
+		if(o == null)
+			return false;
+		
 		int i = binarySearch((T) o);
 		if(i < 0)
 			return false;

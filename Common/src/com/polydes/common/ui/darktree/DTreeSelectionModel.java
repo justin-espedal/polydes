@@ -66,7 +66,7 @@ public class DTreeSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> imp
 	@SuppressWarnings("unchecked")	
 	private T[] treePathsToNodes(TreePath[] paths)
 	{
-		return map(paths, leafClass, path -> (T) path.getLastPathComponent());
+		return map(paths, leafClass, path -> path == null ? null : (T) path.getLastPathComponent());
 	}
 
 	@Override
@@ -81,30 +81,45 @@ public class DTreeSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> imp
 	@Override
 	public void setSelectionPaths(TreePath[] paths)
 	{
-		selection.setAll(treePathsToNodes(paths));
+		if(paths == null)
+			clearSelection();
+		else
+			selection.setAll(treePathsToNodes(paths));
 	}
 	
 	@Override
 	public void addSelectionPath(TreePath path)
 	{
+		if(path == null)
+			return;
+		
 		selection.add(treePathToNode(path));
 	}
 
 	@Override
 	public void addSelectionPaths(TreePath[] paths)
 	{
+		if(paths == null)
+			return;
+		
 		selection.addAll(treePathsToNodes(paths));
 	}
 
 	@Override
 	public void removeSelectionPath(TreePath path)
 	{
+		if(path == null)
+			return;
+		
 		selection.remove(treePathToNode(path));
 	}
 
 	@Override
 	public void removeSelectionPaths(TreePath[] paths)
 	{
+		if(paths == null)
+			return;
+		
 		selection.removeAll(treePathsToNodes(paths));
 	}
 
