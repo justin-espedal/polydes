@@ -81,16 +81,8 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 	{
 		if(name != newName)
 		{
-			String oldName = name;
-			
-			if(file.renameTo(new File(file.getParentFile(), newName)))
-			{
-				name = newName;
-				for(LeafListener<SysFile,SysFolder> l : listeners) {l.leafNameChanged(this, oldName);}
-				
-				if(parent != null)
-					parent.registerNameChange(oldName, name);
-			}
+			file.renameTo(new File(file.getParentFile(), newName));
+			FileMonitor.refresh();
 		}
 	}
 	

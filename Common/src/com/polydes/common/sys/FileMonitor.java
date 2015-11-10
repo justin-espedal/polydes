@@ -15,6 +15,7 @@ import com.polydes.common.nodes.HierarchyModel;
 
 import stencyl.core.lib.Game;
 import stencyl.sw.SW;
+import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
 public class FileMonitor
@@ -52,8 +53,15 @@ public class FileMonitor
 					if(toMove.isEmpty())
 						return;
 					
-					FileOperations.moveFiles(toMove, target.getFile());
+					SysFileOperations.moveFiles(toMove, target.getFile());
 				};
+				
+				@Override
+				public void removeItem(SysFile item, SysFolder target)
+				{
+					FileHelper.delete(item.getFile());
+					FileMonitor.refresh();
+				}
 			};
 		}
 		
@@ -95,7 +103,10 @@ public class FileMonitor
 				
 				SysFile toRemove = getSysFile(file);
 				if(toRemove != null && toRemove.getParent() != null)
+				{
+					model.getSelection().remove(toRemove);
 					toRemove.getParent().removeItem(toRemove);
+				}
 				
 				dispose(file);
 			}
@@ -135,6 +146,7 @@ public class FileMonitor
 				if(parent == model.getRootBranch() && extensionExists(directory.getName()))
 					return;
 				
+				model.getSelection().remove(toRemove);
 				toRemove.getParent().removeItem(toRemove);
 				dispose(directory);
 			}
