@@ -199,13 +199,7 @@ public class ExtrasManagerExtension extends BaseExtension
 		gameOpen = false;
 	}
 
-	/*
-	 * Happens when the user requests the Options dialog for your extension.
-	 * 
-	 * You need to provide the form. We wrap it in a dialog.
-	 */
 	@Override
-	@SuppressWarnings("serial")
 	public OptionsPanel onOptions()
 	{
 		return new OptionsPanel()
@@ -213,41 +207,11 @@ public class ExtrasManagerExtension extends BaseExtension
 			String textPath;
 			String imagePath;
 			
-			/*
-			 * Construct the form.
-			 * 
-			 * We provide a simple way to construct forms without knowing Swing
-			 * (Java's GUI library).
-			 */
 			@Override
 			public void init()
 			{
-				String[] data;
-				if(readData() == null || readData().isEmpty())
-					data = new String[] {"", ""};
-				else
-					data = readData().split("\n");
-				textPath = data[0];
-				imagePath = data[1];
-				
-				FileHandler textHandler = new FileHandler()
-				{
-					@Override
-					public void handleFile(File f)
-					{
-						textPath = "\"" + f.getAbsolutePath() + "\"";
-						FileEditor.typeProgramMap.put("text/plain", textPath);
-					}
-				};
-				FileHandler imageHandler = new FileHandler()
-				{
-					@Override
-					public void handleFile(File f)
-					{
-						imagePath = "\"" + f.getAbsolutePath() + "\"";
-						FileEditor.typeProgramMap.put("image/png", imagePath);
-					}
-				};
+				FileHandler textHandler = (file) -> textPath = "\"" + file.getAbsolutePath() + "\"";
+				FileHandler imageHandler = (file) -> imagePath = "\"" + file.getAbsolutePath() + "\"";
 				
 				startForm();
 				addHeader("Options");
@@ -258,33 +222,28 @@ public class ExtrasManagerExtension extends BaseExtension
 				endForm();
 			}
 
-			/*
-			 * Use this to save the form data out. All you need to do is place
-			 * the properties into preferences.
-			 */
 			@Override
 			public void onPressedOK()
 			{
-				saveData(textPath + "\n" + imagePath);
+				putProp("textEditorPath", textPath);
+				putProp("imageEditorPath", imagePath);
+				
+				FileEditor.typeProgramMap.put("application/octet-stream", textPath);
+				FileEditor.typeProgramMap.put("text/plain", textPath);
+				FileEditor.typeProgramMap.put("image/png", imagePath);
 			}
 
-			/*
-			 * Happens whenever the user presses cancel or clicks the "x" in the
-			 * corner
-			 */
 			@Override
 			public void onPressedCancel()
 			{
 				
 			}
-
-			/*
-			 * Happens whenever the user brings this options panel up
-			 */
+			
 			@Override
 			public void onShown()
 			{
-				
+				textPath = readStringProp("textEditorPath", "");
+				imagePath = readStringProp("imageEditorPath", "");
 			}
 		};
 	}
