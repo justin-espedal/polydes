@@ -55,7 +55,7 @@ public class DynamicType extends DataType<Dynamic>
 	@Override
 	public String encode(Dynamic e)
 	{
-		return e.type.checkEncode(e.value) + ":" + e.type.id;
+		return e.type.checkEncode(e.value) + ":" + e.type.getId();
 	}
 
 	@Override

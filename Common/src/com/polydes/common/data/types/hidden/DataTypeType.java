@@ -41,13 +41,13 @@ public class DataTypeType extends DataType<DataType>
 	@Override
 	public String toDisplayString(DataType data)
 	{
-		return data.id;
+		return data.getId();
 	}
 
 	@Override
 	public String encode(DataType data)
 	{
-		return data.id;
+		return data.getId();
 	}
 	
 	@Override

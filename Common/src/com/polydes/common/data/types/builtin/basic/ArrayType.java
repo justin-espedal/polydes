@@ -70,7 +70,7 @@ public class ArrayType extends DataType<DataList>
 		
 		for(int i = 0; i < array.size(); ++i)
 			s += array.genType.checkEncode(array.get(i)) + (i < array.size() - 1 ? "," : "");
-		s += "]:" + array.genType.id;
+		s += "]:" + array.genType.getId();
 		
 		return s;
 	}
@@ -141,7 +141,7 @@ public class ArrayType extends DataType<DataList>
 		Extras e = (Extras) extras;
 		ExtrasMap emap = new ExtrasMap();
 		emap.put(EDITOR, "" + e.editor);
-		emap.put("genType", e.genType.id);
+		emap.put("genType", e.genType.getId());
 		if(e.defaultValue != null)
 			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
 		return emap;

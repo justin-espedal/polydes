@@ -9,7 +9,7 @@ import com.polydes.common.ext.RegistryObject;
 
 public class DataSetSource implements RegistryObject
 {
-	public final String id;
+	public final String id; //registry key
 	public final DataType<?> type;
 	public Supplier<Collection<?>> collectionSupplier;
 	

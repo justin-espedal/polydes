@@ -13,7 +13,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 	public static String EDITOR = "editor";
 	
 	public final Class<T> javaType;
-	public String id;
+	private String id; //registry key
 	
 	private final int hash;
 	
@@ -138,7 +138,12 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 		return hash;
 	}
 	
-	public void changeID(String newID)
+	public String getId()
+	{
+		return id;
+	}
+	
+	public void changeId(String newID)
 	{
 		Types.get().renameItem(this, newID);
 	}

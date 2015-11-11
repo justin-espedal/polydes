@@ -35,7 +35,7 @@ public class DataTransferable implements Transferable
 		flavors[0] = getFlavor();
 		flavors[1] = DataFlavor.stringFlavor;
 		
-		sd = new SerializedData(type.id, type.checkEncode(value));
+		sd = new SerializedData(type.getId(), type.checkEncode(value));
 	}
 
 	@Override

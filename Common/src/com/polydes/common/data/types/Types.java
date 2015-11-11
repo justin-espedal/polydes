@@ -124,7 +124,7 @@ public class Types extends ObjectRegistry<DataType<?>>
 		{
 			//TODO: Add structure types from DSExtension
 			registerItem(srt);
-			DataSetSources.get().registerItem(new DataSetSource(srt.id, srt, () -> srt.getList()));
+			DataSetSources.get().registerItem(new DataSetSource(srt.getId(), srt, () -> srt.getList()));
 		}
 	}
 	

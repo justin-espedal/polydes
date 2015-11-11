@@ -46,6 +46,16 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 		map.remove(object.getKey());
 	}
 	
+	/**
+	 * Convenience method for unregisterItem(Object)
+	 */
+	public void unregisterItem(String key)
+	{
+		T value = map.get(key);
+		if(value != null)
+			unregisterItem(value);
+	}
+	
 	public boolean hasItem(String key)
 	{
 		return map.containsKey(key);
@@ -60,6 +70,16 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 	{
 		map.put(newName, map.remove(value.getKey()));
 		value.setKey(newName);
+	}
+	
+	/**
+	 * Convenience method for renameItem(Object, String)
+	 */
+	public void renameItem(String oldName, String newName)
+	{
+		T value = map.get(oldName);
+		if(value != null)
+			renameItem(value, newName);
 	}
 	
 	public Collection<T> values()

@@ -85,7 +85,7 @@ public class SetType extends DataType<DataSet>
 				s += ",";
 		}
 		
-		s += "]:" + type.id;
+		s += "]:" + type.getId();
 		
 		return s;
 	}

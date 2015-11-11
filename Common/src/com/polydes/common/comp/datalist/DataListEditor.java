@@ -449,7 +449,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 				DataList transferList = new DataList(t);
 				for(int i = 0; i < data.rows.length; ++i)
 					transferList.add(data.dle.model.get(data.rows[i]));
-				cachedSD = new SerializedData(t.id, t.checkEncode(transferList));
+				cachedSD = new SerializedData(t.getId(), t.checkEncode(transferList));
 			}
 			return cachedSD;
 		}
@@ -494,7 +494,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 			{
 				// should check if it's an array of genType, or if it's a single item of genType
 				SerializedData sd = getSerializedData(support.getTransferable());
-				if(!sd.type.equals(dle.model.genType.id))
+				if(!sd.type.equals(dle.model.genType.getId()))
 					return false;
 				
 				return true;
