@@ -1,6 +1,7 @@
 package com.polydes.common.sys;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,6 +16,7 @@ import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.polydes.common.comp.DisabledPanel;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
@@ -33,9 +35,10 @@ public class FilePreviewer
 		
 		if(toPreview != null)
 		{
-			JPanel previewPanel = new JPanel();
+			DisabledPanel previewPanel = new DisabledPanel(toPreview);
 			previewPanel.setBackground(PropertiesSheetStyle.DARK.pageBg);
-			previewPanel.add(toPreview);
+			previewPanel.setEnabled(false);
+			previewPanel.setDisabledColor(new Color(0, 0, 0, 0));
 			return previewPanel;
 		}
 		
@@ -65,7 +68,7 @@ public class FilePreviewer
 	{
 		JPanel panel = new JPanel(new BorderLayout());
 		JTextArea preview = new JTextArea();
-		preview.setEditable(false);
+		
 		Dimension previewSize = new Dimension(380, 200);
 		preview.setMinimumSize(previewSize);
 		preview.setMaximumSize(previewSize);
