@@ -27,6 +27,7 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
+import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
 import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.util.PopupUtil;
@@ -37,7 +38,7 @@ import stencyl.sw.app.lists.AbstractListIcon.OverlayIcon;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.gfx.ImageUtil;
 
-public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<T> implements BranchListener<T,U>
+public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<T> implements BranchListener<T,U>, LeafListener<T, U>
 {
 	U folder;
 	DefaultListModel<T> listModel;
@@ -156,7 +157,12 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		
 		this.folder = folder;
 		folder.addFolderListener(this);
-		refresh();
+		
+		for(T l : folder.getItems())
+		{
+			listModel.addElement(l);
+			l.addListener(this);
+		}
 	}
 	
 	@Override
@@ -175,17 +181,11 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 	
 	public void dispose()
 	{
+		for(T l : folder.getItems())
+			l.removeListener(this);
 		folder.removeFolderListener(this);
 		folder = null;
 		transferHandler.dispose();
-	}
-	
-	public void refresh()
-	{
-		removeAll();
-		
-		for(T l : folder.getItems())
-			listModel.addElement(l);
 	}
 	
 	public U getFolder()
@@ -222,6 +222,12 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		public Dimension getIconSize()
 		{
 			return new Dimension(iconWidth, iconHeight);
+		}
+		
+		public void refreshIcon(T value)
+		{
+			iconCache.remove(value);
+			renderedIconCache.remove(value);
 		}
 		
 		private HashMap<T, Image> iconCache = new HashMap<>();
@@ -272,11 +278,30 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 	public void branchLeafAdded(U folder, T item, int position)
 	{
 		listModel.add(position, item);
+		item.addListener(this);
 	}
 
 	@Override
 	public void branchLeafRemoved(U folder, T item, int position)
 	{
+		item.removeListener(this);
 		listModel.remove(position);
+	}
+
+	/*================================================*\
+	 | Leaf Listener
+	\*================================================*/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void leafStateChanged(T source)
+	{
+		((LeafRenderer<T,U>) getCellRenderer()).refreshIcon(source);
+	}
+
+	@Override
+	public void leafNameChanged(T source, String oldName)
+	{
+		
 	}
 }
