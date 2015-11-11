@@ -112,4 +112,13 @@ public class Lang
 	{
 		return (T[]) Array.newInstance(c, size);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T> T[] newarray(Class<T> c, T... elements)
+	{
+		T[] a = (T[]) Array.newInstance(c, elements.length);
+		for(int i = 0; i < elements.length; ++i)
+			a[i] = elements[i];
+		return a;
+	}
 }

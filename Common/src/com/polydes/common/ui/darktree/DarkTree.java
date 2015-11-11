@@ -39,12 +39,11 @@ import com.polydes.common.comp.StatusBar;
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
+import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeUtils;
 import com.polydes.common.res.ResourceLoader;
 import com.polydes.common.util.PopupUtil;
-import com.polydes.common.util.PopupUtil.PopupItem;
-import com.polydes.common.util.PopupUtil.PopupSelectionListener;
 
 import stencyl.sw.util.UI;
 
@@ -74,8 +73,6 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	private JButton newItemButton;
 	private JButton removeItemButton;
 	private JButton propertiesButton;
-	
-	private static ImageIcon folderIcon = ResourceLoader.loadIcon("tree/folder-enabled.png");
 	
 	private static ImageIcon newItemEnabled = ResourceLoader.loadIcon("tree/plus-enabled.png");
 	private static ImageIcon newItemDisabled = ResourceLoader.loadIcon("tree/plus-disabled.png");
@@ -252,24 +249,17 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		if(e.getSource() == newItemButton)
 		{
 			U newNodeFolder = folderModel.getCreationParentFolder(selection);
-			
-			ArrayList<PopupItem> items = new ArrayList<PopupItem>();
-			if(newNodeFolder.isFolderCreationEnabled())
-				items.add(new PopupItem("Folder", null, folderIcon));
-			items.addAll(folderModel.getNodeCreator().getCreatableNodeList());
+			ArrayList<CreatableNodeInfo> items = folderModel.getCreatableNodes(newNodeFolder);
 			
 			if(items.size() == 1)
 				folderModel.createNewItem(items.get(0));
 			else
 			{
-				JPopupMenu menu = PopupUtil.buildPopup(items, new PopupSelectionListener()
-				{
-					@Override
-					public void itemSelected(PopupItem item)
-					{
-						folderModel.createNewItem(item);
-					}
+				JPopupMenu menu = PopupUtil.buildPopup(PopupUtil.asMenuItems(items));
+				PopupUtil.installListener(menu, (item) -> {
+					folderModel.createNewItem((CreatableNodeInfo) item);
 				});
+				
 				Point p = getMousePosition(true);
 				if(p == null)
 				{

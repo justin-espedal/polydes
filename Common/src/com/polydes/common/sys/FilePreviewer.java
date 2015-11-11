@@ -36,7 +36,6 @@ public class FilePreviewer
 			JPanel previewPanel = new JPanel();
 			previewPanel.setBackground(PropertiesSheetStyle.DARK.pageBg);
 			previewPanel.add(toPreview);
-			
 			return previewPanel;
 		}
 		

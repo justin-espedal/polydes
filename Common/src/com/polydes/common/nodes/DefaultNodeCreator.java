@@ -2,20 +2,12 @@ package com.polydes.common.nodes;
 
 import java.util.List;
 
-import com.polydes.common.util.PopupUtil.PopupItem;
-
 public abstract class DefaultNodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>> implements NodeCreator<T,U>
 {
-	@Override
-	public abstract T createNode(PopupItem selected, String nodeName);
-	
 	@Override
 	public void editNode(T toEdit)
 	{
 	}
-	
-	@Override
-	public abstract void nodeRemoved(T toRemove);
 	
 	@Override
 	public boolean attemptRemove(List<T> toRemove)

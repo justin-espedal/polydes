@@ -6,9 +6,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
+import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.nodes.NodeUtils.LeafRunnable;
 import com.polydes.common.ui.darktree.SelectionType;
-import com.polydes.common.util.PopupUtil.PopupItem;
 
 /**
  * Branch that can be represented as the root of a hierarchical tree system.
@@ -79,6 +80,20 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		return null;
 	}
 	
+	public ArrayList<CreatableNodeInfo> getCreatableNodes(U creationFolder)
+	{
+		ArrayList<CreatableNodeInfo> items = new ArrayList<CreatableNodeInfo>();
+		if(creationFolder.isFolderCreationEnabled())
+			items.add(NodeCreator.folderInfo);
+		items.addAll(nodeCreator.getCreatableNodeList(creationFolder));
+		return items;
+	}
+
+	public ArrayList<NodeAction<T>> getNodeActions(T[] targets)
+	{
+		return nodeCreator.getNodeActions(targets);
+	}
+	
 	public boolean isUniqueLeafNames()
 	{
 		return uniqueLeafNames;
@@ -113,7 +128,7 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	 | Interface Actions - Hook up to buttons and keys
 	\*================================================*/
 	
-	public void createNewItem(PopupItem item)
+	public void createNewItem(CreatableNodeInfo item)
 	{
 		U newNodeFolder = getCreationParentFolder(selection);
 		
@@ -127,14 +142,14 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		createNewItemFromFolder(item, newNodeFolder, insertPosition);
 	}
 	
-	public void createNewItemFromFolder(PopupItem item, U newNodeFolder, int insertPosition)
+	public void createNewItemFromFolder(CreatableNodeInfo item, U newNodeFolder, int insertPosition)
 	{
 		T newNodeObject;
 		
 		if (nodeCreator == null)
 			return;
 		
-		String newName = "New " + item.text + " "; 
+		String newName = "New " + item.name + " "; 
 		int i = 1;
 		
 		while(!newNodeFolder.canCreateItemWithName(newName + i))

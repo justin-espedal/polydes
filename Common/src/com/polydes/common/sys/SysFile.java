@@ -1,16 +1,30 @@
 package com.polydes.common.sys;
 
+import static com.polydes.common.util.Lang.array;
+import static com.polydes.common.util.Lang.asArray;
+
 import java.awt.BorderLayout;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import com.polydes.common.comp.TitledPanel;
+import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
+import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.ui.object.ViewableObject;
+import com.polydes.common.util.PopupUtil;
 
 public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 {
@@ -155,7 +169,52 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 		if(view == null)
 		{
 			view = new TitledPanel(getName(), null);
-			view.add(FilePreviewer.getPreview(this), BorderLayout.CENTER);
+			JPanel previewPanel = FilePreviewer.getPreview(this);
+			
+			previewPanel.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mousePressed(MouseEvent e)
+				{
+					maybeShowPopup(e);
+				}
+				
+				@Override
+				public void mouseReleased(MouseEvent e)
+				{
+					maybeShowPopup(e);
+				}
+				
+				@SuppressWarnings("unchecked")
+				private void maybeShowPopup(MouseEvent e)
+				{
+					if(e.isPopupTrigger())
+					{
+						HierarchyModel<SysFile,SysFolder> folderModel = FileMonitor.getExtrasModel();
+						
+						ArrayList<JMenuItem> menuItems = new ArrayList<>();
+						
+						ArrayList<NodeAction<SysFile>> actionItems = folderModel.getNodeActions(array(SysFile.this));
+						menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
+						
+						JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));
+						
+						PopupUtil.installListener(popup, (item) -> {
+							((NodeAction<SysFile>) item).callback.accept(SysFile.this);
+						});
+						
+						Point p = previewPanel.getMousePosition(true);
+						if(p == null)
+						{
+							p = MouseInfo.getPointerInfo().getLocation();
+							SwingUtilities.convertPointFromScreen(p, previewPanel);
+						}
+						popup.show(previewPanel, p.x, p.y);
+					}
+				}
+			});
+			
+			view.add(previewPanel, BorderLayout.CENTER);
 		}
 		
 		return view;

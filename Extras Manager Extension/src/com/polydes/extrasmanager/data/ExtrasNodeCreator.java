@@ -1,9 +1,10 @@
 package com.polydes.extrasmanager.data;
 
+import static com.polydes.common.util.Lang.arraylist;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -15,7 +16,8 @@ import com.polydes.common.sys.FileRenderer;
 import com.polydes.common.sys.SysFile;
 import com.polydes.common.sys.SysFileOperations;
 import com.polydes.common.sys.SysFolder;
-import com.polydes.common.util.PopupUtil.PopupItem;
+
+import stencyl.sw.util.FileHelper;
 
 public class ExtrasNodeCreator implements NodeCreator<SysFile,SysFolder>
 {
@@ -27,25 +29,25 @@ public class ExtrasNodeCreator implements NodeCreator<SysFile,SysFolder>
 	}
 	
 	@Override
-	public Collection<PopupItem> getCreatableNodeList()
+	public ArrayList<CreatableNodeInfo> getCreatableNodeList(SysFolder creationBranch)
 	{
-		ArrayList<PopupItem> list = new ArrayList<>();
+		ArrayList<CreatableNodeInfo> list = new ArrayList<>();
 		for(File f : com.polydes.extrasmanager.io.FileOperations.getTemplates())
 		{
 			if(f.getName().equals("Thumbs.db"))
 				continue;
-			list.add(new PopupItem(f.getName(), f, FileRenderer.fetchMiniIcon(f)));
+			list.add(new CreatableNodeInfo(f.getName(), f, FileRenderer.fetchMiniIcon(f)));
 		}
 		return list;
 	}
 
 	@Override
-	public SysFile createNode(PopupItem selected, String nodeName)
+	public SysFile createNode(CreatableNodeInfo selected, String nodeName)
 	{
 		SysFolder sfolder = model.getCreationParentFolder(model.getSelection());
 		File folder = sfolder.getFile();
 		
-		if(selected.text.equals("Folder"))
+		if(selected.name.equals("Folder"))
 		{
 			String name = SysFileOperations.getUnusedName("New Folder", folder);
 			File f = new File(folder, name);
@@ -74,6 +76,20 @@ public class ExtrasNodeCreator implements NodeCreator<SysFile,SysFolder>
 		FileMonitor.refresh();
 		
 		return null;
+	}
+	
+	ArrayList<NodeAction<SysFile>> actions = arraylist(
+		new NodeAction<SysFile>("Edit", null, (file) -> FileEditor.edit(file.getFile())),
+		new NodeAction<SysFile>("Delete", null, (file) -> {
+			FileHelper.delete(file.getFile());
+			FileMonitor.refresh();
+		})
+	);
+	
+	@Override
+	public ArrayList<NodeAction<SysFile>> getNodeActions(SysFile[] targets)
+	{
+		return actions;
 	}
 
 	@Override

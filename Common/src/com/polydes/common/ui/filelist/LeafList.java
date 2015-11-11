@@ -1,24 +1,35 @@
 package com.polydes.common.ui.filelist;
 
-import java.awt.Component;
+import static com.polydes.common.util.Lang.asArray;
+import static com.polydes.common.util.Lang.newarray;
+
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
+import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
+import com.polydes.common.nodes.NodeCreator.NodeAction;
+import com.polydes.common.util.PopupUtil;
 
 import stencyl.sw.app.lists.AbstractItemRenderer;
 import stencyl.sw.app.lists.AbstractList;
@@ -50,19 +61,97 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 		
 		addMouseListener(new MouseAdapter() {
+			
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				if (locationToIndex(e.getPoint()) == -1 && !e.isShiftDown() && !isMenuShortcutKeyDown(e))
-				{
+				if(locationToIndex(e.getPoint()) == -1 && !e.isShiftDown() && !isMenuShortcutKeyDown(e))
 					clearSelection();
-				}
 			}
 			
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				maybeShowPopup(e);
+			}
+			
+			private boolean eventIsOverSelection(MouseEvent e)
+			{
+				return
+					locationToIndex(e.getPoint()) != -1 &&
+					isSelectedIndex(locationToIndex(e.getPoint()));
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				maybeShowPopup(e);
+			}
+			
+			@SuppressWarnings("unchecked")
+			private void maybeShowPopup(MouseEvent e)
+			{
+				if(e.isPopupTrigger())
+				{
+					boolean selectionTargeted = eventIsOverSelection(e);
+					
+					if(!selectionTargeted)
+					{
+						int index = locationToIndex(e.getPoint());
+						if(index != -1)
+						{
+							setSelectedIndex(index);
+							selectionTargeted = true;
+						}
+					}
+					
+					boolean singleFolderTargeted = !selectionTargeted ||
+						(getSelectedIndices().length == 1 && getSelectedValue() instanceof Branch);
+					
+					T[] targets = selectionTargeted ?
+							asArray(getSelectedValuesList(), folderModel.leafClass) :
+							newarray(folderModel.leafClass, (T) folder);
+					
+					ArrayList<JMenuItem> menuItems = new ArrayList<>();
+					
+					if(singleFolderTargeted)
+					{
+						ArrayList<CreatableNodeInfo> createItems = folderModel.getCreatableNodes(folder);
+						menuItems.add(PopupUtil.menu("Create", PopupUtil.asMenuItems(createItems)));
+					}
+					if(selectionTargeted)
+					{
+						ArrayList<NodeAction<T>> actionItems = folderModel.getNodeActions(targets);
+						menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
+					}
+					
+					JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));
+					
+					PopupUtil.installListener(popup, (item) -> {
+						
+						if(item instanceof NodeAction)
+							for(T target : targets)
+								((NodeAction<T>) item).callback.accept(target);
+						else if(item instanceof CreatableNodeInfo)
+							folderModel.createNewItem((CreatableNodeInfo) item);
+						
+					});
+					
+					Point p = getMousePosition(true);
+					if(p == null)
+					{
+						p = MouseInfo.getPointerInfo().getLocation();
+						SwingUtilities.convertPointFromScreen(p, LeafList.this);
+					}
+					popup.show(LeafList.this, p.x, p.y);
+				}
+			}
+
 			private boolean isMenuShortcutKeyDown(InputEvent event)
 			{
 				return (event.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0;
 			}
+			
 		});
 		
 		this.folder = folder;
@@ -138,14 +227,11 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		private HashMap<T, Image> iconCache = new HashMap<>();
 		private HashMap<T, Image> renderedIconCache = new HashMap<>();
 		
+		@SuppressWarnings("unchecked")
 		@Override
-		public Component getListCellRendererComponent(JList<? extends T> arg0, T arg1, int arg2, boolean arg3, boolean arg4)
+		public String fetchText(Object value)
 		{
-			super.getListCellRendererComponent(arg0, arg1, arg2, arg3, arg4);
-			
-			setText(arg1.getName());
-			
-			return this;
+			return ((T) value).getName();
 		}
 		
 		@Override

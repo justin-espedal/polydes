@@ -1,16 +1,17 @@
 package com.polydes.common.util;
 
+import static com.polydes.common.util.Lang.mapCA;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.Collection;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.MenuElement;
 
 public class PopupUtil
 {
@@ -27,60 +28,90 @@ public class PopupUtil
 		return menu;
 	}
 	
-	public static JMenuItem item(String name, Icon icon)
+	public static JMenu menu(String name, JMenuItem... items)
 	{
-		JMenuItem item = new JMenuItem(name);
-		item.setIcon(icon);
-		
-		return item;
-	}
-	
-	public static JPopupMenu buildPopup(ArrayList<PopupItem> items, final PopupSelectionListener listener)
-	{
-		JPopupMenu menu = new JPopupMenu();
-		for(final PopupItem item : items)
-		{
-			for(ActionListener l : item.getActionListeners())
-				item.removeActionListener(l);
-			item.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					listener.itemSelected(item);
-				}
-			});
+		JMenu menu = new JMenu(name);
+		for(JMenuItem item : items)
 			menu.add(item);
-		}
 		
 		return menu;
 	}
 	
-	public static class PopupItem extends JMenuItem
+	public static JPopupMenu buildPopup(JMenuItem... items)
 	{
-		public String text;
-		public Object data;
+		JPopupMenu menu = new JPopupMenu();
+		for(JMenuItem item : items)
+			menu.add(item);
 		
-		public PopupItem(Object o, Icon icon)
+		return menu;
+	}
+	
+	public static <T> void installListener(MenuElement menu, PopupSelectionListener<T> listener)
+	{
+		for(MenuElement element : menu.getSubElements())
 		{
-			super("" + o);
-			text = "" + o;
-			setIcon(icon);
-			data = o;
-		}
-		
-		public PopupItem(String name, Object o, ImageIcon icon)
-		{
-			super(name);
-			text = name;
-			setIcon(IconUtil.getIcon(icon, 16));
-			data = o;
+			if(element instanceof JMenuItem)
+			{
+				final JMenuItem item = (JMenuItem) element;
+				
+				for(ActionListener l : item.getActionListeners())
+					item.removeActionListener(l);
+				
+				item.addActionListener((event) -> {
+					T userData = getUserData(item);
+					if(userData != null)
+						listener.itemSelected(userData);
+				});
+			}
+			
+			installListener(element, listener);
 		}
 	}
 	
-	public static interface PopupSelectionListener
+	public static final String USER_DATA_PROPERTY = "PopupUtil.userData";
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T getUserData(JMenuItem item)
 	{
-		public void itemSelected(PopupItem item);
+		return (T) item.getClientProperty(USER_DATA_PROPERTY);
+	}
+	
+	public static JMenuItem menuItem(String name, Object o, ImageIcon icon)
+	{
+		JMenuItem item = new JMenuItem(name);
+		item.setIcon(IconUtil.getIcon(icon, 16));
+		item.putClientProperty(USER_DATA_PROPERTY, o);
+		return item;
+	}
+	
+	public static JMenuItem menuItem(String name, ImageIcon icon, ActionListener l)
+	{
+		JMenuItem item = new JMenuItem(name);
+		item.setIcon(IconUtil.getIcon(icon, 16));
+		item.addActionListener(l);
+		return item;
+	}
+	
+	public static JMenuItem menuItem(String name, ActionListener l)
+	{
+		JMenuItem item = new JMenuItem(name);
+		item.addActionListener(l);
+		return item;
+	}
+	
+	public static interface PopupSelectionListener<T>
+	{
+		public void itemSelected(T item);
+	}
+	
+	public static interface MenuItemAccess
+	{
+		JMenuItem asMenuItem();
+	}
+	
+	public static JMenuItem[] asMenuItems(Collection<? extends MenuItemAccess> c)
+	{
+		return mapCA(c, JMenuItem.class, info -> info.asMenuItem());
 	}
 	
 	public static Point getPositionWithinWindow(Component component, Component parent, Point p)
