@@ -1,6 +1,7 @@
 package com.polydes.common.ui.darktree;
 
 import static com.polydes.common.util.Lang.asArray;
+import static com.polydes.common.util.Lang.newarray;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,13 +15,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultButtonModel;
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -40,6 +45,7 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
+import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeUtils;
 import com.polydes.common.res.ResourceLoader;
@@ -47,8 +53,9 @@ import com.polydes.common.util.PopupUtil;
 
 import stencyl.sw.util.UI;
 
-public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel implements TreeSelectionListener, ActionListener, KeyListener,
-	CellEditorListener, CellEditValidator
+public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
+	implements TreeSelectionListener, CellEditorListener, CellEditValidator,
+				ActionListener, KeyListener, MouseListener
 {
 	public static final int DEF_WIDTH = 200;
 	public static final int MINI_BUTTON_WIDTH = 25;
@@ -127,6 +134,7 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		((DTreeUI) tree.getUI()).setRightChildIndent(8);
 		
 		tree.addKeyListener(this);
+		tree.addMouseListener(this);
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		tree.setEditable(true);
@@ -505,5 +513,102 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 				refreshDisplay();
 			}
 		}, 100);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		maybeShowPopup(e);
+	}
+	
+	private boolean eventIsOverSelection(MouseEvent e)
+	{
+		TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+		if(path != null)
+			return tree.isPathSelected(path);
+		return false;
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		maybeShowPopup(e);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void maybeShowPopup(MouseEvent e)
+	{
+		if(e.isPopupTrigger())
+		{
+			boolean selectionTargeted = eventIsOverSelection(e);
+			
+			if(!selectionTargeted)
+			{
+				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+				if(path != null)
+				{
+					tree.setSelectionPath(path);
+					selectionTargeted = true;
+				}
+			}
+			
+			boolean singleFolderTargeted = !selectionTargeted ||
+				(selection.size() == 1 && selection.firstNode() instanceof Branch);
+			
+			T[] targets = selectionTargeted ?
+				asArray(selection.copyList(), folderModel.leafClass) :
+				newarray(folderModel.leafClass, (T) root);
+			
+			ArrayList<JMenuItem> menuItems = new ArrayList<>();
+			
+			if(singleFolderTargeted)
+			{
+				ArrayList<CreatableNodeInfo> createItems = folderModel.getCreatableNodes((U) selection.firstNode());
+				menuItems.add(PopupUtil.menu("Create", PopupUtil.asMenuItems(createItems)));
+			}
+			if(selectionTargeted)
+			{
+				ArrayList<NodeAction<T>> actionItems = folderModel.getNodeActions(targets);
+				menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
+			}
+			
+			JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));
+			
+			PopupUtil.installListener(popup, (item) -> {
+				
+				if(item instanceof NodeAction)
+					for(T target : targets)
+						((NodeAction<T>) item).callback.accept(target);
+				else if(item instanceof CreatableNodeInfo)
+					folderModel.createNewItem((CreatableNodeInfo) item);
+				
+			});
+			
+			Point p = getMousePosition(true);
+			if(p == null)
+			{
+				p = MouseInfo.getPointerInfo().getLocation();
+				SwingUtilities.convertPointFromScreen(p, this);
+			}
+			popup.show(this, p.x, p.y);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e)
+	{
+		
 	}
 }
