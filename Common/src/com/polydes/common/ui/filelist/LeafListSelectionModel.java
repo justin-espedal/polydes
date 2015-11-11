@@ -29,6 +29,9 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 	private NodeSelection<T,U> selection;
 	private int mode;
 	
+	private int anchor;
+	private int lead;
+	
 	private U folder;
 	
 	public LeafListSelectionModel(HierarchyModel<T,U> model, U folder)
@@ -40,6 +43,9 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 		leafClass = model.leafClass;
 		
 		selection.addSelectionListener(this);
+		
+		anchor = -1;
+		lead = -1;
 	}
 	
 	@Override
@@ -58,6 +64,8 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 			else
 				removeRecursively(toRemove, folder.getItemAt(i));
 		}
+		
+		updateLeadAnchorIndices(index0, index1);
 		
 		selection.change(asArray(toAdd,  leafClass), asArray(toRemove, leafClass));
 	}
@@ -81,6 +89,8 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 			if(i >= i0 && i <= i1)
 				toAdd.add(folder.getItemAt(i));
 		
+		updateLeadAnchorIndices(index0, index1);
+		
 		selection.addAll(asArray(toAdd, leafClass));
 	}
 
@@ -97,7 +107,15 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 				removeRecursively(toRemove, node);
 		});
 		
+		updateLeadAnchorIndices(index0, index1);
+		
 		selection.removeAll(asArray(toRemove, leafClass));
+	}
+	
+	private void updateLeadAnchorIndices(int lead, int anchor)
+	{
+		this.lead = lead;
+		this.anchor = anchor;
 	}
 
 	@Override
@@ -129,25 +147,25 @@ public class LeafListSelectionModel<T extends Leaf<T,U>, U extends Branch<T,U>> 
 	@Override
 	public int getAnchorSelectionIndex()
 	{
-		return 0;
+		return anchor;
 	}
 
 	@Override
 	public void setAnchorSelectionIndex(int index)
 	{
-		
+		anchor = index;
 	}
 
 	@Override
 	public int getLeadSelectionIndex()
 	{
-		return 0;
+		return lead;
 	}
 
 	@Override
 	public void setLeadSelectionIndex(int index)
 	{
-		
+		lead = index;
 	}
 
 	@Override
