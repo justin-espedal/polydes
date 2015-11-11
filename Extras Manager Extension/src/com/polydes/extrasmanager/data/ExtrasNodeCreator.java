@@ -79,6 +79,7 @@ public class ExtrasNodeCreator implements NodeCreator<SysFile,SysFolder>
 	}
 	
 	ArrayList<NodeAction<SysFile>> actions = arraylist(
+		new NodeAction<SysFile>("Rename", null, (file) -> FileEditor.rename(file.getFile())),
 		new NodeAction<SysFile>("Edit", null, (file) -> FileEditor.edit(file.getFile())),
 		new NodeAction<SysFile>("Delete", null, (file) -> {
 			FileHelper.delete(file.getFile());
