@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -37,14 +36,13 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 	private JLabel label;
 	private JTextField input;
 	private String previousValue;
-	private Rectangle viewRect;
-	private int treeX;
 	private int treeWidth;
 
 	public InlineTreeInput(DarkTree<?,?> dtree)
 	{
 		super(new BorderLayout());
-
+		((BorderLayout) getLayout()).setHgap(4);
+		
 		this.dtree = dtree;
 
 		label = new JLabel();
@@ -106,18 +104,6 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 	public void setIcon(ImageIcon icon)
 	{
 		label.setIcon(icon);
-	}
-
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		updateTreeWidth();
-
-		g.setClip(treeX - getX(), 0, treeWidth, DarkTree.ITEM_HEIGHT);
-		g.setColor(getBackground());
-		g.fillRect(treeX - getX(), 0, treeWidth, DarkTree.ITEM_HEIGHT);
-
-		super.paintComponent(g);
 	}
 
 	public void setValid(boolean value)
@@ -200,9 +186,7 @@ public class InlineTreeInput extends JPanel implements ComponentListener
 
 	public void updateTreeWidth()
 	{
-		viewRect = dtree.getScroller().getViewport().getViewRect();
-		treeX = viewRect.x;
-		treeWidth = viewRect.width;
+		treeWidth = dtree.getScroller().getViewport().getViewRect().width;
 	}
 
 	public void setPreviousValue(String value)

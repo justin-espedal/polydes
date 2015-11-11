@@ -124,10 +124,8 @@ public class DTreeUI extends BasicTreeUI implements MouseListener
 					b.width, b.height, false);
 		}
 
-		if (_shouldPaintExpandControl(path, row, isExpanded, hasBeenExpanded,
-				isLeaf))
-			_paintExpandControl(g, clipBounds, insets, bounds, path, row,
-					isExpanded, hasBeenExpanded, isLeaf);
+		if (_shouldPaintExpandControl(path, row, isExpanded, hasBeenExpanded, isLeaf))
+			_paintExpandControl(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
 
 		// Don't paint the renderer if editing this row.
 		if (editingComponent != null && editingPath == path)
