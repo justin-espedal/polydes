@@ -30,7 +30,7 @@ public class ResourceLoader
 	public static ImageIcon loadIcon(String url)
 	{
 		ImageIcon result = iconCache.get(url);
-
+		
 		if (result == null)
 		{
 			URL u = getUrl(url);
@@ -44,7 +44,7 @@ public class ResourceLoader
 
 			catch (Exception e)
 			{
-				log.error(e.getMessage(), e);
+				log.error("Failed to load icon: " + url, e);
 			}
 
 			return new ImageIcon();
