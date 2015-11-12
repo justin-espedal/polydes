@@ -124,7 +124,7 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 		T newObject = generatePlaceholder(s);
 		unknownValues.put(s, newObject);
 		roRealizers.put(s, new ArrayList<>());
-		registerItem(newObject);
+		map.put(s, newObject);
 	}
 	
 	public abstract T generatePlaceholder(String key);
@@ -136,10 +136,10 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 	
 	public void realizeUnknown(String s, T value)
 	{
-		T unknown = unknownValues.remove(s);
 		
-		if(unknown == null)
+		if(!unknownValues.containsKey(s))
 			throw new IllegalArgumentException("There is no unknown object \"" + s + "\"");
+		unknownValues.remove(s);
 		
 		for(RORealizer<T> ror : roRealizers.remove(s))
 			ror.realizeRO(value);
