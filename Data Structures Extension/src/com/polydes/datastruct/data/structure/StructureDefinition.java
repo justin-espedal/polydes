@@ -426,11 +426,9 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 
 	public void realizeFieldHaxeType(StructureField field, HaxeDataType t)
 	{
-		DataStructuresExtension.get().getHaxeTypes().requestValue(field.getType().dataType.getId(), dt -> {
-			if(Structures.structures.containsKey(this))
-				for(Structure struct : Structures.structures.get(this))
-					struct.setPropertyFromString(field, (String) struct.getProperty(field));
-		});
+		if(Structures.structures.containsKey(this))
+			for(Structure struct : Structures.structures.get(this))
+				struct.setPropertyFromString(field, (String) struct.getProperty(field));
 	}
 	
 	@Override
