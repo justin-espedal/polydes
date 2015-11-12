@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.builtin.UnknownDataType;
 import com.polydes.common.ext.RegistryObject;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
@@ -22,6 +23,8 @@ public abstract class HaxeDataType implements RegistryObject
 	
 	public HaxeDataType(DataType<?> dataType, String haxeType, String stencylType)
 	{
+		if(dataType instanceof UnknownDataType || dataType == null)
+			throw new IllegalArgumentException("HaxeDataType cannot be instantiated with an unknown or null core data type.");
 		this.dataType = dataType;
 		this.haxeType = haxeType;
 		this.stencylType = stencylType;
