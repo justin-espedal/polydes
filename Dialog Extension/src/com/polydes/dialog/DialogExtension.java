@@ -8,14 +8,14 @@ import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
 
+import com.polydes.common.ext.ExtensionInterface;
 import com.polydes.common.util.Lang;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.types.HaxeDataType;
-import com.polydes.datastruct.ext.DataStructureExtension;
 import com.polydes.datastruct.ext.HaxeDataTypeExtension;
-import com.polydes.datastruct.ext.StructureDefinitionExtension;
 import com.polydes.dialog.app.MainEditor;
 import com.polydes.dialog.data.def.elements.StructureCommand.CommandType;
 import com.polydes.dialog.data.def.elements.StructureCommands.CommandsType;
@@ -35,7 +35,7 @@ import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-public class DialogExtension extends GameExtension implements HaxeDataTypeExtension, DataStructureExtension, StructureDefinitionExtension
+public class DialogExtension extends GameExtension
 {
 	private static DialogExtension _instance;
 	
@@ -65,7 +65,6 @@ public class DialogExtension extends GameExtension implements HaxeDataTypeExtens
 		isInGameCenter = true;
 		gameCenterName = "Dialog Extension";
 		
-		types = HaxeDataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
 		sdeTypes = Lang.arraylist(
 			new ExtensionType(),
 			new CommandsType(),
@@ -172,10 +171,24 @@ public class DialogExtension extends GameExtension implements HaxeDataTypeExtens
 	@Override
 	public void onGameWithDataOpened()
 	{
+		ExtensionInterface.doUponLoad("com.polydes.datastruct", () -> {
+			
+			DataStructuresExtension dse = DataStructuresExtension.get();
+			
+			for(SDEType<?> sdet : sdeTypes)
+				dse.getSdeTypes().registerItem(getManifest().id, sdet);
+			SDETypes.fromClass(StructureTab.class).childTypes.add(StructureExtension.class);
+			
+			types = HaxeDataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
+			for(HaxeDataType type : types)
+				dse.getHaxeTypes().registerItem(type);
+			
+			File defLoc = new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "def");
+			dse.getStructureDefinitions().addFolder(defLoc, getManifest().name);
+		});
+		
 		Dialog.get().load(new File(getExtrasFolder(), "dialog.txt"));
 		Macros.get().load(new File(getExtrasFolder(), "macros.txt"));
-		
-		SDETypes.fromClass(StructureTab.class).childTypes.add(StructureExtension.class);
 	}
 
 	@Override
@@ -196,6 +209,8 @@ public class DialogExtension extends GameExtension implements HaxeDataTypeExtens
 		Macros.get().unload();
 
 		MainEditor.disposePages();
+		
+		types = null;
 	}
 
 	/*
@@ -231,23 +246,5 @@ public class DialogExtension extends GameExtension implements HaxeDataTypeExtens
 	@Override
 	public void onUninstall()
 	{
-	}
-	
-	@Override
-	public File getDefinitionsFolder()
-	{
-		return new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "def");
-	}
-	
-	@Override
-	public ArrayList<HaxeDataType> getHaxeDataTypes()
-	{
-		return types;
-	}
-
-	@Override
-	public ArrayList<SDEType<?>> getSdeTypes()
-	{
-		return sdeTypes;
 	}
 }

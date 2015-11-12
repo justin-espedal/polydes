@@ -11,10 +11,8 @@ import com.polydes.datastruct.io.read.HaxeObjectDefinitionReader;
 
 import stencyl.sw.util.FileHelper;
 
-public interface HaxeDataTypeExtension
+public class HaxeDataTypeExtension
 {
-	public ArrayList<HaxeDataType> getHaxeDataTypes();
-	
 	/*-------------------------------------*\
 	 * Building from xml
 	\*-------------------------------------*/ 
