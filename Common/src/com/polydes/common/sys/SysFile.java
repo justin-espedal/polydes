@@ -1,6 +1,5 @@
 package com.polydes.common.sys;
 
-import static com.polydes.common.util.Lang.array;
 import static com.polydes.common.util.Lang.asArray;
 
 import java.awt.BorderLayout;
@@ -191,7 +190,7 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 						
 						ArrayList<JMenuItem> menuItems = new ArrayList<>();
 						
-						ArrayList<NodeAction<SysFile>> actionItems = folderModel.getNodeActions(array(SysFile.this));
+						ArrayList<NodeAction<SysFile>> actionItems = folderModel.getNodeActions(new SysFile[] {SysFile.this});
 						menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
 						
 						JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));

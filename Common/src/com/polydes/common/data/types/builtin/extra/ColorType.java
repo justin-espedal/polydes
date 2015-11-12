@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.extra;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -99,7 +97,7 @@ public class ColorType extends DataType<Color>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(control);
+			return new JComponent[] {control};
 		}
 		
 		@Override

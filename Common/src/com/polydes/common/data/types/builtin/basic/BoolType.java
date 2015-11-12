@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.basic;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -97,7 +95,7 @@ public class BoolType extends DataType<Boolean>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(control);
+			return new JComponent[] {control};
 		}
 		
 		@Override

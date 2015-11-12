@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.extra;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -149,7 +147,7 @@ public class SelectionType extends DataType<String>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 		
 		@Override
@@ -217,7 +215,7 @@ public class SelectionType extends DataType<String>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(buttonPanel);
+			return new JComponent[] {buttonPanel};
 		}
 		
 		@Override

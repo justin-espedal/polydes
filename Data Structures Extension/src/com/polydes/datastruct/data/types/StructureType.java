@@ -1,7 +1,5 @@
 package com.polydes.datastruct.data.types;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -182,7 +180,7 @@ public class StructureType extends DataType<Structure>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 		
 		@Override

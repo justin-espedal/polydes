@@ -1,7 +1,5 @@
 package com.polydes.datastruct.data.types;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -102,7 +100,7 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(typeChooser);
+			return new JComponent[] {typeChooser};
 		}
 		
 		@Override

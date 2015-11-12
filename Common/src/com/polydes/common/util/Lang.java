@@ -16,12 +16,6 @@ public class Lang
 	}
 	
 	@SafeVarargs
-	public static final <T> T[] array(T... items)
-	{
-		return items;
-	}
-	
-	@SafeVarargs
 	public static final <T> ArrayList<T> arraylist(T... a)
 	{
 		ArrayList<T> list = new ArrayList<T>(a.length);
@@ -113,6 +107,7 @@ public class Lang
 		return (T[]) Array.newInstance(c, size);
 	}
 	
+	@SafeVarargs
 	@SuppressWarnings("unchecked")
 	public static final <T> T[] newarray(Class<T> c, T... elements)
 	{

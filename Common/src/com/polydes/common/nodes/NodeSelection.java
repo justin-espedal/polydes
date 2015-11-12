@@ -1,6 +1,5 @@
 package com.polydes.common.nodes;
 
-import static com.polydes.common.util.Lang.array;
 import static com.polydes.common.util.Lang.asArray;
 import static com.polydes.common.util.Lang.newarray;
 
@@ -106,7 +105,7 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 	
 	public boolean add(T t)
 	{
-		return change(array(t), null);
+		return change(newarray(leafClass, t), null);
 	}
 	
 	public boolean addAll(T[] newSelection)
@@ -116,7 +115,7 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 	
 	public boolean remove(T t)
 	{
-		return change(null, array(t));
+		return change(null, newarray(leafClass, t));
 	}
 	
 	public boolean removeAll(T[] oldSelection)
@@ -131,7 +130,7 @@ public class NodeSelection<T extends Leaf<T,U>, U extends Branch<T,U>> implement
 		
 		nodes.remove(newSelection);
 		
-		return change(array(newSelection), asArray(nodes, leafClass));
+		return change(newarray(leafClass, newSelection), asArray(nodes, leafClass));
 	}
 	
 	public boolean setAll(T[] newSelection)

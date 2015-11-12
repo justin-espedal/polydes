@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.hidden;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -164,7 +162,7 @@ public class DataTypeType extends DataType<DataType>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(typeChooser);
+			return new JComponent[] {typeChooser};
 		}
 		
 		@Override

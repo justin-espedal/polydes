@@ -1,6 +1,5 @@
 package com.polydes.common.data.types.builtin.basic;
 
-import static com.polydes.common.util.Lang.array;
 import static com.polydes.common.util.Lang.or;
 
 import javax.swing.BorderFactory;
@@ -179,7 +178,7 @@ public class IntType extends DataType<Integer>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(field);
+			return new JComponent[] {field};
 		}
 	}
 	
@@ -227,7 +226,7 @@ public class IntType extends DataType<Integer>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(spinner);
+			return new JComponent[] {spinner};
 		}
 		
 		@Override
@@ -303,7 +302,7 @@ public class IntType extends DataType<Integer>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(slider, field);
+			return new JComponent[] {slider, field};
 		}
 	}
 }

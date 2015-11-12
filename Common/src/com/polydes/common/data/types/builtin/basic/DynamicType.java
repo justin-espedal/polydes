@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.basic;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -193,7 +191,7 @@ public class DynamicType extends DataType<Dynamic>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(typeChooser, valueEditorWrapper);
+			return new JComponent[] {typeChooser, valueEditorWrapper};
 		}
 		
 		public DialogPanel createMiniPage()

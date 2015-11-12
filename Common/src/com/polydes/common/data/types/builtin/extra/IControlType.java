@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.extra;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -118,7 +116,7 @@ public class IControlType extends DataType<IControl>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 		
 		@Override

@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -154,7 +152,7 @@ public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 		
 		@Override

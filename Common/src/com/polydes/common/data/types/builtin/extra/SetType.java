@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.extra;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -204,7 +202,7 @@ public class SetType extends DataType<DataSet>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(buttonPanel);
+			return new JComponent[] {buttonPanel};
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.basic;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -240,7 +238,7 @@ public class ArrayType extends DataType<DataList>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 	}
 	
@@ -284,7 +282,7 @@ public class ArrayType extends DataType<DataList>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 		
 		@Override

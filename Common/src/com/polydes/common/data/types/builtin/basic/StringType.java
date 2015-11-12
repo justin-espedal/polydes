@@ -1,7 +1,5 @@
 package com.polydes.common.data.types.builtin.basic;
 
-import static com.polydes.common.util.Lang.array;
-
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
@@ -136,7 +134,7 @@ public class StringType extends DataType<String>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 	}
 	
@@ -198,7 +196,7 @@ public class StringType extends DataType<String>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(editor);
+			return new JComponent[] {editor};
 		}
 	}
 }

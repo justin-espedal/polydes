@@ -1,7 +1,5 @@
 package com.polydes.common.data.types;
 
-import static com.polydes.common.util.Lang.array;
-
 import javax.swing.JComponent;
 
 import com.polydes.common.ext.RegistryObject;
@@ -122,7 +120,7 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 		@Override
 		public JComponent[] getComponents()
 		{
-			return array(style.createSoftLabel(msg));
+			return new JComponent[] {style.createSoftLabel(msg)};
 		}
 	}
 	
