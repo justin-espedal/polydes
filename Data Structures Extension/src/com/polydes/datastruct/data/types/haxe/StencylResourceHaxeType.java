@@ -16,6 +16,7 @@ public class StencylResourceHaxeType<T extends Resource> extends HaxeDataType
 	public StencylResourceHaxeType(StencylResourceType<T> srt, String haxeType, String stencylType)
 	{
 		super(srt, haxeType, stencylType);
+		this.srt = srt;
 	}
 	
 	@SuppressWarnings("unchecked")
