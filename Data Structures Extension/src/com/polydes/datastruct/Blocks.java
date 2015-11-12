@@ -228,11 +228,6 @@ public class Blocks
 		
 		Definitions.get().put(blockDef.tag, blockDef);
 		tagCache.put(blockDef.tag, blockDef);
-		
-		for(HaxeDataType type : DataStructuresExtension.get().getHaxeTypes().values())
-		{
-			addDesignModeBlocks(type);
-		}
 	}
 	
 	public static void addDesignModeBlocks(HaxeDataType type)
