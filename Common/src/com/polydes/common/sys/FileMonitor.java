@@ -189,8 +189,6 @@ public class FileMonitor
 		else
 			newFile = new SysFile(file);
 		
-		System.out.println(key + " is " + ((newFile instanceof SysFolder) ? "Folder" : "File"));
-		
 		fileCache.put(key, newFile);
 		return newFile;
 	}
