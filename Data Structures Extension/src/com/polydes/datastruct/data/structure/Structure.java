@@ -11,9 +11,9 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
+import com.polydes.common.ui.object.EditableObject;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.ui.objeditors.StructureEditor;
@@ -41,7 +41,7 @@ public class Structure extends EditableObject
 		enabledFields = new HashMap<StructureField, Boolean>();
 		for(StructureField f : template.getFields())
 		{
-			Object value = f.getType().decode("");
+			Object value = f.getType().dataType.decode("");
 			fieldData.put(f, value);
 			enabledFields.put(f, !f.isOptional());
 			pcs.firePropertyChange(f.getVarname(), null, value);
@@ -51,7 +51,7 @@ public class Structure extends EditableObject
 		allStructures.get(template).add(this);
 		
 		dref = new DataItem(name, this);
-		dref.setIcon(template.getSmallIcon());
+		dref.setIcon(template.getIcon());
 	}
 	
 	public void loadDefaults()
@@ -61,7 +61,7 @@ public class Structure extends EditableObject
 			{
 				Object defValue = f.getExtras().getDefault();
 				if(defValue != null)
-				setProperty(f, f.getType().checkCopy(defValue));
+				setProperty(f, f.getType().dataType.checkCopy(defValue));
 			}
 	}
 	
@@ -82,7 +82,7 @@ public class Structure extends EditableObject
 	
 	public void setPropertyFromString(StructureField field, String value)
 	{
-		Object newValue = field.getType().decode(value);
+		Object newValue = field.getType().dataType.decode(value);
 		Object oldValue = fieldData.get(field);
 		fieldData.put(field, newValue);
 		pcs.firePropertyChange(field.getVarname(), oldValue, newValue);
@@ -171,14 +171,9 @@ public class Structure extends EditableObject
 		return template.getName();
 	}
 	
-	public ImageIcon getSmallIcon()
+	public ImageIcon getIcon()
 	{
-		return template.getSmallIcon();
-	}
-	
-	public ImageIcon getMediumIcon()
-	{
-		return template.getMediumIcon();
+		return template.getIcon();
 	}
 	
 	public Structure copy()
@@ -187,7 +182,7 @@ public class Structure extends EditableObject
 		
 		for(StructureField field : getFields())
 		{
-			newStructure.setProperty(field, field.getType().checkCopy(getProperty(field)));
+			newStructure.setProperty(field, field.getType().dataType.checkCopy(getProperty(field)));
 			newStructure.enabledFields.put(field, enabledFields.get(field));
 		}
 		
@@ -198,7 +193,7 @@ public class Structure extends EditableObject
 	{
 		for(StructureField field : getFields())
 		{
-			setProperty(field, field.getType().checkCopy(structure.getProperty(field)));
+			setProperty(field, field.getType().dataType.checkCopy(structure.getProperty(field)));
 			enabledFields.put(field, structure.enabledFields.get(field));
 		}
 	}
@@ -274,11 +269,11 @@ public class Structure extends EditableObject
 		
 		StructureDefinition oldTemplate = template;
 		template = def;
-		dref.setIcon(template.getSmallIcon());
+		dref.setIcon(template.getIcon());
 		
 		for(StructureField f : template.getFields())
 		{
-			Object value = f.getType().decode("");
+			Object value = f.getType().dataType.decode("");
 			fieldData.put(f, value);
 			enabledFields.put(f, !f.isOptional());
 			pcs.firePropertyChange(f.getVarname(), null, value);
@@ -298,5 +293,11 @@ public class Structure extends EditableObject
 		allStructures.get(template).add(this);
 		
 		disposeEditor();
+	}
+
+	@Override
+	public boolean fillsViewHorizontally()
+	{
+		return false;
 	}
 }

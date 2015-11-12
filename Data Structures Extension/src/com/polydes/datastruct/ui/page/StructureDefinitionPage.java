@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -12,25 +11,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.polydes.common.comp.MiniSplitPane;
 import com.polydes.common.comp.StatusBar;
+import com.polydes.common.nodes.DefaultNodeCreator;
 import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.ui.darktree.DTreeSelectionListener;
-import com.polydes.common.ui.darktree.DTreeSelectionState;
+import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
+import com.polydes.common.nodes.NodeSelection;
+import com.polydes.common.nodes.NodeSelectionEvent;
+import com.polydes.common.nodes.NodeSelectionListener;
 import com.polydes.common.ui.darktree.DarkTree;
-import com.polydes.common.ui.darktree.DefaultNodeCreator;
 import com.polydes.common.ui.darktree.SelectionType;
-import com.polydes.common.util.PopupUtil.PopupItem;
+import com.polydes.common.ui.object.EditableObject;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.Prefs;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.list.ListUtils;
@@ -48,28 +46,28 @@ public class StructureDefinitionPage extends JPanel
 	private JPanel emptySidebarBottom;
 	
 	private HierarchyModel<DataItem,Folder> definitionsfm;
-	
 	private DarkTree<DataItem,Folder> definitionTree;
-	private DarkTree<DataItem,Folder> editorTree;
-	private JComponent definitionTreeView;
 	
-	private DTreeSelectionState<DataItem,Folder> selectionState;
+	private HierarchyModel<DataItem,Folder> editorModel;
+	private JComponent definitionTreeView;
 	
 	protected JScrollPane scroller;
 	protected JPanel page;
 	
 	private StructureDefinitionEditor editor;
 	
-	private DTreeSelectionListener<DataItem,Folder> definitionStateListener = new DTreeSelectionListener<DataItem,Folder>()
+	private NodeSelectionListener<DataItem,Folder> definitionStateListener = new NodeSelectionListener<DataItem,Folder>()
 	{
 		@Override
-		public void selectionStateChanged()
+		public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
 		{
+			NodeSelection<DataItem, Folder> selection = definitionsfm.getSelection();
+			
 			page.removeAll();
 			
 			int dl = splitPane.getDividerLocation();
 			
-			if(selectionState.type == SelectionType.FOLDERS)
+			if(selection.getType() == SelectionType.FOLDERS)
 			{
 				revalidate();
 				repaint();
@@ -77,52 +75,40 @@ public class StructureDefinitionPage extends JPanel
 				splitPane.setDividerLocation(dl);
 				return;
 			}
-			DataItem di = selectionState.nodes.get(0).getUserObject();
+			DataItem di = selection.firstNode();
 			StructureDefinition toEdit = (StructureDefinition) di.getObject();
 			editor = toEdit.getEditor();
 			editor.setAlignmentX(LEFT_ALIGNMENT);
 			
 			page.add(editor, BorderLayout.CENTER);
 			
-			if(editorTree != null)
-				editorTree.removeTreeListener(editorStateListener);
-			editorTree = editor.tree;
-			editorTree.addTreeListener(editorStateListener);
+			if(editorModel != null)
+				editorModel.getSelection().removeSelectionListener(editorStateListener);
+			editorModel = editor.model;
+			editorModel.getSelection().addSelectionListener(editorStateListener);
 			
 			splitPane.setTopComponent(definitionTreeView);
 			splitPane.setBottomComponent(editor.treeView);
 			splitPane.setDividerLocation(dl);
 			
-			editorTree.getTree().setSelectionPath(new TreePath(new TreeNode[] {editorTree.getRoot()}));
-			editorStateListener.selectionStateChanged();
+			editor.tree.getTree().setSelectionPath(editor.tree.getRootPath());
+			editorStateListener.selectionChanged(null);
 			
 			revalidate();
 			repaint();
 		}
-		
-		@Override
-		public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
-		{
-			selectionState = state;
-		}
 	};
 	
-	private DTreeSelectionState<DataItem,Folder> editorState;
-	
-	private DTreeSelectionListener<DataItem,Folder> editorStateListener = new DTreeSelectionListener<DataItem,Folder>()
+	private NodeSelectionListener<DataItem,Folder> editorStateListener = new NodeSelectionListener<DataItem,Folder>()
 	{
 		@Override
-		public void setSelectionState(DTreeSelectionState<DataItem,Folder> state)
+		public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
 		{
-			editorState = state;
-		}
-		
-		@Override
-		public void selectionStateChanged()
-		{
+			NodeSelection<DataItem, Folder> selection = editorModel.getSelection();
+			
 			PropertiesWindow propsWindow = StructureDefinitionsWindow.get().getPropsWindow();
 			
-			DataItem di = editorState.nodes.get(0).getUserObject();
+			DataItem di = selection.get(0);
 			EditableObject selected = (di == null) ? null : di.getObject();
 			if(selected != null)
 			{
@@ -167,9 +153,8 @@ public class StructureDefinitionPage extends JPanel
 		public void componentHidden(ComponentEvent e)
 		{
 			StructureDefinitionsWindow.get().getPropsWindow().removeComponentListener(this);
-			if(editorTree != null)
-				if(editorTree.getTree() != null)
-					editorTree.getTree().getSelectionModel().clearSelection();
+			if(editorModel != null)
+				editorModel.getSelection().clear();
 		}
 	};
 	
@@ -185,11 +170,10 @@ public class StructureDefinitionPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		definitionsfm = new HierarchyModel<DataItem,Folder>(StructureDefinitions.root);
+		definitionsfm = new HierarchyModel<DataItem,Folder>(DataStructuresExtension.get().getStructureDefinitions().root, DataItem.class, Folder.class);
 		definitionTree = new DarkTree<DataItem,Folder>(definitionsfm);
 		definitionTree.setNamingEditingAllowed(false);
-		definitionTree.addTreeListener(definitionStateListener);
-		definitionTree.expand((Folder) StructureDefinitions.root.getItemByName("My Structures"));
+		definitionTree.expand((Folder) DataStructuresExtension.get().getStructureDefinitions().root.getItemByName("My Structures"));
 		
 		page = new JPanel(new BorderLayout());
 		page.setBackground(UIConsts.TEXT_EDITOR_COLOR);
@@ -209,19 +193,20 @@ public class StructureDefinitionPage extends JPanel
 		definitionTree.setListEditEnabled(true);
 		definitionTree.enablePropertiesButton();
 		definitionsfm.setUniqueLeafNames(true);
+		definitionsfm.getSelection().addSelectionListener(definitionStateListener);
 		
-		definitionTree.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
+		definitionsfm.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
 		{
 			@Override
-			public Collection<PopupItem> getCreatableNodeList()
+			public ArrayList<CreatableNodeInfo> getCreatableNodeList(Folder creationBranch)
 			{
 				return createNodeList;
 			}
 			
 			@Override
-			public DataItem createNode(PopupItem item, String nodeName)
+			public DataItem createNode(CreatableNodeInfo item, String nodeName)
 			{
-				if(item.text.equals("Folder"))
+				if(item.name.equals("Folder"))
 					return new Folder(nodeName);
 				
 				CreateStructureDefinitionDialog dg = new CreateStructureDefinitionDialog();
@@ -232,8 +217,14 @@ public class StructureDefinitionPage extends JPanel
 				if(toCreate == null)
 					return null;
 				
-				StructureDefinitions.addDefinition(toCreate);
+				DataStructuresExtension.get().getStructureDefinitions().registerItem(toCreate);
 				return toCreate.dref;
+			}
+			
+			@Override
+			public ArrayList<NodeAction<DataItem>> getNodeActions(DataItem[] targets)
+			{
+				return null;
 			}
 			
 			@Override
@@ -298,15 +289,15 @@ public class StructureDefinitionPage extends JPanel
 	
 	public void selectNone()
 	{
-		if(editorTree != null)
-			editorTree.getTree().getSelectionModel().clearSelection();
-		definitionTree.getTree().getSelectionModel().clearSelection();
+		if(editorModel != null)
+			editorModel.getSelection().clear();
+		definitionsfm.getSelection().clear();
 	}
 	
-	private static final ArrayList<PopupItem> createNodeList = new ArrayList<PopupItem>();
+	private static final ArrayList<CreatableNodeInfo> createNodeList = new ArrayList<CreatableNodeInfo>();
 	static
 	{
-		createNodeList.add(new PopupItem("Structure", null, null));
+		createNodeList.add(new CreatableNodeInfo("Structure", null, null));
 	}
 	
 	public JComponent getSidebar()

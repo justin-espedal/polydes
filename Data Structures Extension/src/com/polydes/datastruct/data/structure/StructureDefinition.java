@@ -10,33 +10,31 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.polydes.common.data.types.ExtraProperties;
+import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.ext.RegistryObject;
+import com.polydes.common.ui.object.EditableObject;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.core.Pair;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.EditableObject;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.folder.FolderPolicy;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.structure.elements.StructureTabset;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.ExtraProperties;
-import com.polydes.datastruct.data.types.ExtrasMap;
-import com.polydes.datastruct.data.types.Types;
+import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
 import com.polydes.datastruct.ui.page.StructurePage;
 
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
-
-public class StructureDefinition extends EditableObject
+public class StructureDefinition extends EditableObject implements RegistryObject
 {
 	public static FolderPolicy STRUCTURE_DEFINITION_POLICY = new StructureDefinitionEditingPolicy();
 	
 	private BufferedImage iconImg;
-	private ImageIcon smallIcon;
-	private ImageIcon mediumIcon;
+	private ImageIcon icon;
 	
 	private String name;
-	private String classname;
+	private String classname; // registry key
 	
 	public String customCode = "";
 	private final LinkedHashMap<String, StructureField> fields;
@@ -56,7 +54,7 @@ public class StructureDefinition extends EditableObject
 		Structure.addType(this);
 		
 		dref = new DataItem(name, this);
-		dref.setIcon(smallIcon);
+		dref.setIcon(icon);
 		
 		guiRoot = new Folder("root", new StructureTable(this));
 		guiRoot.setPolicy(STRUCTURE_DEFINITION_POLICY);
@@ -73,9 +71,8 @@ public class StructureDefinition extends EditableObject
 	public void setImage(BufferedImage image)
 	{
 		this.iconImg = image;
-		smallIcon = new ImageIcon(GraphicsUtilities.createThumbnail(image, 16));
-		mediumIcon = new ImageIcon(image);
-		dref.setIcon(smallIcon);
+		icon = new ImageIcon(image);
+		dref.setIcon(icon);
 	}
 	
 	public void setName(String name)
@@ -106,15 +103,9 @@ public class StructureDefinition extends EditableObject
 			return StringUtils.substringBeforeLast(classname, ".");
 	}
 
-	public void setClassname(String newClassname)
+	public void changeClassname(String newClassname)
 	{
-		String oldClassname = classname;
-		classname = newClassname;
-		
-		Types.typeFromXML.get(oldClassname).haxeType = newClassname;
-		Types.typeFromXML.put(newClassname, Types.typeFromXML.remove(oldClassname));
-		StructureDefinitions.defMap.put(newClassname, StructureDefinitions.defMap.remove(oldClassname));
-		
+		DataStructuresExtension.get().getStructureDefinitions().renameItem(this, newClassname);
 		Structures.root.setDirty(true);
 	}
 	
@@ -123,14 +114,9 @@ public class StructureDefinition extends EditableObject
 		return iconImg;
 	}
 	
-	public ImageIcon getSmallIcon()
+	public ImageIcon getIcon()
 	{
-		return smallIcon;
-	}
-	
-	public ImageIcon getMediumIcon()
-	{
-		return mediumIcon;
+		return icon;
 	}
 	
 	public StructureField getField(String name)
@@ -183,10 +169,10 @@ public class StructureDefinition extends EditableObject
 		//l is original type/optionalArgs
 		//r is new type/optionalArgs
 		
-		Pair<DataType<?>> type;
+		Pair<HaxeDataType> type;
 		Pair<ExtraProperties> optArgs;
 		
-		public TypeUpdate(Pair<DataType<?>> type, Pair<ExtraProperties> optArgs)
+		public TypeUpdate(Pair<HaxeDataType> type, Pair<ExtraProperties> optArgs)
 		{
 			this.type = type;
 			this.optArgs = optArgs;
@@ -213,7 +199,7 @@ public class StructureDefinition extends EditableObject
 		fields.remove(f);
 	}
 	
-	public void setFieldTypeForPreview(StructureField f, DataType<?> type)
+	public void setFieldTypeForPreview(StructureField f, HaxeDataType type)
 	{
 		if(typeUpdates == null)
 			typeUpdates = new HashMap<StructureField, TypeUpdate>();
@@ -221,7 +207,7 @@ public class StructureDefinition extends EditableObject
 		if(!typeUpdates.containsKey(f))
 			typeUpdates.put(f,
 				new TypeUpdate(
-					new Pair<DataType<?>>(
+					new Pair<HaxeDataType>(
 						f.getType(),
 						null
 					),
@@ -234,7 +220,7 @@ public class StructureDefinition extends EditableObject
 		
 		TypeUpdate update = typeUpdates.get(f);
 		update.type.r = type;
-		update.optArgs.r = type.loadExtras(new ExtrasMap());
+		update.optArgs.r = type.dataType.loadExtras(new ExtrasMap());
 		
 		editor.preview.clearProperty(f);
 		f.setExtras(update.optArgs.r);
@@ -264,7 +250,7 @@ public class StructureDefinition extends EditableObject
 		{
 			for(StructureField field : typeUpdates.keySet())
 			{
-				Pair<DataType<?>> types = typeUpdates.get(field).type;
+				Pair<HaxeDataType> types = typeUpdates.get(field).type;
 				if(types.l == types.r)
 					continue;
 				setFieldType(field, types.r);
@@ -288,14 +274,14 @@ public class StructureDefinition extends EditableObject
 		}
 	}
 	
-	public void setFieldType(StructureField f, DataType<?> type)
+	public void setFieldType(StructureField f, HaxeDataType type)
 	{
 		for(Structure s : Structure.getAllOfType(this))
 			s.clearProperty(f);
 		if(f.getType() != type)
 		{
 			f.setType(type);
-			f.setExtras(type.loadExtras(new ExtrasMap()));
+			f.setExtras(type.dataType.loadExtras(new ExtrasMap()));
 		}
 	}
 	
@@ -405,9 +391,9 @@ public class StructureDefinition extends EditableObject
 		for(Structure s : Structures.structures.get(this))
 			StructurePage.get().getFolderModel().removeItem(s.dref, s.dref.getParent());
 		
-		StructureDefinitions.defMap.remove(getFullClassname());
+		DataStructuresExtension.get().getStructureDefinitions().unregisterItem(this);
+		DataStructuresExtension.get().getHaxeTypes().unregisterItem(classname);
 		Structures.structures.remove(this);
-		Types.typeFromXML.remove(classname);
 		
 		dispose();
 	}
@@ -436,5 +422,32 @@ public class StructureDefinition extends EditableObject
 		StructureDefinition def = new StructureDefinition(name, name);
 		def.unknown = true;
 		return def;
+	}
+
+	public void realizeFieldHaxeType(StructureField field, HaxeDataType t)
+	{
+		DataStructuresExtension.get().getHaxeTypes().requestValue(field.getType().dataType.getId(), dt -> {
+			if(Structures.structures.containsKey(this))
+				for(Structure struct : Structures.structures.get(this))
+					struct.setPropertyFromString(field, (String) struct.getProperty(field));
+		});
+	}
+	
+	@Override
+	public String getKey()
+	{
+		return classname;
+	}
+	
+	@Override
+	public void setKey(String newKey)
+	{
+		this.classname = newKey;
+	}
+
+	@Override
+	public boolean fillsViewHorizontally()
+	{
+		return false;
 	}
 }

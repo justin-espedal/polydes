@@ -1,26 +1,24 @@
 package com.polydes.datastruct.io.read;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
-import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
-import com.polydes.datastruct.data.structure.elements.StructureUnknown;
+import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.StructureDefinition;
 
 public class StructureDefinitionReader
 {
-	private static final Logger log = Logger.getLogger(StructureDefinitionReader.class);
+//	private static final Logger log = Logger.getLogger(StructureDefinitionReader.class);
 	
 	public static void read(Element root, StructureDefinition model)
 	{
 		if(root.hasAttribute("extends"))
-			model.parent = StructureDefinitions.getFromString(root.getAttribute("extends"));
+			model.parent = DataStructuresExtension.get().getStructureDefinitions().getItem(root.getAttribute("extends"));
 		readFields(root, model, model.guiRoot);
 	}
 	
@@ -30,20 +28,10 @@ public class StructureDefinitionReader
 		{
 			for(Element e : XML.children(parent))
 			{
-				SDEType<?> type = null;
-				try
-				{
-					type = SDETypes.fromTag(e.getNamespaceURI(), e.getLocalName());
-				}
-				catch(Exception ex)
-				{
-					log.error(ex.getMessage());
-				}
-				if(type == null)
-				{
-					log.error("Couldn't load structure definition element: " + e.getTagName());
-					type = SDETypes.fromClass(StructureUnknown.class);
-				}
+				String ns = e.getNamespaceURI();
+				if(ns == null)
+					ns = SDETypes.BASE_OWNER;
+				SDEType<?> type = DataStructuresExtension.get().getSdeTypes().getItem(ns, e.getLocalName());
 				SDE newItem = type.read(model, e);
 				
 				if(type.isBranchNode)

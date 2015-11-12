@@ -14,54 +14,68 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataType;
+import com.polydes.common.data.types.ExtraProperties;
+import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.data.types.builtin.extra.ColorType;
+import com.polydes.common.data.types.builtin.extra.ColorType.ColorEditor;
+import com.polydes.common.ext.RORealizer;
 import com.polydes.common.io.XML;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.ExtraProperties;
-import com.polydes.datastruct.data.types.ExtrasMap;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.UnknownDataType;
-import com.polydes.datastruct.data.types.builtin.extra.ColorType;
-import com.polydes.datastruct.data.types.builtin.extra.ColorType.ColorEditor;
-import com.polydes.datastruct.data.types.general.StructureType;
+import com.polydes.datastruct.data.types.HaxeDataType;
+import com.polydes.datastruct.data.types.HaxeTypes;
+import com.polydes.datastruct.data.types.StructureType;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.utils.Layout;
 
-public class StructureField extends SDE
+public class StructureField extends SDE implements RORealizer<HaxeDataType>
 {
 	private StructureDefinition owner;
 	
 	private String varname;
-	private DataType<?> type;
+	private HaxeDataType type;
 	private String label;
 	private String hint;
 	private boolean optional;
 	private ExtraProperties extras;
 	
-	public StructureField(StructureDefinition owner, String varname, DataType<?> type, String label, String hint, boolean optional, ExtrasMap extras)
+	private ExtrasMap emap;
+	
+	public StructureField(StructureDefinition owner, String varname, String type, String label, String hint, boolean optional, ExtrasMap extras)
 	{
 		this.owner = owner;
 		this.varname = varname;
-		this.type = type;
 		this.label = label;
 		this.hint = hint;
 		this.optional = optional;
-		this.extras = type.loadExtras(extras);
+		
+		emap = extras;
+		DataStructuresExtension.get().getHaxeTypes().requestValue(type, this);
+	}
+	
+	@Override
+	public void realizeRO(HaxeDataType type)
+	{
+		//TODO: This is assuming that an initialized HaxeDataType -always- knows a realized dataType.
+		this.type = type;
+		this.extras = type.dataType.loadExtras(emap);
+		emap = null;
 	}
 	
 	public StructureDefinition getOwner()
@@ -71,7 +85,7 @@ public class StructureField extends SDE
 	
 	public void loadExtras(ExtrasMap extras)
 	{
-		this.extras = type.loadExtras(extras);
+		this.extras = type.dataType.loadExtras(extras);
 	}
 	
 	public ExtraProperties getExtras()
@@ -99,7 +113,7 @@ public class StructureField extends SDE
 		return varname;
 	}
 	
-	public DataType<?> getType()
+	public HaxeDataType getType()
 	{
 		return type;
 	}
@@ -130,24 +144,16 @@ public class StructureField extends SDE
 		this.optional = optional;
 	}
 	
-	public void setTypeForPreview(DataType<?> type)
+	public void setTypeForPreview(HaxeDataType type)
 	{
 		this.type = type;
 		owner.setFieldTypeForPreview(this, type);
 	}
 	
-	public void setType(DataType<?> type)
+	public void setType(HaxeDataType type)
 	{
 		this.type = type;
 		owner.setFieldType(this, type);
-	}
-	
-	public void realizeType(DataType<?> type)
-	{
-		if(!(this.type instanceof UnknownDataType))
-			throw new IllegalStateException("Cannot realize a field that already knows its type.");
-		this.extras = type.loadExtras(((UnknownDataType) this.type).saveExtras(extras));
-		this.type = type;
 	}
 	
 	@Override
@@ -227,10 +233,10 @@ public class StructureField extends SDE
 			if(e.hasChildNodes())
 				XML.children(e).forEach((child) -> emap.put(child.getTagName(), readExtrasFromElement(child)));
 			
-			DataType<?> dtype = Types.tryToGetFromString(type);
-			
-			StructureField toAdd = new StructureField(model, name, dtype, label, hint, optional, emap);
+			StructureField toAdd = new StructureField(model, name, type, label, hint, optional, emap);
 			model.addField(toAdd);
+			
+			DataStructuresExtension.get().getHaxeTypes().requestValue(type, t -> model.realizeFieldHaxeType(toAdd, t));
 			
 			return toAdd;
 		}
@@ -248,15 +254,15 @@ public class StructureField extends SDE
 		public void write(StructureField f, Element e)
 		{
 			e.setAttribute("name", f.getVarname());
-			e.setAttribute("type", f.getType().haxeType);
+			e.setAttribute("type", f.getType().getHaxeType());
 			XML.write(e, "label", f.getLabel());
 			if(!f.getHint().isEmpty())
 				XML.write(e, "hint", f.getHint());
 			if(f.isOptional())
 				e.setAttribute("optional", "true");
 			
-			DataType<?> dtype = f.getType();
-			ExtrasMap emap = dtype.saveExtras(f.getExtras());
+			HaxeDataType dtype = f.getType();
+			ExtrasMap emap = dtype.dataType.saveExtras(f.getExtras());
 			if(emap != null)
 				writeExtrasToElement(e.getOwnerDocument(), e, emap);
 		}
@@ -288,7 +294,7 @@ public class StructureField extends SDE
 		public StructureField create(StructureDefinition def, String nodeName)
 		{
 			StructureField newField =
-					new StructureField(def, StructureField.formatVarname(nodeName), Types._String, nodeName, "", false, new ExtrasMap());
+					new StructureField(def, StructureField.formatVarname(nodeName), HaxeTypes._String.getHaxeType(), nodeName, "", false, new ExtrasMap());
 			def.addField(newField, def.getEditor().preview);
 			return newField;
 		}
@@ -371,7 +377,7 @@ public class StructureField extends SDE
 		{
 			JComponent editPanel = null;
 			
-			DataType type = f.getType();
+			DataType type = f.getType().dataType;
 			
 			if(sheet.fieldEditorMap.containsKey(f))
 				sheet.fieldEditorMap.get(f).dispose();

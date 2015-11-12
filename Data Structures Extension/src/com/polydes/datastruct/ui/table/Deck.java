@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.utils.AdaptingCardLayout;
 import com.polydes.datastruct.ui.utils.Layout;
 

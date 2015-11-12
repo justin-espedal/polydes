@@ -15,10 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.polydes.common.comp.UpdatingCombo;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.StructureFolder;
-import com.polydes.datastruct.ui.comp.UpdatingCombo;
 
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.comp.ButtonBarFactory;
@@ -53,7 +53,7 @@ public class EditFolderDialog extends StencylDialog
 		dp.startBlock();
 		dp.addHeader("Edit Folder");
 		dp.addGenericRow("Structure Exclusive", structureExclusiveField = new JCheckBox());
-		dp.addGenericRow("Structure", typeChooser = new UpdatingCombo<StructureDefinition>(StructureDefinitions.defMap.values(), null));
+		dp.addGenericRow("Structure", typeChooser = new UpdatingCombo<StructureDefinition>(DataStructuresExtension.get().getStructureDefinitions().values(), null));
 		dp.finishBlock();
 		
 		structureExclusiveField.setBackground(null);

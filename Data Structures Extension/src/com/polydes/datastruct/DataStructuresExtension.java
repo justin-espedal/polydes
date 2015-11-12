@@ -2,7 +2,6 @@ package com.polydes.datastruct;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -11,19 +10,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.polydes.common.ext.GameExtensionWatcher;
 import com.polydes.common.ui.darktree.DarkTree;
-import com.polydes.datastruct.data.core.Images;
-import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.ext.DataStructureExtension;
-import com.polydes.datastruct.ext.DataTypeExtension;
-import com.polydes.datastruct.ext.StructureDefinitionExtension;
+import com.polydes.datastruct.data.types.HaxeDataType;
+import com.polydes.datastruct.data.types.HaxeTypes;
 import com.polydes.datastruct.io.HXGenerator;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.updates.V3_GameExtensionUpdate;
@@ -31,7 +24,6 @@ import com.polydes.datastruct.updates.V4_FullTypeNamesUpdate;
 
 import stencyl.core.lib.Game;
 import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
-import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.GameExtension;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.Locations;
@@ -42,17 +34,31 @@ public class DataStructuresExtension extends GameExtension
 	
 	private static DataStructuresExtension instance;
 	
-	private ExtensionMonitor monitor;
-	public ArrayList<DataTypeExtension> dataTypeExtensions = new ArrayList<>();
-	public ArrayList<DataStructureExtension> dataStructureExtensions = new ArrayList<>();
-	public ArrayList<StructureDefinitionExtension> sdeExtensions = new ArrayList<>();
+	public SDETypes sdeTypes;
+	public HaxeTypes haxeTypes;
+	public StructureDefinitions structureDefinitions;
 	
 	public static boolean forceUpdateData = false;
 	private boolean initialized = false;
 	
-	public boolean isInitialized()
+	public static DataStructuresExtension get()
 	{
-		return initialized;
+		return instance;
+	}
+	
+	public SDETypes getSdeTypes()
+	{
+		return sdeTypes;
+	}
+	
+	public HaxeTypes getHaxeTypes()
+	{
+		return haxeTypes;
+	}
+	
+	public StructureDefinitions getStructureDefinitions()
+	{
+		return structureDefinitions;
 	}
 	
 	/*
@@ -82,101 +88,11 @@ public class DataStructuresExtension extends GameExtension
 		Prefs.DEFPAGE_HEIGHT = readIntProp("defpage.height", 480);
 		Prefs.DEFPAGE_SIDEWIDTH = readIntProp("defpage.sidewidth", DarkTree.DEF_WIDTH);
 		Prefs.DEFPAGE_SIDEDL = readIntProp("defpage.sidedl", 150);
-		
-		monitor = new ExtensionMonitor();
-		monitor.startWatching();
 	}
 	
-	public static DataStructuresExtension get()
+	public boolean isInitialized()
 	{
-		return instance;
-	}
-	
-	private class ExtensionMonitor extends GameExtensionWatcher
-	{
-		@Override
-		public void extensionAdded(BaseExtension e)
-		{
-			DataTypeExtension dtExt =
-				(e instanceof DataTypeExtension) ?
-				(DataTypeExtension) e :
-				null;
-			
-			DataStructureExtension dsExt =
-				(e instanceof DataStructureExtension) ?
-				(DataStructureExtension) e :
-				null;
-				
-			StructureDefinitionExtension sdExt =
-				(e instanceof StructureDefinitionExtension) ?
-				(StructureDefinitionExtension) e :
-				null;
-				
-			if(dtExt != null)
-				dataTypeExtensions.add(dtExt);
-			if(dsExt != null)
-				dataStructureExtensions.add(dsExt);
-			if(sdExt != null)
-				sdeExtensions.add(sdExt);
-			
-			if(initialized)
-			{
-				if(sdExt != null)
-					for(SDEType<?> type : sdExt.getSdeTypes())
-						SDETypes.addType(e.getManifest().id, type);
-				
-				if(dtExt != null)
-					for(DataType<?> type : dtExt.getDataTypes())
-						Types.addType(type);
-					
-				if(dsExt != null)
-					StructureDefinitions.get().addFolder(dsExt.getDefinitionsFolder(), e.getManifest().name);
-				
-				Types.resolveChanges();
-			}
-		}
-
-		@Override
-		public void extensionRemoved(BaseExtension e)
-		{
-			DataTypeExtension dtExt =
-				(e instanceof DataTypeExtension) ?
-				(DataTypeExtension) e :
-				null;
-			
-			DataStructureExtension dsExt =
-				(e instanceof DataStructureExtension) ?
-				(DataStructureExtension) e :
-				null;
-			
-			StructureDefinitionExtension sdExt =
-				(e instanceof StructureDefinitionExtension) ?
-				(StructureDefinitionExtension) e :
-				null;
-			
-			if(dtExt != null)
-				dataTypeExtensions.remove(dtExt);
-			if(dsExt != null)
-				dataStructureExtensions.remove(dsExt);
-			if(sdExt != null)
-				sdeExtensions.remove(sdExt);
-			
-			if(initialized)
-			{
-//				if(sdExt != null)
-//					for(SDEType<?> type : sdExt.getSdeTypes())
-//						SDETypes.removeType(e.getManifest().id, type);
-				
-				if(dtExt != null)
-					for(DataType<?> type : dtExt.getDataTypes())
-						Types.removeType(type);
-				
-				if(dsExt != null)
-					StructureDefinitions.get().removeFolder(dsExt.getDefinitionsFolder());
-				
-				Types.resolveChanges();
-			}
-		}
+		return initialized;
 	}
 	
 	@Override
@@ -207,9 +123,6 @@ public class DataStructuresExtension extends GameExtension
 		properties.put("defpage.sidedl", Prefs.DEFPAGE_SIDEDL);
 		
 		super.onDestroy();
-		
-		monitor.stopWatching();
-		monitor = null;
 	}
 	
 	private static String sourceDir;
@@ -221,7 +134,7 @@ public class DataStructuresExtension extends GameExtension
 		{
 			try
 			{
-				StructureDefinitions.get().saveChanges();
+				DataStructuresExtension.get().getStructureDefinitions().saveChanges();
 			}
 			catch (IOException e1)
 			{
@@ -265,11 +178,11 @@ public class DataStructuresExtension extends GameExtension
 			Text.writeLines(dataList, HXGenerator.generateFileList(new File(getExtrasFolder(), "data")));
 			
 			write("com.polydes.datastruct.DataStructureReader", HXGenerator.generateReader());
-			for(DataType<?> type : Types.typeFromXML.values())
+			for(HaxeDataType type : haxeTypes.values())
 			{
 				List<String> lines = type.generateHaxeClass();
 				if(lines != null)
-					write(type.haxeType, lines);
+					write(type.getHaxeType(), lines);
 			}
 		}
 	}
@@ -321,27 +234,15 @@ public class DataStructuresExtension extends GameExtension
 	{
 		try
 		{
-			for(StructureDefinitionExtension sdExt : sdeExtensions)
-			{
-				String extensionID = ((BaseExtension) sdExt).getManifest().id;
-				for(SDEType<?> type : sdExt.getSdeTypes())
-					SDETypes.addType(extensionID, type);
-			}
-			
-			//Add all Types
-			Types.initialize();
-			
-			for(DataTypeExtension ext : dataTypeExtensions)
-				for(DataType<?> type : ext.getDataTypes())
-					Types.addType(type);
+			sdeTypes = new SDETypes();
+			haxeTypes = new HaxeTypes();
+			structureDefinitions = new StructureDefinitions();
 			
 			new File(getDataFolder(), "defs").mkdirs();
-			StructureDefinitions.get().addFolder(new File(getDataFolder(), "defs"), "My Structures");
-			for(DataStructureExtension ext : dataStructureExtensions)
-				StructureDefinitions.get().addFolder(ext.getDefinitionsFolder(), ((BaseExtension) ext).getManifest().name);
+			DataStructuresExtension.get().getStructureDefinitions().addFolder(new File(getDataFolder(), "defs"), "My Structures");
 			
 			new File(getExtrasFolder(), "data").mkdirs();
-			Images.get().load(new File(Locations.getGameLocation(getGame()), "extras"));
+//			Images.get().load(new File(Locations.getGameLocation(getGame()), "extras"));
 			Structures.get().load(new File(getExtrasFolder(), "data"));
 			
 			Blocks.addDesignModeBlocks();
@@ -364,13 +265,17 @@ public class DataStructuresExtension extends GameExtension
 	public void onGameWithDataClosed()
 	{
 		MainPage.disposePages();
-		StructureDefinitions.dispose();
+		structureDefinitions.dispose();
 		StructureCondition.dispose();
-		Types.dispose();
-		Images.dispose();
+		haxeTypes.dispose();
+//		Images.dispose();
 		Structures.dispose();
 		Blocks.dispose();
-		SDETypes.disposeExtended();
+		sdeTypes.dispose();
+		
+		sdeTypes = null;
+		haxeTypes = null;
+		structureDefinitions = null;
 		
 		initialized = false;
 	}
@@ -407,7 +312,5 @@ public class DataStructuresExtension extends GameExtension
 	@Override
 	public void onUninstall()
 	{
-		monitor.stopWatching();
-		monitor = null;
 	}
 }

@@ -3,7 +3,7 @@ package com.polydes.datastruct.ui.page;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import com.polydes.datastruct.data.folder.EditableObject;
+import com.polydes.common.ui.object.EditableObject;
 import com.polydes.datastruct.ui.utils.LightweightWindow;
 
 import stencyl.sw.lnf.Theme;

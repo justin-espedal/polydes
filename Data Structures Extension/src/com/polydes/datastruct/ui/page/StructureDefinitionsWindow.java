@@ -10,9 +10,9 @@ import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
 import com.polydes.common.comp.MiniSplitPane;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.Prefs;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
 
 import stencyl.sw.SW;
 
@@ -82,7 +82,7 @@ public class StructureDefinitionsWindow extends JDialog
 				}
 				*/
 				
-				for(StructureDefinition def : StructureDefinitions.defMap.values())
+				for(StructureDefinition def : DataStructuresExtension.get().getStructureDefinitions().values())
 					def.update();
 				StructurePage.get().refreshSelected();
 				
@@ -108,7 +108,7 @@ public class StructureDefinitionsWindow extends JDialog
 		StructureDefinitionPage.get().selectNone();
 		propsWindow.setObject(null);
 		propsWindow.setVisible(false);
-		for(StructureDefinition def : StructureDefinitions.defMap.values())
+		for(StructureDefinition def : DataStructuresExtension.get().getStructureDefinitions().values())
 			def.disposeEditor();
 	}
 	
@@ -161,7 +161,7 @@ public class StructureDefinitionsWindow extends JDialog
 		{
 			_instance.dispose();
 			_instance = null;
-			for(StructureDefinition def : StructureDefinitions.defMap.values())
+			for(StructureDefinition def : DataStructuresExtension.get().getStructureDefinitions().values())
 				def.disposeEditor();
 		}
 	}

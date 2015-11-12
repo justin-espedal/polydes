@@ -95,7 +95,7 @@ public class MainPage extends JPanel
 	
 	public static void disposePages()
 	{
-		StructurePage.dispose();
+		StructurePage.get().dispose();
 		StructureDefinitionPage.dispose();
 		StructureDefinitionsWindow.disposeWindow();
 		if(_instance != null)

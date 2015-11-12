@@ -49,10 +49,10 @@ public class StructureUnknown extends SDE
 	
 	public static class UnknownType extends SDEType<StructureUnknown>
 	{
-		public UnknownType()
+		public UnknownType(String tag)
 		{
 			sdeClass = StructureUnknown.class;
-			tag = "unknown";
+			this.tag = tag;
 			isBranchNode = true;
 			icon = Resources.loadIcon("question-white.png");
 			childTypes = new ArrayList<>();

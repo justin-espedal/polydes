@@ -1,7 +1,7 @@
 package com.polydes.datastruct.utils;
 
-import com.polydes.datastruct.data.core.DataList;
-import com.polydes.datastruct.data.types.DataType;
+import com.polydes.common.data.core.DataList;
+import com.polydes.common.data.types.DataType;
 
 public class DLang
 {

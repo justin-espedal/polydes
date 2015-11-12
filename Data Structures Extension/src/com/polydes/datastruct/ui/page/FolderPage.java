@@ -7,9 +7,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.ui.UIConsts;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class FolderPage extends JPanel
 {

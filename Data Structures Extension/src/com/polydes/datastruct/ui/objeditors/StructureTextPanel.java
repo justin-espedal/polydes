@@ -1,10 +1,10 @@
 package com.polydes.datastruct.ui.objeditors;
 
+import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.data.types.builtin.basic.StringType;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.structure.elements.StructureText;
-import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.basic.StringType;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 
 public class StructureTextPanel extends StructureObjectPanel
 {

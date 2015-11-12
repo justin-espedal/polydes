@@ -4,44 +4,33 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 
-import com.polydes.common.util.Lang;
+import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.ExtraProperties;
+import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.data.types.builtin.basic.BoolType.BooleanEditor;
+import com.polydes.common.data.types.builtin.basic.StringType;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.elements.StructureField;
-import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.ExtraProperties;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.data.types.UpdateListener;
-import com.polydes.datastruct.data.types.builtin.basic.StringType;
-import com.polydes.datastruct.data.types.builtin.basic.BoolType.BooleanEditor;
-import com.polydes.datastruct.data.types.hidden.DataTypeType;
+import com.polydes.datastruct.data.types.HaxeDataType;
+import com.polydes.datastruct.data.types.HaxeDataTypeType;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.utils.DocumentAdapter;
 import com.polydes.datastruct.ui.utils.VarNameFilter;
 
 public class StructureFieldPanel extends StructureObjectPanel
 {
-	private static final DataTypeType.Extras excludeHiddenTypes;
-	
-	static
-	{
-		excludeHiddenTypes = new DataTypeType.Extras();
-		excludeHiddenTypes.excludedTypes = Lang.hashset(Types._DataType);
-	}
-	
 	StructureField field;
 	
 	String oldName;
-	DataType<?> oldType;
+	HaxeDataType oldType;
 	String oldLabel;
 	String oldHint;
 	boolean oldOptional;
 	boolean oldDirty;
 	
 	JTextField nameField;
-	@SuppressWarnings("rawtypes")
-	DataEditor<DataType> typeEditor;
+	DataEditor<HaxeDataType> typeEditor;
 	DataEditor<String> labelEditor;
 	DataEditor<String> hintEditor;
 	DataEditor<Boolean> optionalEditor;
@@ -93,14 +82,14 @@ public class StructureFieldPanel extends StructureObjectPanel
 		
 		//=== Type
 		
-		typeEditor = new DataTypeType.DataTypeEditor(excludeHiddenTypes);
+		typeEditor = new HaxeDataTypeType.HaxeDataTypeEditor();
 		typeEditor.setValue(field.getType());
 		typeEditor.addListener(new UpdateListener()
 		{
 			@Override
 			public void updated()
 			{
-				DataType<?> type = typeEditor.getValue();
+				HaxeDataType type = typeEditor.getValue();
 				
 				field.setTypeForPreview(type);
 				clearExpansion(extraPropertiesExpansion);

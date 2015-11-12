@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.Types;
+import com.polydes.datastruct.data.types.HaxeDataType;
 
 import stencyl.sw.editors.snippet.designer.AttributeType;
 import stencyl.sw.editors.snippet.designer.Definition;
@@ -230,13 +229,13 @@ public class Blocks
 		Definitions.get().put(blockDef.tag, blockDef);
 		tagCache.put(blockDef.tag, blockDef);
 		
-		for(DataType<?> type : Types.typeFromXML.values())
+		for(HaxeDataType type : DataStructuresExtension.get().getHaxeTypes().values())
 		{
 			addDesignModeBlocks(type);
 		}
 	}
 	
-	public static void addDesignModeBlocks(DataType<?> type)
+	public static void addDesignModeBlocks(HaxeDataType type)
 	{
 		ArrayList<Definition> blocks = type.getBlocks();
 		if(blocks != null)
@@ -294,7 +293,7 @@ public class Blocks
 		tagCache.clear();
 	}
 
-	public static void removeDesignModeBlocks(DataType<?> type)
+	public static void removeDesignModeBlocks(HaxeDataType type)
 	{
 		ArrayList<Definition> blocks = type.getBlocks();
 		if(blocks != null)

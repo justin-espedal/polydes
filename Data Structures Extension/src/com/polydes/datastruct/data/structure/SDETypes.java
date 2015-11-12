@@ -3,9 +3,9 @@ package com.polydes.datastruct.data.structure;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map.Entry;
 
-import com.polydes.common.util.PopupUtil.PopupItem;
+import com.polydes.common.ext.ExtendableObjectRegistry;
+import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
 import com.polydes.datastruct.data.structure.elements.StructureCondition.ConditionType;
 import com.polydes.datastruct.data.structure.elements.StructureField.FieldType;
 import com.polydes.datastruct.data.structure.elements.StructureHeader.HeaderType;
@@ -16,32 +16,24 @@ import com.polydes.datastruct.data.structure.elements.StructureText.TextType;
 import com.polydes.datastruct.data.structure.elements.StructureUnknown.UnknownType;
 
 /** StructureDefinitionElementTypes **/
-public class SDETypes
+public class SDETypes extends ExtendableObjectRegistry<SDEType<?>>
 {
-	static HashMap<String, SDEType<?>> fromStandardTags = new HashMap<>();
-	static HashMap<String, HashMap<String, SDEType<?>>> fromTag = new HashMap<>();
-	static HashMap<Class<? extends SDE>, SDEType<?>> fromClass = new HashMap<>();
-	
-	public static HashMap<Class<? extends SDE>, PopupItem> asPopupItem = new HashMap<>();
-	static
+	public SDETypes()
 	{
-		addType(null, new ConditionType());
-		addType(null, new FieldType());
-		addType(null, new HeaderType());
-		addType(null, new TabType());
-		addType(null, new TabsetType());
-		addType(null, new TextType());
-		addType(null, new UnknownType());
+		String base = ExtendableObjectRegistry.BASE_OWNER;
+		registerItem(base, new ConditionType());
+		registerItem(base, new FieldType());
+		registerItem(base, new HeaderType());
+		registerItem(base, new TabType());
+		registerItem(base, new TabsetType());
+		registerItem(base, new TextType());
+//		registerItem(base, new UnknownType());
+		
 		fromClass.put(StructureTable.class, fromClass.get(StructureTab.class));
 	}
 	
-	public static SDEType<?> fromTag(String ext, String tag)
-	{
-		if(ext == null)
-			return fromStandardTags.get(tag);
-		else
-			return fromTag.get(ext).get(tag);
-	}
+	static HashMap<Class<? extends SDE>, SDEType<?>> fromClass = new HashMap<>();
+	public static HashMap<Class<? extends SDE>, CreatableNodeInfo> asCNInfo = new HashMap<>();
 	
 	@SuppressWarnings("unchecked")
 	public static <T extends SDE> SDEType<T> fromClass(Class<T> c)
@@ -49,40 +41,35 @@ public class SDETypes
 		return (SDEType<T>) fromClass.get(c);
 	}
 	
-	public static void addType(String ext, SDEType<?> type)
+	@Override
+	public void registerItem(String owner, SDEType<?> type)
 	{
-		if(ext == null)
-			fromStandardTags.put(type.tag, type);
-		else
-		{
-			if(!fromTag.containsKey(ext))
-				fromTag.put(ext, new HashMap<>());
-			fromTag.get(ext).put(type.tag, type);
-		}
+		super.registerItem(owner, type);
 		fromClass.put(type.sdeClass, type);
 		
 		String capitalized = type.tag.substring(0, 1).toUpperCase(Locale.ENGLISH) + type.tag.substring(1);
-		asPopupItem.put(type.sdeClass, new PopupItem(capitalized, type.sdeClass, type.icon));
+		asCNInfo.put(type.sdeClass, new CreatableNodeInfo(capitalized, type.sdeClass, type.icon));
 		
-		type.owner = ext;
+		type.owner = owner;
 	}
 	
-	public static void removeExtendedType(String extension, SDEType<?> type)
+	@Override
+	public void unregisterItem(String owner, String key)
 	{
+		SDEType<?> type = super.getItem(owner, key);
+		super.unregisterItem(owner, key);
 		fromClass.remove(type.sdeClass);
-		asPopupItem.remove(type.sdeClass);
+		asCNInfo.remove(type.sdeClass);
 	}
-
+	
 	public static Collection<SDEType<?>> getTypes()
 	{
 		return fromClass.values();
 	}
 
-	public static void disposeExtended()
+	@Override
+	public SDEType<?> generatePlaceholder(String owner, String key)
 	{
-		for(HashMap<String, SDEType<?>> map : fromTag.values())
-			for(Entry<String, SDEType<?>> entry : map.entrySet())
-				removeExtendedType(entry.getKey(), entry.getValue());
-		fromTag.clear();
+		return new UnknownType(key);
 	}
 }

@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
+import com.polydes.common.ui.object.EditableObject;
 
 
 public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>

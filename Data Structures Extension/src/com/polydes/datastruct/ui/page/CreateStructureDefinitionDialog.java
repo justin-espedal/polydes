@@ -20,12 +20,11 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.polydes.common.comp.UpdatingCombo;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
-import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.UIConsts;
-import com.polydes.datastruct.ui.comp.UpdatingCombo;
 import com.polydes.datastruct.ui.utils.ImageImporter;
 import com.polydes.datastruct.ui.utils.Layout;
 
@@ -85,8 +84,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 			@Override
 			public boolean verifyText(JTextField field, String text)
 			{
-				nameOk = (editDef != null && editDef.getName().equals(text)) ||
-						(isValidName(text) && !Types.typeFromXML.containsKey(text));
+				nameOk = isValidName(text);
 				verify();
 				
 				return nameOk;
@@ -120,7 +118,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		nameField = new AutoVerifyField(nameVerifier, "");
 		classField = new AutoVerifyField(classVerifier, "");
 		packageField = new AutoVerifyField(packageVerifier, "");
-		parentTypeChooser = new UpdatingCombo<StructureDefinition>(StructureDefinitions.defMap.values(), null);
+		parentTypeChooser = new UpdatingCombo<StructureDefinition>(DataStructuresExtension.get().getStructureDefinitions().values(), null);
 		parentTypeChooser.setBackground(null);
 		JButton parentTypeClearButton = new JButton("Clear");
 		parentTypeClearButton.addActionListener(e -> parentTypeChooser.setSelectedItem(null));
@@ -264,14 +262,14 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		{
 			if(!editDef.getName().equals(nameField.getText()))
 				editDef.setName(nameField.getText());
-			editDef.setClassname(packageField.getText() + "." + classField.getText());
+			editDef.changeClassname(packageField.getText() + "." + classField.getText());
 			if(editDef.getIconImg() != iconImg)
 				editDef.setImage(iconImg);
 			editDef.parent = parentTypeChooser.getSelected();
 			
 			JLabel previewLabel = editDef.getEditor().getPreview().getEditor().label;
 			previewLabel.setText(editDef.getName());
-			previewLabel.setIcon(editDef.getMediumIcon());
+			previewLabel.setIcon(editDef.getIcon());
 			editDef.setDirty(true);
 		}
 		else

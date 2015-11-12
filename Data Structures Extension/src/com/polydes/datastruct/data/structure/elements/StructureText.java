@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
@@ -16,7 +17,6 @@ import com.polydes.datastruct.ui.objeditors.StructureTextPanel;
 import com.polydes.datastruct.ui.table.Card;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 

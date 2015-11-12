@@ -11,15 +11,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.polydes.common.data.types.DataType;
+import com.polydes.common.data.types.Types;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.data.types.general.StructureType;
+import com.polydes.datastruct.data.types.StructureType;
 import com.polydes.datastruct.io.Text;
 
 import stencyl.sw.util.FileHelper;
@@ -52,12 +51,12 @@ public class TypenameUpdater
 			{
 				String oldTypeName = entry.getKey();
 				String newTypeName = entry.getValue();
-				DataType<?> loadedType = Types.fromXML(newTypeName);
+				DataType<?> loadedType = Types.get().getItem(newTypeName);
 				
 				//move any data that was loaded into unknown structure definitions into new definitions
-				if(StructureDefinitions.defMap.containsKey(oldTypeName))
+				if(dse.getStructureDefinitions().hasItem(oldTypeName))
 				{
-					StructureDefinition unknown = StructureDefinitions.defMap.get(oldTypeName);
+					StructureDefinition unknown = dse.getStructureDefinitions().getItem(oldTypeName);
 					StructureDefinition known = ((StructureType) loadedType).def;
 					
 					ArrayList<Structure> oldList = Structures.structures.remove(unknown);
@@ -68,7 +67,7 @@ public class TypenameUpdater
 						s.realizeTemplate(known);
 						newList.add(s);
 					}
-					StructureDefinitions.defMap.remove(oldTypeName);
+					dse.getStructureDefinitions().realizeUnknown(oldTypeName, known);
 					Structure.removeType(unknown);
 				}
 			}

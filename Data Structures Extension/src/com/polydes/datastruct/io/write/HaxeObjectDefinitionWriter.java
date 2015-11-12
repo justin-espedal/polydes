@@ -25,7 +25,7 @@ public class HaxeObjectDefinitionWriter
 		{
 			Element field = doc.createElement("field");
 			field.setAttribute("name", hf.name);
-			field.setAttribute("type", hf.type.haxeType);
+			field.setAttribute("type", hf.type.getHaxeType());
 			if(hf.defaultValue != null)
 				field.setAttribute("default", hf.defaultValue);
 			if(!hf.editorData.isEmpty())

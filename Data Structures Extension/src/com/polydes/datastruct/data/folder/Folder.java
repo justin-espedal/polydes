@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
+import com.polydes.common.ui.object.EditableObject;
+import com.polydes.common.ui.object.ViewableObject;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.page.FolderPage;
@@ -54,6 +56,12 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 		@Override
 		public void revertChanges()
 		{
+		}
+
+		@Override
+		public boolean fillsViewHorizontally()
+		{
+			return false;
 		}
 	}
 	
@@ -275,5 +283,11 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 		if(view != null)
 			view.dispose();
 		view = null;
+	}
+
+	@Override
+	public boolean fillsViewHorizontally()
+	{
+		return true;
 	}
 }

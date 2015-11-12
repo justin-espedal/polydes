@@ -2,21 +2,22 @@ package com.polydes.datastruct.data.structure;
 
 import java.util.Collection;
 
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.w3c.dom.Element;
 
+import com.polydes.common.ext.RegistryObject;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 
 /** StructureDefinitionElementType **/
-public abstract class SDEType<T extends SDE>
+public abstract class SDEType<T extends SDE> implements RegistryObject
 {
 	public Class<T> sdeClass;
 	public String tag;
-	public Icon icon;
+	public ImageIcon icon;
 	public boolean isBranchNode;
 	public Collection<Class<? extends SDE>> childTypes;
 	
@@ -32,4 +33,16 @@ public abstract class SDEType<T extends SDE>
 	public void genCode(T value, StringBuilder builder) { }
 	
 	public String owner;
+	
+	@Override
+	public String getKey()
+	{
+		return tag;
+	}
+	
+	@Override
+	public void setKey(String newKey)
+	{
+		throw new IllegalAccessError();
+	}
 }

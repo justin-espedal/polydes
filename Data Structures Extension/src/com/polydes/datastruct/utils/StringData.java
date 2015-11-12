@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
-import com.polydes.datastruct.data.types.DataType;
+import com.polydes.common.data.types.DataType;
 
 public class StringData
 {

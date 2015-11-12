@@ -12,12 +12,15 @@ import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.data.types.Types;
+import com.polydes.common.ext.ObjectRegistry;
 import com.polydes.common.io.XML;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.folder.FolderPolicy;
-import com.polydes.datastruct.data.types.Types;
-import com.polydes.datastruct.data.types.general.StructureType;
+import com.polydes.datastruct.data.types.StructureType;
+import com.polydes.datastruct.data.types.haxe.StructureHaxeType;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.io.read.StructureDefinitionReader;
 import com.polydes.datastruct.io.write.StructureDefinitionWriter;
@@ -26,14 +29,12 @@ import com.polydes.datastruct.res.Resources;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-public class StructureDefinitions
+public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 {
-	private static StructureDefinitions _instance;
-	public static Folder root;
-	private static HashMap<Folder, File> baseFolders;
-	public static HashMap<String, StructureDefinition> defMap = new HashMap<String, StructureDefinition>();
+	public Folder root;
+	private HashMap<Folder, File> baseFolders;
 	
-	private StructureDefinitions()
+	public StructureDefinitions()
 	{
 		root = new Folder("Structure Definitions");
 		baseFolders = new HashMap<Folder, File>();
@@ -51,22 +52,6 @@ public class StructureDefinitions
 		policy.itemEditingEnabled = false;
 		policy.itemRemovalEnabled = false;
 		root.setPolicy(policy);
-	}
-	
-	public static StructureDefinitions get()
-	{
-		if(_instance == null)
-			_instance = new StructureDefinitions();
-		
-		return _instance;
-	}
-	
-	//Use this to keep track of what might need updating when a StructureDefinition is realized.
-	public static StructureDefinition getFromString(String defType)
-	{
-		if(!defMap.containsKey(defType))
-			createUnknownDefinition(defType);
-		return defMap.get(defType);
 	}
 	
 	public void addFolder(File fsfolder, String name)
@@ -99,7 +84,7 @@ public class StructureDefinitions
 	
 	//If the definition already exists as an unknown definition,
 	//it will simply have its data set
-	public static StructureDefinition loadDefinition(File fsfile)
+	public StructureDefinition loadDefinition(File fsfile)
 	{
 		String fname = fsfile.getName();
 		
@@ -110,8 +95,8 @@ public class StructureDefinitions
 		Element structure = XML.getFile(fsfile.getAbsolutePath());
 		String classname = structure.getAttribute("classname");
 		
-		StructureDefinition def = defMap.containsKey(classname) ?
-			defMap.get(classname) :
+		StructureDefinition def = isUnknown(classname) ?
+			getItem(classname) :
 			new StructureDefinition(defname, classname);
 		if(def.isUnknown())
 			def.realize(defname, classname);
@@ -133,29 +118,55 @@ public class StructureDefinitions
 			System.out.println("Couldn't load icon for Structure Definition " + def.getName());
 		}
 		
-		if(!defMap.containsKey(classname))
-			addDefinition(def);
+		registerItem(def);
 		
 		return def;
 	}
 	
-	public static StructureDefinition createUnknownDefinition(String name)
+	@Override
+	public StructureDefinition generatePlaceholder(String key)
 	{
-		StructureDefinition def = StructureDefinition.newUnknown(name);
+		StructureDefinition def = StructureDefinition.newUnknown(key);
 		try
 		{
 			def.setImage(ImageIO.read(Resources.getUrl("question-32.png")));
 		}
 		catch (IOException e){}
-		addDefinition(def);
 		return def;
 	}
 	
-	public static void addDefinition(StructureDefinition def)
+	@Override
+	public void registerItem(StructureDefinition def)
 	{
-		defMap.put(def.getFullClassname(), def);
 		Structures.structures.put(def, new ArrayList<Structure>());
-		Types.addType(new StructureType(def));
+		
+		StructureType structureType = new StructureType(def);
+		StructureHaxeType newHaxeType = new StructureHaxeType(structureType);
+		
+		Types.get().registerItem(structureType);
+		DataStructuresExtension.get().getHaxeTypes().registerItem(newHaxeType);
+		super.registerItem(def);
+	}
+	
+	@Override
+	public void unregisterItem(StructureDefinition def)
+	{
+		super.unregisterItem(def);
+		DataStructuresExtension.get().getHaxeTypes().unregisterItem(def.getKey());
+		Types.get().unregisterItem(def.getKey());
+		
+		Structures.structures.remove(def);
+		def.dispose();
+	}
+	
+	@Override
+	public void renameItem(StructureDefinition value, String newName)
+	{
+		String oldKey = value.getKey();
+		
+		super.renameItem(value, newName);
+		DataStructuresExtension.get().getHaxeTypes().renameItem(oldKey, newName);
+		Types.get().renameItem(oldKey, newName);
 	}
 	
 	public void saveChanges() throws IOException
@@ -209,13 +220,11 @@ public class StructureDefinitions
 		}
 	}
 	
-	public static void dispose()
+	@Override
+	public void dispose()
 	{
-		for(StructureDefinition def : defMap.values())
-			def.dispose();
-		defMap.clear();
+		super.dispose();
 		baseFolders.clear();
-		_instance = null;
 		root = null;
 	}
 	

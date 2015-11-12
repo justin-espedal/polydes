@@ -13,13 +13,13 @@ import javax.swing.JComponent;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DisposeListener;
+import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.core.UPair;
 import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.DisposeListener;
-import com.polydes.datastruct.data.types.UpdateListener;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.table.Table;

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.elements.StructureField;
@@ -90,7 +91,7 @@ public class Structures
 			String type = map.remove("struct_type");
 			nextID = Math.max(nextID, id + 1);
 			
-			StructureDefinition template = StructureDefinitions.getFromString(type);
+			StructureDefinition template = DataStructuresExtension.get().getStructureDefinitions().getItem(type);
 			Structure model = new Structure(id, name, template);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
@@ -108,7 +109,7 @@ public class Structures
 			FolderInfo info = new FolderInfo(file);
 			ArrayList<String> order = info.getFileOrder();
 			if(info.containsKey("childType"))
-				newFolder.childType = StructureDefinitions.getFromString(info.get("childType"));
+				newFolder.childType = DataStructuresExtension.get().getStructureDefinitions().getItem(info.get("childType"));
 			for(String fname : order)
 				deepload(newFolder, new File(file, fname));
 			folder.addItem(newFolder);
@@ -187,7 +188,7 @@ public class Structures
 			{
 				if(field.isOptional() && !s.isPropertyEnabled(field))
 					continue;
-				toWrite.add(field.getVarname() + "=" + field.getType().checkEncode(s.getProperty(field)));
+				toWrite.add(field.getVarname() + "=" + field.getType().dataType.checkEncode(s.getProperty(field)));
 			}
 			if(s.getUnknownData() != null)
 				for(Entry<String, String> entry : s.getUnknownData().entrySet())

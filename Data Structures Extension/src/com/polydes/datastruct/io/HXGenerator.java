@@ -6,10 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.StructureDefinition;
-import com.polydes.datastruct.data.structure.StructureDefinitions;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.Types;
+import com.polydes.datastruct.data.types.HaxeDataType;
 
 import stencyl.sw.util.Locations;
 
@@ -48,7 +47,7 @@ public class HXGenerator
 		String imports = "";
 		String classmap = "";
 		String datatypes = "";
-		for(StructureDefinition def : StructureDefinitions.defMap.values())
+		for(StructureDefinition def : DataStructuresExtension.get().getStructureDefinitions().values())
 		{
 			imports += String.format("import %s;\n", def.getFullClassname());
 			classmap += String.format("\t\tclassmap.set(\"%s\", Type.resolveClass(\"%s\"));\n", def.getFullClassname(), def.getFullClassname());
@@ -61,7 +60,7 @@ public class HXGenerator
 		
 		String readers = "";
 		
-		for(DataType<?> type : Types.typeFromXML.values())
+		for(HaxeDataType type : DataStructuresExtension.get().getHaxeTypes().values())
 		{
 			List<String> lines = type.generateHaxeReader();
 			if(lines != null)

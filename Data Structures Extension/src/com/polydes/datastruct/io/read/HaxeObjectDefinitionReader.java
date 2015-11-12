@@ -2,13 +2,12 @@ package com.polydes.datastruct.io.read;
 
 import org.w3c.dom.Element;
 
+import com.polydes.common.data.types.ExtrasMap;
 import com.polydes.common.io.XML;
 import com.polydes.common.util.Lang;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.core.HaxeField;
 import com.polydes.datastruct.data.core.HaxeObjectDefinition;
-import com.polydes.datastruct.data.types.DataType;
-import com.polydes.datastruct.data.types.ExtrasMap;
-import com.polydes.datastruct.data.types.Types;
 
 public class HaxeObjectDefinitionReader
 {
@@ -34,9 +33,8 @@ public class HaxeObjectDefinitionReader
 				}
 			}
 			
-			DataType<?> dtype = Types.tryToGetFromString(type);
-			
-			HaxeField hf = new HaxeField(name, dtype, editorData);
+			HaxeField hf = new HaxeField(name, null, editorData);
+			DataStructuresExtension.get().getHaxeTypes().requestValue(type, hf);
 			
 			if(field.hasAttribute("default"))
 				hf.defaultValue = field.getAttribute("default");

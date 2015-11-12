@@ -15,8 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
@@ -24,7 +26,6 @@ import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.elements.StructureField;
-import com.polydes.datastruct.data.types.DataEditor;
 
 public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem,Folder>
 {
