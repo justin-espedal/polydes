@@ -4,10 +4,10 @@ import javax.swing.JComponent;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.polydes.datastruct.data.types.DataEditor;
-import com.polydes.datastruct.data.types.builtin.basic.StringType;
-import com.polydes.datastruct.ui.comp.EnumEditor;
-import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
+import com.polydes.common.comp.EnumEditor;
+import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.builtin.basic.StringType;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class StructureArgument
 {

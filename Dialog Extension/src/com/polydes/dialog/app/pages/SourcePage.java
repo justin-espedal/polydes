@@ -1,11 +1,11 @@
 package com.polydes.dialog.app.pages;
 
+import static com.polydes.common.util.Lang.arraylist;
+
 import java.awt.BorderLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -14,11 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.polydes.common.ui.darktree.DTreeNodeCreator;
+import com.polydes.common.nodes.NodeCreator;
+import com.polydes.common.nodes.NodeSelection;
+import com.polydes.common.nodes.NodeSelectionEvent;
 import com.polydes.common.ui.darktree.SelectionType;
-import com.polydes.common.util.PopupUtil.PopupItem;
 import com.polydes.dialog.app.StatusBar;
 import com.polydes.dialog.app.editors.DataItemEditor;
 import com.polydes.dialog.app.editors.EditorFactory;
@@ -33,7 +33,7 @@ import com.polydes.dialog.res.Resources;
 
 import stencyl.sw.util.UI;
 
-public class SourcePage<T extends LinkedDataItem> extends BasicPage implements DTreeNodeCreator<DataItem,Folder>
+public class SourcePage<T extends LinkedDataItem> extends BasicPage implements NodeCreator<DataItem,Folder>
 {
 	private Class<T> cls;
 	
@@ -50,6 +50,8 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 	protected ArrayList<JPanel> currPages;
 	
 	protected Highlighter textAreaHighlighter;
+	
+	//TODO: extend TreePage
 	
 	public SourcePage(Class<T> cls, Folder rootFolder)
 	{
@@ -113,14 +115,16 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 		currView = folderPage;
 		editPane.add(currView, BorderLayout.CENTER);
 		
-		tree.setNodeCreator(this);
+		folderModel.setNodeCreator(this);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void selectionStateChanged()
+	public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
 	{
-		if(currView == folderPage && (selectionState.type == SelectionType.FOLDERS))
+		NodeSelection<DataItem, Folder> selection = folderModel.getSelection();
+		
+		if(currView == folderPage && (selection.getType() == SelectionType.FOLDERS))
 			return;
 		
 		editPane.remove(currView);
@@ -130,17 +134,15 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 		
 		currView = null;
 		
-		if(selectionState.type == SelectionType.FOLDERS)
+		if(selection.getType() == SelectionType.FOLDERS)
 			currView = folderPage;
 		else
 		{
 			ArrayList<T> toEdit = new ArrayList<T>();
 			
-			for(DefaultMutableTreeNode node : selectionState.nodes)
-			{
-				if(cls.isInstance(node.getUserObject()))
-					toEdit.add((T) node.getUserObject());
-			}
+			for(DataItem selected : selection)
+				if(cls.isInstance(selected))
+					toEdit.add((T) selected);
 			
 			T item;
 			DataItemEditor editor;
@@ -178,21 +180,27 @@ public class SourcePage<T extends LinkedDataItem> extends BasicPage implements D
 	 | Tree Node Creator
 	\*================================================*/
 	
-	private List<PopupItem> creatableNodeList = Arrays.asList(new PopupItem("Dialog Chunk", null, null));
+	private ArrayList<CreatableNodeInfo> creatableNodeList = arraylist(new CreatableNodeInfo("Dialog Chunk", null, null));
 	
 	@Override
-	public Collection<PopupItem> getCreatableNodeList()
+	public ArrayList<CreatableNodeInfo> getCreatableNodeList(Folder branchNode)
 	{
 		return creatableNodeList;
 	}
 
 	@Override
-	public DataItem createNode(PopupItem selected, String nodeName)
+	public DataItem createNode(CreatableNodeInfo selected, String nodeName)
 	{
-		if(selected.text.equals("Folder"))
+		if(selected.name.equals("Folder"))
 			return new Folder(nodeName);
 		
 		return new TextSource(nodeName);
+	}
+	
+	@Override
+	public ArrayList<NodeAction<DataItem>> getNodeActions(DataItem[] targets)
+	{
+		return null;
 	}
 
 	@Override

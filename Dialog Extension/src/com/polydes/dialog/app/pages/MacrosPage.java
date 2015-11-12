@@ -12,7 +12,7 @@ public class MacrosPage extends SourcePage<TextSource>
 	{
 		super(TextSource.class, Macros.get());
 		
-		tree.setNodeCreator(null);
+		folderModel.setNodeCreator(null);
 		setListEditEnabled(false);
 		textAreaHighlighter = new PreferenceHighlighter();
 	}

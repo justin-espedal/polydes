@@ -36,7 +36,8 @@ public class V6_ExtensionSubmodules implements Runnable
 			Structure ms = make("dialog.ds.ext.MessagingScripts", "Dialog/Plugins/Messaging Scripts");
 			Structure ss = make("dialog.ds.ext.SoundScripts", "Dialog/Plugins/Sound Scripts");
 			
-			StructureDefinition unknownDef = StructureDefinitions.defMap.get("Style");
+			StructureDefinitions sdefs = DataStructuresExtension.get().getStructureDefinitions();
+			StructureDefinition unknownDef = sdefs.getItem("Style");
 			for(Structure style : loopDef(unknownDef))
 			{
 				String prefix = "Dialog/Plugins/" + style.dref.getName() + " ";
@@ -136,7 +137,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				map.put("extensions", extensionList);
 			}
 			
-			unknownDef = StructureDefinitions.defMap.get("ScalingImage");
+			unknownDef = sdefs.getItem("ScalingImage");
 			for(Structure scalingImage : loopDef(unknownDef))
 			{
 				Map<String,String> map = scalingImage.getUnknownData();
@@ -147,7 +148,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				System.out.println(map);
 			}
 			
-			unknownDef = StructureDefinitions.defMap.get("Tween");
+			unknownDef = sdefs.getItem("Tween");
 			for(Structure tween : loopDef(unknownDef))
 			{
 				Map<String,String> map = tween.getUnknownData();
@@ -158,7 +159,7 @@ public class V6_ExtensionSubmodules implements Runnable
 				System.out.println(map);
 			}
 			
-			unknownDef = StructureDefinitions.defMap.get("Window");
+			unknownDef = sdefs.getItem("Window");
 			for(Structure window : loopDef(unknownDef))
 			{
 				Map<String,String> map = window.getUnknownData();
@@ -211,8 +212,10 @@ public class V6_ExtensionSubmodules implements Runnable
 		String name = pathParts[pathParts.length - 1];
 		pathParts = ArrayUtils.remove(pathParts, pathParts.length - 1);
 		
+		StructureDefinitions sdefs = DataStructuresExtension.get().getStructureDefinitions();
+		
 		int id = Structures.newID();
-		StructureDefinition type = StructureDefinitions.defMap.get(def);
+		StructureDefinition type = sdefs.getItem(def);
 		Structure toReturn = new Structure(id, name, type);
 		toReturn.loadDefaults();
 		Structures.structures.get(type).add(toReturn);

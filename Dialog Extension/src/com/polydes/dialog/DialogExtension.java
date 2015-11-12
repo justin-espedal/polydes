@@ -12,9 +12,9 @@ import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
-import com.polydes.datastruct.data.types.DataType;
+import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ext.DataStructureExtension;
-import com.polydes.datastruct.ext.DataTypeExtension;
+import com.polydes.datastruct.ext.HaxeDataTypeExtension;
 import com.polydes.datastruct.ext.StructureDefinitionExtension;
 import com.polydes.dialog.app.MainEditor;
 import com.polydes.dialog.data.def.elements.StructureCommand.CommandType;
@@ -35,11 +35,11 @@ import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
 
-public class DialogExtension extends GameExtension implements DataTypeExtension, DataStructureExtension, StructureDefinitionExtension
+public class DialogExtension extends GameExtension implements HaxeDataTypeExtension, DataStructureExtension, StructureDefinitionExtension
 {
 	private static DialogExtension _instance;
 	
-	ArrayList<DataType<?>> types;
+	ArrayList<HaxeDataType> types;
 	ArrayList<SDEType<?>> sdeTypes;
 	
 	public static DialogExtension get()
@@ -65,7 +65,7 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 		isInGameCenter = true;
 		gameCenterName = "Dialog Extension";
 		
-		types = DataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
+		types = HaxeDataTypeExtension.readTypesFolder(new File(Locations.getGameExtensionLocation("com.polydes.dialog"), "types"));
 		sdeTypes = Lang.arraylist(
 			new ExtensionType(),
 			new CommandsType(),
@@ -240,7 +240,7 @@ public class DialogExtension extends GameExtension implements DataTypeExtension,
 	}
 	
 	@Override
-	public ArrayList<DataType<?>> getDataTypes()
+	public ArrayList<HaxeDataType> getHaxeDataTypes()
 	{
 		return types;
 	}
