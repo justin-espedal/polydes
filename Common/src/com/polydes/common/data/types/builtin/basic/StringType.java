@@ -9,10 +9,9 @@ import javax.swing.JTextField;
 
 import com.polydes.common.comp.utils.DocumentAdapter;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class StringType extends DataType<String>
@@ -22,16 +21,26 @@ public class StringType extends DataType<String>
 		super(String.class);
 	}
 	
+	public static final String REGEX = "regex";
+	
 	@Override
-	public DataEditor<String> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<String> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		Extras e = (Extras) extras;
-		if(e.editor.equals(Editor.Expanding))
-			return new ExpandingStringEditor(e, style);
-		else //if(editorType.equals("Single Line"))
-			return new SingleLineStringEditor(e, style);
+		switch(props.<Editor>get(EDITOR))
+		{
+			case Expanding:
+				return new ExpandingStringEditor(props, style);
+			default:
+				return new SingleLineStringEditor(props, style);	
+		}
 	}
 
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new StringEditorBuilder();
+	}
+	
 	@Override
 	public String decode(String s)
 	{
@@ -50,38 +59,25 @@ public class StringType extends DataType<String>
 		return t;
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public class StringEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.SingleLine);
-		e.defaultValue = extras.get("defaultValue", Types._String, "");
-		e.regex = extras.get("regex", Types._String, null);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		if(e.regex != null)
-			emap.put("regex", e.regex);
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Editor editor;
-		public String defaultValue;
-		public String regex;
-		
-		@Override
-		public Object getDefault()
+		public StringEditorBuilder()
 		{
-			return defaultValue;
+			super(StringType.this, new EditorProperties(){{
+				put(EDITOR, Editor.SingleLine);
+			}});
+		}
+
+		public StringEditorBuilder expandingEditor()
+		{
+			props.put(EDITOR, Editor.Expanding);
+			return this;
+		}
+		
+		public StringEditorBuilder regex(String pattern)
+		{
+			props.put(REGEX, pattern);
+			return this;
 		}
 	}
 	
@@ -96,11 +92,10 @@ public class StringType extends DataType<String>
 		JTextField editor;
 		String regex;
 		
-		public SingleLineStringEditor(Extras e, PropertiesSheetStyle style)
+		public SingleLineStringEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			editor = style.createTextField();
-			if(e != null)
-				regex = e.regex;
+			regex = props.get(REGEX);
 			
 			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
 			{
@@ -143,7 +138,7 @@ public class StringType extends DataType<String>
 		JTextArea editor;
 		String regex;
 		
-		public ExpandingStringEditor(Extras e, PropertiesSheetStyle style)
+		public ExpandingStringEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			editor = new JTextArea();
 			editor.setBackground(style.fieldBg);
@@ -161,8 +156,7 @@ public class StringType extends DataType<String>
 					)
 				);
 			
-			if(e != null)
-				regex = e.regex;
+			regex = props.get(REGEX);
 			
 			editor.getDocument().addDocumentListener(new DocumentAdapter(false)
 			{

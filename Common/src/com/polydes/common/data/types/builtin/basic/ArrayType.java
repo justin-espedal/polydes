@@ -14,31 +14,38 @@ import com.polydes.common.comp.datalist.DataListEditor;
 import com.polydes.common.comp.utils.DocumentAdapter;
 import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
-import com.polydes.common.data.types.builtin.UnknownDataType.UnknownExtras;
-import com.polydes.common.ext.RORealizer;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class ArrayType extends DataType<DataList>
 {
 	public ArrayType()
 	{
-		//TODO: How does genType work now?
 		super(DataList.class);
 	}
-
+	
+	public static final String GEN_TYPE = "genType";
+	public static final String GEN_TYPE_PROPS = "genTypeProps";
+	
 	@Override
-	public DataEditor<DataList> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<DataList> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		final Extras e = (Extras) extras;
-		
-		if(e.editor.equals(Editor.Simple))
-			return new SimpleArrayEditor(style, e.genType);
-		else //if(editorType.equals("Standard"))
-			return new StandardArrayEditor(e.genType, e.genTypeExtras, style);
+		switch(props.<Editor>get(EDITOR))
+		{
+			case Simple:
+				return new SimpleArrayEditor(style, props);
+			default:
+				return new StandardArrayEditor(style, props);	
+		}	
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new ArrayEditorBuilder();
 	}
 
 	@Override
@@ -121,56 +128,39 @@ public class ArrayType extends DataType<DataList>
 		return copyList;
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.Standard);
-		if(extras.containsKey("genTypeExtras"))
-			e.genTypeExtras = new UnknownExtras(extras.getMap("genTypeExtras"));
-		extras.requestDataType("genType", Types._String, e);
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Array, null);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		emap.put("genType", e.genType.getId());
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties implements RORealizer<DataType<?>>
-	{
-		public Editor editor;
-		public DataType<?> genType;
-		public ExtraProperties genTypeExtras;
-		public DataList defaultValue;
-		
-		@Override
-		public Object getDefault()
-		{
-			return defaultValue;
-		}
-		
-		@Override
-		public void realizeRO(DataType<?> type)
-		{
-			genType = type;
-			if(genTypeExtras instanceof UnknownExtras)
-				genTypeExtras = type.loadExtras(((UnknownExtras) genTypeExtras).getMap());
-		}
-	}
-	
 	public static enum Editor
 	{
 		Standard,
 		Simple;
+	}
+	
+	public class ArrayEditorBuilder extends DataEditorBuilder
+	{
+		public ArrayEditorBuilder()
+		{
+			super(ArrayType.this, new EditorProperties(){{
+				put(EDITOR, Editor.Standard);
+				put(GEN_TYPE, Types._String);
+			}});
+		}
+
+		public ArrayEditorBuilder simpleEditor()
+		{
+			props.put(EDITOR, Editor.Simple);
+			return this;
+		}
+		
+		public ArrayEditorBuilder genType(DataType<?> dtype)
+		{
+			props.put(GEN_TYPE, dtype);
+			return this;
+		}
+		
+		public ArrayEditorBuilder genTypeProps(EditorProperties genTypeProps)
+		{
+			props.put(GEN_TYPE_PROPS, genTypeProps);
+			return this;
+		}
 	}
 	
 	public static class SimpleArrayEditor extends DataEditor<DataList>
@@ -180,9 +170,9 @@ public class ArrayType extends DataType<DataList>
 		
 		DataList list;
 		
-		public SimpleArrayEditor(PropertiesSheetStyle style, DataType<?> genType)
+		public SimpleArrayEditor(PropertiesSheetStyle style, EditorProperties props)
 		{
-			this.genType = genType;
+			genType = props.get(GEN_TYPE);
 			
 			editor = new JTextArea();
 			editor.setBackground(style.fieldBg);
@@ -246,14 +236,14 @@ public class ArrayType extends DataType<DataList>
 	{
 		DataListEditor editor;
 		DataType<?> genType;
-		ExtraProperties genTypeExtras;
+		EditorProperties genTypeProps;
 		
-		public StandardArrayEditor(DataType<?> genType, ExtraProperties genTypeExtras, PropertiesSheetStyle style)
+		public StandardArrayEditor(PropertiesSheetStyle style, EditorProperties props)
 		{
-			this.genType = genType;
-			this.genTypeExtras = genTypeExtras;
+			genType = props.get(GEN_TYPE);
+			genTypeProps = props.get(GEN_TYPE_PROPS);
 			
-			editor = new DataListEditor(null, genTypeExtras, style);
+			editor = new DataListEditor(null, genTypeProps, style);
 			
 			editor.addActionListener(new ActionListener()
 			{
@@ -270,7 +260,7 @@ public class ArrayType extends DataType<DataList>
 		{
 			if(t == null)
 				t = new DataList(genType);
-			editor.setData(t, genTypeExtras);
+			editor.setData(t, genTypeProps);
 		}
 		
 		@Override

@@ -41,7 +41,7 @@ import com.polydes.common.comp.utils.HierarchyLeaveListener;
 import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.types.DataTransferable;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.SerializedData;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
@@ -65,10 +65,10 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 	
 	//Model
 	private DataList model;
-	private ExtraProperties genTypeExtras;
+	private EditorProperties genTypeProps;
 	private DataListTableWrapper tableModel;
 	
-	public DataListEditor(DataList model, ExtraProperties genTypeExtras, PropertiesSheetStyle style)
+	public DataListEditor(DataList model, EditorProperties genTypeProps, PropertiesSheetStyle style)
 	{
 		setOpaque(false);
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -126,7 +126,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		table.setTransferHandler(new DataListTransferHandler(this));
 		table.setFillsViewportHeight(true);
 		
-		setData(model, genTypeExtras);
+		setData(model, genTypeProps);
 		
 		actionListeners = EventListenerSupport.create(ActionListener.class);
 		
@@ -144,7 +144,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		add(scrollPane, BorderLayout.CENTER);
 	}
 	
-	public void setData(DataList model, ExtraProperties genTypeExtras)
+	public void setData(DataList model, EditorProperties genTypeProps)
 	{
 		if(this.model != model)
 		{
@@ -158,7 +158,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 			tableModel.addTableModelListener(this);
 			
 			renderer.setModel(model);
-			editor.setType(model, model.genType, genTypeExtras);
+			editor.setType(model, model.genType, genTypeProps);
 			
 			TableColumnModel cm = table.getColumnModel();
 			TableColumn indices = cm.getColumn(0);
@@ -174,7 +174,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 			values.setCellRenderer(renderer);
 		}
 		
-		this.genTypeExtras = genTypeExtras;
+		this.genTypeProps = genTypeProps;
 	}
 	
 	public DataList getModel()
@@ -182,9 +182,9 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		return model;
 	}
 	
-	public ExtraProperties getGenericExtras()
+	public EditorProperties getGenericProperties()
 	{
-		return genTypeExtras;
+		return genTypeProps;
 	}
 	
 	@Override
@@ -363,7 +363,7 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		editor.removeCellEditorListener(this);
 		editor.dispose();
 		tableModel.removeTableModelListener(this);
-		genTypeExtras = null;
+		genTypeProps = null;
 		model = null;
 		tableModel = null;
 	}

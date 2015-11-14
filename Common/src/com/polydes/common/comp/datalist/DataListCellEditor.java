@@ -1,5 +1,7 @@
 package com.polydes.common.comp.datalist;
 
+import static com.polydes.common.util.Lang.or;
+
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -20,20 +22,19 @@ import com.polydes.common.comp.utils.TemporaryAWTListener;
 import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class DataListCellEditor implements TableCellEditor
 {
 	private static final EditController controller = new EditController();
-	private static final ExtrasMap defaultExtras = new ExtrasMap();
+	private static final EditorProperties defaultProps = new EditorProperties();
 	
 	private final JTable table;
 	
 	private DataList model;
 	private DataType<?> genType;
-	private ExtraProperties genTypeExtras;
+	private EditorProperties genTypeProps;
 	
 	private final EventListenerSupport<CellEditorListener> cellListeners;
 	
@@ -45,11 +46,11 @@ public class DataListCellEditor implements TableCellEditor
 		this.table = table;
 	}
 	
-	public void setType(DataList model, DataType<?> genType, ExtraProperties genTypeExtras)
+	public void setType(DataList model, DataType<?> genType, EditorProperties genTypeProps)
 	{
 		this.model = model;
 		this.genType = genType;
-		this.genTypeExtras = genTypeExtras;
+		this.genTypeProps = genTypeProps;
 	}
 
 	@Override
@@ -119,9 +120,7 @@ public class DataListCellEditor implements TableCellEditor
 		disposeEditor();
 		
 		@SuppressWarnings("unchecked")
-		DataEditor<S> deditor = (genTypeExtras != null) ?
-			(DataEditor<S>) genType.createEditor(genTypeExtras, PropertiesSheetStyle.DARK) :
-			(DataEditor<S>) genType.createEditor(defaultExtras, PropertiesSheetStyle.DARK); 
+		DataEditor<S> deditor = (DataEditor<S>) genType.createEditor(or(genTypeProps, defaultProps), PropertiesSheetStyle.DARK);
 		
 		deditor.setValue(value);
 		
@@ -148,7 +147,7 @@ public class DataListCellEditor implements TableCellEditor
 		disposeEditor();
 		model = null;
 		genType = null;
-		genTypeExtras = null;
+		genTypeProps = null;
 	}
 	
 	private void disposeEditor()

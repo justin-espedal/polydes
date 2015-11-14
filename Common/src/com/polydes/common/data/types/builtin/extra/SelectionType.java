@@ -14,10 +14,9 @@ import javax.swing.JRadioButton;
 import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class SelectionType extends DataType<String>
@@ -27,27 +26,29 @@ public class SelectionType extends DataType<String>
 		super(String.class, "com.polydes.common.Selection");
 	}
 	
+	public static final String OPTIONS = "options";
+	
 	@Override
-	public DataEditor<String> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditorBuilder createEditorBuilder()
 	{
-		Extras e = (Extras) extras;
-		DataList options = e.options;
+		return new SelectionEditorBuilder();
+	}
+	
+	@Override
+	public DataEditor<String> createEditor(EditorProperties props, PropertiesSheetStyle style)
+	{
+		DataList options = props.get(OPTIONS);
 		
 		if(options == null || options.isEmpty())
 			return new InvalidEditor<String>("The selected source has no items", style);
 		
-		if(e.editor.equals(Editor.RadioButtons))
+		switch(props.<Editor>get(EDITOR))
 		{
-			return new RadioButtonsSelectionEditor(options, style);
+			case RadioButtons:
+				return new RadioButtonsSelectionEditor(options, style);
+			default:
+				return new DropdownSelectionEditor(options);	
 		}
-		else// if(e.editor.equals(Editor.Dropdown))
-		{
-			return new DropdownSelectionEditor(options);
-		}
-		/*else if(e.editor.equals(Editor.Grid))
-			return comps(style.createSoftLabel("Grid is unimplemented"));
-		else //if(editorType.equals("Cycle"))
-			return comps(style.createSoftLabel("Cycle is unimplemented"));*/
 	}
 
 	@Override
@@ -68,39 +69,27 @@ public class SelectionType extends DataType<String>
 		return t;
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.Dropdown);
-		e.options = extras.get("options", Types._Array, null);
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._String, "");
-		return e;
-	}
+	public DataList options;
 	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
+	public class SelectionEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		if(e.options != null)
-			emap.put("options", Types._Array.encode(e.options));
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Editor editor;
-		public DataList options;//editor Simple, genType String
-		public String defaultValue;
-		
-		@Override
-		public Object getDefault()
+		public SelectionEditorBuilder()
 		{
-			return defaultValue;
+			super(SelectionType.this, new EditorProperties(){{
+				put(EDITOR, Editor.Dropdown);
+			}});
+		}
+		
+		public SelectionEditorBuilder radioButtonsEditor()
+		{
+			props.put(EDITOR, Editor.RadioButtons);
+			return this;
+		}
+		
+		public SelectionEditorBuilder source(DataList list)
+		{
+			props.put(OPTIONS, list);
+			return this;
 		}
 	}
 	

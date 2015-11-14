@@ -27,18 +27,12 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 		hash = id.hashCode();
 	}
 	
-	public abstract ExtrasMap saveExtras(ExtraProperties extras);
-	public abstract ExtraProperties loadExtras(ExtrasMap extras);
-	
 	/**
 	 * Create editor, set value, add listener.<br />
 	 * Dispose when you're done.
 	 */
-	public abstract DataEditor<T> createEditor(ExtraProperties extras, PropertiesSheetStyle style);
-	public DataEditor<T> createEditor(ExtrasMap extras, PropertiesSheetStyle style)
-	{
-		return createEditor(loadExtras(extras), style);
-	}
+	public abstract DataEditor<T> createEditor(EditorProperties properties, PropertiesSheetStyle style);
+	public abstract DataEditorBuilder createEditorBuilder();
 	
 	public abstract T decode(String s);
 	

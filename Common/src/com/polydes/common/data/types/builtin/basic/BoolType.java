@@ -7,10 +7,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class BoolType extends DataType<Boolean>
@@ -21,9 +20,15 @@ public class BoolType extends DataType<Boolean>
 	}
 	
 	@Override
-	public DataEditor<Boolean> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Boolean> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
 		return new BooleanEditor();
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new BoolEditorBuilder();
 	}
 
 	@Override
@@ -44,32 +49,11 @@ public class BoolType extends DataType<Boolean>
 		return new Boolean(t);
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public class BoolEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = new Extras();
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Bool, false);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Boolean defaultValue;
-		
-		@Override
-		public Object getDefault()
+		public BoolEditorBuilder()
 		{
-			return defaultValue;
+			super(BoolType.this, new EditorProperties());
 		}
 	}
 	

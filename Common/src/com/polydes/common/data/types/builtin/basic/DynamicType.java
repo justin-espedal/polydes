@@ -13,9 +13,9 @@ import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.core.Dynamic;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
@@ -24,7 +24,7 @@ import stencyl.sw.util.dg.DialogPanel;
 
 public class DynamicType extends DataType<Dynamic>
 {
-	private static final ExtrasMap noExtras = new ExtrasMap();
+	private static final EditorProperties noProps = new EditorProperties();
 	
 	public DynamicType()
 	{
@@ -32,9 +32,15 @@ public class DynamicType extends DataType<Dynamic>
 	}
 	
 	@Override
-	public DataEditor<Dynamic> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Dynamic> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
 		return new DynamicEditor(style);
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new DynamicEditorBuilder();
 	}
 	
 	@Override
@@ -68,32 +74,11 @@ public class DynamicType extends DataType<Dynamic>
 		return new Dynamic(t.type.checkCopy(t.value), t.type);
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public class DynamicEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = new Extras();
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Dynamic, null);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Dynamic defaultValue;
-		
-		@Override
-		public Object getDefault()
+		public DynamicEditorBuilder()
 		{
-			return defaultValue;
+			super(DynamicType.this, new EditorProperties());
 		}
 	}
 	
@@ -169,7 +154,7 @@ public class DynamicType extends DataType<Dynamic>
 				
 				JComponent editor = null;
 				
-				valueEditor = newType.createEditor(noExtras, PropertiesSheetStyle.DARK);
+				valueEditor = newType.createEditor(noProps, PropertiesSheetStyle.DARK);
 				valueEditor.setValue(data.value);
 				valueEditor.addListener(new UpdateListener()
 				{

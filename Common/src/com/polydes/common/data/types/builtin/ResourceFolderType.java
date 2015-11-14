@@ -7,9 +7,9 @@ import javax.swing.JComponent;
 
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.core.lib.Folder;
@@ -24,25 +24,21 @@ public class ResourceFolderType extends DataType<Folder>
 	{
 		super(Folder.class);
 	}
-
+	
+	public static final String RESOURCE_TYPE = "resourceType";
+	
 	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
+	public DataEditor<Folder> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		return null;
+		return new FolderChooser(props.get(RESOURCE_TYPE));
 	}
-
+	
 	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public DataEditorBuilder createEditorBuilder()
 	{
-		return null;
+		return new ResourceFolderEditorBuilder();
 	}
-
-	@Override
-	public DataEditor<Folder> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
-	{
-		return new FolderChooser(null);
-	}
-
+	
 	@Override
 	public Folder decode(String s)
 	{
@@ -67,6 +63,20 @@ public class ResourceFolderType extends DataType<Folder>
 	public Folder copy(Folder t)
 	{
 		return t;
+	}
+	
+	public class ResourceFolderEditorBuilder extends DataEditorBuilder
+	{
+		public ResourceFolderEditorBuilder()
+		{
+			super(ResourceFolderType.this, new EditorProperties());
+		}
+
+		public ResourceFolderEditorBuilder type(ResourceType type)
+		{
+			props.put(RESOURCE_TYPE, type);
+			return this;
+		}
 	}
 	
 	public class FolderChooser extends DataEditor<Folder>

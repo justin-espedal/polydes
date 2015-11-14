@@ -17,10 +17,9 @@ import com.polydes.common.comp.OutlinelessSpinner;
 import com.polydes.common.comp.utils.DocumentAdapter;
 import com.polydes.common.comp.utils.IntegerFilter;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.sw.util.VerificationHelper;
@@ -31,27 +30,42 @@ public class IntType extends DataType<Integer>
 	{
 		super(Integer.class);
 	}
-
+	
+	public static final String MIN = "min";
+	public static final String MAX = "max";
+	public static final String STEP = "step";
+	
 	@Override
-	public DataEditor<Integer> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Integer> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		Extras e = (Extras) extras;
-		int min1 = or(e.min, Integer.MIN_VALUE);
-		final int max = or(e.max, Integer.MAX_VALUE);
+		int min1 = or(props.<Integer>get(MIN), Integer.MIN_VALUE);
+		final int max = or(props.<Integer>get(MAX), Integer.MAX_VALUE);
 		final int min = min1 > max ? max : min1;
 		
 		IntegerEditor editor = null;
 		
-		if(e.editor.equals(Editor.Slider))
-			editor = new SliderIntegerEditor(e, style);
-		else if(e.editor.equals(Editor.Spinner))
-			editor = new SpinnerIntegerEditor(e, style);
-		else //if(editorType.equals("Plain"))
-			editor = new PlainIntegerEditor(style);
+		switch(props.<Editor>get(EDITOR))
+		{
+			case Slider:
+				editor = new SliderIntegerEditor(props, style);
+				break;
+			case Spinner:
+				editor = new SpinnerIntegerEditor(props, style);
+				break;
+			default:
+				editor = new PlainIntegerEditor(style);
+				break;
+		}
 		
 		editor.setRange(min, max);
 		
 		return editor;
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new IntEditorBuilder();
 	}
 
 	@Override
@@ -79,53 +93,51 @@ public class IntType extends DataType<Integer>
 		return new Integer(t);
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.Plain);
-		e.min = extras.get("min", Types._Int, null);
-		e.max = extras.get("max", Types._Int, null);
-		e.step = extras.get("step", Types._Int, 1);
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Int, 0);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		if(e.min != null)
-			emap.put("min", "" + e.min);
-		if(e.max != null)
-			emap.put("max", "" + e.max);
-		emap.put("step", "" + e.step);
-		emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Editor editor;
-		public Integer min;
-		public Integer max;
-		public Integer step;
-		public Integer defaultValue;
-		
-		@Override
-		public Object getDefault()
-		{
-			return defaultValue;
-		}
-	}
-	
 	public static enum Editor
 	{
 		Slider,
 		Spinner,
 		Plain
+	}
+	
+	public class IntEditorBuilder extends DataEditorBuilder
+	{
+		public IntEditorBuilder()
+		{
+			super(IntType.this, new EditorProperties(){{
+				put(EDITOR, Editor.Plain);
+			}});
+		}
+		
+		public IntEditorBuilder spinnerEditor()
+		{
+			props.put(EDITOR, Editor.Spinner);
+			return this;
+		}
+		
+		public IntEditorBuilder sliderEditor()
+		{
+			props.put(EDITOR, Editor.Slider);
+			return this;
+		}
+		
+		public IntEditorBuilder min(int min)
+		{
+			props.put(MIN, min);
+			return this;
+		}
+		
+		public IntEditorBuilder max(int max)
+		{
+			props.put(MAX, max);
+			return this;
+		}
+		
+		public IntEditorBuilder step(int step)
+		{
+			props.put(STEP, step);
+			return this;
+		}
 	}
 	
 	public static abstract class IntegerEditor extends DataEditor<Integer>
@@ -187,9 +199,9 @@ public class IntType extends DataType<Integer>
 		private JSpinner spinner;
 		private SpinnerNumberModel model;
 		
-		public SpinnerIntegerEditor(Extras e, PropertiesSheetStyle style)
+		public SpinnerIntegerEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			int step = or(e.step, 1);
+			int step = or(props.get(STEP), 1);
 			
 			model = new SpinnerNumberModel(0, 0, 0, step);
 			spinner = new OutlinelessSpinner(model);
@@ -242,7 +254,7 @@ public class IntType extends DataType<Integer>
 	{
 		private JSlider slider;
 		
-		public SliderIntegerEditor(Extras e, PropertiesSheetStyle style)
+		public SliderIntegerEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			field = style.createTextField();
 			

@@ -15,12 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.core.DataSet;
 import com.polydes.common.data.core.DataSetSource;
-import com.polydes.common.data.core.DataSetSource.CustomDataSetSource;
-import com.polydes.common.data.core.DataSetSources;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
@@ -31,22 +29,26 @@ public class SetType extends DataType<DataSet>
 		super(DataSet.class);
 	}
 	
+	public static final String SOURCE = "source";
+	
 	@Override
-	public DataEditor<DataSet> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<DataSet> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		Extras e = (Extras) extras;
+		DataSetSource source = props.get(SOURCE);
 		
-		if(e.source == null)
+		if(source == null)
 			return new InvalidEditor<DataSet>("Select a valid data source", style);
 		
-		if(e.source.collectionSupplier.get().isEmpty())
+		if(source.collectionSupplier.get().isEmpty())
 			return new InvalidEditor<DataSet>("The selected source has no items", style);
 		
-//		if(e.editor.equals(Editor.Grid))
-//			return comps(style.createSoftLabel("Grid is unimplemented"));
-		
-		//else if(editorType.equals("Checklist"))
-			return new ChecklistDataSetEditor(e.source, style);
+		return new ChecklistDataSetEditor(source, style);
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new SetEditorBuilder();
 	}
 
 	@Override
@@ -99,45 +101,24 @@ public class SetType extends DataType<DataSet>
 		return copySet;
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.Checklist);
-		if(extras.containsKey("sourceType"))
-			e.source = DataSetSources.get().getItem(extras.get("sourceType", Types._String));
-		else
-			e.source = new CustomDataSetSource(extras.get("source", Types._Array, null));
-		e.sourceFilter = extras.get("sourceFilter", Types._String, null);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		if(e.source.id.equals("custom"))
-			emap.put("source", Types._Array.checkEncode(e.source));
-		else
-			emap.put("sourceType", e.source.id);
-		if(e.sourceFilter != null)
-			emap.put("sourceFilter", e.sourceFilter);
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Editor editor;
-		public DataSetSource source;
-		public String sourceFilter;
-	}
-	
 	public static enum Editor
 	{
 		Checklist/*,
 		Grid*/
+	}
+	
+	public class SetEditorBuilder extends DataEditorBuilder
+	{
+		public SetEditorBuilder()
+		{
+			super(SetType.this, new EditorProperties());
+		}
+
+		public SetEditorBuilder source(DataSetSource source)
+		{
+			props.put(SOURCE, source);
+			return this;
+		}
 	}
 	
 	public static class ChecklistDataSetEditor extends DataEditor<DataSet>

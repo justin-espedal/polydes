@@ -1,9 +1,9 @@
 package com.polydes.common.data.types.builtin;
 
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 public class UnknownDataType extends DataType<String>
@@ -12,38 +12,17 @@ public class UnknownDataType extends DataType<String>
 	{
 		super(String.class, id);
 	}
-
-	public static class UnknownExtras extends ExtraProperties
+	
+	@Override
+	public DataEditor<String> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		ExtrasMap extras;
-		
-		public UnknownExtras(ExtrasMap extras)
-		{
-			this.extras = extras;
-		}
-		
-		public ExtrasMap getMap()
-		{
-			return extras;
-		}
+		return new UnkownEditor("", style);
 	}
 	
 	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
+	public DataEditorBuilder createEditorBuilder()
 	{
-		return ((UnknownExtras) extras).extras;
-	}
-
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		return new UnknownExtras(extras);
-	}
-
-	@Override
-	public DataEditor<String> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
-	{
-		return new UnkownEditor("", style);
+		return new DataEditorBuilder(this, new EditorProperties());
 	}
 	
 	class UnkownEditor extends InvalidEditor<String>

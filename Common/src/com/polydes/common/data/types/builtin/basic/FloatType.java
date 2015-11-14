@@ -18,10 +18,9 @@ import com.polydes.common.comp.OutlinelessSpinner;
 import com.polydes.common.comp.utils.DocumentAdapter;
 import com.polydes.common.comp.utils.FloatFilter;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.sw.util.VerificationHelper;
@@ -32,27 +31,43 @@ public class FloatType extends DataType<Float>
 	{
 		super(Float.class);
 	}
+	
+	public static final String MIN = "min";
+	public static final String MAX = "max";
+	public static final String STEP = "step";
+	public static final String DECIMAL_PLACES = "decimalPlaces";
 
 	@Override
-	public DataEditor<Float> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Float> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		Extras e = (Extras) extras;
-		float min1 = or(e.min, -Float.MAX_VALUE);
-		final float max = or(e.max, Float.MAX_VALUE);
+		float min1 = or(props.<Float>get(MIN), -Float.MAX_VALUE);
+		final float max = or(props.<Float>get(MAX), Float.MAX_VALUE);
 		final float min = min1 > max ? max : min1;
 		
 		FloatEditor editor = null;
 		
-		if(e.editor.equals(Editor.Slider))
-			editor = new SliderFloatEditor(e, style);
-		else if(e.editor.equals(Editor.Spinner))
-			editor = new SpinnerFloatEditor(e, style);
-		else //if(editorType.equals("Plain"))
-			editor = new PlainFloatEditor(style);
+		switch(props.<Editor>get(EDITOR))
+		{
+			case Slider:
+				editor = new SliderFloatEditor(props, style);
+				break;
+			case Spinner:
+				editor = new SpinnerFloatEditor(props, style);
+				break;
+			default:
+				editor = new PlainFloatEditor(style);
+				break;
+		}
 		
 		editor.setRange(min, max);
 		
 		return editor;
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new FloatEditorBuilder();
 	}
 
 	@Override
@@ -80,49 +95,49 @@ public class FloatType extends DataType<Float>
 		return new Float(t);
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public class FloatEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = new Extras();
-		e.editor = extras.get(EDITOR, Editor.Plain);
-		e.min = extras.get("min", Types._Float, null);
-		e.max = extras.get("max", Types._Float, null);
-		e.decimalPlaces = extras.get("decimalPlaces", Types._Int, null);
-		e.step = extras.get("step", Types._Float, 0.01f);
-		e.defaultValue = extras.get(DEFAULT_VALUE, Types._Float, 0.0f);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		emap.put(EDITOR, "" + e.editor);
-		if(e.min != null)
-			emap.put("min", "" + e.min);
-		if(e.max != null)
-			emap.put("max", "" + e.max);
-		if(e.decimalPlaces != null)
-			emap.put("decimalPlaces", "" + e.decimalPlaces);
-		emap.put("step", "" + e.step);
-		emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public Editor editor;
-		public Float min;
-		public Float max;
-		public Integer decimalPlaces;
-		public Float step;
-		public Float defaultValue;
-		
-		@Override
-		public Object getDefault()
+		public FloatEditorBuilder()
 		{
-			return defaultValue;
+			super(FloatType.this, new EditorProperties(){{
+				put(EDITOR, Editor.Plain);
+			}});
+		}
+		
+		public FloatEditorBuilder spinnerEditor()
+		{
+			props.put(EDITOR, Editor.Spinner);
+			return this;
+		}
+		
+		public FloatEditorBuilder sliderEditor()
+		{
+			props.put(EDITOR, Editor.Slider);
+			return this;
+		}
+		
+		public FloatEditorBuilder min(float min)
+		{
+			props.put(MIN, min);
+			return this;
+		}
+		
+		public FloatEditorBuilder max(float max)
+		{
+			props.put(MAX, max);
+			return this;
+		}
+		
+		public FloatEditorBuilder step(float step)
+		{
+			props.put(STEP, step);
+			return this;
+		}
+		
+		public FloatEditorBuilder decimalPlaces(int places)
+		{
+			props.put(DECIMAL_PLACES, places);
+			return this;
 		}
 	}
 	
@@ -192,9 +207,9 @@ public class FloatType extends DataType<Float>
 		private JSpinner spinner;
 		private SpinnerNumberModel model;
 		
-		public SpinnerFloatEditor(Extras e, PropertiesSheetStyle style)
+		public SpinnerFloatEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			float step = or(e.step, .01f);
+			float step = or(props.<Float>get(STEP), .01f);
 			
 			model = new SpinnerNumberModel(0f, 0f, 0f, step);
 			spinner = new OutlinelessSpinner(model);
@@ -248,11 +263,11 @@ public class FloatType extends DataType<Float>
 		private JSlider slider;
 		private float factor;
 		
-		public SliderFloatEditor(Extras e, PropertiesSheetStyle style)
+		public SliderFloatEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			field = style.createTextField();
 			
-			int decimalPlaces = or(e.decimalPlaces, 2);
+			int decimalPlaces = or(props.<Integer>get(DECIMAL_PLACES), 2);
 			factor = (float) Math.pow(10, decimalPlaces);
 			
 			slider = new JSlider();
