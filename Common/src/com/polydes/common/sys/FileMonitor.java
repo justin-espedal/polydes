@@ -198,7 +198,6 @@ public class FileMonitor
 		fileCache.remove(file.getAbsolutePath());
 	}
 	
-	//TODO: This could run unnecessarily slow for large filesets.
 	private static void readFolder(SysFolder folder, boolean isRoot)
 	{
 		for(File file : folder.getFile().listFiles())

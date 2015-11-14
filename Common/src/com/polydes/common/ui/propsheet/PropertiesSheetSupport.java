@@ -3,6 +3,7 @@ package com.polydes.common.ui.propsheet;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -18,6 +19,7 @@ public class PropertiesSheetSupport
 	private final PropertyChangeSupport pcs;
 	private final PropertiesSheetBuilder builder;
 	
+	private boolean usesMap;
 	private final Object model;
 	
 	public PropertiesSheetSupport(DialogPanel panel, Object model)
@@ -33,6 +35,7 @@ public class PropertiesSheetSupport
 		builder = new PropertiesSheetBuilder(this, wrapper, style);
 		
 		this.model = model;
+		usesMap = model instanceof Map;
 	}
 	
 	public void run()
@@ -173,8 +176,11 @@ public class PropertiesSheetSupport
 	 * Helpers
 	\*-------------------------------------*/
 	
+	@SuppressWarnings("rawtypes")
 	public Object readField(Object target, String fieldName)
 	{
+		if(usesMap)
+			return ((Map) target).get(fieldName);
 		try
 		{
 			return FieldUtils.readDeclaredField(target, fieldName, true);
@@ -185,12 +191,16 @@ public class PropertiesSheetSupport
 		}
 	}
 	
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void writeField(Object target, String fieldName, Object value)
 	{
 		try
 		{
 			Object oldValue = readField(target, fieldName);
-			FieldUtils.writeDeclaredField(target, fieldName, value, true);
+			if(usesMap)
+				((Map) target).put(fieldName, value);
+			else
+				FieldUtils.writeDeclaredField(target, fieldName, value, true);
 			pcs.firePropertyChange(fieldName, oldValue, value);
 		}
 		catch(IllegalAccessException e)

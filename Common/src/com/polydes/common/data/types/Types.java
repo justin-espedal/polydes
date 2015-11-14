@@ -127,7 +127,6 @@ public class Types extends ObjectRegistry<DataType<?>>
 		
 		for(StencylResourceType<?> srt : srts)
 		{
-			//TODO: Add structure types from DSExtension
 			registerItem(srt);
 			DataSetSources.get().registerItem(new DataSetSource(srt.getId(), srt, () -> srt.getList()));
 		}
