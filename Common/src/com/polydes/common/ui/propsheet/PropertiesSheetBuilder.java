@@ -6,6 +6,7 @@ import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.data.types.builtin.ResourceFolderType.ResourceFolderEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.ArrayType.ArrayEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.BoolType.BoolEditorBuilder;
@@ -51,6 +52,13 @@ public class PropertiesSheetBuilder
 		FieldInfo newField = new FieldInfo(activeBuilder.varname, activeBuilder.type, activeBuilder.label, activeBuilder.hint, activeBuilder.optional);
 		wrapper.addField(newField, editor);
 		support.fieldAdded(newField, editor);
+	}
+	
+	
+	public PropertiesSheetBuilder onUpdate(UpdateListener l)
+	{
+		support.getField(activeBuilder.varname).getEditor().addListener(l);
+		return this;
 	}
 	
 	public FieldBuilder field(String varname)

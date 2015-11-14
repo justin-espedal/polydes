@@ -112,6 +112,11 @@ public class PropertiesSheetSupport
 		{
 			return optional;
 		}
+		
+		public DataEditor<?> getEditor()
+		{
+			return editor;
+		}
 	}
 	
 	/*-------------------------------------*\
@@ -121,6 +126,11 @@ public class PropertiesSheetSupport
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		pcs.addPropertyChangeListener(listener);
+	}
+	
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener)
+	{
+		pcs.addPropertyChangeListener(property, listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener)
