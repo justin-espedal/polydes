@@ -24,6 +24,7 @@ public class PropertiesSheetBuilder
 	private final PropertiesSheetWrapper wrapper;
 	private final PropertiesSheetStyle style;
 	
+	private Mode mode;
 	private FieldBuilder activeBuilder;
 	
 	// https://github.com/mfornos/humanize/blob/master/humanize-slim/src/main/java/humanize/util/Constants.java
@@ -34,6 +35,25 @@ public class PropertiesSheetBuilder
 		this.support = support;
 		this.wrapper = wrapper;
 		this.style = style;
+		mode = null;
+	}
+
+	private enum Mode
+	{
+		BUILD,
+		CHANGE
+	}
+	
+	public PropertiesSheetBuilder startBuilding()
+	{
+		mode = Mode.BUILD;
+		return this;
+	}
+	
+	public PropertiesSheetBuilder startChanging()
+	{
+		mode = Mode.CHANGE;
+		return this;
 	}
 	
 	public PropertiesSheetBuilder header(String title)
@@ -49,11 +69,23 @@ public class PropertiesSheetBuilder
 	
 	public void createEditor(DataEditor<?> editor)
 	{
+		if(mode != Mode.BUILD)
+			throw new IllegalStateException();
+		
 		FieldInfo newField = new FieldInfo(activeBuilder.varname, activeBuilder.type, activeBuilder.label, activeBuilder.hint, activeBuilder.optional);
 		wrapper.addField(newField, editor);
 		support.fieldAdded(newField, editor);
 	}
 	
+	public void doChange(DataEditor<?> editor)
+	{
+		if(mode != Mode.CHANGE)
+			throw new IllegalStateException();
+		
+		FieldInfo newField = new FieldInfo(activeBuilder.varname, activeBuilder.type, activeBuilder.label, activeBuilder.hint, activeBuilder.optional);
+		wrapper.changeField(activeBuilder.varname, newField, editor);
+		support.changeField(activeBuilder.varname, newField, editor);
+	}
 	
 	public PropertiesSheetBuilder onUpdate(UpdateListener l)
 	{
@@ -63,22 +95,42 @@ public class PropertiesSheetBuilder
 	
 	public FieldBuilder field(String varname)
 	{
-		return activeBuilder = new FieldBuilder(varname);
+		switch(mode)
+		{
+			case BUILD:
+				return activeBuilder = new FieldBuilder(varname);
+			case CHANGE:
+				return activeBuilder = FieldBuilder.fromFieldInfo(support.getField(varname));
+			default:
+				throw new IllegalStateException();
+		}
 	}
 	
 	public void finish()
 	{
+		if(mode == Mode.BUILD)
+			wrapper.finish();
 		activeBuilder = null;
-		wrapper.finish();
+		mode = null;
 	}
 	
-	public class FieldBuilder
+	public static class FieldBuilder
 	{
 		private String varname;
 		private DataType<?> type;
 		private String label;
 		private String hint;
 		private boolean optional;
+		
+		public static FieldBuilder fromFieldInfo(FieldInfo info)
+		{
+			FieldBuilder builder = new FieldBuilder(info.getVarname());
+			builder.type = info.getType();
+			builder.label = info.getLabel();
+			builder.hint = info.getHint();
+			builder.optional = info.isOptional();
+			return builder;
+		}
 		
 		public FieldBuilder(String varname)
 		{

@@ -26,6 +26,12 @@ public class DialogPanelWrapper implements PropertiesSheetWrapper
 	}
 	
 	@Override
+	public void changeField(String varname, FieldInfo field, DataEditor<?> editor)
+	{
+		throw new UnsupportedOperationException("DialogPanel doesn't support changing fields.");
+	}
+	
+	@Override
 	public void addHeader(String title)
 	{
 		panel.addHeader(title);

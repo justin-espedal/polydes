@@ -25,4 +25,10 @@ public class DataEditorBuilder
 		builder.createEditor(type.createEditor(props, builder.getStyle()));
 		return builder;
 	}
+	
+	public PropertiesSheetBuilder change()
+	{
+		builder.doChange(type.createEditor(props, builder.getStyle()));
+		return builder;
+	}
 }

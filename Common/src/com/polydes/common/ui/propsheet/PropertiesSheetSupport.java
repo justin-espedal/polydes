@@ -25,7 +25,7 @@ public class PropertiesSheetSupport
 		this(new DialogPanelWrapper(panel), PropertiesSheetStyle.DARK, model);
 	}
 	
-	private PropertiesSheetSupport(PropertiesSheetWrapper wrapper, PropertiesSheetStyle style, Object model)
+	public PropertiesSheetSupport(PropertiesSheetWrapper wrapper, PropertiesSheetStyle style, Object model)
 	{
 		this.wrapper = wrapper;
 		fields = new HashMap<>();
@@ -46,7 +46,12 @@ public class PropertiesSheetSupport
 	
 	public PropertiesSheetBuilder build()
 	{
-		return builder;
+		return builder.startBuilding();
+	}
+
+	public PropertiesSheetBuilder change()
+	{
+		return builder.startChanging();
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
@@ -55,7 +60,28 @@ public class PropertiesSheetSupport
 		fields.put(field.varname, field);
 		field.oldValue = readField(model, field.varname);
 		field.editor = editor;
-		editor.addListener(() -> writeField(model, field.varname, editor.getValue()));
+		editor.addListener(() -> writeField(model, field.getVarname(), editor.getValue()));
+		editor.setValue(readField(model, field.varname));
+	}
+	
+	public FieldInfo getField(String varname)
+	{
+		return fields.get(varname);
+	}
+	
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public void updateField(String varname, Object value)
+	{
+		((DataEditor) fields.get(varname).editor).setValue(value);
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void changeField(String varname, FieldInfo field, DataEditor editor)
+	{
+		fields.remove(varname).editor.dispose();
+		fields.put(varname, field);
+		field.editor = editor;
+		editor.addListener(() -> writeField(model, field.getVarname(), editor.getValue()));
 		editor.setValue(readField(model, field.varname));
 	}
 	
@@ -91,6 +117,11 @@ public class PropertiesSheetSupport
 			this.label = label;
 			this.hint = hint;
 			this.optional = optional;
+		}
+		
+		public String getVarname()
+		{
+			return varname;
 		}
 		
 		public DataType<?> getType()

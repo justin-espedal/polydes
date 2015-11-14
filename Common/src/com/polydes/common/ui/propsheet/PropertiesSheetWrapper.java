@@ -6,6 +6,7 @@ import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
 public interface PropertiesSheetWrapper
 {
 	void addField(FieldInfo newField, DataEditor<?> editor);
+	void changeField(String varname, FieldInfo field, DataEditor<?> editor);
 	void addHeader(String title);
 	void finish();
 	void dispose();
