@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.core.DataSetSources;
+import com.polydes.common.data.types.builtin.EnumType;
 import com.polydes.common.data.types.builtin.ResourceFolderType;
 import com.polydes.common.data.types.builtin.StencylResourceType;
 import com.polydes.common.data.types.builtin.UnknownDataType;
@@ -45,6 +46,8 @@ public class Types extends ObjectRegistry<DataType<?>>
 //	public static ExtrasImageType _ExtrasImage = new ExtrasImageType();
 	public static SelectionType _Selection = new SelectionType();
 	public static SetType _Set = new SetType();
+	
+	public static EnumType _Enum = new EnumType();
 	
 	public static StencylResourceType<IActorType> _Actor = new StencylResourceType<>(ResourceTypes.actor);
 	public static StencylResourceType<EditableBackground> _Background = new StencylResourceType<>(ResourceTypes.background);
@@ -115,6 +118,8 @@ public class Types extends ObjectRegistry<DataType<?>>
 //		registerItem(_ExtrasImage);
 		registerItem(_Selection);
 		registerItem(_Set);
+		
+		registerItem(_Enum);
 		
 		//Stencyl types
 		registerItem(_Control);

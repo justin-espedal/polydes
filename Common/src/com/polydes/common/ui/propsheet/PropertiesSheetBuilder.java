@@ -166,6 +166,12 @@ public class PropertiesSheetBuilder
 			return Types._ResourceFolder.new ResourceFolderEditorBuilder();
 		}
 		
+		public DataEditorBuilder _enum(Class<? extends Enum<?>> cls)
+		{
+			this.type = Types._Enum;
+			return Types._Enum.new EnumEditorBuilder().type(cls);
+		}
+		
 		public DataEditorBuilder _editor(DataType<?> type)
 		{
 			this.type = type;
