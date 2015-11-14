@@ -1,5 +1,7 @@
 package com.polydes.common.ui.propsheet;
 
+import java.util.regex.Pattern;
+
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
@@ -22,6 +24,9 @@ public class PropertiesSheetBuilder
 	private final PropertiesSheetStyle style;
 	
 	private FieldBuilder activeBuilder;
+	
+	// https://github.com/mfornos/humanize/blob/master/humanize-slim/src/main/java/humanize/util/Constants.java
+	public static final Pattern SPLIT_CAMEL = Pattern.compile("(?<=[A-Z])(?=[A-Z][a-z])|(?<=[^A-Z])(?=[A-Z])|(?<=[A-Za-z])(?=[^A-Za-z])");
 	
 	public PropertiesSheetBuilder(PropertiesSheetSupport support, PropertiesSheetWrapper wrapper, PropertiesSheetStyle style)
 	{
@@ -71,7 +76,7 @@ public class PropertiesSheetBuilder
 		{
 			this.varname = varname;
 			type = null;
-			label = varname;
+			label = SPLIT_CAMEL.matcher(varname).replaceAll(" ");
 			hint = null;
 			optional = false;
 		}
