@@ -146,7 +146,7 @@ public abstract class PropertiesSheetStyle
 		
 		public Light()
 		{
-			pageBg = null;
+			pageBg = new Color(240, 240, 240);
 			fieldBg = Color.WHITE;
 			fieldBorder = new Color(160, 160, 160);
 			fieldtextColor = Color.BLACK;
