@@ -34,6 +34,7 @@ public class DialogPanelWrapper implements PropertiesSheetWrapper
 	@Override
 	public void addHeader(String title)
 	{
+		panel.finishBlock();
 		panel.addHeader(title);
 	}
 	
