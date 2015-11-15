@@ -101,9 +101,9 @@ public class PropertiesSheetBuilder
 		switch(mode)
 		{
 			case BUILD:
-				return activeBuilder = new FieldBuilder(varname);
+				return activeBuilder = new FieldBuilder(varname, this);
 			case CHANGE:
-				return activeBuilder = FieldBuilder.fromFieldInfo(support.getField(varname));
+				return activeBuilder = FieldBuilder.fromFieldInfo(support.getField(varname), this);
 			default:
 				throw new IllegalStateException();
 		}
@@ -125,9 +125,11 @@ public class PropertiesSheetBuilder
 		private String hint;
 		private boolean optional;
 		
-		public static FieldBuilder fromFieldInfo(FieldInfo info)
+		private PropertiesSheetBuilder sheetBuilder;
+		
+		public static FieldBuilder fromFieldInfo(FieldInfo info, PropertiesSheetBuilder sheetBuilder)
 		{
-			FieldBuilder builder = new FieldBuilder(info.getVarname());
+			FieldBuilder builder = new FieldBuilder(info.getVarname(), sheetBuilder);
 			builder.type = info.getType();
 			builder.label = info.getLabel();
 			builder.hint = info.getHint();
@@ -135,13 +137,15 @@ public class PropertiesSheetBuilder
 			return builder;
 		}
 		
-		public FieldBuilder(String varname)
+		public FieldBuilder(String varname, PropertiesSheetBuilder sheetBuilder)
 		{
 			this.varname = varname;
 			type = null;
 			label = SPLIT_CAMEL.matcher(varname).replaceAll(" ");
 			hint = null;
 			optional = false;
+			
+			this.sheetBuilder = sheetBuilder;
 		}
 		
 		public FieldBuilder label(String label)
@@ -165,97 +169,97 @@ public class PropertiesSheetBuilder
 		public ArrayEditorBuilder _array()
 		{
 			this.type = Types._Array;
-			return Types._Array.new ArrayEditorBuilder();
+			return Types._Array.new ArrayEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public BoolEditorBuilder _boolean()
 		{
 			this.type = Types._Bool;
-			return Types._Bool.new BoolEditorBuilder();
+			return Types._Bool.new BoolEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public DynamicEditorBuilder _dynamic()
 		{
 			this.type = Types._Dynamic;
-			return Types._Dynamic.new DynamicEditorBuilder();
+			return Types._Dynamic.new DynamicEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public FloatEditorBuilder _float()
 		{
 			this.type = Types._Float;
-			return Types._Float.new FloatEditorBuilder();
+			return Types._Float.new FloatEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public IntEditorBuilder _int()
 		{
 			this.type = Types._Int;
-			return Types._Int.new IntEditorBuilder();
+			return Types._Int.new IntEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public StringEditorBuilder _string()
 		{
 			this.type = Types._String;
-			return Types._String.new StringEditorBuilder();
+			return Types._String.new StringEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 //		public ColorEditorBuilder _color()
 //		{
 //			this.type = Types._Color;
-//			return Types._Color.new ColorEditorBuilder();
+//			return Types._Color.new ColorEditorBuilder().setSheetBuilder(sheetBuilder);
 //		}
 		
 //		public ExtrasImageEditorBuilder _extrasImage()
 //		{
 //			this.type = Types._ExtrasImage;
-//			return Types._ExtrasImage.new ExtrasImageEditorBuilder();
+//			return Types._ExtrasImage.new ExtrasImageEditorBuilder().setSheetBuilder(sheetBuilder);
 //		}
 		
 //		public IControlEditorBuilder _control()
 //		{
 //			this.type = Types._Control;
-//			return Types._Control.new ControlEditorBuilder();
+//			return Types._Control.new ControlEditorBuilder().setSheetBuilder(sheetBuilder);
 //		}
 		
 		public SelectionEditorBuilder _selection()
 		{
 			this.type = Types._Selection;
-			return Types._Selection.new SelectionEditorBuilder();
+			return Types._Selection.new SelectionEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public SetEditorBuilder _set()
 		{
 			this.type = Types._Set;
-			return Types._Set.new SetEditorBuilder();
+			return Types._Set.new SetEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public ResourceFolderEditorBuilder _folder()
 		{
 			this.type = Types._ResourceFolder;
-			return Types._ResourceFolder.new ResourceFolderEditorBuilder();
+			return Types._ResourceFolder.new ResourceFolderEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public DataEditorBuilder _enum(Class<? extends Enum<?>> cls)
 		{
 			this.type = Types._Enum;
-			return Types._Enum.new EnumEditorBuilder().type(cls);
+			return Types._Enum.new EnumEditorBuilder().type(cls).setSheetBuilder(sheetBuilder);
 		}
 
 		public CollectionObjectEditorBuilder _collection(Collection<?> values)
 		{
 			this.type = Types._Collection;
-			return Types._Collection.new CollectionObjectEditorBuilder().source(values);
+			return Types._Collection.new CollectionObjectEditorBuilder().source(values).setSheetBuilder(sheetBuilder);
 		}
 
 		public FilePathEditorBuilder _filePath()
 		{
 			this.type = Types._FilePath;
-			return Types._FilePath.new FilePathEditorBuilder();
+			return Types._FilePath.new FilePathEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public DataEditorBuilder _editor(DataType<?> type)
 		{
 			this.type = type;
-			return type.createEditorBuilder();
+			return type.createEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 	}
 }

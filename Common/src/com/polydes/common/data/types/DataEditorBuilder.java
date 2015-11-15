@@ -14,6 +14,13 @@ public class DataEditorBuilder
 		this.type = type;
 		this.props = props;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends DataEditorBuilder> T setSheetBuilder(PropertiesSheetBuilder builder)
+	{
+		this.builder = builder;
+		return (T) this;
+	}
 
 	public DataEditor<?> build(PropertiesSheetStyle style)
 	{
