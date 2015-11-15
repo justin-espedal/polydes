@@ -123,7 +123,6 @@ public class StructureTabset extends SDE
 		@Override
 		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTabset value)
 		{
-			// TODO Auto-generated method stub
 			
 		}
 	}

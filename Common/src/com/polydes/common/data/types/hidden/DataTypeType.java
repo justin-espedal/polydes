@@ -2,10 +2,10 @@ package com.polydes.common.data.types.hidden;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.function.Predicate;
 
 import javax.swing.JComponent;
 
-import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
@@ -76,7 +76,7 @@ public class DataTypeType extends DataType<DataType>
 			});
 		}
 		
-		public DataTypeEditor(CollectionPredicate<DataType<?>> filter)
+		public DataTypeEditor(Predicate<DataType<?>> filter)
 		{
 			typeChooser = new UpdatingCombo<DataType<?>>(Types.get().values(), filter);
 			
@@ -115,7 +115,7 @@ public class DataTypeType extends DataType<DataType>
 //			typeChooser.setMaximumRowCount(18);
 //		}
 		
-		public void setFilter(CollectionPredicate<DataType<?>> filter)
+		public void setFilter(Predicate<DataType<?>> filter)
 		{
 			typeChooser.setFilter(filter);
 		}

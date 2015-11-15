@@ -1,54 +1,21 @@
 package com.polydes.datastruct.ui.objeditors;
 
-import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.StringType;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
 
 public class StructureTabPanel extends StructureObjectPanel
 {
-	StructureTab tab;
-	
-	String oldLabel;
-	
-	DataEditor<String> labelEditor;
-	
 	public StructureTabPanel(final StructureTab tab, PropertiesSheetStyle style)
 	{
-		super(style);
+		super(style, tab);
 		
-		this.tab = tab;
+		sheet.build()
 		
-		oldLabel = tab.getLabel();
-		
-		//=== Label
-		
-		labelEditor = new StringType.SingleLineStringEditor(null, style);
-		labelEditor.setValue(tab.getLabel());
-		labelEditor.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				tab.setLabel(labelEditor.getValue());
-				previewKey.setName(labelEditor.getValue());
+			.field("label")._string().add().onUpdate(() -> {
+				previewKey.setName(tab.getLabel());
 				preview.lightRefreshDataItem(previewKey);
-			}
-		});
-		
-		addGenericRow("Label", labelEditor);
-	}
-	
-	public void revert()
-	{
-		tab.setLabel(oldLabel);
-	}
-	
-	public void dispose()
-	{
-		clearExpansion(0);
-		oldLabel = null;
-		labelEditor = null;
+			})
+			
+			.finish();
 	}
 }

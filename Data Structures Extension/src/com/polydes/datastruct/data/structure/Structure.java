@@ -57,9 +57,9 @@ public class Structure extends EditableObject
 	public void loadDefaults()
 	{
 		for(StructureField f : template.getFields())
-			if(f.getExtras() != null)
+			if(f.getEditorProperties() != null)
 			{
-				Object defValue = f.getExtras().getDefault();
+				Object defValue = f.getDefaultValue();
 				if(defValue != null)
 				setProperty(f, f.getType().dataType.checkCopy(defValue));
 			}

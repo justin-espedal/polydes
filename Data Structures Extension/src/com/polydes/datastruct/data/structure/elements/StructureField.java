@@ -10,14 +10,14 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.data.types.builtin.extra.ColorType;
 import com.polydes.common.data.types.builtin.extra.ColorType.ColorEditor;
@@ -31,6 +31,7 @@ import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.data.types.HaxeTypes;
 import com.polydes.datastruct.data.types.StructureType;
@@ -53,17 +54,19 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	private String label;
 	private String hint;
 	private boolean optional;
-	private ExtraProperties extras;
+	private Object defaultValue;
+	private EditorProperties props;
 	
 	private ExtrasMap emap;
 	
-	public StructureField(StructureDefinition owner, String varname, String type, String label, String hint, boolean optional, ExtrasMap extras)
+	public StructureField(StructureDefinition owner, String varname, String type, String label, String hint, boolean optional, String defaultValue, ExtrasMap extras)
 	{
 		this.owner = owner;
 		this.varname = varname;
 		this.label = label;
 		this.hint = hint;
 		this.optional = optional;
+		this.defaultValue = defaultValue;
 		
 		emap = extras;
 		DataStructuresExtension.get().getHaxeTypes().requestValue(type, this);
@@ -72,10 +75,43 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	@Override
 	public void realizeRO(HaxeDataType type)
 	{
-		//TODO: This is assuming that an initialized HaxeDataType -always- knows a realized dataType.
+		if(emap.containsKey("genType"))
+		{
+			DataStructuresExtension.get().getHaxeTypes().requestDataTypeBridge((String) emap.get("genType"), (dt) -> {
+				emap.put("genType", dt.getKey());
+				finalizeType(type);
+			});
+		}
+		else
+			finalizeType(type);
+	}
+	
+	private void finalizeType(HaxeDataType type)
+	{
 		this.type = type;
-		this.extras = type.dataType.loadExtras(emap);
+		this.props = type.loadExtras(emap);
+		if(defaultValue instanceof String)
+			this.defaultValue = type.dataType.decode((String) defaultValue);
 		emap = null;
+		if(waitingForTypeInfo != null)
+			for(Runnable r : waitingForTypeInfo)
+				r.run();
+		waitingForTypeInfo = null;
+	}
+	
+	private Runnable[] waitingForTypeInfo = null;
+	
+	public void waitForTypeInfo(Runnable callback)
+	{
+		if(type != null)
+			callback.run();
+		else
+		{
+			if(waitingForTypeInfo == null)
+				waitingForTypeInfo = new Runnable[] {callback};
+			else
+				waitingForTypeInfo = ArrayUtils.add(waitingForTypeInfo, callback);
+		}
 	}
 	
 	public StructureDefinition getOwner()
@@ -85,17 +121,17 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	
 	public void loadExtras(ExtrasMap extras)
 	{
-		this.extras = type.dataType.loadExtras(extras);
+		this.props = type.loadExtras(extras);
 	}
 	
-	public ExtraProperties getExtras()
+	public EditorProperties getEditorProperties()
 	{
-		return extras;
+		return props;
 	}
 	
-	public void setExtras(ExtraProperties extras)
+	public void setEditorProperties(EditorProperties props)
 	{
-		this.extras = extras;
+		this.props = props;
 	}
 	
 	public String getHint()
@@ -123,6 +159,11 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		return optional;
 	}
 	
+	public Object getDefaultValue()
+	{
+		return defaultValue;
+	}
+	
 	public void setHint(String hint)
 	{
 		this.hint = hint;
@@ -142,6 +183,11 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	public void setOptional(boolean optional)
 	{
 		this.optional = optional;
+	}
+	
+	public void setDefaultValue(Object defaultValue)
+	{
+		this.defaultValue = defaultValue;
 	}
 	
 	public void setTypeForPreview(HaxeDataType type)
@@ -228,15 +274,15 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 			String label = take(map, "label");
 			String hint = take(map, "hint");
 			boolean optional = take(map, "optional").equals("true");
+			String defaultValue = take(map, "default");
 			ExtrasMap emap = new ExtrasMap();
 			emap.putAll(map);
 			if(e.hasChildNodes())
 				XML.children(e).forEach((child) -> emap.put(child.getTagName(), readExtrasFromElement(child)));
 			
-			StructureField toAdd = new StructureField(model, name, type, label, hint, optional, emap);
+			StructureField toAdd = new StructureField(model, name, type, label, hint, optional, defaultValue, emap);
 			model.addField(toAdd);
-			
-			DataStructuresExtension.get().getHaxeTypes().requestValue(type, t -> model.realizeFieldHaxeType(toAdd, t));
+			toAdd.waitForTypeInfo(() -> model.realizeFieldHaxeType(toAdd, toAdd.type));
 			
 			return toAdd;
 		}
@@ -260,11 +306,18 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 				XML.write(e, "hint", f.getHint());
 			if(f.isOptional())
 				e.setAttribute("optional", "true");
+			if(f.getDefaultValue() != null)
+				e.setAttribute("default", f.getType().dataType.checkEncode(f.getDefaultValue()));
 			
 			HaxeDataType dtype = f.getType();
-			ExtrasMap emap = dtype.dataType.saveExtras(f.getExtras());
+			ExtrasMap emap = dtype.saveExtras(f.getEditorProperties());
 			if(emap != null)
+			{
+				if(emap.containsKey("genType"))
+					emap.put("genType",
+						DataStructuresExtension.get().getHaxeTypes().getDtFromHaxe((String) emap.get("genType")).getKey());
 				writeExtrasToElement(e.getOwnerDocument(), e, emap);
+			}
 		}
 		
 		public static void writeExtrasToElement(Document doc, Element e, ExtrasMap emap)
@@ -294,7 +347,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		public StructureField create(StructureDefinition def, String nodeName)
 		{
 			StructureField newField =
-					new StructureField(def, StructureField.formatVarname(nodeName), HaxeTypes._String.getHaxeType(), nodeName, "", false, new ExtrasMap());
+					new StructureField(def, StructureField.formatVarname(nodeName), HaxeTypes._String.getHaxeType(), nodeName, "", false, null, new ExtrasMap());
 			def.addField(newField, def.getEditor().preview);
 			return newField;
 		}
@@ -386,9 +439,9 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 			
 			//special case for "Structure" editors, because they may need to know which Structure they're in for filtering.
 			if(type instanceof StructureType)
-				deditor = ((StructureType) type).new StructureEditor((StructureType.Extras) f.getExtras(), sheet.model);
+				deditor = ((StructureType) type).new StructureEditor(f.getEditorProperties(), sheet.model);
 			else
-				deditor = type.createEditor(f.getExtras(), sheet.style);
+				deditor = type.createEditor(f.getEditorProperties(), sheet.style);
 			
 			//special case for Color editors inside preview structures. Need to make sure the popup window works.
 			if(type instanceof ColorType && sheet.model.getID() == -1)

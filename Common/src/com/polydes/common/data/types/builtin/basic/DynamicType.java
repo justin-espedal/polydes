@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.core.Dynamic;
@@ -113,7 +113,7 @@ public class DynamicType extends DataType<Dynamic>
 		
 		public void excludeTypes(final HashSet<DataType<?>> types)
 		{
-			typeChooser.setFilter(new CollectionPredicate<DataType<?>>()
+			typeChooser.setFilter(new Predicate<DataType<?>>()
 			{
 				@Override
 				public boolean test(DataType<?> t)

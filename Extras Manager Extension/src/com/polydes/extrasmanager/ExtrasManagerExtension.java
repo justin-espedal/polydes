@@ -1,16 +1,19 @@
 package com.polydes.extrasmanager;
 
+import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.sys.FileMonitor;
 import com.polydes.common.sys.SysFile;
 import com.polydes.common.sys.SysFolder;
+import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.extrasmanager.app.MainEditor;
 import com.polydes.extrasmanager.data.ExtrasNodeCreator;
 import com.polydes.extrasmanager.data.FileEditor;
@@ -18,10 +21,10 @@ import com.polydes.extrasmanager.io.FileOperations;
 
 import stencyl.core.lib.Game;
 import stencyl.sw.ext.BaseExtension;
-import stencyl.sw.ext.FileHandler;
 import stencyl.sw.ext.OptionsPanel;
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.Locations;
+import stencyl.sw.util.dg.DialogPanel;
 
 public class ExtrasManagerExtension extends BaseExtension
 {
@@ -204,46 +207,46 @@ public class ExtrasManagerExtension extends BaseExtension
 	{
 		return new OptionsPanel()
 		{
-			String textPath;
-			String imagePath;
+			PropertiesSheetSupport sheet;
 			
 			@Override
 			public void init()
 			{
-				FileHandler textHandler = (file) -> textPath = "\"" + file.getAbsolutePath() + "\"";
-				FileHandler imageHandler = (file) -> imagePath = "\"" + file.getAbsolutePath() + "\"";
+				DialogPanel panel = new DialogPanel(PropertiesSheetStyle.DARK.pageBg);
 				
-				startForm();
-				addHeader("Options");
-				JTextField textField = addFileChooser("Text Editor", textHandler, false);
-				JTextField imageField = addFileChooser("Image Editor", imageHandler, false);
-				textField.setText(textPath);
-				imageField.setText(imagePath);
-				endForm();
+				sheet = new PropertiesSheetSupport(panel, properties);
+				
+				sheet.build()
+					.header("Options")
+					.field("textEditor")._filePath().add()
+					.field("imageEditor")._filePath().add()
+					.finish();
+				
+				panel.addFinalRow(new JLabel());
+				add(panel, BorderLayout.CENTER);
 			}
 
 			@Override
 			public void onPressedOK()
 			{
-				putProp("textEditorPath", textPath);
-				putProp("imageEditorPath", imagePath);
-				
-				FileEditor.typeProgramMap.put("application/octet-stream", textPath);
-				FileEditor.typeProgramMap.put("text/plain", textPath);
-				FileEditor.typeProgramMap.put("image/png", imagePath);
+				FileEditor.typeProgramMap.put("application/octet-stream", readStringProp("textEditorPath", null));
+				FileEditor.typeProgramMap.put("text/plain", readStringProp("textEditorPath", null));
+				FileEditor.typeProgramMap.put("image/png", readStringProp("imageEditorPath", null));
+				sheet.dispose();
+				sheet = null;
 			}
 
 			@Override
 			public void onPressedCancel()
 			{
-				
+				sheet.revertChanges();
+				sheet.dispose();
+				sheet = null;
 			}
 			
 			@Override
 			public void onShown()
 			{
-				textPath = readStringProp("textEditorPath", "");
-				imagePath = readStringProp("imageEditorPath", "");
 			}
 		};
 	}

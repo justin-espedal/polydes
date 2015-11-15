@@ -1,22 +1,16 @@
 package com.polydes.datastruct.data.types.haxe;
 
-import com.polydes.common.comp.UpdatingCombo;
-import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.core.DataSetSource.CustomDataSetSource;
 import com.polydes.common.data.core.DataSetSources;
-import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
-import com.polydes.common.data.types.builtin.basic.StringType.SingleLineStringEditor;
-import com.polydes.common.data.types.builtin.extra.SetType.Extras;
-import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.common.data.types.builtin.extra.SetType;
+import com.polydes.common.data.types.builtin.extra.SetType.Editor;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
-import com.polydes.datastruct.ui.objeditors.StructureObjectPanel;
-import com.polydes.datastruct.ui.table.PropertiesSheet;
 
 public class SetHaxeType extends HaxeDataType
 {
@@ -24,93 +18,77 @@ public class SetHaxeType extends HaxeDataType
 	{
 		super(Types._Set, "com.polydes.datastruct.Set", "OBJECT");
 	}
+	
+	@Override
+	public EditorProperties loadExtras(ExtrasMap extras)
+	{
+		EditorProperties props = new EditorProperties();
+		props.put(SetType.EDITOR, extras.get("editor", Editor.Checklist));
+		if(extras.containsKey("sourceType"))
+			props.put(SetType.SOURCE, DataSetSources.get().getItem(extras.get("sourceType", Types._String)));
+		else
+			props.put(SetType.SOURCE, new CustomDataSetSource(extras.get("source", Types._Array, null)));
+		//TODO transform a string into an appropriate predicate
+//		props.put(SetType.SOURCE_FILTER, extras.get("sourceFilter", Types._String, null));
+		return props;
+	}
+
+	@Override
+	public ExtrasMap saveExtras(EditorProperties props)
+	{
+		ExtrasMap emap = new ExtrasMap();
+		emap.put("editor", props.get(SetType.EDITOR));
+		DataSetSource source = props.get(SetType.SOURCE);
+		if(source.id.equals("custom"))
+			emap.put("source", Types._Array.checkEncode(source));
+		else
+			emap.put("sourceType", source.id);
+		//TODO transform a predicate into a string
+//		if(props.containsKey(SetType.SOURCE_FILTER))
+//			emap.put("sourceFilter", props.get(SetType.SOURCE_FILTER));
+		return emap;
+	}
 
 	@Override
 	public void applyToFieldPanel(final StructureFieldPanel panel)
 	{
-		int expansion = panel.getExtraPropertiesExpansion();
-		final Extras e = (Extras) panel.getExtras();
-		final PropertiesSheet preview = panel.getPreview();
-		final DataItem previewKey = panel.getPreviewKey();
-		final PropertiesSheetStyle style = panel.style;
+		EditorProperties props = panel.getExtras();
+		boolean custom = props.<DataSetSource>get(SetType.SOURCE).id.equals("custom");
 		
-		final int customSourceRow;
-		final int dataFilterRow;
+		PropertiesSheetSupport sheet = panel.getEditorSheet();
 		
-		//=== Editor
+		sheet.build()
+			
+			.field(SetType.SOURCE)._collection(DataSetSources.get().values()).add()
+			
+			.field("sourceList")._array().simpleEditor().genType(Types._String).add()
+			
+			.field(SetType.SOURCE_FILTER).optional()._editor(null).add()
+			
+			.finish();
 		
-//		DataList editorChoices = Lang.datalist(Types._String, "Checklist"/*, "Grid"*/);
-//		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
-//		editorChooser.setValue("Plain");
-//		editorChooser.addListener(new UpdateListener()
+		sheet.addPropertyChangeListener(SetType.SOURCE, event -> {
+			boolean newCustom = props.<DataSetSource>get(SetType.SOURCE).id.equals("custom");
+			panel.setRowVisibility(sheet, "sourceList", newCustom);
+			panel.setRowVisibility(sheet, SetType.SOURCE_FILTER, !newCustom);
+		});
+		
+		//TODO
+//		customSourceField.addListener(new UpdateListener()
 //		{
 //			@Override
 //			public void updated()
 //			{
-//				e.editor = Editor.valueOf(editorChooser.getValue());
+//				((CustomDataSetSource) e.source).list.clear();
+//				((CustomDataSetSource) e.source).list.addAll(customSourceField.getValue());
 //				preview.refreshDataItem(previewKey);
 //			}
 //		});
 		
-		//=== Sources
+		//TODO ?
+//		customSourceRow = panel.addGenericRow(expansion, "Source", customSourceField, StructureObjectPanel.RESIZE_FLAG);
 		
-		boolean custom = e.source.id.equals("custom");
-		
-		final UpdatingCombo<DataSetSource> sourceChooser = new UpdatingCombo<DataSetSource>(DataSetSources.get().values(), null);
-		sourceChooser.setSelectedItem(e.source);
-		sourceChooser.addActionListener((event) -> {
-			e.source = sourceChooser.getSelected();
-			preview.refreshDataItem(previewKey);
-		});
-		
-		final DataEditor<DataList> customSourceField = new SimpleArrayEditor(style, Types._String);
-		customSourceField.setValue(custom ? ((CustomDataSetSource) e.source).list : null);
-		customSourceField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				((CustomDataSetSource) e.source).list.clear();
-				((CustomDataSetSource) e.source).list.addAll(customSourceField.getValue());
-				preview.refreshDataItem(previewKey);
-			}
-		});
-		
-		//=== Source Filter
-		
-		final DataEditor<String> filterField = new SingleLineStringEditor(null, style);
-		filterField.setValue(e.sourceFilter);
-		filterField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.sourceFilter = filterField.getValue();
-				preview.refreshDataItem(previewKey);
-			}
-		});
-		
-		//panel.addGenericRow(expansion, "Editor", editorChooser);
-		
-		panel.addGenericRow(expansion, "Source", sourceChooser);
-		dataFilterRow = panel.addEnablerRow(expansion, "Filter", filterField, e.sourceFilter != null);
-		customSourceRow = panel.addGenericRow(expansion, "Source", customSourceField, StructureObjectPanel.RESIZE_FLAG);
-		
-		sourceChooser.addActionListener(event -> {
-			boolean newCustom = e.source.id.equals("custom");
-			panel.setRowVisibility(dataFilterRow, !newCustom);
-			panel.setRowVisibility(customSourceRow, newCustom);
-			
-			if(newCustom)
-			{
-				e.source = new CustomDataSetSource(new DataList(Types._String));
-				e.sourceFilter = null;
-			}
-			
-			preview.refreshDataItem(previewKey);
-		});
-		
-		panel.setRowVisibility(dataFilterRow, !custom);
-		panel.setRowVisibility(customSourceRow, custom);
+		panel.setRowVisibility(sheet, "sourceList", custom);
+		panel.setRowVisibility(sheet, SetType.SOURCE_FILTER, !custom);
 	}
 }

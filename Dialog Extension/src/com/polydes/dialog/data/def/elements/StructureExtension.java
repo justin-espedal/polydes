@@ -5,9 +5,6 @@ import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
-import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.StringType;
 import com.polydes.common.io.XML;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.Lang;
@@ -41,68 +38,18 @@ public class StructureExtension extends SDE
 	
 	public class StructureExtensionPanel extends StructureObjectPanel
 	{
-		StructureExtension extension;
-		
-		String oldImplementation;
-		String oldDescription;
-		
-		DataEditor<String> implementationEditor;
-		DataEditor<String> descriptionEditor;
-		
 		public StructureExtensionPanel(final StructureExtension extension, PropertiesSheetStyle style)
 		{
-			super(style);
+			super(style, extension);
 			
-			this.extension = extension;
+			sheet.build()
 			
-			oldImplementation = extension.implementation;
-			oldDescription = extension.description;
-			
-			//=== Implementation
-	
-			implementationEditor = new StringType.SingleLineStringEditor(null, style);
-			implementationEditor.setValue(extension.implementation);
-		
-			implementationEditor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					extension.implementation = implementationEditor.getValue();
-				}
-			});
-			
-			addGenericRow("Implementation", implementationEditor);
-			
-			//=== Description
-			
-			descriptionEditor = new StringType.ExpandingStringEditor(null, style);
-			descriptionEditor.setValue(extension.description);
-		
-			descriptionEditor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					extension.description = descriptionEditor.getValue();
-					preview.lightRefreshDataItem(previewKey);
-				}
-			});
-			
-			addGenericRow("Description", descriptionEditor);
-		}
-		
-		public void revert()
-		{
-			extension.implementation = oldImplementation;
-			extension.description = oldDescription;
-		}
-		
-		public void dispose()
-		{
-			clearExpansion(0);
-			oldImplementation = null;
-			oldDescription = null;
+				.field("implementation")._string().add()
+				
+				.field("description")._string().expandingEditor().add()
+				.onUpdate(() -> preview.lightRefreshDataItem(previewKey))
+				
+				.finish();
 		}
 	}
 
@@ -127,7 +74,7 @@ public class StructureExtension extends SDE
 	@Override
 	public void revertChanges()
 	{
-		editor.revert();
+		editor.revertChanges();
 	}
 	
 	public static class ExtensionType extends SDEType<StructureExtension>

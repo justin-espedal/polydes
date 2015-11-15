@@ -66,7 +66,8 @@ public class StructureTab extends SDE
 	@Override
 	public void revertChanges()
 	{
-		editor.revert();
+		if(editor != null)
+			editor.revertChanges();
 	}
 
 	@Override

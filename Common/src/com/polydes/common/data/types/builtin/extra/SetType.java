@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -30,6 +31,7 @@ public class SetType extends DataType<DataSet>
 	}
 	
 	public static final String SOURCE = "source";
+	public static final String SOURCE_FILTER = "sourceFilter";
 	
 	@Override
 	public DataEditor<DataSet> createEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -42,7 +44,7 @@ public class SetType extends DataType<DataSet>
 		if(source.collectionSupplier.get().isEmpty())
 			return new InvalidEditor<DataSet>("The selected source has no items", style);
 		
-		return new ChecklistDataSetEditor(source, style);
+		return new ChecklistDataSetEditor(props, style);
 	}
 	
 	@Override
@@ -119,6 +121,12 @@ public class SetType extends DataType<DataSet>
 			props.put(SOURCE, source);
 			return this;
 		}
+		
+		public SetEditorBuilder filter(Predicate<?> filter)
+		{
+			props.put(SOURCE_FILTER, filter);
+			return this;
+		}
 	}
 	
 	public static class ChecklistDataSetEditor extends DataEditor<DataSet>
@@ -129,9 +137,10 @@ public class SetType extends DataType<DataSet>
 		JPanel buttonPanel;
 		IdentityHashMap<Object, JCheckBox> map;
 		
-		public ChecklistDataSetEditor(DataSetSource source, PropertiesSheetStyle style)
+		public ChecklistDataSetEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			this.source = source;
+			source = props.get(SOURCE);
+			Predicate<Object> filter = props.get(SOURCE_FILTER);
 			
 			ArrayList<JCheckBox> buttons = new ArrayList<JCheckBox>();
 			
@@ -139,6 +148,9 @@ public class SetType extends DataType<DataSet>
 			
 			for(final Object o : source.collectionSupplier.get())
 			{
+				if(!filter.test(o))
+					continue;
+				
 				final JCheckBox b = new JCheckBox("" + o);
 				buttons.add(b);
 				map.put(o, b);

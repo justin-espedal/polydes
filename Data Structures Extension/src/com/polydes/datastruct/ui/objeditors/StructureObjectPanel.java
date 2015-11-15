@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -14,10 +14,10 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.DisposeListener;
-import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.core.UPair;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
+import com.polydes.common.ui.propsheet.PropertiesSheetWrapper;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.Row;
@@ -28,54 +28,33 @@ import com.polydes.datastruct.ui.utils.Layout;
 public class StructureObjectPanel extends Table implements PreviewableEditor
 {
 	public static final int RESIZE_FLAG = 0x01;
-	//0001, 0002, 0004, 0008
-	//0010, 0020. 0040, 0080
-	//0100, 0200, 0400, 0800
-	//1000, 2000, 4000, 8000
+	
+	protected PropertiesSheetSupport sheet;
 	
 	protected PropertiesSheet preview;
 	protected DataItem previewKey;
 	
-	private Expansion[] cardEditors;
+	private HashMap<String, PropertiesSheetSupport> extensions = new HashMap<>();
+	private HashMap<String, DisposableSheetWrapper> wrappers = new HashMap<>();
 	
-	public StructureObjectPanel(PropertiesSheetStyle style)
+	public StructureObjectPanel(PropertiesSheetStyle style, Object model)
 	{
 		super(style);
+		sheet = createSheetExtension(model, "base");
 		
 		setBorder(BorderFactory.createEmptyBorder(style.rowgap, style.rowgap, 0, style.rowgap));
-		cardEditors = new Expansion[] {new Expansion()};
 	}
 	
-	private void addEditor(int expansionID, int rowID, DataEditor<?> editor)
+	private void addGenericRowAtInternal(int row, String label, JComponent... comps)
 	{
-		cardEditors[expansionID].add(rowID, editor);
-		if(editor != null)
-			editor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					previewKey.setDirty(true);
-				}
-			});
+		RowGroup group = new RowGroup(null);
+		group.rows = new Row[0];
+		group.add(style.createLabel(label), Layout.horizontalBox(comps));
+		group.add(style.rowgap);
+		addGroup(row, group);
 	}
 	
-	public int addEnablerRow(int expansionID, String label, DataEditor<?> editor, boolean initiallyEnabled)
-	{
-		JComponent[] comps = ArrayUtils.add(editor.getComponents(), 0, createEnabler(editor, initiallyEnabled));
-		int rowID = addGenericRowInternal(expansionID, label, comps);
-		addEditor(expansionID, rowID, editor);
-		return rowID;
-	}
-	
-	public int addGenericRow(int expansionID, String label, DataEditor<?> editor)
-	{
-		int rowID = addGenericRowInternal(expansionID, label, editor.getComponents());
-		addEditor(expansionID, rowID, editor);
-		return rowID;
-	}
-	
-	private int addGenericRowInternal(int expansionID, String label, JComponent... comps)
+	public int addGenericRow(String label, JComponent... comps)
 	{
 		RowGroup group = new RowGroup(null);
 		group.rows = new Row[0];
@@ -85,64 +64,24 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		return rows.length - 1;
 	}
 	
-	public int addGenericRow(int expansionID, String label, JComponent... comps)
-	{
-		RowGroup group = new RowGroup(null);
-		group.rows = new Row[0];
-		group.add(style.createLabel(label), Layout.horizontalBox(comps));
-		group.add(style.rowgap);
-		addGroup(rows.length, group);
-		addEditor(expansionID, rows.length - 1, null);
-		return rows.length - 1;
-	}
-	
-	public int addGenericRow(int expansionID, String label, DataEditor<?> editor, final int flags)
+	//TODO: Get rid of this
+	public int addGenericRow(String label, DataEditor<?> editor, final int flags)
 	{
 		final JComponent[] comps = editor.getComponents();
 		if((flags & RESIZE_FLAG) > 0)
 		{
 			for(JComponent comp : comps)
 				comp.addComponentListener(resizeListener);
-			editor.addDisposeListener(new DisposeListener()
-			{
-				@Override
-				public void disposed()
-				{
-					for(JComponent comp : comps)
-						comp.removeComponentListener(resizeListener);
-				
-				}
+			editor.addDisposeListener(() -> {
+				for(JComponent comp : comps)
+					comp.removeComponentListener(resizeListener);
 			});
 		}
 		
-		int rowID = addGenericRowInternal(expansionID, label, comps);
-		addEditor(expansionID, rowID, editor);
-		return rowID;
+		return addGenericRow(label, comps);
 	}
 	
-	public int addGenericRow(String label, DataEditor<?> editor)
-	{
-		int rowID = addGenericRowInternal(0, label, editor.getComponents());
-		addEditor(0, rowID, editor);
-		return rowID;
-	}
-	
-	public int addGenericRow(String label, JComponent... comps)
-	{
-		return addGenericRow(0, label, comps);
-	}
-	
-	public int addGenericRow(String label, DataEditor<?> editor, final int flags)
-	{
-		return addGenericRow(0, label, editor, flags);
-	}
-	
-	public int newExpander()
-	{
-		cardEditors = ArrayUtils.add(cardEditors, new Expansion());
-		return cardEditors.length - 1;
-	}
-	
+	//TODO: Make this better (use DisabledPanel)
 	public JCheckBox createEnabler(final DataEditor<?> editor, final boolean initialValue)
 	{
 		final JCheckBox enabler = new JCheckBox();
@@ -176,8 +115,9 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		return enabler;
 	}
 	
-	public void setRowVisibility(int rowID, boolean visible)
+	public void setRowVisibility(PropertiesSheetSupport sheet, String id, boolean visible)
 	{
+		int rowID = ((DisposableSheetWrapper) sheet.getWrapper()).rowIndex.get(id);
 		rows[rowID].setConditionallyVisible(visible);
 		
 		layoutContainer();
@@ -194,19 +134,29 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		}
 	};
 	
-	public void clearExpansion(int expansionID)
+	public PropertiesSheetSupport createSheetExtension(Object model, String id)
 	{
-		for(UPair<Integer, DataEditor<?>> editor : cardEditors[expansionID])
-		{
-			removeGroup(editor.l);
-			if(editor.r != null)
-				editor.r.dispose();
-			for(Expansion exp : cardEditors)
-				for(UPair<Integer, DataEditor<?>> row : exp)
-					if(row.l > editor.l)
-						--row.l;
-		}
-		cardEditors[expansionID] = new Expansion();
+		DisposableSheetWrapper wrapper = new DisposableSheetWrapper();
+		PropertiesSheetSupport support = new PropertiesSheetSupport(wrapper, style, model);
+		
+		extensions.put(id, support);
+		wrappers.put(id, wrapper);
+		
+		return support;
+	}
+	
+	public void clearSheetExtension(String id)
+	{
+		PropertiesSheetSupport support = extensions.remove(id);
+		wrappers.remove(id);
+		support.dispose();
+	}
+	
+	private void removeRow(int rowID)
+	{
+		removeGroup(rowID);
+		for(DisposableSheetWrapper wrapper : wrappers.values())
+			wrapper.decrementGreaterThan(rowID, 1);
 	}
 	
 	@Override
@@ -215,12 +165,104 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		preview = sheet;
 		previewKey = key;
 	}
-}
-
-class Expansion extends ArrayList<UPair<Integer, DataEditor<?>>>
-{
-	public void add(int rowID, DataEditor<?> editor)
+	
+	public void revertChanges()
 	{
-		add(new UPair<Integer, DataEditor<?>>(rowID, editor));
+		for(PropertiesSheetSupport support : extensions.values())
+			support.revertChanges();
+	}
+	
+	public void dispose()
+	{
+		sheet = null;
+		preview = null;
+		previewKey = null;
+		
+		removeAll();
+		
+		for(PropertiesSheetSupport support : extensions.values())
+			support.dispose();
+		
+		extensions = null;
+		wrappers = null;
+	}
+	
+	// PropertiesSheetWrapper
+	
+	public class DisposableSheetWrapper implements PropertiesSheetWrapper
+	{
+		private HashMap<String, Integer> rowIndex;
+		private boolean disposing;
+		
+		public void decrementGreaterThan(int pivot, int amount)
+		{
+			if(disposing)
+				return;
+			
+			for(String rowKey : rowIndex.keySet())
+			{
+				int rowIsAt = rowIndex.get(rowKey);
+				if(rowIsAt > pivot)
+					rowIndex.put(rowKey, rowIsAt - amount);
+			}
+		}
+		
+		private JComponent[] buildRow(FieldInfo field, DataEditor<?> editor)
+		{
+			JComponent[] comps = editor.getComponents();
+			
+			String hint = field.getHint();
+			if(hint != null && !hint.isEmpty())
+				comps = ArrayUtils.add(comps, style.createEditorHint(hint));
+			
+			//TODO: editor.getValue() will NOT be an accurate value at this time.
+			if(field.isOptional())
+				comps = ArrayUtils.add(comps, 0, createEnabler(editor, editor.getValue() != null));
+			
+			return comps;
+		}
+		
+		@Override
+		public void addField(FieldInfo newField, DataEditor<?> editor)
+		{
+			JComponent[] comps = buildRow(newField, editor);
+			editor.addListener(() -> previewKey.setDirty(true));
+			
+			int row = addGenericRow(newField.getLabel(), comps);
+			rowIndex.put(newField.getVarname(), row);
+		}
+		
+		@Override
+		public void changeField(String varname, FieldInfo field, DataEditor<?> editor)
+		{
+			JComponent[] comps = buildRow(field, editor);
+			editor.addListener(() -> previewKey.setDirty(true));
+			
+			int row = rowIndex.get(varname);
+			removeGroup(row);
+			addGenericRowAtInternal(row, field.getLabel(), comps);
+		}
+		
+		@Override
+		public void addHeader(String title)
+		{
+			int row = addGenericRow("", style.createRoundedLabel(title));
+			rowIndex.put("H: " + title, row);
+		}
+		
+		@Override
+		public void finish()
+		{
+			
+		}
+		
+		@Override
+		public void dispose()
+		{
+			disposing = true;
+			for(Integer row : rowIndex.values())
+				removeRow(row);
+			rowIndex = null;
+		}
 	}
 }

@@ -4,7 +4,10 @@ import java.util.HashMap;
 
 import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.core.DataSetSources;
+import com.polydes.common.data.types.builtin.CollectionObjectType;
 import com.polydes.common.data.types.builtin.EnumType;
+import com.polydes.common.data.types.builtin.FilePathType;
+import com.polydes.common.data.types.builtin.FileType;
 import com.polydes.common.data.types.builtin.ResourceFolderType;
 import com.polydes.common.data.types.builtin.StencylResourceType;
 import com.polydes.common.data.types.builtin.UnknownDataType;
@@ -48,6 +51,9 @@ public class Types extends ObjectRegistry<DataType<?>>
 	public static SetType _Set = new SetType();
 	
 	public static EnumType _Enum = new EnumType();
+	public static CollectionObjectType _Collection = new CollectionObjectType();
+	public static FileType _File = new FileType();
+	public static FilePathType _FilePath = new FilePathType();
 	
 	public static StencylResourceType<IActorType> _Actor = new StencylResourceType<>(ResourceTypes.actor);
 	public static StencylResourceType<EditableBackground> _Background = new StencylResourceType<>(ResourceTypes.background);

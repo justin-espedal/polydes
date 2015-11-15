@@ -1,5 +1,6 @@
 package com.polydes.common.ui.propsheet;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 import com.polydes.common.data.types.DataEditor;
@@ -7,6 +8,8 @@ import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.data.types.builtin.CollectionObjectType.CollectionObjectEditorBuilder;
+import com.polydes.common.data.types.builtin.FilePathType.FilePathEditorBuilder;
 import com.polydes.common.data.types.builtin.ResourceFolderType.ResourceFolderEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.ArrayType.ArrayEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.BoolType.BoolEditorBuilder;
@@ -235,6 +238,18 @@ public class PropertiesSheetBuilder
 		{
 			this.type = Types._Enum;
 			return Types._Enum.new EnumEditorBuilder().type(cls);
+		}
+
+		public CollectionObjectEditorBuilder _collection(Collection<?> values)
+		{
+			this.type = Types._Collection;
+			return Types._Collection.new CollectionObjectEditorBuilder().source(values);
+		}
+
+		public FilePathEditorBuilder _filePath()
+		{
+			this.type = Types._FilePath;
+			return Types._FilePath.new FilePathEditorBuilder();
 		}
 		
 		public DataEditorBuilder _editor(DataType<?> type)

@@ -7,9 +7,9 @@ import javax.swing.JComponent;
 
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.DataStructuresExtension;
 
@@ -21,9 +21,15 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 	}
 
 	@Override
-	public DataEditor<HaxeDataType> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<HaxeDataType> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
 		return new HaxeDataTypeEditor();
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new DataEditorBuilder(this, new EditorProperties());
 	}
 
 	@Override
@@ -48,23 +54,6 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 	public HaxeDataType copy(HaxeDataType t)
 	{
 		return t;
-	}
-	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		return null;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
 	}
 	
 	public static class HaxeDataTypeEditor extends DataEditor<HaxeDataType>

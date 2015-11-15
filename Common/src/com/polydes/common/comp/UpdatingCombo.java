@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import com.polydes.common.collections.CollectionObserver;
-import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.collections.CollectionUpdateListener;
 
 /**
@@ -20,7 +20,7 @@ public class UpdatingCombo<T> extends JComboBox<T>
 {
 	UpdatingModel<T> model;
 	
-	public UpdatingCombo(Collection<T> list, CollectionPredicate<T> filter)
+	public UpdatingCombo(Collection<T> list, Predicate<T> filter)
 	{
 		super(new UpdatingModel<T>(list, filter));
 		model = (UpdatingModel<T>) getModel();
@@ -42,7 +42,7 @@ public class UpdatingCombo<T> extends JComboBox<T>
 		model.setList(list);
 	}
 	
-	public void setFilter(CollectionPredicate<T> filter)
+	public void setFilter(Predicate<T> filter)
 	{
 		model.setFilter(filter);
 	}
@@ -53,10 +53,10 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 	public static Map<Collection<?>, CollectionObserver> observers = new IdentityHashMap<Collection<?>, CollectionObserver>();
 	
 	private Collection<T> list;
-	private CollectionPredicate<T> filter;
+	private Predicate<T> filter;
 	private ArrayList<T> objects;
 	
-	public UpdatingModel(Collection<T> list, CollectionPredicate<T> filter)
+	public UpdatingModel(Collection<T> list, Predicate<T> filter)
 	{
 		if(!observers.containsKey(list))
 			observers.put(list, new CollectionObserver(list));
@@ -82,7 +82,7 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		listUpdated();
 	}
 	
-	public void setFilter(CollectionPredicate<T> filter)
+	public void setFilter(Predicate<T> filter)
 	{
 		this.filter = filter;
 		listUpdated();

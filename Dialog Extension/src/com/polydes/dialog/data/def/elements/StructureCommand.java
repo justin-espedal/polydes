@@ -2,8 +2,6 @@ package com.polydes.dialog.data.def.elements;
 
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -11,9 +9,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.StringType;
 import com.polydes.common.io.XML;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.ColorUtil;
@@ -29,7 +24,7 @@ import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.dialog.app.editors.text.DialogHighlighter;
-import com.polydes.dialog.data.def.elements.StructureArgument.StructureArgumentEditor;
+import com.polydes.dialog.data.def.elements.StructureArgument.StructureArgumentType;
 import com.polydes.dialog.data.def.elements.StructureArgument.Type;
 
 public class StructureCommand extends SDE
@@ -65,143 +60,37 @@ public class StructureCommand extends SDE
 	
 	public class StructureCommandPanel extends StructureObjectPanel
 	{
-		StructureCommand cmd;
-		
-		String oldName;
-		ArrayList<StructureArgument> oldArgs;
-		String oldDescription;
-		
-		DataEditor<String> nameEditor;
-		ArrayList<DataEditor<StructureArgument>> argEditors;
-		DataEditor<String> descriptionEditor;
-		
-		int argsExpander;
-		
 		public StructureCommandPanel(final StructureCommand cmd, PropertiesSheetStyle style)
 		{
-			super(style);
+			super(style, cmd);
 			
-			this.cmd = cmd;
+			StructureArgumentType sat = new StructureArgumentType();
 			
-			oldName = cmd.name;
-			oldArgs = new ArrayList<>();
-			for(StructureArgument arg : cmd.args)
-				oldArgs.add(new StructureArgument(arg.name, arg.type));
+			sheet.build()
 			
-			//=== Name
-	
-			nameEditor = new StringType.SingleLineStringEditor(null, style);
-			nameEditor.setValue(cmd.name);
-		
-			nameEditor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					cmd.name = nameEditor.getValue();
-					previewKey.setName(cmd.getDisplayLabel());
-					preview.lightRefreshDataItem(previewKey);
-				}
-			});
-			
-			addGenericRow("Name", nameEditor);
-			
-			//=== Description
-			
-			descriptionEditor = new StringType.ExpandingStringEditor(null, style);
-			descriptionEditor.setValue(cmd.description);
-		
-			descriptionEditor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					cmd.description = descriptionEditor.getValue();
-					preview.lightRefreshDataItem(previewKey);
-				}
-			});
-			
-			addGenericRow("Description", descriptionEditor);
-			
-			//=== Arguments
-			
-			addGenericRow("", new JComponent[] {style.createSoftLabel("Arguments")});
-			
-			argsExpander = newExpander();
-			
-			refreshArgs();
-		}
-		
-		private void refreshArgs()
-		{
-			clearExpansion(argsExpander);
-			
-			int i = 0;
-			
-			for(StructureArgument arg : cmd.args)
-			{
-				final int argIndex = i++;
+				.field("name")._string().add()
 				
-				DataEditor<StructureArgument> argEditor = new StructureArgumentEditor(style);
-				argEditor.setValue(arg);
+				.field("description")._string().expandingEditor().add()
 				
-				argEditor.addListener(new UpdateListener()
-				{
-					@Override
-					public void updated()
-					{
-						StructureArgument value = argEditor.getValue();
-						arg.name = value.name;
-						arg.type = value.type;
-						previewKey.setName(cmd.getDisplayLabel());
-						preview.lightRefreshDataItem(previewKey);
-					}
-				});
+				.header("Argument")
 				
-				addGenericRow(argsExpander, String.valueOf(argIndex), argEditor);
-			}
+				.field("args").label("")._array().genType(sat).add()
+				
+				.finish();
 			
-			JButton addArgButton = new JButton("+");
-			JButton removeArgButton = new JButton("-");
-			
-			final int argIndex = i;
-					
-			addArgButton.addActionListener((e) -> {
-				cmd.args.add(new StructureArgument("newArg" + argIndex, Type.String));
+			sheet.addPropertyChangeListener("name", event -> {
 				previewKey.setName(cmd.getDisplayLabel());
 				preview.lightRefreshDataItem(previewKey);
-				refreshArgs();
+			});	
+			
+			sheet.addPropertyChangeListener("description", event -> {
+				preview.lightRefreshDataItem(previewKey);
 			});
 			
-			removeArgButton.addActionListener((e) -> {
-				cmd.args.remove(cmd.args.size() - 1);
+			sheet.addPropertyChangeListener("args", event -> {
 				previewKey.setName(cmd.getDisplayLabel());
 				preview.lightRefreshDataItem(previewKey);
-				refreshArgs();
 			});
-			
-			removeArgButton.setEnabled(cmd.args.size() > 0);
-			
-			addGenericRow(argsExpander, "", new JComponent[] {addArgButton, removeArgButton});
-			
-			setSize(getPreferredSize());
-		}
-		
-		public void revert()
-		{
-			cmd.name = oldName;
-			cmd.args.clear();
-			cmd.args.addAll(oldArgs);
-			cmd.description = oldDescription;
-		}
-		
-		public void dispose()
-		{
-			clearExpansion(0);
-			clearExpansion(argsExpander);
-			oldName = null;
-			oldArgs = null;
-			oldDescription = null;
 		}
 	}
 
@@ -226,7 +115,7 @@ public class StructureCommand extends SDE
 	@Override
 	public void revertChanges()
 	{
-		editor.revert();
+		editor.revertChanges();
 	}
 	
 	public static class CommandType extends SDEType<StructureCommand>

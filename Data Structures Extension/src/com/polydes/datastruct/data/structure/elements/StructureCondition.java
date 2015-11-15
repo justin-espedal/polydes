@@ -220,7 +220,7 @@ public class StructureCondition extends SDE
 	public void revertChanges()
 	{
 		if(editor != null)
-			setText(editor.getOldText());
+			editor.revertChanges();
 	}
 	
 	@Override

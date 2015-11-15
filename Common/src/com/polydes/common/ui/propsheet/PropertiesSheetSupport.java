@@ -72,6 +72,11 @@ public class PropertiesSheetSupport
 		return fields.get(varname);
 	}
 	
+	public PropertiesSheetWrapper getWrapper()
+	{
+		return wrapper;
+	}
+	
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void updateField(String varname, Object value)
 	{

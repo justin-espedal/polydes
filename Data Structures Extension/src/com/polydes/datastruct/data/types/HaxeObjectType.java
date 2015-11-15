@@ -12,9 +12,9 @@ import javax.swing.SwingConstants;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.core.HaxeObject;
@@ -37,9 +37,15 @@ public class HaxeObjectType extends DataType<HaxeObject>
 	}
 
 	@Override
-	public DataEditor<HaxeObject> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<HaxeObject> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
 		return new HaxeObjectEditor(style);
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new DataEditorBuilder(this, new EditorProperties());
 	}
 	
 	@Override
@@ -84,35 +90,6 @@ public class HaxeObjectType extends DataType<HaxeObject>
 		return new HaxeObject(t);
 	}
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
-	{
-		Extras e = new Extras();
-		e.defaultValue = extras.get(DEFAULT_VALUE, this, null);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		return emap;
-	}
-	
-	public static class Extras extends ExtraProperties
-	{
-		public HaxeObject defaultValue;
-		
-		@Override
-		public Object getDefault()
-		{
-			return defaultValue;
-		}
-	}
-	
 	public class HaxeObjectEditor extends DataEditor<HaxeObject>
 	{
 		JLabel[] labels;
@@ -128,7 +105,8 @@ public class HaxeObjectType extends DataType<HaxeObject>
 			
 			for(int i = 0; i < def.fields.length; ++i)
 			{
-				editors[i] = def.fields[i].type.dataType.createEditor(def.fields[i].editorData, style);
+				HaxeDataType htype = def.fields[i].type;
+				editors[i] = htype.dataType.createEditor(htype.loadExtras(def.fields[i].editorData), style);
 				editors[i].addListener(updater);
 				if(labels != null)
 				{

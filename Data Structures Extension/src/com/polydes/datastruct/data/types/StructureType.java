@@ -1,20 +1,18 @@
 package com.polydes.datastruct.data.types;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.function.Predicate;
 
 import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 
-import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
-import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+import com.polydes.common.util.PredicateUtil;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.Structures;
@@ -32,10 +30,19 @@ public class StructureType extends DataType<Structure>
 		this.def = def;
 	}
 	
+	public static final String SOURCE_FILTER = "sourceFilter";
+	public static final String ALLOW_SUBTYPES = "allowSubtypes";
+	
 	@Override
-	public DataEditor<Structure> createEditor(ExtraProperties extras, PropertiesSheetStyle style)
+	public DataEditor<Structure> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		return new StructureEditor((Extras) extras, null);
+		return new StructureEditor(props, null);
+	}
+	
+	@Override
+	public DataEditorBuilder createEditorBuilder()
+	{
+		return new StructureEditorBuilder();
 	}
 
 	@Override
@@ -87,42 +94,23 @@ public class StructureType extends DataType<Structure>
 	}
 	
 	
-	@Override
-	public ExtraProperties loadExtras(ExtrasMap extras)
+	public class StructureEditorBuilder extends DataEditorBuilder
 	{
-		Extras e = new Extras();
-		String filterText = extras.get("sourceFilter", Types._String, null);
-		if(filterText != null)
-			e.sourceFilter = new StructureCondition(null, filterText);
-		e.defaultValue = extras.get(DEFAULT_VALUE, this, null);
-		e.allowSubclasses = extras.get("allowSubclasses", Types._Bool, false);
-		return e;
-	}
-	
-	@Override
-	public ExtrasMap saveExtras(ExtraProperties extras)
-	{
-		Extras e = (Extras) extras;
-		ExtrasMap emap = new ExtrasMap();
-		if(e.sourceFilter != null)
-			emap.put("sourceFilter", e.sourceFilter.getText());
-		if(e.defaultValue != null)
-			emap.put(DEFAULT_VALUE, encode(e.defaultValue));
-		if(e.allowSubclasses)
-			emap.put("allowSubclasses", "true");
-		return emap;
-	}
-	
-	public class Extras extends ExtraProperties
-	{
-		public StructureCondition sourceFilter;
-		public Structure defaultValue;
-		public boolean allowSubclasses;
-		
-		@Override
-		public Object getDefault()
+		public StructureEditorBuilder()
 		{
-			return defaultValue;
+			super(StructureType.this, new EditorProperties());
+		}
+		
+		public StructureEditorBuilder filter(StructureCondition filter)
+		{
+			props.put(SOURCE_FILTER, filter);
+			return this;
+		}
+		
+		public StructureEditorBuilder allowSubtypes()
+		{
+			props.put(ALLOW_SUBTYPES, true);
+			return this;
 		}
 	}
 	
@@ -130,39 +118,24 @@ public class StructureType extends DataType<Structure>
 	{
 		private UpdatingCombo<Structure> editor;
 		
-		public StructureEditor(Extras e, Structure currentStructure)
+		public StructureEditor(EditorProperties props, Structure currentStructure)
 		{
-			CollectionPredicate<Structure> filter =
-				e.sourceFilter == null ? null :
-				new StructurePredicate(e.sourceFilter, currentStructure);
+			StructureCondition condition = props.get(SOURCE_FILTER);
+			Predicate<Structure> predicate = condition == null ? null : new StructurePredicate(condition, currentStructure);
 			
-			if(e.allowSubclasses)
-				filter = CollectionPredicate.and(filter, (s) -> s.getTemplate().is(def));
+			boolean allowSubtypes = props.<Boolean>get(ALLOW_SUBTYPES);
 			
-			editor = new UpdatingCombo<Structure>(e.allowSubclasses ? Structures.structuresByID.values() : Structures.getList(def), filter);
+			if(allowSubtypes)
+				predicate = PredicateUtil.and(predicate, (s) -> s.getTemplate().is(def));
 			
-			editor.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					updated();
-				}
-			});
+			editor = new UpdatingCombo<Structure>(allowSubtypes ? Structures.structuresByID.values() : Structures.getList(def), predicate);
+			editor.addActionListener(event -> updated());
 		}
 		
 		public StructureEditor()
 		{
 			editor = new UpdatingCombo<Structure>(Structures.getList(def), null);
-			
-			editor.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					updated();
-				}
-			});
+			editor.addActionListener(event -> updated());
 		}
 		
 		@Override
@@ -192,7 +165,7 @@ public class StructureType extends DataType<Structure>
 		}
 	}
 	
-	class StructurePredicate implements CollectionPredicate<Structure>
+	class StructurePredicate implements Predicate<Structure>
 	{
 		private StructureCondition condition;
 		private Structure s;

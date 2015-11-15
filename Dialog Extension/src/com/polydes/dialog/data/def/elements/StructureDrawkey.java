@@ -5,9 +5,6 @@ import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
-import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.StringType;
 import com.polydes.common.io.XML;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.folder.DataItem;
@@ -48,47 +45,19 @@ public class StructureDrawkey extends SDE
 	
 	public class StructureDrawkeyPanel extends StructureObjectPanel
 	{
-		StructureDrawkey drawkey;
-		
-		String oldName;
-		
-		DataEditor<String> nameEditor;
-		
 		public StructureDrawkeyPanel(final StructureDrawkey drawkey, PropertiesSheetStyle style)
 		{
-			super(style);
+			super(style, drawkey);
 			
-			this.drawkey = drawkey;
+			sheet.build()
 			
-			oldName = drawkey.getName();
+				.field("name")._string().add()
+				
+				.finish();
 			
-			//=== Name
-	
-			nameEditor = new StringType.SingleLineStringEditor(null, style);
-			nameEditor.setValue(drawkey.getName());
-		
-			nameEditor.addListener(new UpdateListener()
-			{
-				@Override
-				public void updated()
-				{
-					drawkey.setName(nameEditor.getValue());
-					preview.lightRefreshDataItem(previewKey);
-				}
+			sheet.addPropertyChangeListener(event -> {
+				preview.lightRefreshDataItem(previewKey);
 			});
-			
-			addGenericRow("Name", nameEditor);
-		}
-		
-		public void revert()
-		{
-			drawkey.setName(oldName);
-		}
-		
-		public void dispose()
-		{
-			clearExpansion(0);
-			oldName = null;
 		}
 	}
 
@@ -113,7 +82,7 @@ public class StructureDrawkey extends SDE
 	@Override
 	public void revertChanges()
 	{
-		editor.revert();
+		editor.revertChanges();
 	}
 	
 	public static class DrawkeyType extends SDEType<StructureDrawkey>

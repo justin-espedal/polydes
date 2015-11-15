@@ -1,19 +1,13 @@
 package com.polydes.datastruct.data.types.haxe;
 
-import com.polydes.common.data.core.DataList;
-import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
-import com.polydes.common.data.types.UpdateListener;
+import com.polydes.common.data.types.builtin.basic.IntType;
 import com.polydes.common.data.types.builtin.basic.IntType.Editor;
-import com.polydes.common.data.types.builtin.basic.IntType.Extras;
-import com.polydes.common.data.types.builtin.basic.IntType.PlainIntegerEditor;
-import com.polydes.common.data.types.builtin.extra.SelectionType;
-import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.folder.DataItem;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
-import com.polydes.datastruct.ui.table.PropertiesSheet;
-import com.polydes.datastruct.utils.DLang;
 
 public class IntHaxeType extends HaxeDataType
 {
@@ -21,92 +15,54 @@ public class IntHaxeType extends HaxeDataType
 	{
 		super(Types._Int, "Int", "NUMBER");
 	}
+	
+	@Override
+	public EditorProperties loadExtras(ExtrasMap extras)
+	{
+		EditorProperties props = new EditorProperties();
+		props.put(IntType.EDITOR, extras.get("editor", Editor.Plain));
+		props.put(IntType.MIN, extras.get("min", Types._Int, null));
+		props.put(IntType.MAX, extras.get("max", Types._Int, null));
+		props.put(IntType.STEP, extras.get("step", Types._Int, 1));
+		return props;
+	}
 
+	@Override
+	public ExtrasMap saveExtras(EditorProperties props)
+	{
+		ExtrasMap emap = new ExtrasMap();
+		emap.put("editor", props.get(IntType.EDITOR));
+		if(props.containsKey(IntType.MIN))
+			emap.put("min", props.get(IntType.MIN));
+		if(props.containsKey(IntType.MAX))
+			emap.put("max", props.get(IntType.MAX));
+		emap.put("step", props.get(IntType.STEP));
+		return emap;
+	}
+	
 	@Override
 	public void applyToFieldPanel(final StructureFieldPanel panel)
 	{
-		int expansion = panel.getExtraPropertiesExpansion();
-		final Extras e = (Extras) panel.getExtras();
-		final PropertiesSheet preview = panel.getPreview();
-		final DataItem previewKey = panel.getPreviewKey();
-		final PropertiesSheetStyle style = panel.style;
+		final EditorProperties props = panel.getExtras();
 		
-		final int stepRow;
+		PropertiesSheetSupport sheet = panel.getEditorSheet();
 		
-		//=== Editor
+		sheet.build()
 		
-		DataList editorChoices = DLang.datalist(Types._String, "Plain", "Spinner", "Slider");
-		final DataEditor<String> editorChooser = new SelectionType.DropdownSelectionEditor(editorChoices);
-		editorChooser.setValue(e.editor.name());
-		//editorChooser listener later, after stepRow is added.
+			.field(IntType.EDITOR)._enum(IntType.Editor.class).add()
+			
+			.field(IntType.MIN).optional()._int().add()
+			
+			.field(IntType.MAX).optional()._int().add()
+			
+			.field(IntType.STEP)._int().add()
+			
+			.finish();
 		
-		//=== Min, Max, Step, Default Value
-		
-		final DataEditor<Integer> minField = new PlainIntegerEditor(style);
-		minField.setValue(e.min);
-		minField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.min = minField.getValue();
-				preview.refreshDataItem(previewKey);
-			}
+		sheet.addPropertyChangeListener(IntType.EDITOR, event -> {
+			panel.setRowVisibility(sheet, IntType.STEP, props.get(IntType.EDITOR) == Editor.Spinner);
 		});
 		
-		final DataEditor<Integer> maxField = new PlainIntegerEditor(style);
-		maxField.setValue(e.max);
-		maxField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.max = maxField.getValue();
-				preview.refreshDataItem(previewKey);
-			}
-		});
-		
-		final DataEditor<Integer> stepField = new PlainIntegerEditor(style);
-		stepField.setValue(e.step);
-		stepField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.step = stepField.getValue();
-				preview.refreshDataItem(previewKey);
-			}
-		});
-		
-		final DataEditor<Integer> defaultField = new PlainIntegerEditor(style);
-		defaultField.setValue(e.defaultValue);
-		defaultField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.defaultValue = defaultField.getValue();
-				preview.refreshDataItem(previewKey);
-			}
-		});
-		
-		panel.addGenericRow(expansion, "Editor", editorChooser);
-		panel.addEnablerRow(expansion, "Minimum", minField, e.min != null);
-		panel.addEnablerRow(expansion, "Maximum", maxField, e.max != null);
-		stepRow = panel.addGenericRow(expansion, "Step", stepField);
-		panel.addGenericRow(expansion, "Default", defaultField);
-		
-		editorChooser.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.editor = Editor.valueOf(editorChooser.getValue());
-				preview.refreshDataItem(previewKey);
-				panel.setRowVisibility(stepRow, e.editor == Editor.Spinner);
-				
-			}
-		});
-		panel.setRowVisibility(stepRow, e.editor == Editor.Spinner);
+		panel.setRowVisibility(sheet, IntType.STEP, props.get(IntType.EDITOR) == Editor.Spinner);
 	}
 }

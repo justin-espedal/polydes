@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.DataType;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.builtin.UnknownDataType;
 import com.polydes.common.ext.RegistryObject;
@@ -52,6 +53,16 @@ public abstract class HaxeDataType implements RegistryObject
 	public List<String> generateHaxeReader()
 	{
 		return null;
+	}
+	
+	public ExtrasMap saveExtras(EditorProperties extras)
+	{
+		return new ExtrasMap();
+	}
+	
+	public EditorProperties loadExtras(ExtrasMap extras)
+	{
+		return new EditorProperties();
 	}
 	
 	/**

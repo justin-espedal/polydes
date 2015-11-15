@@ -6,23 +6,21 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.polydes.common.data.types.DataEditor;
-import com.polydes.common.data.types.UpdateListener;
-import com.polydes.common.data.types.builtin.basic.StringType.SingleLineStringEditor;
-import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+import com.polydes.common.data.types.EditorProperties;
+import com.polydes.common.data.types.Types;
+import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
-import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.data.types.StructureType;
-import com.polydes.datastruct.data.types.StructureType.Extras;
 import com.polydes.datastruct.io.Text;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -112,50 +110,55 @@ public class StructureHaxeType extends HaxeDataType
 	}
 	
 	@Override
+	public EditorProperties loadExtras(ExtrasMap extras)
+	{
+		EditorProperties props = new EditorProperties();
+		String filterText = extras.get("sourceFilter", Types._String, null);
+		if(filterText != null)
+			props.put(StructureType.SOURCE_FILTER, new StructureCondition(null, filterText));
+		props.put(StructureType.ALLOW_SUBTYPES, extras.get("allowSubclasses", Types._Bool, false));
+		return props;
+	}
+
+	@Override
+	public ExtrasMap saveExtras(EditorProperties props)
+	{
+		ExtrasMap emap = new ExtrasMap();
+		if(props.containsKey(StructureType.SOURCE_FILTER))
+			emap.put("sourceFilter", props.<StructureCondition>get(StructureType.SOURCE_FILTER).getText());
+		if(props.<Boolean>get(StructureType.ALLOW_SUBTYPES) == Boolean.TRUE)
+			emap.put("allowSubclasses", "true");
+		return emap;
+	}
+	
+	@Override
 	public void applyToFieldPanel(StructureFieldPanel panel)
 	{
-		int expansion = panel.getExtraPropertiesExpansion();
-		final Extras e = (Extras) panel.getExtras();
-		final PropertiesSheet preview = panel.getPreview();
-		final DataItem previewKey = panel.getPreviewKey();
-		final PropertiesSheetStyle style = panel.style;
+		PropertiesSheet preview = panel.getPreview();
+		DataItem previewKey = panel.getPreviewKey();
 		
-		//=== Source Filter
-
-		final DataEditor<String> filterField = new SingleLineStringEditor(null, style);
-		filterField.setValue(e.sourceFilter == null ? null : e.sourceFilter.getText());
-		filterField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				String text = filterField.getValue();
-				
-				if(e.sourceFilter == null && !text.isEmpty())
-					e.sourceFilter = new StructureCondition(null, text);
-				else if(e.sourceFilter != null && text.isEmpty())
-					e.sourceFilter = null;
-				else if(e.sourceFilter != null && !text.isEmpty())
-					e.sourceFilter.setText(text);
-				
-				preview.refreshDataItem(previewKey);
-			}
+		EditorProperties props = panel.getExtras();
+		
+		String filterProxy = "_" + StructureType.SOURCE_FILTER;
+		
+		PropertiesSheetSupport sheet = panel.getEditorSheet();
+		sheet.build()
+			.field(filterProxy).optional()._string().add()
+			.finish();
+		
+		sheet.addPropertyChangeListener(StructureType.SOURCE_FILTER, event -> {
+			StructureCondition condition = props.get(StructureType.SOURCE_FILTER);
+			String conditionText = props.get(filterProxy);
+			
+			if(condition == null && !conditionText.isEmpty())
+				condition = new StructureCondition(null, conditionText);
+			else if(condition != null && conditionText.isEmpty())
+				condition = null;
+			else if(condition != null && !conditionText.isEmpty())
+				condition.setText(conditionText);
+			
+			props.put(StructureType.SOURCE_FILTER, condition);
+			preview.refreshDataItem(previewKey);
 		});
-		
-		//=== Default Value
-		
-		final DataEditor<Structure> defaultField = type.new StructureEditor();
-		defaultField.setValue(e.defaultValue);
-		defaultField.addListener(new UpdateListener()
-		{
-			@Override
-			public void updated()
-			{
-				e.defaultValue = defaultField.getValue();
-			}
-		});
-		
-		panel.addEnablerRow(expansion, "Filter", filterField, e.sourceFilter != null);
-		panel.addGenericRow(expansion, "Default", defaultField);
 	}
 }

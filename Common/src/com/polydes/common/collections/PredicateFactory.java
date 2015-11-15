@@ -1,20 +1,21 @@
 package com.polydes.common.collections;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 public class PredicateFactory
 {
-	public static <T> CollectionPredicate<T> isIn(final Collection<T> collection)
+	public static <T> Predicate<T> isIn(final Collection<T> collection)
 	{
 		return new IsInPredicate<T>(collection);
 	}
 	
-	public static <T> CollectionPredicate<T> isNotIn(final Collection<T> collection)
+	public static <T> Predicate<T> isNotIn(final Collection<T> collection)
 	{
 		return new IsNotInPredicate<T>(collection);
 	}
 	
-	static class IsInPredicate<T> implements CollectionPredicate<T>
+	static class IsInPredicate<T> implements Predicate<T>
 	{
 		private Collection<T> collection;
 		
@@ -30,7 +31,7 @@ public class PredicateFactory
 		}
 	}
 	
-	static class IsNotInPredicate<T> implements CollectionPredicate<T>
+	static class IsNotInPredicate<T> implements Predicate<T>
 	{
 		private Collection<T> collection;
 		

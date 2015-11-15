@@ -2,8 +2,8 @@ package com.polydes.datastruct.data.core;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.polydes.common.data.types.ExtrasMap;
 import com.polydes.common.ext.RORealizer;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 
 public class HaxeField implements RORealizer<HaxeDataType>

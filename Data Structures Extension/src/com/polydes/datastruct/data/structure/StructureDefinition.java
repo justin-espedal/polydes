@@ -10,8 +10,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.polydes.common.data.types.ExtraProperties;
-import com.polydes.common.data.types.ExtrasMap;
+import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ext.RegistryObject;
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.datastruct.DataStructuresExtension;
@@ -22,6 +21,7 @@ import com.polydes.datastruct.data.folder.FolderPolicy;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.structure.elements.StructureTab;
 import com.polydes.datastruct.data.structure.elements.StructureTabset;
+import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
 import com.polydes.datastruct.ui.page.StructurePage;
@@ -170,9 +170,9 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		//r is new type/optionalArgs
 		
 		Pair<HaxeDataType> type;
-		Pair<ExtraProperties> optArgs;
+		Pair<EditorProperties> optArgs;
 		
-		public TypeUpdate(Pair<HaxeDataType> type, Pair<ExtraProperties> optArgs)
+		public TypeUpdate(Pair<HaxeDataType> type, Pair<EditorProperties> optArgs)
 		{
 			this.type = type;
 			this.optArgs = optArgs;
@@ -211,8 +211,8 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 						f.getType(),
 						null
 					),
-					new Pair<ExtraProperties>(
-						f.getExtras(),
+					new Pair<EditorProperties>(
+						f.getEditorProperties(),
 						null
 					)
 				)
@@ -220,10 +220,10 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		
 		TypeUpdate update = typeUpdates.get(f);
 		update.type.r = type;
-		update.optArgs.r = type.dataType.loadExtras(new ExtrasMap());
+		update.optArgs.r = type.loadExtras(new ExtrasMap());
 		
 		editor.preview.clearProperty(f);
-		f.setExtras(update.optArgs.r);
+		f.setEditorProperties(update.optArgs.r);
 	}
 	
 	public void update()
@@ -266,7 +266,7 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		{
 			for(StructureField field : typeUpdates.keySet())
 			{
-				field.setExtras(typeUpdates.get(field).optArgs.l);
+				field.setEditorProperties(typeUpdates.get(field).optArgs.l);
 				field.setType(typeUpdates.get(field).type.l);
 			}
 			typeUpdates.clear();
@@ -281,7 +281,7 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		if(f.getType() != type)
 		{
 			f.setType(type);
-			f.setExtras(type.dataType.loadExtras(new ExtrasMap()));
+			f.setEditorProperties(type.loadExtras(new ExtrasMap()));
 		}
 	}
 	
@@ -426,6 +426,8 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 
 	public void realizeFieldHaxeType(StructureField field, HaxeDataType t)
 	{
+		//like StructureField::realizeRO, this requires than when a HaxeDataType
+		//has been registered, it already has a valid DataType<?>
 		if(Structures.structures.containsKey(this))
 			for(Structure struct : Structures.structures.get(this))
 				struct.setPropertyFromString(field, (String) struct.getProperty(field));

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -53,12 +54,11 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
 
 import com.jidesoft.swing.PaintPanel;
-import com.polydes.common.collections.CollectionPredicate;
 import com.polydes.common.comp.StatusBar;
+import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.points.NamedPoint;
 import com.polydes.points.PointsExtension;
 import com.polydes.points.comp.CyclingSpinnerListModel;
-import com.polydes.points.comp.UpdatingCombo;
 import com.polydes.points.res.Resources;
 
 import stencyl.core.engine.actor.IActorType;
@@ -942,9 +942,9 @@ public class PointEditorPage extends JPanel
 		}
 	}
 	
-	public static CollectionPredicate<IActorType> matchPredicate(final String pattern)
+	public static Predicate<IActorType> matchPredicate(final String pattern)
 	{
-		return new CollectionPredicate<IActorType>()
+		return new Predicate<IActorType>()
 		{
 			@Override
 			public boolean test(IActorType t)
