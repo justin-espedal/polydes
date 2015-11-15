@@ -33,6 +33,25 @@ public class ExtrasMap extends HashMap<String, Object>
 	}
 	
 	/*-------------------------------------*\
+	 * Special Cases: Haxe Types
+	\*-------------------------------------*/ 
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getTyped(String key, DataType<T> type, T defaultValue)
+	{
+		String s = (String) get(key);
+		if(s == null)
+			return defaultValue;
+		else
+			return (T) HaxeTypeConverter.decode(type, s);
+	}
+	
+	public Object putTyped(String key, DataType<?> type, Object value)
+	{
+		return put(key, HaxeTypeConverter.encode(type, value));
+	}
+	
+	/*-------------------------------------*\
 	 * Special Cases: Map, Enum, DataType
 	\*-------------------------------------*/ 
 	

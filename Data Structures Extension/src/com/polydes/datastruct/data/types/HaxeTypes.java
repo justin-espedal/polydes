@@ -12,6 +12,7 @@ import com.polydes.datastruct.data.types.haxe.ArrayHaxeType;
 import com.polydes.datastruct.data.types.haxe.BoolHaxeType;
 import com.polydes.datastruct.data.types.haxe.ColorHaxeType;
 import com.polydes.datastruct.data.types.haxe.DynamicHaxeType;
+import com.polydes.datastruct.data.types.haxe.ExtrasImageHaxeType;
 import com.polydes.datastruct.data.types.haxe.FloatHaxeType;
 import com.polydes.datastruct.data.types.haxe.IControlHaxeType;
 import com.polydes.datastruct.data.types.haxe.IntHaxeType;
@@ -31,7 +32,7 @@ public class HaxeTypes extends ObjectRegistry<HaxeDataType>
 	
 	public static ColorHaxeType _Color = new ColorHaxeType();
 	public static IControlHaxeType _Control = new IControlHaxeType();
-//	public static ExtrasImageHaxeType _ExtrasImage = new ExtrasImageHaxeType();
+	public static ExtrasImageHaxeType _ExtrasImage = new ExtrasImageHaxeType();
 	public static SelectionHaxeType _Selection = new SelectionHaxeType();
 	public static SetHaxeType _Set = new SetHaxeType();
 	
@@ -52,7 +53,7 @@ public class HaxeTypes extends ObjectRegistry<HaxeDataType>
 		
 		//Extra
 		registerItem(_Color);
-//		registerItem(_ExtrasImage);
+		registerItem(_ExtrasImage);
 		registerItem(_Selection);
 		registerItem(_Set);
 		

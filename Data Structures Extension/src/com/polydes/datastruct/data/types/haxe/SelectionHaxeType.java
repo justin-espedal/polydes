@@ -21,7 +21,8 @@ public class SelectionHaxeType extends HaxeDataType
 	{
 		EditorProperties props = new EditorProperties();
 		props.put(SelectionType.EDITOR, extras.get("editor", Editor.Dropdown));
-		props.put(SelectionType.OPTIONS, extras.get("options", Types._Array, null));
+		if(extras.containsKey("options"))
+			props.put(SelectionType.OPTIONS, extras.getTyped("options", Types._Array, null));
 		return props;
 	}
 
@@ -31,7 +32,7 @@ public class SelectionHaxeType extends HaxeDataType
 		ExtrasMap emap = new ExtrasMap();
 		emap.put("editor", props.get(SelectionType.EDITOR));
 		if(props.containsKey(SelectionType.OPTIONS))
-			emap.put("options", Types._Array.encode(props.get(SelectionType.OPTIONS)));
+			emap.putTyped("options", Types._Array, props.get(SelectionType.OPTIONS));
 		return emap;
 	}
 	

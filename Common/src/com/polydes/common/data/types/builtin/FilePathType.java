@@ -8,7 +8,6 @@ import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
-import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.builtin.FileType.FileEditor;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
@@ -65,13 +64,13 @@ public class FilePathType extends DataType<String>
 		}
 	}
 	
-	public class FilePathEditor extends DataEditor<String>
+	public static class FilePathEditor extends DataEditor<String>
 	{
 		private FileEditor editor;
 		
 		public FilePathEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			editor = Types._File.new FileEditor(props, style);
+			editor = new FileEditor(props, style);
 		}
 		
 		@Override

@@ -25,7 +25,9 @@ public class FileType extends DataType<File>
 		super(File.class);
 	}
 
+	public static final String ROOT_DIRECTORY = "rootDirectory";
 	public static final String ONLY_DIRECTORIES = "onlyDirectories";
+	public static final String FILTER = "filter";
 	
 	@Override
 	public DataEditor<File> createEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -64,14 +66,26 @@ public class FileType extends DataType<File>
 			super(FileType.this, new EditorProperties());
 		}
 		
+		public FileEditorBuilder rootDirectory(String path)
+		{
+			props.put(ROOT_DIRECTORY, path);
+			return this;
+		}
+		
 		public FileEditorBuilder onlyDirectories()
 		{
 			props.put(ONLY_DIRECTORIES, true);
 			return this;
 		}
+		
+		public FileEditorBuilder filter(String filter)
+		{
+			props.put(FILTER, filter);
+			return this;
+		}
 	}
 	
-	public class FileEditor extends DataEditor<File>
+	public static class FileEditor extends DataEditor<File>
 	{
 		private File file;
 		GroupButton button;
@@ -80,6 +94,8 @@ public class FileType extends DataType<File>
 		public FileEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			boolean onlyDirectories = props.get(ONLY_DIRECTORIES);
+			
+			//TODO implement filetype filters and root folders.
 			
 			button = new GroupButton(4);
 			button.setText("Choose");

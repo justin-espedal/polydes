@@ -33,6 +33,7 @@ import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
+import com.polydes.datastruct.data.types.HaxeTypeConverter;
 import com.polydes.datastruct.data.types.HaxeTypes;
 import com.polydes.datastruct.data.types.StructureType;
 import com.polydes.datastruct.res.Resources;
@@ -75,23 +76,10 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	@Override
 	public void realizeRO(HaxeDataType type)
 	{
-		if(emap.containsKey("genType"))
-		{
-			DataStructuresExtension.get().getHaxeTypes().requestDataTypeBridge((String) emap.get("genType"), (dt) -> {
-				emap.put("genType", dt.getKey());
-				finalizeType(type);
-			});
-		}
-		else
-			finalizeType(type);
-	}
-	
-	private void finalizeType(HaxeDataType type)
-	{
 		this.type = type;
 		this.props = type.loadExtras(emap);
 		if(defaultValue instanceof String)
-			this.defaultValue = type.dataType.decode((String) defaultValue);
+			this.defaultValue = HaxeTypeConverter.decode(type.dataType, (String) defaultValue);
 		emap = null;
 		if(waitingForTypeInfo != null)
 			for(Runnable r : waitingForTypeInfo)

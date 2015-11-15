@@ -27,11 +27,11 @@ public class ArrayHaxeType extends HaxeDataType
 	{
 		final EditorProperties props = new EditorProperties();
 		props.put(ArrayType.EDITOR, extras.get("editor", Editor.Standard));
-		if(extras.containsKey("genTypeExtras"))
-			props.put(ArrayType.GEN_TYPE_PROPS, new UnknownProperties(extras.getMap("genTypeExtras")));
+		if(extras.containsKey("genTypeProps"))
+			props.put(ArrayType.GEN_TYPE_PROPS, new UnknownProperties(extras.getMap("genTypeProps")));
 		
 		extras.requestDataType("genType", HaxeTypes._String, (type) -> {
-			props.put(ArrayType.GEN_TYPE, type);
+			props.put(ArrayType.GEN_TYPE, type.dataType);
 			Object genExtra = props.get(ArrayType.GEN_TYPE_PROPS);
 			if(genExtra instanceof UnknownProperties)
 				props.put(ArrayType.GEN_TYPE_PROPS, type.loadExtras(((UnknownProperties) genExtra).getMap()));

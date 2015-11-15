@@ -27,7 +27,7 @@ public class SetHaxeType extends HaxeDataType
 		if(extras.containsKey("sourceType"))
 			props.put(SetType.SOURCE, DataSetSources.get().getItem(extras.get("sourceType", Types._String)));
 		else
-			props.put(SetType.SOURCE, new CustomDataSetSource(extras.get("source", Types._Array, null)));
+			props.put(SetType.SOURCE, new CustomDataSetSource(extras.getTyped("source", Types._Array, null)));
 		//TODO transform a string into an appropriate predicate
 //		props.put(SetType.SOURCE_FILTER, extras.get("sourceFilter", Types._String, null));
 		return props;
@@ -40,7 +40,7 @@ public class SetHaxeType extends HaxeDataType
 		emap.put("editor", props.get(SetType.EDITOR));
 		DataSetSource source = props.get(SetType.SOURCE);
 		if(source.id.equals("custom"))
-			emap.put("source", Types._Array.checkEncode(source));
+			emap.putTyped("source", Types._Array, source);
 		else
 			emap.put("sourceType", source.id);
 		//TODO transform a predicate into a string
