@@ -63,8 +63,8 @@ public class PropertiesSheetSupport
 		fields.put(field.varname, field);
 		field.oldValue = readField(model, field.varname);
 		field.editor = editor;
-		editor.addListener(() -> writeField(model, field.getVarname(), editor.getValue()));
 		editor.setValue(readField(model, field.varname));
+		editor.addListener(() -> writeField(model, field.getVarname(), editor.getValue()));		
 	}
 	
 	public FieldInfo getField(String varname)

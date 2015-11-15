@@ -1,5 +1,7 @@
 package com.polydes.common.data.types.builtin.basic;
 
+import static com.polydes.common.util.Lang.or;
+
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
@@ -26,7 +28,7 @@ public class StringType extends DataType<String>
 	@Override
 	public DataEditor<String> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		switch(props.<Editor>get(EDITOR))
+		switch(or(props.<Editor>get(EDITOR), Editor.SingleLine))
 		{
 			case Expanding:
 				return new ExpandingStringEditor(props, style);

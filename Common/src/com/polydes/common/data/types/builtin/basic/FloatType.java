@@ -46,7 +46,7 @@ public class FloatType extends DataType<Float>
 		
 		FloatEditor editor = null;
 		
-		switch(props.<Editor>get(EDITOR))
+		switch(or(props.<Editor>get(EDITOR), Editor.Plain))
 		{
 			case Slider:
 				editor = new SliderFloatEditor(props, style);

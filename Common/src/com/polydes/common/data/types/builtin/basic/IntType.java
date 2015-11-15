@@ -44,7 +44,7 @@ public class IntType extends DataType<Integer>
 		
 		IntegerEditor editor = null;
 		
-		switch(props.<Editor>get(EDITOR))
+		switch(or(props.<Editor>get(EDITOR), Editor.Plain))
 		{
 			case Slider:
 				editor = new SliderIntegerEditor(props, style);

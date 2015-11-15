@@ -24,7 +24,14 @@ import stencyl.sw.util.dg.DialogPanel;
 
 public class DynamicType extends DataType<Dynamic>
 {
-	private static final EditorProperties noProps = new EditorProperties();
+	private static final EditorProperties noProps = new EditorProperties()
+	{
+		@Override
+		public Object put(String key, Object value)
+		{
+			throw new RuntimeException();
+		};
+	};
 	
 	public DynamicType()
 	{

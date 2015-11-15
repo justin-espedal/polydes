@@ -1,5 +1,7 @@
 package com.polydes.common.data.types.builtin.basic;
 
+import static com.polydes.common.util.Lang.or;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class ArrayType extends DataType<DataList>
 	@Override
 	public DataEditor<DataList> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		switch(props.<Editor>get(EDITOR))
+		switch(or(props.<Editor>get(EDITOR), Editor.Standard))
 		{
 			case Simple:
 				return new SimpleArrayEditor(style, props);

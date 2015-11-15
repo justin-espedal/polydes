@@ -13,7 +13,7 @@ public class SelectionHaxeType extends HaxeDataType
 {
 	public SelectionHaxeType()
 	{
-		super(Types._String, "com.polydes.datastruct.Selection", "TEXT");
+		super(Types._Selection, "com.polydes.datastruct.Selection", "TEXT");
 	}
 	
 	@Override

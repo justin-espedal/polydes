@@ -28,7 +28,14 @@ import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 public class DataListCellEditor implements TableCellEditor
 {
 	private static final EditController controller = new EditController();
-	private static final EditorProperties defaultProps = new EditorProperties();
+	private static final EditorProperties defaultProps = new EditorProperties()
+	{
+		@Override
+		public Object put(String key, Object value)
+		{
+			throw new RuntimeException();
+		};
+	};
 	
 	private final JTable table;
 	

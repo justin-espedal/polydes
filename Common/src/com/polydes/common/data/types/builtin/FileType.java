@@ -93,7 +93,7 @@ public class FileType extends DataType<File>
 		
 		public FileEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			boolean onlyDirectories = props.get(ONLY_DIRECTORIES);
+			boolean onlyDirectories = props.get(ONLY_DIRECTORIES) == Boolean.TRUE;
 			
 			//TODO implement filetype filters and root folders.
 			

@@ -1,5 +1,7 @@
 package com.polydes.common.data.types.builtin.extra;
 
+import static com.polydes.common.util.Lang.or;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ public class SelectionType extends DataType<String>
 		if(options == null || options.isEmpty())
 			return new InvalidEditor<String>("The selected source has no items", style);
 		
-		switch(props.<Editor>get(EDITOR))
+		switch(or(props.<Editor>get(EDITOR), Editor.Dropdown))
 		{
 			case RadioButtons:
 				return new RadioButtonsSelectionEditor(options, style);
