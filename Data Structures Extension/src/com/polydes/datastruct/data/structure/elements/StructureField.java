@@ -300,12 +300,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 			HaxeDataType dtype = f.getType();
 			ExtrasMap emap = dtype.saveExtras(f.getEditorProperties());
 			if(emap != null)
-			{
-				if(emap.containsKey("genType"))
-					emap.put("genType",
-						DataStructuresExtension.get().getHaxeTypes().getDtFromHaxe((String) emap.get("genType")).getKey());
 				writeExtrasToElement(e.getOwnerDocument(), e, emap);
-			}
 		}
 		
 		public static void writeExtrasToElement(Document doc, Element e, ExtrasMap emap)

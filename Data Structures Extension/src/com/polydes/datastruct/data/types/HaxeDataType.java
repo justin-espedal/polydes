@@ -95,6 +95,12 @@ public abstract class HaxeDataType implements RegistryObject
 	}
 	
 	@Override
+	public String toString()
+	{
+		return haxeType;
+	}
+	
+	@Override
 	public String getKey()
 	{
 		return haxeType;

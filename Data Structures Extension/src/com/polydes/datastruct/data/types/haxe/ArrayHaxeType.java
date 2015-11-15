@@ -1,11 +1,14 @@
 package com.polydes.datastruct.data.types.haxe;
 
+import static com.polydes.common.util.Lang.or;
+
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.builtin.basic.ArrayType;
 import com.polydes.common.data.types.builtin.basic.ArrayType.Editor;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
@@ -45,9 +48,11 @@ public class ArrayHaxeType extends HaxeDataType
 	{
 		ExtrasMap emap = new ExtrasMap();
 		emap.put("editor", props.get(ArrayType.EDITOR));
-		emap.put("genType", props.<DataType<?>>get(ArrayType.GEN_TYPE).getId());
+		
+		String genType = props.<DataType<?>>get(ArrayType.GEN_TYPE).getId();
+		emap.put("genType", DataStructuresExtension.get().getHaxeTypes().getHaxeFromDT(genType).getHaxeType());
 		//TODO
-//		emap.put("genTypeExtras", props.<EditorProperties>get(ArrayType.GEN_TYPE_PROPS));
+//		emap.put("genTypeProps", props.<EditorProperties>get(ArrayType.GEN_TYPE_PROPS));
 		return emap;
 	}
 	
@@ -58,6 +63,11 @@ public class ArrayHaxeType extends HaxeDataType
 		final DataItem previewKey = panel.getPreviewKey();
 		
 		HaxeDataTypeType hdt = new HaxeDataTypeType();
+		EditorProperties props = panel.getExtras();
+		
+		String genTypeProxy = "_" + ArrayType.GEN_TYPE;
+		String typeID = or(props.<DataType<?>>get(ArrayType.GEN_TYPE), Types._String).getId();
+		props.put(genTypeProxy, DataStructuresExtension.get().getHaxeTypes().getHaxeFromDT(typeID));
 		
 		PropertiesSheetSupport sheet = panel.getEditorSheet();
 		
@@ -65,13 +75,13 @@ public class ArrayHaxeType extends HaxeDataType
 		
 			.field(ArrayType.EDITOR)._enum(ArrayType.Editor.class).add()
 			
-			.field(ArrayType.GEN_TYPE).label("Data Type")._editor(hdt).add()
+			.field(genTypeProxy).label("Data Type")._editor(hdt).add()
 			
 			.finish();
 		
-		sheet.addPropertyChangeListener(ArrayType.GEN_TYPE, event -> {
+		sheet.addPropertyChangeListener(genTypeProxy, event -> {
 			HaxeDataType newType = (HaxeDataType) event.getNewValue();
-			panel.getExtras().put(ArrayType.GEN_TYPE, newType.dataType);
+			props.put(ArrayType.GEN_TYPE, newType.dataType);
 			preview.refreshDataItem(previewKey);
 			
 			//TODO: Make sure this works
