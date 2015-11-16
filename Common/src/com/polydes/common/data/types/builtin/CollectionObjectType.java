@@ -23,15 +23,15 @@ public class CollectionObjectType extends DataType<Object>
 	public static final String FILTER = "filter";
 
 	@Override
-	public DataEditor<Object> createEditor(EditorProperties properties, PropertiesSheetStyle style)
+	public DataEditor<Object> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		return null;
+		return new CollectionObjectEditor(props, style);
 	}
 
 	@Override
 	public DataEditorBuilder createEditorBuilder()
 	{
-		return null;
+		return new CollectionObjectEditorBuilder();
 	}
 
 	@Override
