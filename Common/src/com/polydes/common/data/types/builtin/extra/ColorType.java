@@ -54,7 +54,7 @@ public class ColorType extends DataType<Color>
 	
 	public static class ColorEditor extends DataEditor<Color>
 	{
-		ColorDisplay control;
+		final ColorDisplay control;
 		
 		public ColorEditor()
 		{
@@ -100,7 +100,6 @@ public class ColorType extends DataType<Color>
 		{
 			super.dispose();
 			control.dispose();
-			control = null;
 		}
 	}
 }

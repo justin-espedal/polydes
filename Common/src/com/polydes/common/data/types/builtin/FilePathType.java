@@ -66,7 +66,7 @@ public class FilePathType extends DataType<String>
 	
 	public static class FilePathEditor extends DataEditor<String>
 	{
-		private FileEditor editor;
+		private final FileEditor editor;
 		
 		public FilePathEditor(EditorProperties props, PropertiesSheetStyle style)
 		{

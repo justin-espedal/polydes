@@ -171,12 +171,6 @@ public class FloatType extends DataType<Float>
 		{
 			field.setText(t == null ? "" : "" + t);
 		}
-		
-		@Override
-		public void dispose()
-		{
-			field = null;
-		}
 	}
 	
 	public static class PlainFloatEditor extends FloatEditor
@@ -204,7 +198,7 @@ public class FloatType extends DataType<Float>
 	
 	public static class SpinnerFloatEditor extends FloatEditor
 	{
-		private JSpinner spinner;
+		private final JSpinner spinner;
 		private SpinnerNumberModel model;
 		
 		public SpinnerFloatEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -254,13 +248,12 @@ public class FloatType extends DataType<Float>
 		{
 			super.dispose();
 			model = null;
-			spinner = null;
 		}
 	}
 	
 	public static class SliderFloatEditor extends FloatEditor
 	{
-		private JSlider slider;
+		private final JSlider slider;
 		private float factor;
 		
 		public SliderFloatEditor(EditorProperties props, PropertiesSheetStyle style)

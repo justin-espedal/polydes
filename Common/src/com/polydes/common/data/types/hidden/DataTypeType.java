@@ -60,7 +60,7 @@ public class DataTypeType extends DataType<DataType>
 	
 	public static class DataTypeEditor extends DataEditor<DataType>
 	{
-		UpdatingCombo<DataType<?>> typeChooser;
+		final UpdatingCombo<DataType<?>> typeChooser;
 		
 		public DataTypeEditor()
 		{
@@ -90,31 +90,6 @@ public class DataTypeType extends DataType<DataType>
 			});
 		}
 		
-//		public DataTypeEditor(final EditorProperties props)
-//		{
-//			CollectionPredicate<DataType<?>> filter = new CollectionPredicate<DataType<?>>()
-//			{
-//				@Override
-//				public boolean test(DataType<?> t)
-//				{
-//					return !e.excludedTypes.contains(t);
-//				};
-//			};
-//			
-//			typeChooser = new UpdatingCombo<DataType<?>>(Types.get().values(), filter);
-//			
-//			typeChooser.addActionListener(new ActionListener()
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent e)
-//				{
-//					updated();
-//				}
-//			});
-//			
-//			typeChooser.setMaximumRowCount(18);
-//		}
-		
 		public void setFilter(Predicate<DataType<?>> filter)
 		{
 			typeChooser.setFilter(filter);
@@ -143,7 +118,6 @@ public class DataTypeType extends DataType<DataType>
 		{
 			super.dispose();
 			typeChooser.dispose();
-			typeChooser = null;
 		}
 	}
 }

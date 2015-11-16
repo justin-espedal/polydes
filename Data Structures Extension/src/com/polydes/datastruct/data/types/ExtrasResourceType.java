@@ -98,7 +98,7 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 	
 	public static class ExtrasResourceEditor extends DataEditor<ExtrasResource>
 	{
-		FileEditor fileEditor;
+		final FileEditor fileEditor;
 		
 		public ExtrasResourceEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
@@ -144,7 +144,6 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 		{
 			super.dispose();
 			fileEditor.dispose();
-			fileEditor = null;
 		}
 	}
 }

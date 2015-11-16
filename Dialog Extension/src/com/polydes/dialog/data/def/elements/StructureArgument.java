@@ -102,10 +102,10 @@ public class StructureArgument
 	{
 		StructureArgument arg;
 		
-		DataEditor<String> nameEditor;
-		DataEditor<Type> typeEditor;
+		final DataEditor<String> nameEditor;
+		final DataEditor<Type> typeEditor;
 		
-		JComponent[] comps;
+		final JComponent[] comps;
 		
 		public StructureArgumentEditor(PropertiesSheetStyle style)
 		{
@@ -143,8 +143,6 @@ public class StructureArgument
 			super.dispose();
 			nameEditor.dispose();
 			typeEditor.dispose();
-			nameEditor = null;
-			typeEditor = null;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.polydes.common.data.types;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import com.polydes.common.ext.RegistryObject;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
@@ -102,10 +103,13 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 		protected PropertiesSheetStyle style;
 		protected String msg;
 		
+		protected final JLabel label;
+		
 		public InvalidEditor(String msg, PropertiesSheetStyle style)
 		{
 			this.msg = msg;
 			this.style = style;
+			label = style.createSoftLabel(msg);
 		}
 		
 		@Override public void set(T t) {}
@@ -114,7 +118,8 @@ public abstract class DataType<T> implements Comparable<DataType<?>>, RegistryOb
 		@Override
 		public JComponent[] getComponents()
 		{
-			return new JComponent[] {style.createSoftLabel(msg)};
+			label.setText(msg);
+			return new JComponent[] {label};
 		}
 	}
 	

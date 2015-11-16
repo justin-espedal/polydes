@@ -88,8 +88,8 @@ public class FileType extends DataType<File>
 	public static class FileEditor extends DataEditor<File>
 	{
 		private File file;
-		GroupButton button;
-		JTextField pathField;
+		final GroupButton button;
+		final JTextField pathField;
 		
 		public FileEditor(EditorProperties props, PropertiesSheetStyle style)
 		{

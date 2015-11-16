@@ -55,7 +55,7 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 	
 	public static class HaxeDataTypeEditor extends DataEditor<HaxeDataType>
 	{
-		UpdatingCombo<HaxeDataType> typeChooser;
+		final UpdatingCombo<HaxeDataType> typeChooser;
 		
 		public HaxeDataTypeEditor()
 		{
@@ -87,7 +87,6 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 		{
 			super.dispose();
 			typeChooser.dispose();
-			typeChooser = null;
 		}
 	}
 }

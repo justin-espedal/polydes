@@ -5,15 +5,15 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
- * DataEditors often install listeners and hold references,
- * so always call {@code dispose();} when finished with a
- * DataEditor.
+ * <p>DataEditors often install listeners and hold references,
+ * so always call {@code dispose()} when finished with a
+ * DataEditor.</p>
  * 
  * To extend DataEditor, generally:													<br />
  * 1) An editor should be created.													<br />
- * 2) When that editor's value changes, call {@code updated();}						<br />
+ * 2) When that editor's value changes, call {@code updated()}.						<br />
  * 3) Extends get and set value to work with that editor.							<br />
- * 4) Return a list of the components for your editor in {@code getComponents();}	<br />
+ * 4) Return a list of the components for your editor in {@code getComponents()}.	<br />
  */
 public abstract class DataEditor<T>
 {
@@ -80,5 +80,10 @@ public abstract class DataEditor<T>
 		disposeListeners = null;
 	}
 	
+	/**
+	 * An array of components is returned so that they can be laid out as desired
+	 * in the UI by the caller. An array of the same objects should be returned every
+	 * time this method is called.
+	 */
 	public abstract JComponent[] getComponents();
 }

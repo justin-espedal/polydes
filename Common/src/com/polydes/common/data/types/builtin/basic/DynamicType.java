@@ -92,8 +92,8 @@ public class DynamicType extends DataType<Dynamic>
 	@SuppressWarnings("rawtypes")
 	public static class DynamicEditor extends DataEditor<Dynamic>
 	{
-		private UpdatingCombo<DataType<?>> typeChooser;
-		private JPanel valueEditorWrapper;
+		private final UpdatingCombo<DataType<?>> typeChooser;
+		private final JPanel valueEditorWrapper;
 		private DataEditor valueEditor;
 		private PropertiesSheetStyle style;
 		
@@ -206,8 +206,6 @@ public class DynamicType extends DataType<Dynamic>
 				valueEditor.dispose();
 			
 			data = null;
-			typeChooser = null;
-			valueEditorWrapper = null;
 			valueEditor = null;
 			style = null;
 		}

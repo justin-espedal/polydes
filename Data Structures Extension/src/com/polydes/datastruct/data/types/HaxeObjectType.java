@@ -92,14 +92,15 @@ public class HaxeObjectType extends DataType<HaxeObject>
 	
 	public class HaxeObjectEditor extends DataEditor<HaxeObject>
 	{
-		JLabel[] labels;
-		DataEditor<?>[] editors;
+		final JLabel[] labels;
+		final DataEditor<?>[] editors;
+		final JComponent[] comps;
 		
 		public HaxeObjectEditor(PropertiesSheetStyle style)
 		{
 			editors = new DataEditor[def.fields.length];
-			if(def.showLabels)
-				labels = new JLabel[def.fields.length];
+			labels = def.showLabels ?
+				new JLabel[def.fields.length] : null;
 			
 			UpdateListener updater = () -> updated();
 			
@@ -114,20 +115,28 @@ public class HaxeObjectType extends DataType<HaxeObject>
 					labels[i].setHorizontalAlignment(SwingConstants.CENTER);
 				}
 			}
+			
+			List<JComponent> jcomps = new ArrayList<JComponent>();
+			for(int i = 0; i < def.fields.length; ++i)
+			{
+				JComponent c = new JPanel(new BorderLayout());
+				c.setBackground(null);
+				if(labels != null)
+					c.add(labels[i], BorderLayout.NORTH);
+				c.add(Layout.horizontalBox(editors[i].getComponents()), BorderLayout.CENTER);
+				jcomps.add(c);
+			}
+			
+			comps = jcomps.toArray(new JComponent[jcomps.size()]);
 		}
 		
 		@Override
 		public void set(HaxeObject o)
 		{
 			if(o == null)
-			{
-				System.out.println("Setting editor to null HaxeObject.");
 				o = new HaxeObject(def, new Object[def.fields.length]);
-			}
 			for(int i = 0; i < def.fields.length; ++i)
-			{
 				editors[i].setValueUnchecked(o.values[i]);
-			}
 		}
 		
 		@Override
@@ -142,18 +151,7 @@ public class HaxeObjectType extends DataType<HaxeObject>
 		@Override
 		public JComponent[] getComponents()
 		{
-			List<JComponent> jcomps = new ArrayList<JComponent>();
-			for(int i = 0; i < def.fields.length; ++i)
-			{
-				JComponent c = new JPanel(new BorderLayout());
-				c.setBackground(null);
-				if(labels != null)
-					c.add(labels[i], BorderLayout.NORTH);
-				c.add(Layout.horizontalBox(editors[i].getComponents()), BorderLayout.CENTER);
-				jcomps.add(c);
-			}
-			
-			return jcomps.toArray(new JComponent[jcomps.size()]);
+			return comps;
 		}
 		
 		@Override
@@ -161,10 +159,7 @@ public class HaxeObjectType extends DataType<HaxeObject>
 		{
 			super.dispose();
 			for(DataEditor<?> editor : editors)
-			{
 				editor.dispose();
-			}
-			editors = null;
 		}
 	}
 }

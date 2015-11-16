@@ -91,7 +91,7 @@ public class StringType extends DataType<String>
 	
 	public static class SingleLineStringEditor extends DataEditor<String>
 	{
-		JTextField editor;
+		final JTextField editor;
 		String regex;
 		
 		public SingleLineStringEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -137,7 +137,7 @@ public class StringType extends DataType<String>
 	
 	public static class ExpandingStringEditor extends DataEditor<String>
 	{
-		JTextArea editor;
+		final JTextArea editor;
 		String regex;
 		
 		public ExpandingStringEditor(EditorProperties props, PropertiesSheetStyle style)

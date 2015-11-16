@@ -167,7 +167,7 @@ public class ArrayType extends DataType<DataList>
 	
 	public static class SimpleArrayEditor extends DataEditor<DataList>
 	{
-		JTextArea editor;
+		final JTextArea editor;
 		DataType<?> genType;
 		
 		DataList list;
@@ -236,9 +236,9 @@ public class ArrayType extends DataType<DataList>
 	
 	public static class StandardArrayEditor extends DataEditor<DataList>
 	{
-		DataListEditor editor;
-		DataType<?> genType;
-		EditorProperties genTypeProps;
+		final DataListEditor editor;
+		final DataType<?> genType;
+		final EditorProperties genTypeProps;
 		
 		public StandardArrayEditor(PropertiesSheetStyle style, EditorProperties props)
 		{
@@ -282,7 +282,6 @@ public class ArrayType extends DataType<DataList>
 		{
 			super.dispose();
 			editor.dispose();
-			editor = null;
 		}
 	}
 }

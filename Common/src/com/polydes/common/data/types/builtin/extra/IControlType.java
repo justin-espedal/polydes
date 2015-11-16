@@ -61,7 +61,7 @@ public class IControlType extends DataType<IControl>
 	
 	public static class IControlEditor extends DataEditor<IControl>
 	{
-		UpdatingCombo<IControl> editor;
+		final UpdatingCombo<IControl> editor;
 		
 		public IControlEditor()
 		{
@@ -100,7 +100,6 @@ public class IControlType extends DataType<IControl>
 		{
 			super.dispose();
 			editor.dispose();
-			editor = null;
 		}
 	}
 }

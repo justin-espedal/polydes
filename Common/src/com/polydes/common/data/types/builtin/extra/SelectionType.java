@@ -105,7 +105,7 @@ public class SelectionType extends DataType<String>
 	
 	public static class DropdownSelectionEditor extends DataEditor<String>
 	{
-		JComboBox<String> editor;
+		final JComboBox<String> editor;
 		
 		public DropdownSelectionEditor(DataList options)
 		{
@@ -145,15 +145,14 @@ public class SelectionType extends DataType<String>
 		public void dispose()
 		{
 			super.dispose();
-			editor = null;
 		}
 	}
 	
 	public static class RadioButtonsSelectionEditor extends DataEditor<String>
 	{
-		ButtonGroup group;
-		HashMap<String, JRadioButton> bmap;
-		JPanel buttonPanel;
+		final ButtonGroup group;
+		final HashMap<String, JRadioButton> bmap;
+		final JPanel buttonPanel;
 		
 		String current;
 		
@@ -214,10 +213,7 @@ public class SelectionType extends DataType<String>
 		{
 			super.dispose();
 			bmap.clear();
-			bmap = null;
-			buttonPanel = null;
 			current = null;
-			group = null;
 		}
 	}
 }

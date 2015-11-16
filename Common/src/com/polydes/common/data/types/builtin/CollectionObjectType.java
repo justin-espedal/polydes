@@ -74,7 +74,7 @@ public class CollectionObjectType extends DataType<Object>
 	
 	public class CollectionObjectEditor extends DataEditor<Object>
 	{
-		UpdatingCombo<Object> combo;
+		final UpdatingCombo<Object> combo;
 		
 		public CollectionObjectEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
@@ -105,6 +105,7 @@ public class CollectionObjectType extends DataType<Object>
 		@Override
 		public void dispose()
 		{
+			super.dispose();
 			combo.dispose();
 		}
 	}

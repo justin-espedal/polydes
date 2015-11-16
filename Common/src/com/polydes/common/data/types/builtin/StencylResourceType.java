@@ -97,7 +97,7 @@ public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 	
 	public class DropdownResourceEditor extends DataEditor<T>
 	{
-		UpdatingCombo<T> editor;
+		final UpdatingCombo<T> editor;
 		
 		public DropdownResourceEditor()
 		{
@@ -136,7 +136,6 @@ public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 		{
 			super.dispose();
 			editor.dispose();
-			editor = null;
 		}
 	}
 }

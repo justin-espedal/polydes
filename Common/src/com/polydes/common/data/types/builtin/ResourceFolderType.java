@@ -81,8 +81,8 @@ public class ResourceFolderType extends DataType<Folder>
 	
 	public class FolderChooser extends DataEditor<Folder>
 	{
-		UpdatingCombo<Folder> editor;
-		JComponent[] comps;
+		final UpdatingCombo<Folder> editor;
+		final JComponent[] comps;
 		
 		ResourceType type;
 		
@@ -132,7 +132,6 @@ public class ResourceFolderType extends DataType<Folder>
 		{
 			super.dispose();
 			editor.dispose();
-			editor = null;
 		}
 	}
 }

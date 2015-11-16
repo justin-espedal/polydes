@@ -196,7 +196,7 @@ public class IntType extends DataType<Integer>
 	
 	public static class SpinnerIntegerEditor extends IntegerEditor
 	{
-		private JSpinner spinner;
+		private final JSpinner spinner;
 		private SpinnerNumberModel model;
 		
 		public SpinnerIntegerEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -246,13 +246,12 @@ public class IntType extends DataType<Integer>
 		{
 			super.dispose();
 			model = null;
-			spinner = null;
 		}
 	}
 	
 	public static class SliderIntegerEditor extends IntegerEditor
 	{
-		private JSlider slider;
+		private final JSlider slider;
 		
 		public SliderIntegerEditor(EditorProperties props, PropertiesSheetStyle style)
 		{

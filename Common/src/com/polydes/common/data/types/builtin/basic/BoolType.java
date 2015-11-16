@@ -59,7 +59,7 @@ public class BoolType extends DataType<Boolean>
 	
 	public static class BooleanEditor extends DataEditor<Boolean>
 	{
-		JCheckBox control;
+		final JCheckBox control;
 		
 		public BooleanEditor()
 		{
@@ -100,7 +100,6 @@ public class BoolType extends DataType<Boolean>
 		public void dispose()
 		{
 			super.dispose();
-			control = null;
 		}
 	}
 }

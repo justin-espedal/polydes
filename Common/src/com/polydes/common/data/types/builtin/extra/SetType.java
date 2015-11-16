@@ -138,12 +138,13 @@ public class SetType extends DataType<DataSet>
 	
 	public static class ChecklistDataSetEditor extends DataEditor<DataSet>
 	{
-		Collection<?> source;
-		DataType<?> genType;
+		final Collection<?> source;
+		final DataType<?> genType;
+		
+		final JPanel buttonPanel;
+		final IdentityHashMap<Object, JCheckBox> map;
 		
 		DataSet set;
-		JPanel buttonPanel;
-		IdentityHashMap<Object, JCheckBox> map;
 		
 		public ChecklistDataSetEditor(EditorProperties props, PropertiesSheetStyle style)
 		{

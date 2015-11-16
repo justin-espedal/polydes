@@ -116,7 +116,7 @@ public class StructureType extends DataType<Structure>
 	
 	public class StructureEditor extends DataEditor<Structure>
 	{
-		private UpdatingCombo<Structure> editor;
+		private final UpdatingCombo<Structure> editor;
 		
 		public StructureEditor(EditorProperties props, Structure currentStructure)
 		{
@@ -161,7 +161,6 @@ public class StructureType extends DataType<Structure>
 		{
 			super.dispose();
 			editor.dispose();
-			editor = null;
 		}
 	}
 	

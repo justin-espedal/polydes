@@ -7,8 +7,8 @@ import com.polydes.common.data.types.DataEditor;
 
 public class EnumEditor<T extends Enum<T>> extends DataEditor<T>
 {
-	JComboBox<T> combo;
-	JComponent[] comps;
+	final JComboBox<T> combo;
+	final JComponent[] comps;
 	
 	public EnumEditor(Class<T> cls)
 	{
