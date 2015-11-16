@@ -108,9 +108,6 @@ public class SetHaxeType extends HaxeDataType
 		});
 		
 		updateSourceType(panel, sheet, props);
-		
-		//TODO ?
-//		customSourceRow = panel.addGenericRow(expansion, "Source", customSourceField, StructureObjectPanel.RESIZE_FLAG);
 	}
 
 	private void updateSourceType(StructureFieldPanel panel, PropertiesSheetSupport sheet, EditorProperties props)

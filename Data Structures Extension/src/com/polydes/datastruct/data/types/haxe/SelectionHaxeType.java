@@ -48,8 +48,5 @@ public class SelectionHaxeType extends HaxeDataType
 			.field(SelectionType.OPTIONS)._array().simpleEditor().add()
 			
 			.finish();
-		
-		//TODO ?
-//		panel.addGenericRow(expansion, "Options", optionsField, StructureObjectPanel.RESIZE_FLAG);
 	}
 }

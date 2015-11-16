@@ -16,6 +16,8 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
+import com.polydes.common.data.types.builtin.basic.StringType.ExpandingStringEditor;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
@@ -29,8 +31,6 @@ import com.polydes.datastruct.ui.utils.Layout;
 
 public class StructureObjectPanel extends Table implements PreviewableEditor
 {
-	public static final int RESIZE_FLAG = 0x01;
-	
 	protected PropertiesSheetSupport sheet;
 	
 	protected PropertiesSheet preview;
@@ -64,23 +64,6 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		group.add(style.rowgap);
 		addGroup(rows.length, group);
 		return rows.length - 1;
-	}
-	
-	//TODO: Get rid of this
-	public int addGenericRow(String label, DataEditor<?> editor, final int flags)
-	{
-		final JComponent[] comps = editor.getComponents();
-		if((flags & RESIZE_FLAG) > 0)
-		{
-			for(JComponent comp : comps)
-				comp.addComponentListener(resizeListener);
-			editor.addDisposeListener(() -> {
-				for(JComponent comp : comps)
-					comp.removeComponentListener(resizeListener);
-			});
-		}
-		
-		return addGenericRow(label, comps);
 	}
 	
 	//TODO: Make this better (use DisabledPanel)
@@ -207,6 +190,21 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		private JComponent[] buildRow(FieldInfo field, DataEditor<?> editor)
 		{
 			JComponent[] comps = editor.getComponents();
+			
+			/*
+			 * TODO: For further customization, these can be placed in a map
+			 * of resizing editors. Hardcoding for now.
+			 */
+			if(editor instanceof SimpleArrayEditor || editor instanceof ExpandingStringEditor)
+			{
+				final JComponent[] resizingComps = comps;
+				for(JComponent comp : resizingComps)
+					comp.addComponentListener(resizeListener);
+				editor.addDisposeListener(() -> {
+					for(JComponent comp : resizingComps)
+						comp.removeComponentListener(resizeListener);
+				});
+			}
 			
 			String hint = field.getHint();
 			if(hint != null && !hint.isEmpty())

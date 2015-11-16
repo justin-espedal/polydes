@@ -79,9 +79,6 @@ public class StructureFieldPanel extends StructureObjectPanel
 				preview.lightRefreshDataItem(previewKey);
 		});
 		
-		//TODO ?
-//		addGenericRow("Hint", hintEditor, RESIZE_FLAG);
-		
 		refreshFieldEditors();
 	}
 	
