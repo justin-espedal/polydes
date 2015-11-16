@@ -10,11 +10,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.polydes.common.data.types.Types;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinitions;
 import com.polydes.datastruct.data.structure.Structures;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
+import com.polydes.datastruct.data.types.DSTypes;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.data.types.HaxeTypes;
 import com.polydes.datastruct.io.HXGenerator;
@@ -234,6 +236,8 @@ public class DataStructuresExtension extends GameExtension
 	{
 		try
 		{
+			DSTypes.register();
+			
 			sdeTypes = new SDETypes();
 			haxeTypes = new HaxeTypes();
 			structureDefinitions = new StructureDefinitions();
@@ -272,6 +276,7 @@ public class DataStructuresExtension extends GameExtension
 		Structures.dispose();
 		Blocks.dispose();
 		sdeTypes.dispose();
+		DSTypes.unregister();
 		
 		sdeTypes = null;
 		haxeTypes = null;

@@ -11,7 +11,6 @@ import com.polydes.common.data.types.builtin.StencylResourceType;
 import com.polydes.common.data.types.builtin.UnknownDataType;
 import com.polydes.common.data.types.builtin.basic.ArrayType;
 import com.polydes.common.data.types.builtin.basic.BoolType;
-import com.polydes.common.data.types.builtin.basic.DynamicType;
 import com.polydes.common.data.types.builtin.basic.FloatType;
 import com.polydes.common.data.types.builtin.basic.IntType;
 import com.polydes.common.data.types.builtin.basic.StringType;
@@ -37,7 +36,6 @@ public class Types extends ObjectRegistry<DataType<?>>
 	
 	public static ArrayType _Array = new ArrayType();
 	public static BoolType _Bool = new BoolType();
-	public static DynamicType _Dynamic = new DynamicType();
 	public static FloatType _Float = new FloatType();
 	public static IntType _Int = new IntType();
 	public static StringType _String = new StringType();
@@ -111,7 +109,6 @@ public class Types extends ObjectRegistry<DataType<?>>
 		//Basic
 		registerItem(_Array);
 		registerItem(_Bool);
-		registerItem(_Dynamic);
 		registerItem(_Float);
 		registerItem(_Int);
 		registerItem(_String);

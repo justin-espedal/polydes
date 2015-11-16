@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.core.DataList;
 import com.polydes.common.data.core.DataSet;
-import com.polydes.common.data.core.Dynamic;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.builtin.basic.ArrayType;
@@ -30,7 +29,6 @@ public class HaxeTypeConverter
 		coders = new HashMap<>();
 		coders.put(Types._Array.getId(), new ArrayCoder());
 		coders.put(Types._Set.getId(), new SetCoder());
-		coders.put(Types._Dynamic.getId(), new DynamicCoder());
 	}
 	
 	public static Object decode(DataType<?> type, String s)
@@ -98,11 +96,11 @@ public class HaxeTypeConverter
 		{
 			int typeMark = s.lastIndexOf(":");
 			if(typeMark == -1)
-				return new DataSet(Types._Dynamic);
+				return new DataSet(DSTypes._Dynamic);
 			
 			DataType<?> dtype = getHT().getItem(s.substring(typeMark + 1)).dataType;
 			if(dtype == null)
-				return new DataSet(Types._Dynamic);
+				return new DataSet(DSTypes._Dynamic);
 			
 			DataSet toReturn = new DataSet(dtype);
 			
@@ -130,28 +128,6 @@ public class HaxeTypeConverter
 			s += "]:" + getHT().getHaxeFromDT(type.getId()).getHaxeType();
 			
 			return s;
-		}
-	}
-	
-	static class DynamicCoder implements Coder<Dynamic>
-	{
-		@Override
-		public Dynamic decode(String s)
-		{
-			int i = s.lastIndexOf(":");
-			if(i == -1)
-				return new Dynamic(s, Types._String);
-			
-			String value = s.substring(0, i);
-			String type = s.substring(i + 1);
-			DataType<?> dtype = getHT().getItem(type).dataType;
-			return new Dynamic(HaxeTypeConverter.decode(dtype, value), dtype);
-		}
-
-		@Override
-		public String encode(Dynamic e)
-		{
-			return HaxeTypeConverter.encode(e.type, e.value) + ":" + getHT().getHaxeFromDT(e.type.getId()).getHaxeType();
 		}
 	}
 }

@@ -59,11 +59,11 @@ public class SetType extends DataType<DataSet>
 	{
 		int typeMark = s.lastIndexOf(":");
 		if(typeMark == -1)
-			return new DataSet(Types._Dynamic);
+			return new DataSet(Types._String);
 		
 		DataType<?> dtype = Types.get().getItem(s.substring(typeMark + 1));
 		if(dtype == null)
-			return new DataSet(Types._Dynamic);
+			return new DataSet(Types._String);
 		
 		DataSet toReturn = new DataSet(dtype);
 		

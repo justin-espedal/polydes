@@ -15,7 +15,6 @@ import com.polydes.common.data.types.builtin.FilePathType.FilePathEditorBuilder;
 import com.polydes.common.data.types.builtin.ResourceFolderType.ResourceFolderEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.ArrayType.ArrayEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.BoolType.BoolEditorBuilder;
-import com.polydes.common.data.types.builtin.basic.DynamicType.DynamicEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.FloatType.FloatEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.IntType.IntEditorBuilder;
 import com.polydes.common.data.types.builtin.basic.StringType.StringEditorBuilder;
@@ -178,12 +177,6 @@ public class PropertiesSheetBuilder
 		{
 			this.type = Types._Bool;
 			return Types._Bool.new BoolEditorBuilder().setSheetBuilder(sheetBuilder);
-		}
-		
-		public DynamicEditorBuilder _dynamic()
-		{
-			this.type = Types._Dynamic;
-			return Types._Dynamic.new DynamicEditorBuilder().setSheetBuilder(sheetBuilder);
 		}
 		
 		public FloatEditorBuilder _float()
