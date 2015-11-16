@@ -38,4 +38,11 @@ public class DataEditorBuilder
 		builder.doChange(type.createEditor(props, builder.getStyle()));
 		return builder;
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends DataEditorBuilder> T loadProps(EditorProperties props)
+	{
+		this.props.putAll(props);
+		return (T) this;
+	}
 }
