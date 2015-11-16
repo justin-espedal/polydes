@@ -1,5 +1,7 @@
 package com.polydes.datastruct.ui.objeditors;
 
+import static com.polydes.common.util.Lang.asArray;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -179,8 +181,8 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		
 		removeAll();
 		
-		for(PropertiesSheetSupport support : extensions.values())
-			support.dispose();
+		for(String key : asArray(extensions.keySet(), String.class))
+			clearSheetExtension(key);
 		
 		extensions = null;
 		wrappers = null;
