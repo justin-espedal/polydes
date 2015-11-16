@@ -1,8 +1,5 @@
 package com.polydes.datastruct.data.types;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JComponent;
 
 import com.polydes.common.comp.UpdatingCombo;
@@ -63,15 +60,8 @@ public class HaxeDataTypeType extends DataType<HaxeDataType>
 		public HaxeDataTypeEditor()
 		{
 			typeChooser = new UpdatingCombo<HaxeDataType>(DataStructuresExtension.get().getHaxeTypes().values(), null);
-			
-			typeChooser.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					updated();
-				}
-			});
+			typeChooser.setComparator((t1, t2) -> t1.getHaxeType().compareTo(t2.getHaxeType()));
+			typeChooser.addActionListener(event -> updated());
 		}
 		
 		@Override

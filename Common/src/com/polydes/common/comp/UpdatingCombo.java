@@ -2,6 +2,7 @@ package com.polydes.common.comp;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -46,6 +47,11 @@ public class UpdatingCombo<T> extends JComboBox<T>
 	{
 		model.setFilter(filter);
 	}
+	
+	public void setComparator(Comparator<T> comparator)
+	{
+		model.setComparator(comparator);
+	}
 }
 
 class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpdateListener
@@ -54,6 +60,7 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 	
 	private Collection<T> list;
 	private Predicate<T> filter;
+	private Comparator<T> comparator;
 	private ArrayList<T> objects;
 	
 	public UpdatingModel(Collection<T> list, Predicate<T> filter)
@@ -88,6 +95,12 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		listUpdated();
 	}
 	
+	public void setComparator(Comparator<T> comparator)
+	{
+		this.comparator = comparator;
+		listUpdated();
+	}
+	
 	@Override
 	public void listUpdated()
 	{
@@ -108,6 +121,8 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		
 		objects.clear();
 		objects.addAll(filteredList);
+		if(comparator != null)
+			objects.sort(comparator);
 		
 		fireContentsChanged(this, 0, objects.size());
 	}

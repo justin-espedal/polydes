@@ -33,7 +33,10 @@ public abstract class HaxeDataType implements RegistryObject
 	
 	public String getSimpleClassname()
 	{
-		return StringUtils.substringAfterLast(haxeType, ".");
+		if(haxeType.contains("."))
+			return StringUtils.substringAfterLast(haxeType, ".");
+		else
+			return haxeType;
 	}
 	
 	public String getPackage()
@@ -97,7 +100,7 @@ public abstract class HaxeDataType implements RegistryObject
 	@Override
 	public String toString()
 	{
-		return haxeType;
+		return getSimpleClassname();
 	}
 	
 	@Override
