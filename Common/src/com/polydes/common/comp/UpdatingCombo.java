@@ -61,7 +61,8 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 	private Collection<T> list;
 	private Predicate<T> filter;
 	private Comparator<T> comparator;
-	private ArrayList<T> objects;
+	
+	private final ArrayList<T> objects;
 	
 	public UpdatingModel(Collection<T> list, Predicate<T> filter)
 	{
@@ -163,6 +164,6 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		
 		list = null;
 		filter = null;
-		objects = null;
+		objects.clear();
 	}
 }
