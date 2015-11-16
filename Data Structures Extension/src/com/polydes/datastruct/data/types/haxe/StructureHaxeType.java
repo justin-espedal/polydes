@@ -126,7 +126,7 @@ public class StructureHaxeType extends HaxeDataType
 		ExtrasMap emap = new ExtrasMap();
 		if(props.containsKey(StructureType.SOURCE_FILTER))
 			emap.put("sourceFilter", props.<StructureCondition>get(StructureType.SOURCE_FILTER).getText());
-		if(props.<Boolean>get(StructureType.ALLOW_SUBTYPES) == Boolean.TRUE)
+		if(props.get(StructureType.ALLOW_SUBTYPES) == Boolean.TRUE)
 			emap.put("allowSubclasses", "true");
 		return emap;
 	}

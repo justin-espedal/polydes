@@ -62,8 +62,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			sheet.change().field("defaultValue")._editor(type.dataType).change().finish();
 			
 			field.setTypeForPreview(type);
-			clearSheetExtension("extras");
-			type.applyToFieldPanel(StructureFieldPanel.this);
+			refreshFieldEditors();
 			preview.refreshDataItem(previewKey);
 			
 			layoutContainer();
@@ -83,8 +82,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 		//TODO ?
 //		addGenericRow("Hint", hintEditor, RESIZE_FLAG);
 		
-		editorSheet = createSheetExtension(field.getEditorProperties(), "editor");
-		editorSheet.addPropertyChangeListener(event -> preview.refreshDataItem(previewKey));
+		refreshFieldEditors();
 	}
 	
 	// === Methods for DataType extra property appliers.
@@ -93,10 +91,15 @@ public class StructureFieldPanel extends StructureObjectPanel
 	public void setPreviewSheet(PropertiesSheet sheet, DataItem key)
 	{
 		super.setPreviewSheet(sheet, key);
-		
-		clearSheetExtension("editor");
+		refreshFieldEditors();
+	}
+	
+	private void refreshFieldEditors()
+	{
+		if(editorSheet != null)
+			clearSheetExtension("editor");
 		editorSheet = createSheetExtension(field.getEditorProperties(), "editor");
-		editorSheet.addPropertyChangeListener(event -> preview.refreshDataItem(previewKey));
+		editorSheet.addPropertyChangeListener(event -> {if(preview != null) preview.refreshDataItem(previewKey);});
 		field.getType().applyToFieldPanel(StructureFieldPanel.this);
 	}
 	

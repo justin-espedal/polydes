@@ -1,5 +1,7 @@
 package com.polydes.datastruct.data.types;
 
+import static com.polydes.common.util.Lang.or;
+
 import java.io.File;
 
 import javax.swing.JComponent;
@@ -64,6 +66,7 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 	
 	public enum ResourceType
 	{
+		ANY("*.*"),
 		IMAGE("*.png");
 
 		String filter;
@@ -99,7 +102,7 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 		
 		public ExtrasResourceEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
-			ResourceType type = props.get(RESOURCE_TYPE);
+			ResourceType type = or(props.get(RESOURCE_TYPE), ResourceType.ANY);
 			
 			fileEditor = (FileEditor) Types._File.new FileEditorBuilder()
 					.rootDirectory(Locations.getGamePath(Game.getGame(), "extras")).filter(type.getFilter())

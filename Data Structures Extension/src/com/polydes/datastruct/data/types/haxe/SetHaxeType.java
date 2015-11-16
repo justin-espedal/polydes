@@ -164,5 +164,7 @@ public class SetHaxeType extends HaxeDataType
 				props.put(SetType.GEN_TYPE, sht.dataType);
 				break;
 		}
+		
+		panel.getPreview().refreshDataItem(panel.getPreviewKey());
 	}
 }

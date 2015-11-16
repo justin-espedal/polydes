@@ -147,9 +147,8 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 	
 	public void clearSheetExtension(String id)
 	{
-		PropertiesSheetSupport support = extensions.remove(id);
+		extensions.remove(id).dispose();
 		wrappers.remove(id);
-		support.dispose();
 	}
 	
 	private void removeRow(int rowID)
@@ -192,13 +191,9 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 	public class DisposableSheetWrapper implements PropertiesSheetWrapper
 	{
 		private HashMap<String, Integer> rowIndex = new HashMap<>();
-		private boolean disposing;
 		
 		public void decrementGreaterThan(int pivot, int amount)
 		{
-			if(disposing)
-				return;
-			
 			for(String rowKey : rowIndex.keySet())
 			{
 				int rowIsAt = rowIndex.get(rowKey);
@@ -259,9 +254,8 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		@Override
 		public void dispose()
 		{
-			disposing = true;
-			for(Integer row : rowIndex.values())
-				removeRow(row);
+			for(String key : rowIndex.keySet())
+				removeRow(rowIndex.get(key));
 			rowIndex = null;
 		}
 	}

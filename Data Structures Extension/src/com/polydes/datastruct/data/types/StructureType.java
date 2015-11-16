@@ -123,7 +123,7 @@ public class StructureType extends DataType<Structure>
 			StructureCondition condition = props.get(SOURCE_FILTER);
 			Predicate<Structure> predicate = condition == null ? null : new StructurePredicate(condition, currentStructure);
 			
-			boolean allowSubtypes = props.<Boolean>get(ALLOW_SUBTYPES);
+			boolean allowSubtypes = props.get(ALLOW_SUBTYPES) == Boolean.TRUE;
 			
 			if(allowSubtypes)
 				predicate = PredicateUtil.and(predicate, (s) -> s.getTemplate().is(def));
