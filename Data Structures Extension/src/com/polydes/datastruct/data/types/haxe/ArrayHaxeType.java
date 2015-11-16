@@ -83,9 +83,6 @@ public class ArrayHaxeType extends HaxeDataType
 			HaxeDataType newType = (HaxeDataType) event.getNewValue();
 			props.put(ArrayType.GEN_TYPE, newType.dataType);
 			preview.refreshDataItem(previewKey);
-			
-			//TODO: Make sure this works (or better yet, automatically mirror editor props in defaults).
-			panel.getSheet().change().field("defaultValue")._array().genType(newType.dataType);
 		});
 	}
 }

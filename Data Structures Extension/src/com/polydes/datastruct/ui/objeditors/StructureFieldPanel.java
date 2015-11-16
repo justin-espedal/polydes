@@ -41,7 +41,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			
 			.field("optional")._boolean().add().onUpdate(() -> preview.refreshDataItem(previewKey))
 			
-			.field("defaultValue").label("Default")._editor(field.getType().dataType).add()
+			.field("defaultValue").label("Default")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).add()
 			
 			.finish();
 		
@@ -96,8 +96,17 @@ public class StructureFieldPanel extends StructureObjectPanel
 		if(editorSheet != null)
 			clearSheetExtension("editor");
 		editorSheet = createSheetExtension(field.getEditorProperties(), "editor");
-		editorSheet.addPropertyChangeListener(event -> {if(preview != null) preview.refreshDataItem(previewKey);});
+		editorSheet.addPropertyChangeListener(event -> refreshGeneratedEditor());
 		field.getType().applyToFieldPanel(StructureFieldPanel.this);
+	}
+	
+	protected void refreshGeneratedEditor()
+	{
+		sheet.change()
+			.field("defaultValue")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).change()
+			.finish();
+		if(preview != null)
+			preview.refreshDataItem(previewKey);
 	}
 	
 	public StructureField getField()

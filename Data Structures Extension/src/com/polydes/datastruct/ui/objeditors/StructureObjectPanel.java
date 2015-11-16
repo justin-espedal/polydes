@@ -236,6 +236,10 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 			int row = rowIndex.get(varname);
 			removeGroup(row);
 			addGenericRowAtInternal(row, field.getLabel(), comps);
+			
+			layoutContainer();
+			revalidate();
+			setSize(getPreferredSize());
 		}
 		
 		@Override
