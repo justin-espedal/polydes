@@ -2,8 +2,6 @@ package com.polydes.common.data.types;
 
 import java.util.HashMap;
 
-import com.polydes.common.data.core.DataSetSource;
-import com.polydes.common.data.core.DataSetSources;
 import com.polydes.common.data.types.builtin.CollectionObjectType;
 import com.polydes.common.data.types.builtin.EnumType;
 import com.polydes.common.data.types.builtin.FilePathType;
@@ -46,7 +44,6 @@ public class Types extends ObjectRegistry<DataType<?>>
 	
 	public static ColorType _Color = new ColorType();
 	public static IControlType _Control = new IControlType();
-//	public static ExtrasImageType _ExtrasImage = new ExtrasImageType();
 	public static SelectionType _Selection = new SelectionType();
 	public static SetType _Set = new SetType();
 	
@@ -132,10 +129,7 @@ public class Types extends ObjectRegistry<DataType<?>>
 		registerItem(_ResourceFolder);
 		
 		for(StencylResourceType<?> srt : srts)
-		{
 			registerItem(srt);
-			DataSetSources.get().registerItem(new DataSetSource(srt.getId(), srt, () -> srt.getList()));
-		}
 	}
 	
 	@Override

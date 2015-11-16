@@ -3,6 +3,7 @@ package com.polydes.common.data.types.builtin.extra;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.core.DataSet;
-import com.polydes.common.data.core.DataSetSource;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
@@ -32,16 +32,17 @@ public class SetType extends DataType<DataSet>
 	
 	public static final String SOURCE = "source";
 	public static final String SOURCE_FILTER = "sourceFilter";
+	public static final String GEN_TYPE = "genType";
 	
 	@Override
 	public DataEditor<DataSet> createEditor(EditorProperties props, PropertiesSheetStyle style)
 	{
-		DataSetSource source = props.get(SOURCE);
+		Collection<?> source = props.get(SOURCE);
 		
 		if(source == null)
 			return new InvalidEditor<DataSet>("Select a valid data source", style);
 		
-		if(source.collectionSupplier.get().isEmpty())
+		if(source.isEmpty())
 			return new InvalidEditor<DataSet>("The selected source has no items", style);
 		
 		return new ChecklistDataSetEditor(props, style);
@@ -116,9 +117,15 @@ public class SetType extends DataType<DataSet>
 			super(SetType.this, new EditorProperties());
 		}
 
-		public SetEditorBuilder source(DataSetSource source)
+		public SetEditorBuilder source(Collection<?> source)
 		{
 			props.put(SOURCE, source);
+			return this;
+		}
+		
+		public SetEditorBuilder genType(DataType<?> type)
+		{
+			props.put(GEN_TYPE, type);
 			return this;
 		}
 		
@@ -131,7 +138,8 @@ public class SetType extends DataType<DataSet>
 	
 	public static class ChecklistDataSetEditor extends DataEditor<DataSet>
 	{
-		DataSetSource source;
+		Collection<?> source;
+		DataType<?> genType;
 		
 		DataSet set;
 		JPanel buttonPanel;
@@ -140,15 +148,16 @@ public class SetType extends DataType<DataSet>
 		public ChecklistDataSetEditor(EditorProperties props, PropertiesSheetStyle style)
 		{
 			source = props.get(SOURCE);
+			genType = props.get(GEN_TYPE);
 			Predicate<Object> filter = props.get(SOURCE_FILTER);
 			
 			ArrayList<JCheckBox> buttons = new ArrayList<JCheckBox>();
 			
 			map = new IdentityHashMap<Object, JCheckBox>();
 			
-			for(final Object o : source.collectionSupplier.get())
+			for(final Object o : source)
 			{
-				if(!filter.test(o))
+				if(filter != null && !filter.test(o))
 					continue;
 				
 				final JCheckBox b = new JCheckBox("" + o);
@@ -179,7 +188,7 @@ public class SetType extends DataType<DataSet>
 		public void set(DataSet t)
 		{
 			if(t == null)
-				t = new DataSet(source.type);
+				t = new DataSet(genType);
 			Iterator<Object> it = t.iterator();
 			while(it.hasNext())
 				map.get(it.next()).setSelected(true);
