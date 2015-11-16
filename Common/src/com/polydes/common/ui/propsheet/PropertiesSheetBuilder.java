@@ -3,6 +3,8 @@ package com.polydes.common.ui.propsheet;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
@@ -141,7 +143,7 @@ public class PropertiesSheetBuilder
 		{
 			this.varname = varname;
 			type = null;
-			label = SPLIT_CAMEL.matcher(varname).replaceAll(" ");
+			label = WordUtils.capitalize(SPLIT_CAMEL.matcher(varname.replaceAll("_", "")).replaceAll(" "));
 			hint = null;
 			optional = false;
 			
