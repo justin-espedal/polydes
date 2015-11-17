@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
@@ -19,7 +20,6 @@ import com.polydes.common.data.types.UpdateListener;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.core.HaxeObject;
 import com.polydes.datastruct.data.core.HaxeObjectDefinition;
-import com.polydes.datastruct.ui.utils.Layout;
 
 public class HaxeObjectType extends DataType<HaxeObject>
 {

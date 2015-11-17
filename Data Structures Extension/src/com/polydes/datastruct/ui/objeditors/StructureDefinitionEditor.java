@@ -128,6 +128,7 @@ public class StructureDefinitionEditor extends JPanel
 		this.def = def;
 		
 		model = new HierarchyModel<DataItem,Folder>(def.guiRoot, DataItem.class, Folder.class);
+		Folder.rootModels.put(def.guiRoot, model);
 		
 		model.getRootBranch().addListener(new LeafListener<DataItem,Folder>()
 		{
@@ -270,6 +271,7 @@ public class StructureDefinitionEditor extends JPanel
 		disposePreview();
 		model.dispose();
 		model = null;
+		Folder.rootModels.remove(def.guiRoot);
 		def = null;
 		tree.dispose();
 		tree = null;

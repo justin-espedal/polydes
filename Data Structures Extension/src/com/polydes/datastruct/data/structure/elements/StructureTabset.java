@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
+import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
@@ -16,7 +17,6 @@ import com.polydes.datastruct.ui.table.Deck;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.RowGroup;
-import com.polydes.datastruct.ui.utils.Layout;
 
 public class StructureTabset extends SDE
 {

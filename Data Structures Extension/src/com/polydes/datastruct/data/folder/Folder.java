@@ -1,6 +1,7 @@
 package com.polydes.datastruct.data.folder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.ImageIcon;
@@ -8,11 +9,13 @@ import javax.swing.JPanel;
 
 import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
+import com.polydes.common.nodes.HierarchyModel;
+import com.polydes.common.nodes.NodeUtils;
+import com.polydes.common.ui.filelist.BranchPage;
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.common.ui.object.ViewableObject;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.res.Resources;
-import com.polydes.datastruct.ui.page.FolderPage;
 
 
 public class Folder extends DataItem implements Branch<DataItem,Folder>, ViewableObject
@@ -266,17 +269,24 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 	{
 		return Lang.or(policy, DEFAULT_POLICY).itemEditingEnabled;
 	}
-
-	private FolderPage view;
+	
+	@Override
+	public ImageIcon getIcon()
+	{
+		return folderIcon;
+	}
+	
+	private BranchPage<DataItem, Folder> view;
+	public static HashMap<Folder, HierarchyModel<DataItem, Folder>> rootModels = new HashMap<>();
 	
 	@Override
 	public JPanel getView()
 	{
 		if(view == null)
-			view = new FolderPage(this);
+			view = new BranchPage<DataItem,Folder>(this, rootModels.get(NodeUtils.getRoot(this)));
 		return view;
 	}
-
+	
 	@Override
 	public void disposeView()
 	{

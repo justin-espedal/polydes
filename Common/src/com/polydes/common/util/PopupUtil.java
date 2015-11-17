@@ -111,6 +111,9 @@ public class PopupUtil
 	
 	public static JMenuItem[] asMenuItems(Collection<? extends MenuItemAccess> c)
 	{
+		if(c == null)
+			return new JMenuItem[0];
+		
 		return mapCA(c, JMenuItem.class, info -> info.asMenuItem());
 	}
 	

@@ -170,7 +170,9 @@ public class StructureDefinitionPage extends JPanel
 	{
 		super(new BorderLayout());
 		
-		definitionsfm = new HierarchyModel<DataItem,Folder>(DataStructuresExtension.get().getStructureDefinitions().root, DataItem.class, Folder.class);
+		Folder root = DataStructuresExtension.get().getStructureDefinitions().root;
+		definitionsfm = new HierarchyModel<DataItem,Folder>(root, DataItem.class, Folder.class);
+		Folder.rootModels.put(root, definitionsfm);
 		definitionTree = new DarkTree<DataItem,Folder>(definitionsfm);
 		definitionTree.setNamingEditingAllowed(false);
 		definitionTree.expand((Folder) DataStructuresExtension.get().getStructureDefinitions().root.getItemByName("My Structures"));
@@ -309,6 +311,8 @@ public class StructureDefinitionPage extends JPanel
 	{
 		if(_instance != null)
 		{
+			Folder root = DataStructuresExtension.get().getStructureDefinitions().root;
+			Folder.rootModels.remove(root);
 			_instance.definitionsfm.dispose();
 			_instance.definitionTree.dispose();
 		}

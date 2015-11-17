@@ -3,13 +3,15 @@ package com.polydes.datastruct.data.folder;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 import com.polydes.common.nodes.Leaf;
 import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.ui.object.EditableObject;
+import com.polydes.common.ui.object.ViewableObject;
 
 
-public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>
+public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>, ViewableObject
 {
 	protected ArrayList<LeafListener<DataItem,Folder>> listeners;
 	protected Folder parent;
@@ -135,6 +137,24 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>
 		
 		if(value && parent != null && !parent.isDirty())
 			parent.setDirty(true);
+	}
+	
+	@Override
+	public JPanel getView()
+	{
+		return object.getView();
+	}
+	
+	@Override
+	public void disposeView()
+	{
+		object.disposeView();
+	}
+	
+	@Override
+	public boolean fillsViewHorizontally()
+	{
+		return false;
 	}
 	
 	@Override

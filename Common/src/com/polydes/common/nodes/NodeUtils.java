@@ -190,6 +190,14 @@ public class NodeUtils
 		return parent.getItemAt(i - 1);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> U getRoot(T child)
+	{
+		while(child.getParent() != null)
+			child = (T) child.getParent();
+		return (U) child;
+	}
+	
 	public static final void print(Collection<? extends Leaf<?,?>> c)
 	{
 		System.out.println(StringUtils.join(Lang.mapCA(c, String.class, i -> i.getName()), ','));

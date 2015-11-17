@@ -27,9 +27,16 @@ public class StructurePage extends TreePage<DataItem,Folder>
 	private JComponent sidebar;
 	private Boolean listEditEnabled;
 	
-	public StructurePage(Folder rootFolder)
+	public static StructurePage newPage(Folder rootFolder)
 	{
-		super(new HierarchyModel<>(rootFolder, DataItem.class, Folder.class));
+		HierarchyModel<DataItem, Folder> model = new HierarchyModel<>(rootFolder, DataItem.class, Folder.class);
+		Folder.rootModels.put(rootFolder, model);
+		return new StructurePage(model);
+	}
+	
+	private StructurePage(HierarchyModel<DataItem, Folder> model)
+	{
+		super(model);
 		
 		setListEditEnabled(true);
 		getFolderModel().setUniqueLeafNames(true);
@@ -129,8 +136,8 @@ public class StructurePage extends TreePage<DataItem,Folder>
 	public static StructurePage get()
 	{
 		if (_instance == null)
-			_instance = new StructurePage(Structures.root);
-
+			_instance = newPage(Structures.root);
+		
 		return _instance;
 	}
 	
@@ -154,6 +161,7 @@ public class StructurePage extends TreePage<DataItem,Folder>
 	public void dispose()
 	{
 		super.dispose();
+		Folder.rootModels.remove(Structures.root);
 		sidebar.removeAll();
 		sidebar = null;
 	}

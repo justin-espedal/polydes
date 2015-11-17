@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.polydes.common.comp.DisabledPanel;
+import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
@@ -47,7 +48,6 @@ import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
-import com.polydes.datastruct.ui.utils.Layout;
 
 public class StructureField extends SDE implements RORealizer<HaxeDataType>
 {

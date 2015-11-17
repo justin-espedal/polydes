@@ -21,12 +21,12 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.comp.UpdatingCombo;
+import com.polydes.common.comp.utils.Layout;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.utils.ImageImporter;
-import com.polydes.datastruct.ui.utils.Layout;
 
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.lnf.Theme;

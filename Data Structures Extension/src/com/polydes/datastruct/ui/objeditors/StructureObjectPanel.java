@@ -17,20 +17,20 @@ import javax.swing.JComponent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.common.comp.DisabledPanel;
+import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
 import com.polydes.common.data.types.builtin.basic.StringType.ExpandingStringEditor;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
-import com.polydes.common.util.ColorUtil;
 import com.polydes.common.ui.propsheet.PropertiesSheetWrapper;
+import com.polydes.common.util.ColorUtil;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
 import com.polydes.datastruct.ui.table.Table;
-import com.polydes.datastruct.ui.utils.Layout;
 
 public class StructureObjectPanel extends Table implements PreviewableEditor
 {
