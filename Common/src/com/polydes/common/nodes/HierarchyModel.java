@@ -268,7 +268,10 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	{
 		simpleMove = true;
 		for(T item : transferItems)
+		{
+			selection.remove(item);
 			item.getParent().removeItem(item);
+		}
 		for(T item : transferItems)
 			target.addItem(item, position++);
 		simpleMove = false;

@@ -102,8 +102,6 @@ public class LeafListTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>>
 		else
 			index = parent.getItems().size();
 		
-		folderModel.getSelection().removeAll(data.nodes);
-		
 		folderModel.massMove(transferItems, parent, index);
 		
 		return true;

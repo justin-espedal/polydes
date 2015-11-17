@@ -49,7 +49,10 @@ public class FileMonitor
 					
 					for(SysFile item : transferItems)
 						if(item.getParent() != target)
+						{
+							model.getSelection().remove(item);
 							toMove.add(item.getFile());
+						}
 					if(toMove.isEmpty())
 						return;
 					

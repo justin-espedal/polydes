@@ -106,8 +106,6 @@ public class DTreeTransferHandler<T extends Leaf<T,U>, U extends Branch<T,U>> ex
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
 		
-		dtree.getSelectionState().clear();
-		
 		folderModel.massMove(transferItems, parentFolder, index);
 		
 		return true;

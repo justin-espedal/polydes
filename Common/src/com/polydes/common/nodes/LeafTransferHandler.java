@@ -149,7 +149,7 @@ public abstract class LeafTransferHandler<T extends Leaf<T, U>, U extends Branch
 		for(T item : transferItems)
 			if(item.getParent() == parentFolder && parentFolder.getItems().indexOf(item) < visibleIndex)
 				--index;
-
+		
 		folderModel.massMove(transferItems, parentFolder, index);
 
 		return true;
