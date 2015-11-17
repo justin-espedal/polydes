@@ -2,6 +2,7 @@ package com.polydes.datastruct.ui.objeditors;
 
 import static com.polydes.common.util.Lang.asArray;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -15,12 +16,14 @@ import javax.swing.JComponent;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.polydes.common.comp.DisabledPanel;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
 import com.polydes.common.data.types.builtin.basic.StringType.ExpandingStringEditor;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
+import com.polydes.common.util.ColorUtil;
 import com.polydes.common.ui.propsheet.PropertiesSheetWrapper;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
@@ -66,8 +69,7 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 		return rows.length - 1;
 	}
 	
-	//TODO: Make this better (use DisabledPanel)
-	public JCheckBox createEnabler(final DataEditor<?> editor, final boolean initialValue)
+	public JCheckBox createEnabler(final DataEditor<?> editor, final DisabledPanel panel, final boolean initialValue)
 	{
 		final JCheckBox enabler = new JCheckBox();
 		enabler.setSelected(initialValue);
@@ -82,8 +84,7 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 			{
 				if(enabled != enabler.isSelected())
 				{
-					for(JComponent comp : editor.getComponents())
-						comp.setVisible(enabler.isSelected());
+					panel.setEnabled(enabler.isSelected());
 					if(!enabler.isSelected())
 						editor.setValue(null);
 					previewKey.setDirty(true);
@@ -94,8 +95,7 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 			}
 		});
 		
-		for(JComponent comp : editor.getComponents())
-			comp.setVisible(initialValue);
+		panel.setEnabled(enabler.isSelected());
 		
 		return enabler;
 	}
@@ -210,11 +210,18 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 			if(hint != null && !hint.isEmpty())
 				comps = ArrayUtils.add(comps, style.createEditorHint(hint));
 			
-			//TODO: editor.getValue() will NOT be an accurate value at this time.
 			if(field.isOptional())
-				comps = ArrayUtils.add(comps, 0, createEnabler(editor, editor.getValue() != null));
-			
-			return comps;
+			{
+				Color bg = ColorUtil.deriveTransparent(style.pageBg, 130);
+				DisabledPanel dpanel = new DisabledPanel(Layout.horizontalBox(comps), bg);
+				dpanel.setBackground(style.pageBg);
+				//TODO: editor.getValue() will NOT be an accurate value at this time.
+				JCheckBox enabler = createEnabler(editor, dpanel, editor.getValue() != null);
+				
+				return new JComponent[] {enabler, dpanel};
+			}
+			else
+				return comps;
 		}
 		
 		@Override

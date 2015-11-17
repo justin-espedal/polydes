@@ -42,4 +42,9 @@ public class ColorUtil
 			s = "0" + s;
 		return s;
 	}
+	
+	public static Color deriveTransparent(Color c, int alpha)
+	{
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+	}
 }

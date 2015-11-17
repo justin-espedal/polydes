@@ -1,5 +1,6 @@
 package com.polydes.datastruct.data.structure.elements;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polydes.common.comp.DisabledPanel;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
@@ -24,6 +26,7 @@ import com.polydes.common.data.types.builtin.extra.ColorType.ColorEditor;
 import com.polydes.common.ext.RORealizer;
 import com.polydes.common.io.XML;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
+import com.polydes.common.util.ColorUtil;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
@@ -446,12 +449,17 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 			editPanel = Layout.horizontalBox(sheet.style.fieldDimension, deditor.getComponents());
 			
 			if(f.isOptional())
-				return constrict(sheet.style, createEnabler(sheet.model, editPanel, f), editPanel);
+			{
+				Color bg = ColorUtil.deriveTransparent(sheet.style.pageBg, 210);
+				DisabledPanel dpanel = new DisabledPanel(editPanel, bg);
+				dpanel.setBackground(sheet.style.pageBg);
+				return constrict(sheet.style, createEnabler(sheet.model, dpanel, f), dpanel);
+			}
 			else
 				return editPanel;
 		}
 		
-		private JCheckBox createEnabler(final Structure model, final JComponent component, final StructureField f)
+		private JCheckBox createEnabler(final Structure model, final DisabledPanel dpanel, final StructureField f)
 		{
 			final JCheckBox enabler = new JCheckBox();
 			enabler.setSelected(model.isPropertyEnabled(f));
@@ -464,7 +472,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 				{
 					if(model.isPropertyEnabled(f) != enabler.isSelected())
 					{
-						component.setVisible(enabler.isSelected());
+						dpanel.setEnabled(enabler.isSelected());
 						model.setPropertyEnabled(f, enabler.isSelected());
 						if(!enabler.isSelected())
 							model.clearProperty(f);
@@ -473,7 +481,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 				}
 			});
 			
-			component.setVisible(model.isPropertyEnabled(f));
+			dpanel.setEnabled(model.isPropertyEnabled(f));
 			
 			return enabler;
 		}
