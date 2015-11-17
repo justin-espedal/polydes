@@ -13,9 +13,11 @@ import org.apache.log4j.Logger;
 
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.common.util.Lang;
+import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.types.HaxeTypeConverter;
 import com.polydes.datastruct.ui.objeditors.StructureEditor;
 
 public class Structure extends EditableObject
@@ -33,7 +35,19 @@ public class Structure extends EditableObject
 	
 	public DataItem dref;
 	
+	public Structure(int id, String name, String templateName)
+	{
+		StructureDefinitions defs = DataStructuresExtension.get().getStructureDefinitions();
+		StructureDefinition def = defs.requestValue(templateName, value -> realizeTemplate(value));
+		load(id, name, def);
+	}
+	
 	public Structure(int id, String name, StructureDefinition template)
+	{
+		load(id, name, template);
+	}
+	
+	private void load(int id, String name, StructureDefinition template)
 	{
 		this.id = id;
 		this.template = template;
@@ -82,7 +96,7 @@ public class Structure extends EditableObject
 	
 	public void setPropertyFromString(StructureField field, String value)
 	{
-		Object newValue = field.getType().dataType.decode(value);
+		Object newValue = HaxeTypeConverter.decode(field.getType().dataType, value);
 		Object oldValue = fieldData.get(field);
 		fieldData.put(field, newValue);
 		pcs.firePropertyChange(field.getVarname(), oldValue, newValue);
@@ -273,7 +287,7 @@ public class Structure extends EditableObject
 		
 		for(StructureField f : template.getFields())
 		{
-			Object value = f.getType().dataType.decode("");
+			Object value = HaxeTypeConverter.decode(f.getType().dataType, "");
 			fieldData.put(f, value);
 			enabledFields.put(f, !f.isOptional());
 			pcs.firePropertyChange(f.getVarname(), null, value);

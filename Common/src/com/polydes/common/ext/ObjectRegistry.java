@@ -27,6 +27,15 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 		map = new HashMap<>();
 	}
 	
+	/**
+	 * A method that can be overridden to add behavior when
+	 * a placeholder type is being added.
+	 */
+	protected void preregisterItem(T object)
+	{
+		map.put(object.getKey(), object);
+	}
+	
 	public void registerItem(T object)
 	{
 		if(isUnknown(object.getKey()))
@@ -65,6 +74,9 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 	
 	public T getItem(String key)
 	{
+		if(map.get(key) == null)
+			throw new RuntimeException("Null value from " + getClass().getSimpleName() + "!: " + key);
+		
 		return map.get(key);
 	}
 	
@@ -110,7 +122,7 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 	
 	public T requestValue(String s, RORealizer<T> tr)
 	{
-		if(!map.containsKey(s))
+		if(!map.containsKey(s) && !isUnknown(s))
 			addUnknown(s);
 		
 		if(isUnknown(s))
@@ -126,9 +138,16 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 		T newObject = generatePlaceholder(s);
 		unknownValues.put(s, newObject);
 		roRealizers.put(s, new ArrayList<>());
-		map.put(s, newObject);
+		preregisterItem(newObject);
 	}
 	
+	/**
+	 * <p>Create a placeholder object that can safely be used until
+	 * the desired data has been loaded.</>
+	 * 
+	 * <p>Calling the getKey method on the new object should
+	 * return the value of this function's key argument.</p>
+	 */
 	public abstract T generatePlaceholder(String key);
 	
 	public boolean isUnknown(String s)

@@ -13,6 +13,7 @@ import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.elements.StructureField;
+import com.polydes.datastruct.data.types.HaxeTypeConverter;
 import com.polydes.datastruct.io.FolderInfo;
 import com.polydes.datastruct.io.Text;
 
@@ -91,8 +92,7 @@ public class Structures
 			String type = map.remove("struct_type");
 			nextID = Math.max(nextID, id + 1);
 			
-			StructureDefinition template = DataStructuresExtension.get().getStructureDefinitions().getItem(type);
-			Structure model = new Structure(id, name, template);
+			Structure model = new Structure(id, name, type);
 			structures.get(model.getTemplate()).add(model);
 			structuresByID.put(model.getID(), model);
 		}
@@ -188,7 +188,7 @@ public class Structures
 			{
 				if(field.isOptional() && !s.isPropertyEnabled(field))
 					continue;
-				toWrite.add(field.getVarname() + "=" + field.getType().dataType.checkEncode(s.getProperty(field)));
+				toWrite.add(field.getVarname() + "=" + HaxeTypeConverter.encode(field.getType().dataType, s.getProperty(field)));
 			}
 			if(s.getUnknownData() != null)
 				for(Entry<String, String> entry : s.getUnknownData().entrySet())

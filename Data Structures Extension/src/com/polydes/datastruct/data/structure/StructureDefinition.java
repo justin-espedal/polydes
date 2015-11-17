@@ -430,7 +430,8 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		//has been registered, it already has a valid DataType<?>
 		if(Structures.structures.containsKey(this))
 			for(Structure struct : Structures.structures.get(this))
-				struct.setPropertyFromString(field, (String) struct.getProperty(field));
+				if(struct.getProperty(field) != null)
+					struct.setPropertyFromString(field, (String) struct.getProperty(field));
 	}
 	
 	@Override

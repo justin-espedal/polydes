@@ -82,6 +82,12 @@ public class HaxeTypes extends ObjectRegistry<HaxeDataType>
 	}
 
 	@Override
+	protected void preregisterItem(HaxeDataType object)
+	{
+		// override so nothing happens.
+	}
+	
+	@Override
 	public HaxeDataType generatePlaceholder(String key)
 	{
 		return null;

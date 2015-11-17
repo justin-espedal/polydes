@@ -135,9 +135,11 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 		return def;
 	}
 	
-	@Override
-	public void registerItem(StructureDefinition def)
+	private void registerWithLists(StructureDefinition def)
 	{
+		if(Structures.structures.containsKey(def))
+			return;
+		
 		Structures.structures.put(def, new ArrayList<Structure>());
 		
 		StructureType structureType = new StructureType(def);
@@ -145,6 +147,19 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 		
 		Types.get().registerItem(structureType);
 		DataStructuresExtension.get().getHaxeTypes().registerItem(newHaxeType);
+	}
+	
+	@Override
+	protected void preregisterItem(StructureDefinition def)
+	{
+		registerWithLists(def);
+		super.preregisterItem(def);
+	}
+	
+	@Override
+	public void registerItem(StructureDefinition def)
+	{
+		registerWithLists(def);
 		super.registerItem(def);
 	}
 	
