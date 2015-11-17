@@ -247,12 +247,10 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 			
 			if(img == null)
 			{
-				img = item.getIcon().getImage();
-				
-				if(img == null)
-				{
+				if(item.getIcon() == null || item.getIcon().getImage() == null)
 					img = Loader.loadIcon("res/global/warning.png").getImage();
-				}
+				else
+					img = item.getIcon().getImage();
 				
 				img = ImageUtil.getBufferedImage(img);
 				
