@@ -31,6 +31,8 @@ public abstract class ObjectRegistry<T extends RegistryObject>
 	{
 		if(isUnknown(object.getKey()))
 			realizeUnknown(object.getKey(), object);
+		else if(map.containsKey(object.getKey()))
+			throw new IllegalArgumentException("The same key cannot be claimed by two objects");
 		else
 			map.put(object.getKey(), object);
 	}
