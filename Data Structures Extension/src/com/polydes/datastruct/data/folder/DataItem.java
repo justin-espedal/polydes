@@ -133,10 +133,12 @@ public class DataItem implements Comparable<DataItem>, Leaf<DataItem,Folder>, Vi
 			return;
 		
 		object.setDirty(value);
-		for(LeafListener<DataItem,Folder> l : listeners) {l.leafStateChanged(this);}
 		
 		if(value && parent != null && !parent.isDirty())
+		{
+			for(LeafListener<DataItem,Folder> l : listeners) {l.leafStateChanged(this);}
 			parent.setDirty(true);
+		}
 	}
 	
 	@Override

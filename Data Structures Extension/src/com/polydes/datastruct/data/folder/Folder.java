@@ -168,8 +168,9 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 			if(pos != -1)
 			{
 				items.remove(item);
-				item.setParent(null, false);
 				itemNames.remove(item.getName());
+				item.setParent(null, false);
+				
 				for(BranchListener<DataItem,Folder> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
 			
 				setDirty(true);
