@@ -11,13 +11,13 @@
         </dg:drawkeys>
     </dg:extension>
     <field label="Window Name" name="windowTemplate" type="dialog.ds.WindowTemplate"/>
-    <field label="Window Font" name="windowFont" type="com.stencyl.models.Font"/>
+    <field label="Window Font" name="windowFont" type="com.stencyl.models.Font" renderPreview="true"/>
     <field default="" editor="Dropdown" label="Cursor Type" name="cursorType" options="[Use Image,Use Window]:String" type="com.polydes.datastruct.Selection"/>
-    <if condition="optCursorType == &amp;quot;Use Image&amp;quot;">
+    <if condition="cursorType == &amp;quot;Use Image&amp;quot;">
         <field label="Cursor Image" name="cursorImage" type="com.polydes.datastruct.ExtrasImage"/>
         <field hint="x/y offset from top-left of the currently selected option." label="Cursor Offset" name="cursorOffset" type="openfl.geom.Point"/>
     </if>
-    <if condition="optCursorType == &amp;quot;Use Window&amp;quot;">
+    <if condition="cursorType == &amp;quot;Use Window&amp;quot;">
         <field label="Cursor Window" name="cursorWindow" type="dialog.ds.WindowTemplate"/>
     </if>
     <field default="" editor="Dropdown" label="Choice Layout" name="choiceLayout" options="[Horizontal,Vertical]:String" type="com.polydes.datastruct.Selection"/>

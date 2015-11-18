@@ -8,11 +8,11 @@
     </dg:extension>
     <field default="0.0" editor="Plain" hint="seconds between characters being typed for fast mode." label="Fast Speed" name="fastSpeed" step="0.01" type="Float"/>
     <field label="Fast Button" name="fastButton" type="com.polydes.datastruct.Control"/>
-    <field editor="Simple" genType="com.stencyl.models.Sound" label="Fast Sound" name="fastSound" type="Array"/>
+    <field editor="Standard" genType="com.stencyl.models.Sound" label="Fast Sound" name="fastSound" type="Array"/>
     <field default="0" editor="Plain" hint="number of milliseconds between playback of the fast sound (0 makes the sound play when a character is typed.)" label="Fast Sound Interval" name="fastSoundInterval" step="1" type="Int"/>
     <field default="0.0" editor="Plain" hint="seconds between characters being typed for zoom mode." label="Zoom Speed" name="zoomSpeed" step="0.01" type="Float"/>
     <field label="Zoom Button" name="zoomButton" type="com.polydes.datastruct.Control"/>
-    <field editor="Simple" genType="com.stencyl.models.Sound" label="Zoom Sound" name="zoomSound" type="Array"/>
+    <field editor="Standard" genType="com.stencyl.models.Sound" label="Zoom Sound" name="zoomSound" type="Array"/>
     <field default="0" editor="Plain" hint="number of milliseconds between playback of the zoom sound (0 makes the sound play when a character is typed.)" label="Zoom Sound Interval" name="zoomSoundInterval" step="1" type="Int"/>
     <field label="Instant Button" name="instantButton" type="com.polydes.datastruct.Control"/>
     <field label="Instant Sound" name="instantSound" type="com.stencyl.models.Sound" optional="true"/>

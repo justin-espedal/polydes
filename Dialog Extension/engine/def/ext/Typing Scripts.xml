@@ -19,7 +19,7 @@
         	</dg:cmd>
         </dg:cmds>
     </dg:extension>
-    <field editor="Simple" genType="com.stencyl.models.Sound" hint="A list of sounds to randomly pick from for each Type Sound." label="Default Random Type Sounds" name="defaultRandomTypeSounds" type="Array"/>
+    <field editor="Standard" genType="com.stencyl.models.Sound" hint="A list of sounds to randomly pick from for each Type Sound." label="Default Random Type Sounds" name="defaultRandomTypeSounds" type="Array"/>
     <field default="0" editor="Plain" hint="Number of characters to skip for playing Type Sound." label="Type Sound Character Skip" name="characterSkipSFX" step="1" type="Int"/>
     <field default="false" label="Play Type Sound On Spaces" name="playTypeSoundOnSpaces" type="Bool"/>
 </structure>

@@ -20,7 +20,7 @@
     <if condition="fitMsgToWindow == false">
         <field hint="Position on screen of the message" label="Message Bounds" name="msgBounds" type="openfl.geom.Rectangle"/>
     </if>
-    <field label="Message Font" name="msgFont" type="com.stencyl.models.Font"/>
+    <field label="Message Font" name="msgFont" type="com.stencyl.models.Font" renderPreview="true"/>
     <field default="0.0" editor="Plain" hint="Seconds between characters being typed. (0.05, 20 characters / second)" label="Message Type Speed" name="msgTypeSpeed" step="0.01" type="Float"/>
     <field label="Message Start Sound" name="msgStartSound" type="com.stencyl.models.Sound" optional="true"/>
     <field default="" editor="SingleLine" hint="Name of Game Attribute that will be set to &amp;quot;true&amp;quot; while Dialog is open." label="Control Attribute" name="controlAttribute" type="String"/>
