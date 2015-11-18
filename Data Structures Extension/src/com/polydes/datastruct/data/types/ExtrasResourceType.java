@@ -13,6 +13,8 @@ import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
+import com.polydes.common.data.types.builtin.FileType;
+import com.polydes.common.data.types.builtin.FileType.DualFileFilter;
 import com.polydes.common.data.types.builtin.FileType.FileEditor;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.datastruct.data.core.ExtrasResource;
@@ -66,17 +68,17 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 	
 	public enum ResourceType
 	{
-		ANY("*.*"),
-		IMAGE("*.png");
-
-		String filter;
+		ANY(null),
+		IMAGE(FileType.ExtensionFilter.PNG_FILTER);
 		
-		private ResourceType(String filter)
+		DualFileFilter filter;
+		
+		private ResourceType(DualFileFilter filter)
 		{
 			this.filter = filter;
 		}
 		
-		public String getFilter()
+		public DualFileFilter getFilter()
 		{
 			return filter;
 		}
