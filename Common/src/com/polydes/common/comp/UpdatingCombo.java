@@ -25,6 +25,7 @@ public class UpdatingCombo<T> extends JComboBox<T>
 	{
 		super(new UpdatingModel<T>(list, filter));
 		model = (UpdatingModel<T>) getModel();
+		setBackground(null);
 	}
 	
 	public T getSelected()

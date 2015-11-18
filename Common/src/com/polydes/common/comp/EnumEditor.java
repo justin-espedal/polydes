@@ -13,6 +13,7 @@ public class EnumEditor<T extends Enum<T>> extends DataEditor<T>
 	public EnumEditor(Class<T> cls)
 	{
 		combo = new JComboBox<>(cls.getEnumConstants());
+		combo.setBackground(null);
 		comps = new JComponent[] {combo};
 		
 		combo.addActionListener((e) -> updated());

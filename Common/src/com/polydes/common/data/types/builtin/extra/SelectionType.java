@@ -112,15 +112,8 @@ public class SelectionType extends DataType<String>
 			String[] optionStrings = DataList.toStrings(options);
 			
 			editor = new JComboBox<String>(optionStrings);
-			
-			editor.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					updated();
-				}
-			});
+			editor.setBackground(null);
+			editor.addActionListener(e -> updated());
 		}
 		
 		@Override
