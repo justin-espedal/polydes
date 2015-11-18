@@ -1,5 +1,6 @@
 package com.polydes.common.data.types.builtin;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -16,10 +17,12 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.polydes.common.comp.RenderedPanel;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
+import com.polydes.common.sys.FileRenderer;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
 import stencyl.sw.SW;
@@ -37,6 +40,7 @@ public class FileType extends DataType<File>
 	public static final String ROOT_DIRECTORY = "rootDirectory";
 	public static final String ONLY_DIRECTORIES = "onlyDirectories";
 	public static final String FILTER = "filter";
+	public static final String RENDER_PREVIEW = "renderPreview";
 	
 	@Override
 	public DataEditor<File> createEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -75,6 +79,12 @@ public class FileType extends DataType<File>
 			super(FileType.this, new EditorProperties());
 		}
 		
+		public FileEditorBuilder rendered()
+		{
+			props.put(RENDER_PREVIEW, Boolean.TRUE);
+			return this;
+		}
+		
 		public FileEditorBuilder rootDirectory(String path)
 		{
 			props.put(ROOT_DIRECTORY, path);
@@ -83,7 +93,7 @@ public class FileType extends DataType<File>
 		
 		public FileEditorBuilder onlyDirectories()
 		{
-			props.put(ONLY_DIRECTORIES, true);
+			props.put(ONLY_DIRECTORIES, Boolean.TRUE);
 			return this;
 		}
 		
@@ -98,7 +108,10 @@ public class FileType extends DataType<File>
 	{
 		private File file;
 		final GroupButton button;
+		
 		final JTextField pathField;
+		final RenderedPanel rendered;
+		
 		String rootDirectory;
 		
 		public FileEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -155,11 +168,13 @@ public class FileType extends DataType<File>
 						file = fc.getSelectedFile();
 //				}
 				
-				updatePathField();
+				updateFileInfo();
 				updated();
 			});
 			
-			pathField = style.createTextField();
+			boolean isRendered = props.get(RENDER_PREVIEW) == Boolean.TRUE;
+			pathField = isRendered ? null : style.createTextField();
+			rendered = isRendered ? new RenderedPanel(90, 60, 0) : null;
 		}
 		
 		@Override
@@ -168,24 +183,40 @@ public class FileType extends DataType<File>
 			return file;
 		}
 		
-		private void updatePathField()
+		private void updateFileInfo()
 		{
-			String fullPath = file == null ? "" : file.getAbsolutePath();
-			String shortPath = fullPath.substring(StringUtils.getCommonPrefix(fullPath, rootDirectory).length());
-			pathField.setText(shortPath);
+			if(pathField != null)
+			{
+				String fullPath = file == null ? "" : file.getAbsolutePath();
+				String shortPath = fullPath.substring(StringUtils.getCommonPrefix(fullPath, rootDirectory).length());
+				pathField.setText(shortPath);
+			}
+			else
+			{
+				if(file == null)
+					rendered.setLabel(null/*, "Unselected"*/);
+				else
+				{
+					Image img = FileRenderer.generateThumb(file).getImage();
+					rendered.setLabel(img/*, StringUtils.substringBeforeLast(file.getName(), ".")*/);
+				}
+			}
 		}
 
 		@Override
 		protected void set(File t)
 		{
 			file = t;
-			updatePathField();
+			updateFileInfo();
 		}
 
 		@Override
 		public JComponent[] getComponents()
 		{
-			return new JComponent[] {button, pathField};
+			if(rendered != null)
+				return new JComponent[] {rendered, button};
+			else
+				return new JComponent[] {button, pathField};
 		}
 	}
 	

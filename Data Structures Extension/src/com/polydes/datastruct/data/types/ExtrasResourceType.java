@@ -107,7 +107,7 @@ public class ExtrasResourceType extends DataType<ExtrasResource>
 			ResourceType type = or(props.get(RESOURCE_TYPE), ResourceType.ANY);
 			
 			fileEditor = (FileEditor) Types._File.new FileEditorBuilder()
-					.rootDirectory(Locations.getGamePath(Game.getGame(), "extras")).filter(type.getFilter())
+					.rootDirectory(Locations.getGamePath(Game.getGame(), "extras")).filter(type.getFilter()).rendered()
 					.build(style);
 			
 			fileEditor.addListener(() -> updated());
