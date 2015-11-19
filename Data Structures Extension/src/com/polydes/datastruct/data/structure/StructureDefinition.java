@@ -36,6 +36,7 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 	private String name;
 	private String classname; // registry key
 	
+	public String iconSource;
 	public String customCode = "";
 	private final LinkedHashMap<String, StructureField> fields;
 	public DataItem dref;

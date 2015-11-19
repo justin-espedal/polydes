@@ -15,8 +15,8 @@
             <dg:drawkey name="Face" />
         </dg:drawkeys>
     </dg:extension>
-    <field label="Namebox Window" name="nameboxWindow" type="dialog.ds.WindowTemplate"/>
-    <field label="Namebox Font" name="nameboxFont" type="com.stencyl.models.Font"/>
+    <field label="Namebox Window" name="nameboxWindow" type="dialog.ds.WindowTemplate" renderPreview="true"/>
+    <field label="Namebox Font" name="nameboxFont" type="com.stencyl.models.Font" renderPreview="true"/>
     <field default="" editor="SingleLine" hint="To be added to the beginning of the face called for. &amp;quot;Face &amp;quot; will turn &amp;lt;face Lenny&amp;gt; into &amp;quot;Face Lenny.png&amp;quot;" label="Face Image prefix" name="faceImagePrefix" type="String"/>
     <field default="" editor="Dropdown" label="Draw Face in Relation to" name="faceRelation" options="[Screen,Message Window]:String" type="com.polydes.datastruct.Selection"/>
     <field label="Face Image Origin" name="faceOrigin" type="dialog.geom.RatioPoint"/>

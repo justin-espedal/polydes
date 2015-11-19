@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 
+import com.polydes.common.comp.RenderedPanel;
 import com.polydes.common.comp.UpdatingCombo;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
@@ -32,6 +33,7 @@ public class StructureType extends DataType<Structure>
 	
 	public static final String SOURCE_FILTER = "sourceFilter";
 	public static final String ALLOW_SUBTYPES = "allowSubtypes";
+	public static final String RENDER_PREVIEW = "renderPreview";
 	
 	@Override
 	public DataEditor<Structure> createEditor(EditorProperties props, PropertiesSheetStyle style)
@@ -112,10 +114,17 @@ public class StructureType extends DataType<Structure>
 			props.put(ALLOW_SUBTYPES, true);
 			return this;
 		}
+		
+		public StructureEditorBuilder rendered()
+		{
+			props.put(RENDER_PREVIEW, Boolean.TRUE);
+			return this;
+		}
 	}
 	
 	public class StructureEditor extends DataEditor<Structure>
 	{
+		private final RenderedPanel panel;
 		private final UpdatingCombo<Structure> editor;
 		
 		public StructureEditor(EditorProperties props, Structure currentStructure)
@@ -130,18 +139,29 @@ public class StructureType extends DataType<Structure>
 			
 			editor = new UpdatingCombo<Structure>(allowSubtypes ? Structures.structuresByID.values() : Structures.getList(def), predicate);
 			editor.addActionListener(event -> updated());
+			
+			panel = props.get(RENDER_PREVIEW) == Boolean.TRUE ?
+				new RenderedPanel(90, 60, 0) : null;
 		}
 		
 		public StructureEditor()
 		{
 			editor = new UpdatingCombo<Structure>(Structures.getList(def), null);
 			editor.addActionListener(event -> updated());
+			panel = null;
 		}
 		
 		@Override
 		public void set(Structure t)
 		{
 			editor.setSelectedItem(t);
+			if(panel != null)
+			{
+				if(t == null || t.getIcon() == null)
+					panel.setLabel(null);
+				else
+					panel.setLabel(t.getIcon().getImage());
+			}
 		}
 		
 		@Override
@@ -153,7 +173,10 @@ public class StructureType extends DataType<Structure>
 		@Override
 		public JComponent[] getComponents()
 		{
-			return new JComponent[] {editor};
+			if(panel != null)
+				return new JComponent[] {panel, editor};
+			else
+				return new JComponent[] {editor};
 		}
 		
 		@Override

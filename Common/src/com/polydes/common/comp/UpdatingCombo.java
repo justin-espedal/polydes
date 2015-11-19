@@ -1,5 +1,6 @@
 package com.polydes.common.comp;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -26,6 +27,12 @@ public class UpdatingCombo<T> extends JComboBox<T>
 		super(new UpdatingModel<T>(list, filter));
 		model = (UpdatingModel<T>) getModel();
 		setBackground(null);
+	}
+	
+	@Override
+	public Dimension getMaximumSize()
+	{
+		return new Dimension(super.getMaximumSize().width, super.getPreferredSize().height);
 	}
 	
 	public T getSelected()

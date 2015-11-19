@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<structure classname="dialog.ds.WindowTemplate">
+<structure classname="dialog.ds.WindowTemplate" iconSource="image">
     <field hint="ex: (0   0) top left, (50%   100%) middle bottom, (100% - 10   100% - 10) ten pixels from bottom right" label="Position" name="position" type="dialog.geom.RatioPoint"/>
-    <field label="Scaling Image" name="image" type="dialog.ds.ScalingImageTemplate"/>
+    <field label="Scaling Image" name="image" type="dialog.ds.ScalingImageTemplate" renderPreview="true"/>
     <field label="Creation Tween" name="createTween" type="dialog.ds.TweenTemplate"/>
     <field label="Destruction Tween" name="destroyTween" type="dialog.ds.TweenTemplate"/>
     <field default="" editor="Dropdown" label="Width" name="scaleWidth" options="[No Scale,Fit Contents,Custom]:String" type="com.polydes.datastruct.Selection"/>

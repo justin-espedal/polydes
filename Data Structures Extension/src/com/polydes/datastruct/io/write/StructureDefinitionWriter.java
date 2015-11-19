@@ -42,6 +42,8 @@ public class StructureDefinitionWriter
 		root.setAttribute("classname", def.getFullClassname());
 		if(def.parent != null)
 			root.setAttribute("extends", def.parent.getFullClassname());
+		if(def.iconSource != null)
+			root.setAttribute("iconSource", def.iconSource);
 		for(DataItem n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}

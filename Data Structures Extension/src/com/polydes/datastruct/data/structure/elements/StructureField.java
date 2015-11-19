@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -197,6 +198,11 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 	public String toString()
 	{
 		return varname + ":" + type;
+	}
+
+	public ImageIcon getIcon(Object value)
+	{
+		return type.getIcon(value);
 	}
 	
 	private StructureFieldPanel editor;

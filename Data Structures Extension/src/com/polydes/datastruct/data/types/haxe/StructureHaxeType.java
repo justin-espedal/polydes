@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.EditorProperties;
@@ -15,6 +17,7 @@ import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
+import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
@@ -116,6 +119,8 @@ public class StructureHaxeType extends HaxeDataType
 		String filterText = extras.get("sourceFilter", Types._String, null);
 		if(filterText != null)
 			props.put(StructureType.SOURCE_FILTER, new StructureCondition(null, filterText));
+		if(extras.containsKey(StructureType.RENDER_PREVIEW))
+			props.put(StructureType.RENDER_PREVIEW, Boolean.TRUE);
 		props.put(StructureType.ALLOW_SUBTYPES, extras.get("allowSubclasses", Types._Bool, false));
 		return props;
 	}
@@ -128,6 +133,8 @@ public class StructureHaxeType extends HaxeDataType
 			emap.put("sourceFilter", props.<StructureCondition>get(StructureType.SOURCE_FILTER).getText());
 		if(props.get(StructureType.ALLOW_SUBTYPES) == Boolean.TRUE)
 			emap.put("allowSubclasses", "true");
+		if(props.get(StructureType.RENDER_PREVIEW) == Boolean.TRUE)
+			emap.put(StructureType.RENDER_PREVIEW, "true");
 		return emap;
 	}
 	
@@ -144,6 +151,7 @@ public class StructureHaxeType extends HaxeDataType
 		PropertiesSheetSupport sheet = panel.getEditorSheet();
 		sheet.build()
 			.field(filterProxy).optional()._string().add()
+			.field(StructureType.RENDER_PREVIEW)._boolean().add()
 			.finish();
 		
 		sheet.addPropertyChangeListener(StructureType.SOURCE_FILTER, event -> {
@@ -160,5 +168,13 @@ public class StructureHaxeType extends HaxeDataType
 			props.put(StructureType.SOURCE_FILTER, condition);
 			preview.refreshDataItem(previewKey);
 		});
+	}
+	
+	@Override
+	public ImageIcon getIcon(Object value)
+	{
+		if(value instanceof Structure)
+			return ((Structure) value).getIcon();
+		return null;
 	}
 }

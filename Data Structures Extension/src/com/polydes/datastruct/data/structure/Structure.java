@@ -65,7 +65,26 @@ public class Structure extends EditableObject
 		allStructures.get(template).add(this);
 		
 		dref = new DataItem(name, this);
-		dref.setIcon(template.getIcon());
+		refreshIconListener();
+	}
+	
+	String prevIconSource;
+	private PropertyChangeListener iconListener;
+	
+	private void refreshIconListener()
+	{
+		if(prevIconSource != null)
+			pcs.removePropertyChangeListener(prevIconSource, iconListener);
+		
+		if(template.iconSource != null)
+		{
+			if(iconListener == null)
+				iconListener = event -> dref.setIcon(getIcon());
+			pcs.addPropertyChangeListener(template.iconSource, iconListener);
+		}
+		
+		dref.setIcon(getIcon());
+		prevIconSource = template.iconSource;
 	}
 	
 	public void loadDefaults()
@@ -187,7 +206,10 @@ public class Structure extends EditableObject
 	
 	public ImageIcon getIcon()
 	{
-		return template.getIcon();
+		if(template.iconSource != null)
+			return template.getField(template.iconSource).getIcon(getPropByName(template.iconSource));
+		else
+			return template.getIcon();
 	}
 	
 	public Structure copy()
@@ -276,14 +298,13 @@ public class Structure extends EditableObject
 	
 	public void realizeTemplate(StructureDefinition def)
 	{
-		if(unknownData == null)
+		if(fieldData == null) //not yet loaded
 			return;
 		
 		log.info("Realizing unknown structure " + dref.getName() + " as " + def.getFullClassname());
 		
 		StructureDefinition oldTemplate = template;
 		template = def;
-		dref.setIcon(template.getIcon());
 		
 		for(StructureField f : template.getFields())
 		{
@@ -300,13 +321,14 @@ public class Structure extends EditableObject
 			setPropertyFromString(f, Lang.or((String) o, ""));
 			setPropertyEnabled(f, o != null || !f.isOptional());
 		}
-		if(unknownData.isEmpty())
+		if(unknownData != null && unknownData.isEmpty())
 			unknownData = null;
 		
 		allStructures.get(oldTemplate).remove(this);
 		allStructures.get(template).add(this);
 		
 		disposeEditor();
+		refreshIconListener();
 	}
 
 	@Override

@@ -19,6 +19,8 @@ public class StructureDefinitionReader
 	{
 		if(root.hasAttribute("extends"))
 			model.parent = DataStructuresExtension.get().getStructureDefinitions().getItem(root.getAttribute("extends"));
+		if(root.hasAttribute("iconSource"))
+			model.iconSource = root.getAttribute("iconSource");
 		readFields(root, model, model.guiRoot);
 	}
 	

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<structure classname="dialog.ds.ScalingImageTemplate">
+<structure classname="dialog.ds.ScalingImageTemplate" iconSource="image">
     <field label="Image" name="image" type="com.polydes.datastruct.ExtrasImage"/>
     <field label="Origin" name="origin" type="dialog.geom.RatioPoint"/>
     <field default="" editor="Dropdown" label="Scale Type" name="type" options="[Stretch Image,Tile Image]:String" type="com.polydes.datastruct.Selection"/>

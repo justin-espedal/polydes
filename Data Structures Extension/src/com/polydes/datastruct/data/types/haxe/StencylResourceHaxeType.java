@@ -1,11 +1,15 @@
 package com.polydes.datastruct.data.types.haxe;
 
+import javax.swing.ImageIcon;
+
 import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.builtin.StencylResourceType;
+import com.polydes.common.sw.Resources;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.ui.objeditors.StructureFieldPanel;
 
+import stencyl.core.lib.AbstractResource;
 import stencyl.core.lib.Resource;
 
 public class StencylResourceHaxeType<T extends Resource> extends HaxeDataType
@@ -42,5 +46,13 @@ public class StencylResourceHaxeType<T extends Resource> extends HaxeDataType
 		panel.getEditorSheet().build()
 			.field(StencylResourceType.RENDER_PREVIEW)._boolean().add()
 			.finish();
+	}
+	
+	@Override
+	public ImageIcon getIcon(Object value)
+	{
+		if(value instanceof AbstractResource)
+			return new ImageIcon(Resources.getImage((AbstractResource) value));
+		return null;
 	}
 }

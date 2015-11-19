@@ -3,6 +3,8 @@ package com.polydes.datastruct.data.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.DataType;
@@ -114,5 +116,10 @@ public abstract class HaxeDataType implements RegistryObject
 	{
 		this.haxeType = newKey;
 		Types.get().renameItem(dataType, newKey); //TODO don't do this??
+	}
+
+	public ImageIcon getIcon(Object value)
+	{
+		return null;
 	}
 }

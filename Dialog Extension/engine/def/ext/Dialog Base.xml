@@ -15,7 +15,7 @@
             <dg:drawkey name="Message" />
         </dg:drawkeys>
     </dg:extension>
-    <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate"/>
+    <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate" renderPreview="true"/>
     <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Bool"/>
     <if condition="fitMsgToWindow == false">
         <field hint="Position on screen of the message" label="Message Bounds" name="msgBounds" type="openfl.geom.Rectangle"/>
