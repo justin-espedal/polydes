@@ -14,7 +14,7 @@ public class StructureConditionPanel extends StructureObjectPanel
 			.field("text").label("Condition")
 			._string().add().onUpdate(() -> {
 				previewKey.setName(condition.getText());
-				preview.lightRefreshDataItem(previewKey);
+				preview.lightRefreshDefaultLeaf(previewKey);
 				preview.refreshVisibleComponents();
 			})
 			

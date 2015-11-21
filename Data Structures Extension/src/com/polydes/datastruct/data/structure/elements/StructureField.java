@@ -27,11 +27,11 @@ import com.polydes.common.data.types.builtin.extra.ColorType;
 import com.polydes.common.data.types.builtin.extra.ColorType.ColorEditor;
 import com.polydes.common.ext.RORealizer;
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.ColorUtil;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.Structure;
@@ -345,7 +345,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		}
 		
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureField value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureField value, int i)
 		{
 			Card parentCard = sheet.getFirstCardParent(parent);
 			
@@ -361,7 +361,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureField value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -376,7 +376,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureField value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -390,7 +390,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		}
 		
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureField value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureField value)
 		{
 			RowGroup group = (RowGroup) gui;
 			
@@ -403,7 +403,7 @@ public class StructureField extends SDE implements RORealizer<HaxeDataType>
 		 | Helpers
 		\*================================================*/
 		
-		public void psLoad(PropertiesSheet sheet, RowGroup group, DataItem node, StructureField f)
+		public void psLoad(PropertiesSheet sheet, RowGroup group, DefaultLeaf node, StructureField f)
 		{
 			String name = f.getLabel().isEmpty() ? f.getVarname() : f.getLabel();
 			

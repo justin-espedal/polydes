@@ -267,14 +267,14 @@ public class TextArea extends DataItemEditor
 	public void setClean()
 	{
 		changed = false;
-		source.setClean();
+		source.setDirty(false);
 	}
 
 	@Override
 	public void setDirty()
 	{
 		changed = true;
-		source.setDirty();
+		source.setDirty(true);
 	}
 	
 	@Override

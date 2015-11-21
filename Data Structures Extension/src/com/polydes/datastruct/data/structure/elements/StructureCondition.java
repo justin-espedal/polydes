@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.Structure;
@@ -271,12 +271,12 @@ public class StructureCondition extends SDE
 		}
 		
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureCondition value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureCondition value, int i)
 		{
 			Card parentCard = sheet.getFirstCardParent(parent);
 			
 			RowGroup group = new RowGroup(value);
-			Card card = createConditionalCard(value, (Folder) node, sheet.model, sheet);
+			Card card = createConditionalCard(value, (DefaultBranch) node, sheet.model, sheet);
 			
 			group.addSubcard(card, parentCard);
 			parentCard.addGroup(i, group);
@@ -291,13 +291,13 @@ public class StructureCondition extends SDE
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCondition value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCondition value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -311,12 +311,12 @@ public class StructureCondition extends SDE
 		}
 
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCondition value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCondition value)
 		{
 			((RowGroup) gui).getSubcard().setCondition(value);
 		}
 		
-		private Card createConditionalCard(final StructureCondition c, final Folder n, final Structure model, final PropertiesSheet sheet)
+		private Card createConditionalCard(final StructureCondition c, final DefaultBranch n, final Structure model, final PropertiesSheet sheet)
 		{
 			return new Card("", false)
 			{

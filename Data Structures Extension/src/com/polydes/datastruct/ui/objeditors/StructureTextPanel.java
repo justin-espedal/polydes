@@ -13,11 +13,11 @@ public class StructureTextPanel extends StructureObjectPanel
 		
 			.field("label")._string().add().onUpdate(() -> {
 				previewKey.setName(text.getLabel());
-				preview.lightRefreshDataItem(previewKey);
+				preview.lightRefreshDefaultLeaf(previewKey);
 			})
 			
 			.field("text")._string().expandingEditor().add().onUpdate(() -> {
-				preview.lightRefreshDataItem(previewKey);
+				preview.lightRefreshDefaultLeaf(previewKey);
 			})
 			
 			.finish();

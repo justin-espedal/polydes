@@ -3,8 +3,9 @@ package com.polydes.datastruct.io.read;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultEditableLeaf;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
@@ -24,7 +25,7 @@ public class StructureDefinitionReader
 		readFields(root, model, model.guiRoot);
 	}
 	
-	private static void readFields(Element parent, StructureDefinition model, Folder gui)
+	private static void readFields(Element parent, StructureDefinition model, DefaultBranch gui)
 	{
 		if(parent != null)
 		{
@@ -44,7 +45,7 @@ public class StructureDefinitionReader
 				}
 				else
 				{
-					gui.addItem(new DataItem(newItem.getDisplayLabel(), newItem));
+					gui.addItem(new DefaultEditableLeaf(newItem.getDisplayLabel(), newItem));
 				}
 			}
 		}

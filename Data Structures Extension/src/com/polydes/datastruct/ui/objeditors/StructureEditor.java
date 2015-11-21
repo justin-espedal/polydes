@@ -6,10 +6,10 @@ import javax.swing.SwingConstants;
 
 import com.polydes.common.comp.TitledPanel;
 import com.polydes.common.comp.utils.Layout;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 
@@ -23,7 +23,7 @@ public class StructureEditor extends TitledPanel
 		this(structure, null);
 	}
 	
-	public StructureEditor(Structure structure, HierarchyModel<DataItem,Folder> model)
+	public StructureEditor(Structure structure, HierarchyModel<DefaultLeaf,DefaultBranch> model)
 	{
 		super(structure.dref.getName(), structure.getIcon());
 		
@@ -36,7 +36,7 @@ public class StructureEditor extends TitledPanel
 		revalidate();
 	}
 	
-	public void highlightElement(DataItem n)
+	public void highlightElement(DefaultLeaf n)
 	{
 		properties.highlightElement(n);
 	}

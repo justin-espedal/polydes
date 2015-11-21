@@ -11,6 +11,8 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,7 +29,6 @@ import com.polydes.common.nodes.Branch;
 import com.polydes.common.nodes.BranchListener;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
-import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
 import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.util.PopupUtil;
@@ -38,7 +39,7 @@ import stencyl.sw.app.lists.AbstractListIcon.OverlayIcon;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.gfx.ImageUtil;
 
-public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<T> implements BranchListener<T,U>, LeafListener<T, U>
+public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<T> implements BranchListener<T,U>, PropertyChangeListener
 {
 	U folder;
 	DefaultListModel<T> listModel;
@@ -161,7 +162,7 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 		for(T l : folder.getItems())
 		{
 			listModel.addElement(l);
-			l.addListener(this);
+			l.addListener(Leaf.ICON, this);
 		}
 	}
 	
@@ -182,7 +183,7 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 	public void dispose()
 	{
 		for(T l : folder.getItems())
-			l.removeListener(this);
+			l.removeListener(Leaf.ICON, this);
 		folder.removeFolderListener(this);
 		folder = null;
 		transferHandler.dispose();
@@ -292,14 +293,8 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void leafStateChanged(T source)
+	public void propertyChange(PropertyChangeEvent evt)
 	{
-		((LeafRenderer<T,U>) getCellRenderer()).refreshIcon(source);
-	}
-
-	@Override
-	public void leafNameChanged(T source, String oldName)
-	{
-		
+		((LeafRenderer<T,U>) getCellRenderer()).refreshIcon((T) evt.getSource());
 	}
 }

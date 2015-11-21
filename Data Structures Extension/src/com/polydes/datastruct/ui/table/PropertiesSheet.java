@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -16,20 +17,20 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import com.polydes.common.data.types.DataEditor;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.HierarchyRepresentation;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 
-public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DataItem,Folder>
+public class PropertiesSheet extends JPanel implements HierarchyRepresentation<DefaultLeaf,DefaultBranch>
 {
-	public Card getFirstCardParent(DataItem n)
+	public Card getFirstCardParent(DefaultLeaf n)
 	{
 		while(true)
 		{
@@ -49,16 +50,16 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> allDescendentsOfType(Class<T> cls, ArrayList<T> list, Folder n)
+	public <T> ArrayList<T> allDescendentsOfType(Class<T> cls, ArrayList<T> list, DefaultBranch n)
 	{
 		if(list == null)
 			list = new ArrayList<T>();
-		for(DataItem n2 : n.getItems())
+		for(DefaultLeaf n2 : n.getItems())
 		{
-			if(n2 instanceof Folder)
-				allDescendentsOfType(cls, list, (Folder) n2);
-			if(cls.isAssignableFrom(n2.getObject().getClass()))
-				list.add((T) n2.getObject());
+			if(n2 instanceof DefaultBranch)
+				allDescendentsOfType(cls, list, (DefaultBranch) n2);
+			if(cls.isAssignableFrom(n2.getUserData().getClass()))
+				list.add((T) n2.getUserData());
 		}
 		return list;
 	}
@@ -69,25 +70,25 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	
 	public PropertiesSheetStyle style;
 	
-	public HashMap<DataItem, GuiObject> guiMap;
+	public HashMap<DefaultLeaf, GuiObject> guiMap;
 	public HashMap<StructureField, DataEditor<?>> fieldEditorMap;
 	public ArrayList<Card> conditionalCards = new ArrayList<Card>();
 	public JScrollPane scroller;
 	
 	/**
-	 * folderModel is null if this isn't the preview of a structure definition editor
+	 * DefaultBranchModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DataItem,Folder> folderModel)
+	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> DefaultBranchModel)
 	{
-		this(model, folderModel, PropertiesSheetStyle.DARK);
+		this(model, DefaultBranchModel, PropertiesSheetStyle.DARK);
 	}
 	
 	public boolean isChangingLayout;
 	
 	/**
-	 * folderModel is null if this isn't the preview of a structure definition editor
+	 * DefaultBranchModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DataItem,Folder> folderModel, PropertiesSheetStyle style)
+	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> DefaultBranchModel, PropertiesSheetStyle style)
 	{
 		root = new Table(style);
 		this.style = style;
@@ -106,21 +107,21 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		});
 		
 		this.model = model;
-		guiMap = new HashMap<DataItem, GuiObject>();
+		guiMap = new HashMap<DefaultLeaf, GuiObject>();
 		fieldEditorMap = new HashMap<StructureField, DataEditor<?>>();
 		add(root);
 		
-		Folder rootFolder = model.getTemplate().guiRoot;
-		guiMap.put(rootFolder, root);
+		DefaultBranch rootDefaultBranch = model.getTemplate().guiRoot;
+		guiMap.put(rootDefaultBranch, root);
 		
 		isChangingLayout = true;
-		buildSheetFromFolder(rootFolder);
+		buildSheetFromDefaultBranch(rootDefaultBranch);
 		isChangingLayout = false;
 		
-		if(folderModel != null)
-			folderModel.addRepresentation(this);
+		if(DefaultBranchModel != null)
+			DefaultBranchModel.addRepresentation(this);
 		
-		for(DataItem n : guiMap.keySet())
+		for(DefaultLeaf n : guiMap.keySet())
 			if(guiMap.get(n) instanceof Card)
 				((Card) guiMap.get(n)).layoutContainer();
 		
@@ -152,7 +153,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	
 	public void dispose()
 	{
-		removeDataItem(model.getTemplate().guiRoot);
+		removeDefaultLeaf(model.getTemplate().guiRoot);
 		guiMap.clear();
 		conditionalCards.clear();
 		root.removeAll();
@@ -173,7 +174,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	private Highlighter highlighter = new Highlighter();
 	private Timer tweener;
 	
-	public void highlightElement(DataItem n)
+	public void highlightElement(DefaultLeaf n)
 	{
 		if(n == null)
 			return;
@@ -254,48 +255,42 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 
 	/*================================================*\
-	 | Folder Hierarchy Representation
+	 | DefaultBranch Hierarchy Representation
 	\*================================================*/
 	
 	@Override
-	public void leafStateChanged(DataItem source)
+	public void propertyChange(PropertyChangeEvent evt)
 	{
 		
 	}
 	
 	@Override
-	public void leafNameChanged(DataItem source, String oldName)
+	public void itemAdded(DefaultBranch DefaultBranch, DefaultLeaf item, int position)
 	{
-		
-	}
-	
-	@Override
-	public void itemAdded(Folder folder, DataItem item, int position)
-	{
-		addDataItem(folder, item, position);
+		addDefaultLeaf(DefaultBranch, item, position);
 	}
 
 	@Override
-	public void itemRemoved(Folder folder, DataItem item, int oldPosition)
+	public void itemRemoved(DefaultBranch DefaultBranch, DefaultLeaf item, int oldPosition)
 	{
-		removeDataItem(item);
+		removeDefaultLeaf(item);
 	}
 	
-	public void buildSheetFromFolder(Folder folder)
+	public void buildSheetFromDefaultBranch(DefaultBranch DefaultBranch)
 	{
-		for(int i = 0; i < folder.getItems().size(); ++i)
+		for(int i = 0; i < DefaultBranch.getItems().size(); ++i)
 		{
-			DataItem d = folder.getItemAt(i);
-			addDataItem(folder, d, i);
-			if(d instanceof Folder)
-				buildSheetFromFolder((Folder) d); 
+			DefaultLeaf d = DefaultBranch.getItemAt(i);
+			addDefaultLeaf(DefaultBranch, d, i);
+			if(d instanceof DefaultBranch)
+				buildSheetFromDefaultBranch((DefaultBranch) d); 
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void addDataItem(Folder parent, DataItem n, int i)
+	public <S extends SDE> void addDefaultLeaf(DefaultBranch parent, DefaultLeaf n, int i)
 	{
-		S data = (S) n.getObject();
+		S data = (S) n.getUserData();
 		
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		GuiObject newObj = type.psAdd(this, parent, n, data, i);
@@ -306,12 +301,12 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void removeDataItem(DataItem n)
+	public <S extends SDE> void removeDefaultLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
-		S data = (S) n.getObject();
+		S data = (S) n.getUserData();
 		
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psRemove(this, guiMap.remove(n), n, data);
@@ -320,12 +315,12 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void refreshDataItem(DataItem n)
+	public <S extends SDE> void refreshDefaultLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
-		S data = (S) n.getObject();
+		S data = (S) n.getUserData();
 		
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psRefresh(this, guiMap.get(n), n, data);
@@ -336,12 +331,12 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void lightRefreshDataItem(DataItem n)
+	public <S extends SDE> void lightRefreshDefaultLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
 		
-		S data = (S) n.getObject();
+		S data = (S) n.getUserData();
 		
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(data.getClass());
 		type.psLightRefresh(this, guiMap.get(n), n, data);

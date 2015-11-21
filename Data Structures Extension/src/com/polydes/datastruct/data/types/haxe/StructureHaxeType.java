@@ -10,10 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
@@ -93,17 +93,15 @@ public class StructureHaxeType extends HaxeDataType
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <S extends SDE> void runCustomCodeInjector(DataItem d, StringBuilder builder)
+	private <S extends SDE> void runCustomCodeInjector(DefaultLeaf d, StringBuilder builder)
 	{
-		S sde = (S) d.getObject();
+		S sde = (S) d.getUserData();
 		SDEType<S> sdetype = (SDEType<S>) SDETypes.fromClass(sde.getClass());
 		sdetype.genCode(sde, builder);
 		
-		if(d instanceof Folder)
-		{
-			for(DataItem item : ((Folder) d).getItems())
+		if(d instanceof DefaultBranch)
+			for(DefaultLeaf item : ((DefaultBranch) d).getItems())
 				runCustomCodeInjector(item, builder);
-		}
 	}
 	
 	@Override
@@ -142,7 +140,7 @@ public class StructureHaxeType extends HaxeDataType
 	public void applyToFieldPanel(StructureFieldPanel panel)
 	{
 		PropertiesSheet preview = panel.getPreview();
-		DataItem previewKey = panel.getPreviewKey();
+		DefaultLeaf previewKey = panel.getPreviewKey();
 		
 		EditorProperties props = panel.getExtras();
 		
@@ -166,7 +164,7 @@ public class StructureHaxeType extends HaxeDataType
 				condition.setText(conditionText);
 			
 			props.put(StructureType.SOURCE_FILTER, condition);
-			preview.refreshDataItem(previewKey);
+			preview.refreshDefaultLeaf(previewKey);
 		});
 	}
 	

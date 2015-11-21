@@ -18,7 +18,7 @@ public interface NodeCreator<T extends Leaf<T,U>, U extends Branch<T,U>>
 	
 	ArrayList<NodeAction<T>> getNodeActions(T[] targets);
 	
-	void editNode(T dataItem);
+	void editNode(T DefaultLeaf);
 	void nodeRemoved(T toRemove);
 	boolean attemptRemove(List<T> toRemove);
 	

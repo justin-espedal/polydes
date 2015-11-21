@@ -7,9 +7,9 @@ import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.data.types.builtin.basic.ArrayType;
 import com.polydes.common.data.types.builtin.basic.ArrayType.Editor;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.types.ExtrasMap;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.data.types.HaxeDataTypeType;
@@ -60,7 +60,7 @@ public class ArrayHaxeType extends HaxeDataType
 	public void applyToFieldPanel(StructureFieldPanel panel)
 	{
 		final PropertiesSheet preview = panel.getPreview();
-		final DataItem previewKey = panel.getPreviewKey();
+		final DefaultLeaf previewKey = panel.getPreviewKey();
 		
 		HaxeDataTypeType hdt = new HaxeDataTypeType();
 		EditorProperties props = panel.getExtras();
@@ -82,7 +82,7 @@ public class ArrayHaxeType extends HaxeDataType
 		sheet.addPropertyChangeListener(genTypeProxy, event -> {
 			HaxeDataType newType = (HaxeDataType) event.getNewValue();
 			props.put(ArrayType.GEN_TYPE, newType.dataType);
-			preview.refreshDataItem(previewKey);
+			preview.refreshDefaultLeaf(previewKey);
 		});
 	}
 }

@@ -3,14 +3,15 @@ package com.polydes.paint.data.stores;
 import java.io.File;
 import java.io.IOException;
 
-import com.polydes.paint.data.DataItem;
-import com.polydes.paint.data.Folder;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
+import com.polydes.common.nodes.DefaultViewableBranch;
 import com.polydes.paint.data.ImageSource;
 import com.polydes.paint.data.LinkedDataItem;
 
 import stencyl.sw.util.FileHelper;
 
-public abstract class ImageStore extends Folder
+public abstract class ImageStore extends DefaultViewableBranch
 {
 	protected ImageStore(String name)
 	{
@@ -33,14 +34,14 @@ public abstract class ImageStore extends Folder
 			addItem(source);
 		}
 		
-		setClean();
+		setDirty(false);
 	}
 	
 	protected void imagesSave(File directory)
 	{
 		updateItem(this);
 		
-		for(DataItem item : getItems())
+		for(DefaultLeaf item : getItems())
 		{
 			System.out.println(item.getName());
 			
@@ -59,22 +60,22 @@ public abstract class ImageStore extends Folder
 			}
 		}
 		
-		setClean();
+		setDirty(false);
 	}
 	
-	private void updateItem(DataItem item)
+	private void updateItem(DefaultLeaf item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
 			((LinkedDataItem) item).updateContents();
-			setDirty();
+			setDirty(true);
 		}
-		else if(item instanceof Folder)
+		else if(item instanceof DefaultBranch)
 		{
 			if(item.isDirty())
-				setDirty();
+				setDirty(true);
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(DefaultLeaf curItem : ((DefaultBranch) item).getItems())
 			{
 				updateItem(curItem);
 			}

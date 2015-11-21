@@ -55,8 +55,7 @@ public class SysFolder extends SysFile implements Branch<SysFile,SysFolder>
 	{
 		items.add(position, item);
 		itemNames.add(item.getName());
-		if(item.getParent() != this)
-			item.setParent(this, false);
+		item.parent = this;
 		for(BranchListener<SysFile,SysFolder> l : flisteners) {l.branchLeafAdded(this, item, position);}
 	}
 
@@ -117,7 +116,7 @@ public class SysFolder extends SysFile implements Branch<SysFile,SysFolder>
 	{
 		int pos = items.indexOf(item);
 		items.remove(item);
-		item.setParent(null, false);
+		item.parent = null;
 		itemNames.remove(item.getName());
 		for(BranchListener<SysFile,SysFolder> l : flisteners) {l.branchLeafRemoved(this, item, pos);}
 	}

@@ -11,10 +11,10 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
+import com.polydes.common.nodes.DefaultEditableLeaf;
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.HaxeTypeConverter;
@@ -33,7 +33,7 @@ public class Structure extends EditableObject
 	protected StructureEditor editor;
 	private int id;
 	
-	public DataItem dref;
+	public DefaultEditableLeaf dref;
 	
 	public Structure(int id, String name, String templateName)
 	{
@@ -64,7 +64,7 @@ public class Structure extends EditableObject
 		
 		allStructures.get(template).add(this);
 		
-		dref = new DataItem(name, this);
+		dref = new DefaultEditableLeaf(name, this);
 		refreshIconListener();
 	}
 	

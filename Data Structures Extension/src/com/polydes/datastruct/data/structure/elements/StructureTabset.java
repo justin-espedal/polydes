@@ -5,9 +5,9 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.comp.utils.Layout;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -77,7 +77,7 @@ public class StructureTabset extends SDE
 		}
 
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureTabset value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureTabset value, int i)
 		{
 			Card parentCard = sheet.getFirstCardParent(parent);
 			
@@ -100,13 +100,13 @@ public class StructureTabset extends SDE
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTabset value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTabset value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTabset value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTabset value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -121,7 +121,7 @@ public class StructureTabset extends SDE
 		}
 
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTabset value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTabset value)
 		{
 			
 		}

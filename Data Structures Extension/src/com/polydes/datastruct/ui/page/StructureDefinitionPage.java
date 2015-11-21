@@ -15,6 +15,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.polydes.common.comp.MiniSplitPane;
 import com.polydes.common.comp.StatusBar;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.DefaultNodeCreator;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
@@ -26,7 +28,6 @@ import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.Prefs;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.data.structure.Structures;
@@ -45,10 +46,10 @@ public class StructureDefinitionPage extends JPanel
 	public MiniSplitPane splitPane;
 	private JPanel emptySidebarBottom;
 	
-	private HierarchyModel<DataItem,Folder> definitionsfm;
-	private DarkTree<DataItem,Folder> definitionTree;
+	private HierarchyModel<DefaultLeaf,DefaultBranch> definitionsfm;
+	private DarkTree<DefaultLeaf,DefaultBranch> definitionTree;
 	
-	private HierarchyModel<DataItem,Folder> editorModel;
+	private HierarchyModel<DefaultLeaf,DefaultBranch> editorModel;
 	private JComponent definitionTreeView;
 	
 	protected JScrollPane scroller;
@@ -56,12 +57,12 @@ public class StructureDefinitionPage extends JPanel
 	
 	private StructureDefinitionEditor editor;
 	
-	private NodeSelectionListener<DataItem,Folder> definitionStateListener = new NodeSelectionListener<DataItem,Folder>()
+	private NodeSelectionListener<DefaultLeaf,DefaultBranch> definitionStateListener = new NodeSelectionListener<DefaultLeaf,DefaultBranch>()
 	{
 		@Override
-		public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
+		public void selectionChanged(NodeSelectionEvent<DefaultLeaf, DefaultBranch> e)
 		{
-			NodeSelection<DataItem, Folder> selection = definitionsfm.getSelection();
+			NodeSelection<DefaultLeaf, DefaultBranch> selection = definitionsfm.getSelection();
 			
 			page.removeAll();
 			
@@ -75,8 +76,8 @@ public class StructureDefinitionPage extends JPanel
 				splitPane.setDividerLocation(dl);
 				return;
 			}
-			DataItem di = selection.firstNode();
-			StructureDefinition toEdit = (StructureDefinition) di.getObject();
+			DefaultLeaf di = selection.firstNode();
+			StructureDefinition toEdit = (StructureDefinition) di.getUserData();
 			editor = toEdit.getEditor();
 			editor.setAlignmentX(LEFT_ALIGNMENT);
 			
@@ -99,17 +100,17 @@ public class StructureDefinitionPage extends JPanel
 		}
 	};
 	
-	private NodeSelectionListener<DataItem,Folder> editorStateListener = new NodeSelectionListener<DataItem,Folder>()
+	private NodeSelectionListener<DefaultLeaf,DefaultBranch> editorStateListener = new NodeSelectionListener<DefaultLeaf,DefaultBranch>()
 	{
 		@Override
-		public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
+		public void selectionChanged(NodeSelectionEvent<DefaultLeaf, DefaultBranch> e)
 		{
-			NodeSelection<DataItem, Folder> selection = editorModel.getSelection();
+			NodeSelection<DefaultLeaf, DefaultBranch> selection = editorModel.getSelection();
 			
 			PropertiesWindow propsWindow = StructureDefinitionsWindow.get().getPropsWindow();
 			
-			DataItem di = selection.get(0);
-			EditableObject selected = (di == null) ? null : di.getObject();
+			DefaultLeaf di = selection.get(0);
+			EditableObject selected = (di == null) ? null : (EditableObject) di.getUserData();
 			if(selected != null)
 			{
 				EditableObject toEdit = (EditableObject) selected;
@@ -171,9 +172,8 @@ public class StructureDefinitionPage extends JPanel
 		super(new BorderLayout());
 		
 		Folder root = DataStructuresExtension.get().getStructureDefinitions().root;
-		definitionsfm = new HierarchyModel<DataItem,Folder>(root, DataItem.class, Folder.class);
-		Folder.rootModels.put(root, definitionsfm);
-		definitionTree = new DarkTree<DataItem,Folder>(definitionsfm);
+		definitionsfm = new HierarchyModel<DefaultLeaf,DefaultBranch>(root, DefaultLeaf.class, DefaultBranch.class);
+		definitionTree = new DarkTree<DefaultLeaf,DefaultBranch>(definitionsfm);
 		definitionTree.setNamingEditingAllowed(false);
 		definitionTree.expand((Folder) DataStructuresExtension.get().getStructureDefinitions().root.getItemByName("My Structures"));
 		
@@ -197,16 +197,16 @@ public class StructureDefinitionPage extends JPanel
 		definitionsfm.setUniqueLeafNames(true);
 		definitionsfm.getSelection().addSelectionListener(definitionStateListener);
 		
-		definitionsfm.setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
+		definitionsfm.setNodeCreator(new DefaultNodeCreator<DefaultLeaf,DefaultBranch>()
 		{
 			@Override
-			public ArrayList<CreatableNodeInfo> getCreatableNodeList(Folder creationBranch)
+			public ArrayList<CreatableNodeInfo> getCreatableNodeList(DefaultBranch creationBranch)
 			{
 				return createNodeList;
 			}
 			
 			@Override
-			public DataItem createNode(CreatableNodeInfo item, String nodeName)
+			public DefaultLeaf createNode(CreatableNodeInfo item, String nodeName)
 			{
 				if(item.name.equals("Folder"))
 					return new Folder(nodeName);
@@ -224,32 +224,32 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public ArrayList<NodeAction<DataItem>> getNodeActions(DataItem[] targets)
+			public ArrayList<NodeAction<DefaultLeaf>> getNodeActions(DefaultLeaf[] targets)
 			{
 				return null;
 			}
 			
 			@Override
-			public void editNode(DataItem toEdit)
+			public void editNode(DefaultLeaf toEdit)
 			{
-				if(toEdit instanceof Folder)
+				if(toEdit instanceof DefaultBranch)
 					return;
 				
-				if(!(toEdit.getObject() instanceof StructureDefinition))
+				if(!(toEdit.getUserData() instanceof StructureDefinition))
 					return;
 				
 				CreateStructureDefinitionDialog dg = new CreateStructureDefinitionDialog();
-				dg.setDefinition((StructureDefinition) toEdit.getObject());
+				dg.setDefinition((StructureDefinition) toEdit.getUserData());
 				dg.dispose();
 				definitionTree.repaint();
 			}
 			
 			@Override
-			public boolean attemptRemove(List<DataItem> toRemove)
+			public boolean attemptRemove(List<DefaultLeaf> toRemove)
 			{
-				if(toRemove.size() > 0 && toRemove.get(0).getObject() instanceof StructureDefinition)
+				if(toRemove.size() > 0 && toRemove.get(0).getUserData() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) toRemove.get(0).getObject();
+					StructureDefinition def = (StructureDefinition) toRemove.get(0).getUserData();
 					UI.Choice result =
 						UI.showYesCancelPrompt(
 							"Remove Structure Definition",
@@ -263,11 +263,11 @@ public class StructureDefinitionPage extends JPanel
 			}
 			
 			@Override
-			public void nodeRemoved(DataItem toRemove)
+			public void nodeRemoved(DefaultLeaf toRemove)
 			{
-				if(toRemove.getObject() instanceof StructureDefinition)
+				if(toRemove.getUserData() instanceof StructureDefinition)
 				{
-					StructureDefinition def = (StructureDefinition) toRemove.getObject();
+					StructureDefinition def = (StructureDefinition) toRemove.getUserData();
 					def.remove();
 				}
 			}
@@ -311,8 +311,6 @@ public class StructureDefinitionPage extends JPanel
 	{
 		if(_instance != null)
 		{
-			Folder root = DataStructuresExtension.get().getStructureDefinitions().root;
-			Folder.rootModels.remove(root);
 			_instance.definitionsfm.dispose();
 			_instance.definitionTree.dispose();
 		}

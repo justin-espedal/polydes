@@ -13,38 +13,6 @@ import com.polydes.common.util.Lang;
 public class NodeUtils
 {
 	@SuppressWarnings("unchecked")
-	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void installListenersRecursive(T item, LeafListener<T,U> l, BranchListener<T,U> fl)
-	{
-		if(l != null)
-			item.addListener(l);
-		if(item instanceof Branch)
-		{
-			if(fl != null)
-				((U) item).addFolderListener(fl);
-			for(T curItem : ((U) item).getItems())
-			{
-				installListenersRecursive(curItem, l, fl);
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void uninstallListenersRecursive(T item, LeafListener<T,U> l, BranchListener<T,U> fl)
-	{
-		if(l != null)
-			item.removeListener(l);
-		if(item instanceof Branch)
-		{
-			if(fl != null)
-				((U) item).removeFolderListener(fl);
-			for(T curItem : ((U) item).getItems())
-			{
-				uninstallListenersRecursive(curItem, l, fl);
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
 	public static final <T extends Leaf<T,U>, U extends Branch<T,U>> void recursiveRun(T item, LeafRunnable<T,U> runnable)
 	{
 		runnable.run(item);

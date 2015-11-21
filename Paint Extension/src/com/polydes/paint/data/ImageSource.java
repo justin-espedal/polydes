@@ -13,7 +13,7 @@ public class ImageSource extends LinkedDataItem
 	public ImageSource(String name)
 	{
 		super(name);
-		contents = img = null;
+		setUserData(img = null);
 	}
 	
 	public void loadFromFile(File loc)
@@ -26,7 +26,7 @@ public class ImageSource extends LinkedDataItem
 		{
 			e.printStackTrace();
 		}
-		contents = img;
+		setUserData(img);
 	}
 	
 	public BufferedImage getImage()
@@ -35,12 +35,12 @@ public class ImageSource extends LinkedDataItem
 	}
 	
 	@Override
-	public void setContents(Object o)
+	public void setUserData(Object o)
 	{
 		if(o instanceof BufferedImage)
 		{
 			img = (BufferedImage) o;
-			super.setContents(o);
+			super.setUserData(o);
 		}
 	}
 }

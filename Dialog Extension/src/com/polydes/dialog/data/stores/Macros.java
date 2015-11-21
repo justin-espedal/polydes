@@ -2,7 +2,7 @@ package com.polydes.dialog.data.stores;
 
 import java.io.File;
 
-import com.polydes.dialog.data.DataItem;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.dialog.data.LinkedDataItem;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.io.Text;
@@ -44,30 +44,30 @@ public class Macros extends TextStore
 				info.addLine(line);
 		}
 		
-		for(DataItem item : getItems())
+		for(DefaultLeaf item : getItems())
 			((TextSource) item).trimLeadingTailingNewlines();
 		
-		setClean();
+		setDirty(false);
 	}
 	
 	@Override
 	public void saveChanges(File file)
 	{
-		for(DataItem item : getItems())
+		for(DefaultLeaf item : getItems())
 		{
 			if(item.isDirty())
 			{
 				if(item instanceof LinkedDataItem)
 					((LinkedDataItem) item).updateContents();
 				
-				setDirty();
+				setDirty(true);
 			}
 		}
 		
 		if(isDirty())
 		{
 			Text.startWriting(file);
-			for(DataItem item : getItems())
+			for(DefaultLeaf item : getItems())
 			{
 				for(String line : ((TextSource) item).getLines())
 					Text.writeLine(file, line);
@@ -76,6 +76,6 @@ public class Macros extends TextStore
 			Text.closeOutput(file);
 		}
 		
-		setClean();
+		setDirty(false);
 	}
 }

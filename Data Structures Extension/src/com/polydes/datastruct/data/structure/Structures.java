@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.HaxeTypeConverter;
 import com.polydes.datastruct.io.FolderInfo;
@@ -143,7 +143,7 @@ public class Structures
 		{
 			FolderInfo info = new FolderInfo();
 			
-			for(DataItem d : root.getItems())
+			for(DefaultLeaf d : root.getItems())
 			{
 				save(d, file);
 				info.addFilenameToOrder(d.getName());
@@ -155,9 +155,9 @@ public class Structures
 		root.setDirty(false);
 	}
 	
-	public void save(DataItem item, File file) throws IOException
+	public void save(DefaultLeaf item, File file) throws IOException
 	{
-		if(item instanceof Folder)
+		if(item instanceof DefaultBranch)
 		{
 			File saveDir = new File(file, item.getName());
 			if(!saveDir.exists())
@@ -165,7 +165,7 @@ public class Structures
 			
 			FolderInfo info = new FolderInfo();
 			
-			for(DataItem d : ((Folder) item).getItems())
+			for(DefaultLeaf d : ((DefaultBranch) item).getItems())
 			{
 				save(d, saveDir);
 				info.addFilenameToOrder(d.getName());
@@ -179,7 +179,7 @@ public class Structures
 		}
 		else
 		{
-			Structure s = (Structure) item.getObject();
+			Structure s = (Structure) item.getUserData();
 			ArrayList<String> toWrite = new ArrayList<String>();
 			toWrite.add("struct_id=" + s.getID());
 			toWrite.add("struct_type=" + s.getTemplate().getFullClassname());

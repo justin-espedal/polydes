@@ -21,12 +21,12 @@ import com.polydes.common.comp.utils.Layout;
 import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.builtin.basic.ArrayType.SimpleArrayEditor;
 import com.polydes.common.data.types.builtin.basic.StringType.ExpandingStringEditor;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport.FieldInfo;
 import com.polydes.common.ui.propsheet.PropertiesSheetWrapper;
 import com.polydes.common.util.ColorUtil;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 import com.polydes.datastruct.ui.table.Row;
 import com.polydes.datastruct.ui.table.RowGroup;
@@ -37,7 +37,7 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 	protected PropertiesSheetSupport sheet;
 	
 	protected PropertiesSheet preview;
-	protected DataItem previewKey;
+	protected DefaultLeaf previewKey;
 	
 	private HashMap<String, PropertiesSheetSupport> extensions = new HashMap<>();
 	private HashMap<String, DisposableSheetWrapper> wrappers = new HashMap<>();
@@ -144,7 +144,7 @@ public class StructureObjectPanel extends Table implements PreviewableEditor
 	}
 	
 	@Override
-	public void setPreviewSheet(PropertiesSheet sheet, DataItem key)
+	public void setPreviewSheet(PropertiesSheet sheet, DefaultLeaf key)
 	{
 		preview = sheet;
 		previewKey = key;

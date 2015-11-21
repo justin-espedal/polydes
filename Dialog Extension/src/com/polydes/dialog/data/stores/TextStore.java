@@ -2,11 +2,12 @@ package com.polydes.dialog.data.stores;
 
 import java.io.File;
 
-import com.polydes.dialog.data.DataItem;
-import com.polydes.dialog.data.Folder;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
+import com.polydes.common.nodes.DefaultViewableBranch;
 import com.polydes.dialog.data.LinkedDataItem;
 
-public abstract class TextStore extends Folder
+public abstract class TextStore extends DefaultViewableBranch
 {
 	protected TextStore(String name)
 	{
@@ -16,19 +17,19 @@ public abstract class TextStore extends Folder
 	public abstract void load(File file);
 	public abstract void saveChanges(File file);
 	
-	public void updateItem(DataItem item)
+	public void updateItem(DefaultLeaf item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
 			((LinkedDataItem) item).updateContents();
-			setDirty();
+			setDirty(true);
 		}
-		else if(item instanceof Folder)
+		else if(item instanceof DefaultBranch)
 		{
 			if(item.isDirty())
-				setDirty();
+				setDirty(true);
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(DefaultLeaf curItem : ((DefaultBranch) item).getItems())
 			{
 				updateItem(curItem);
 			}

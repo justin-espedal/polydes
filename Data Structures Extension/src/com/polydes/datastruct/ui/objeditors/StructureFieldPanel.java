@@ -1,9 +1,9 @@
 package com.polydes.datastruct.ui.objeditors;
 
 import com.polydes.common.data.types.EditorProperties;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.ui.propsheet.PropertiesSheetSupport;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.structure.elements.StructureField;
 import com.polydes.datastruct.data.types.HaxeDataType;
 import com.polydes.datastruct.data.types.HaxeDataTypeType;
@@ -39,7 +39,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			
 			.field("hint")._string().expandingEditor().add()
 			
-			.field("optional")._boolean().add().onUpdate(() -> preview.refreshDataItem(previewKey))
+			.field("optional")._boolean().add().onUpdate(() -> preview.refreshDefaultLeaf(previewKey))
 			
 			.field("defaultValue").label("Default")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).add()
 			
@@ -52,7 +52,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			if(StructureField.formatVarname(oldLabel).equals(field.getVarname()))
 				sheet.updateField("varname", StructureField.formatVarname(field.getLabel()));
 			
-			preview.lightRefreshDataItem(previewKey);
+			preview.lightRefreshDefaultLeaf(previewKey);
 		});
 		
 		sheet.addPropertyChangeListener("type", event -> {
@@ -63,7 +63,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			
 			field.setTypeForPreview(type);
 			refreshFieldEditors();
-			preview.refreshDataItem(previewKey);
+			preview.refreshDefaultLeaf(previewKey);
 			
 			layoutContainer();
 			revalidate();
@@ -74,9 +74,9 @@ public class StructureFieldPanel extends StructureObjectPanel
 			String oldV = (String) event.getOldValue();
 			String newV = (String) event.getNewValue();
 			if(oldV.isEmpty() || newV.isEmpty())
-				preview.refreshDataItem(previewKey);
+				preview.refreshDefaultLeaf(previewKey);
 			else
-				preview.lightRefreshDataItem(previewKey);
+				preview.lightRefreshDefaultLeaf(previewKey);
 		});
 		
 		refreshFieldEditors();
@@ -85,7 +85,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 	// === Methods for DataType extra property appliers.
 	
 	@Override
-	public void setPreviewSheet(PropertiesSheet sheet, DataItem key)
+	public void setPreviewSheet(PropertiesSheet sheet, DefaultLeaf key)
 	{
 		super.setPreviewSheet(sheet, key);
 		refreshFieldEditors();
@@ -106,7 +106,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			.field("defaultValue")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).change()
 			.finish();
 		if(preview != null)
-			preview.refreshDataItem(previewKey);
+			preview.refreshDefaultLeaf(previewKey);
 	}
 	
 	public StructureField getField()
@@ -124,7 +124,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 		return preview;
 	}
 	
-	public DataItem getPreviewKey()
+	public DefaultLeaf getPreviewKey()
 	{
 		return previewKey;
 	}

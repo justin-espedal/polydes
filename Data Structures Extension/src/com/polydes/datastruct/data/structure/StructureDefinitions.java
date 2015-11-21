@@ -15,8 +15,9 @@ import org.w3c.dom.Element;
 import com.polydes.common.data.types.Types;
 import com.polydes.common.ext.ObjectRegistry;
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.folder.FolderPolicy;
 import com.polydes.datastruct.data.types.StructureType;
@@ -42,7 +43,7 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 		FolderPolicy policy = new FolderPolicy()
 		{
 			@Override
-			public boolean canAcceptItem(Folder folder, DataItem item)
+			public boolean canAcceptItem(Folder folder, DefaultLeaf item)
 			{
 				return false;
 			}
@@ -197,7 +198,7 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 				FileUtils.deleteDirectory(temp);
 				temp.mkdirs();
 				
-				for(DataItem d : dsfolder.getItems())
+				for(DefaultLeaf d : dsfolder.getItems())
 					save(d, temp);
 				
 				FileUtils.deleteDirectory(fsfolder);
@@ -208,20 +209,20 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 		root.setDirty(false);
 	}
 	
-	public void save(DataItem item, File file) throws IOException
+	public void save(DefaultLeaf item, File file) throws IOException
 	{
-		if(item instanceof Folder)
+		if(item instanceof DefaultBranch)
 		{
 			File saveDir = new File(file, item.getName());
 			if(!saveDir.exists())
 				saveDir.mkdirs();
 			
-			for(DataItem d : ((Folder) item).getItems())
+			for(DefaultLeaf d : ((DefaultBranch) item).getItems())
 				save(d, saveDir);
 		}
 		else
 		{
-			StructureDefinition def = (StructureDefinition) item.getObject();
+			StructureDefinition def = (StructureDefinition) item.getUserData();
 			
 			Document doc = FileHelper.newDocument();
 			Element e = doc.createElement("structure");
@@ -255,11 +256,11 @@ public class StructureDefinitions extends ObjectRegistry<StructureDefinition>
 		}
 		
 		@Override
-		public boolean canAcceptItem(Folder folder, DataItem item)
+		public boolean canAcceptItem(Folder folder, DefaultLeaf item)
 		{
 			Folder fromFolder = (item instanceof Folder) ?
 						(Folder) item :
-						item.getParent();
+						(Folder) item.getParent();
 			
 			boolean sameRoot = (fromFolder.getPolicy() == this);
 			

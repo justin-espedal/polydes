@@ -1,6 +1,9 @@
 package com.polydes.common.nodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,8 +19,14 @@ import com.polydes.common.ui.darktree.SelectionType;
  * Changes to branches and leaves within this root's structure are reflected in
  * representative models.
  */
-public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements LeafListener<T,U>, BranchListener<T,U>
+public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements PropertyChangeListener, BranchListener<T,U>
 {
+	/**
+	 * Access the model for any root, with the limitation that a single
+	 * root shouldn't be used as the basis for multiple models.
+	 */
+	public static HashMap<Branch<?,?>, HierarchyModel<?, ?>> rootModels = new HashMap<>();
+	
 	public final Class<T> leafClass;
 	public final Class<U> branchClass;
 	
@@ -33,10 +42,13 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	@SuppressWarnings("unchecked")
 	public HierarchyModel(U rootBranch, Class<T> leafClass, Class<U> branchClass)
 	{
+		rootModels.put(rootBranch, this);
+		
 		this.rootBranch = rootBranch;
 		this.leafClass = leafClass;
 		this.branchClass = branchClass;
-		NodeUtils.installListenersRecursive((T) rootBranch, this, this);
+		
+		installListeners((T) rootBranch);
 		
 		leafNames = new HashSet<String>();
 		simpleMove = false;
@@ -56,11 +68,30 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 		});
 	}
 	
+	private void installListeners(T installRoot)
+	{
+		NodeUtils.recursiveRun(installRoot, (T leaf) -> {
+			leaf.addListener(this);
+			if(leaf instanceof Branch)
+				((Branch<T,U>) leaf).addFolderListener(this);
+		});
+	}
+	
+	private void uninstallListeners(T uninstallRoot)
+	{
+		NodeUtils.recursiveRun(uninstallRoot, (T leaf) -> {
+			leaf.removeListener(this);
+			if(leaf instanceof Branch)
+				((Branch<T,U>) leaf).removeFolderListener(this);
+		});
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void dispose()
 	{
-		NodeUtils.uninstallListenersRecursive((T) rootBranch, this, this);
+		uninstallListeners((T) rootBranch);
 		leafNames.clear();
+		rootModels.remove(rootBranch);
 		rootBranch = null;
 	}
 	
@@ -198,7 +229,7 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	{
 //		System.out.println("Folder Item Added: " + folder + ", " + item);
 		if(!simpleMove)
-			NodeUtils.installListenersRecursive(item, this, this);
+			installListeners(item);
 		
 		modelAddLeaf(folder, item, position);
 	}
@@ -208,33 +239,25 @@ public class HierarchyModel<T extends Leaf<T,U>, U extends Branch<T,U>> implemen
 	{
 //		System.out.println("Folder Item Removed: " + folder + ", " + item);
 		if(!simpleMove)
-			NodeUtils.uninstallListenersRecursive(item, this, this);
+			uninstallListeners(item);
 		
 		modelRemoveLeaf(folder, item, position);
 	}
 	
 	@Override
-	public void leafStateChanged(T source)
+	public void propertyChange(PropertyChangeEvent evt)
 	{
-//		System.out.println("Data Item State Changed: " + source);
-		
-		for(HierarchyRepresentation<T,U> rep : reps)
-			rep.leafStateChanged(source);
-	}
-
-	@Override
-	public void leafNameChanged(T source, String oldName)
-	{
-//		System.out.println("Data Item Name Changed: " + source + ", " + oldName);
-		
-		if(!(source instanceof Branch))
+		if(evt.getPropertyName() == Leaf.NAME)
 		{
-			leafNames.remove(oldName);
-			leafNames.add(source.getName());
+			if(!(evt.getSource() instanceof Branch))
+			{
+				leafNames.remove((String) evt.getOldValue());
+				leafNames.add((String) evt.getNewValue());
+			}
 		}
 		
 		for(HierarchyRepresentation<T,U> rep : reps)
-			rep.leafNameChanged(source, oldName);
+			rep.propertyChange(evt);
 	}
 	
 	/*================================================*\

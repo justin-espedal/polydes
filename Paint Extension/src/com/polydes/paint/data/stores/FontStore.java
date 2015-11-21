@@ -2,12 +2,13 @@ package com.polydes.paint.data.stores;
 
 import java.io.File;
 
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
+import com.polydes.common.nodes.DefaultViewableBranch;
 import com.polydes.paint.data.BitmapFont;
-import com.polydes.paint.data.DataItem;
-import com.polydes.paint.data.Folder;
 import com.polydes.paint.data.LinkedDataItem;
 
-public abstract class FontStore extends Folder
+public abstract class FontStore extends DefaultViewableBranch
 {
 	protected FontStore(String name)
 	{
@@ -31,14 +32,14 @@ public abstract class FontStore extends Folder
 			}
 		}
 		
-		setClean();
+		setDirty(false);
 	}
 	
 	protected void fontsSave(File directory)
 	{
 		updateItem(this);
 		
-		for(DataItem item : getItems())
+		for(DefaultLeaf item : getItems())
 		{
 			System.out.println(item.getName() + ", " + item.isDirty());
 			
@@ -50,22 +51,22 @@ public abstract class FontStore extends Folder
 			}
 		}
 		
-		setClean();
+		setDirty(false);
 	}
 	
-	private void updateItem(DataItem item)
+	private void updateItem(DefaultLeaf item)
 	{
 		if(item instanceof LinkedDataItem && item.isDirty())
 		{
 			((LinkedDataItem) item).updateContents();
-			setDirty();
+			setDirty(true);
 		}
-		else if(item instanceof Folder)
+		else if(item instanceof DefaultBranch)
 		{
 			if(item.isDirty())
-				setDirty();
+				setDirty(true);
 			
-			for(DataItem curItem : ((Folder) item).getItems())
+			for(DefaultLeaf curItem : ((DefaultBranch) item).getItems())
 			{
 				updateItem(curItem);
 			}

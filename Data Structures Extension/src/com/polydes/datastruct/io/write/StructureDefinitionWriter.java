@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
@@ -44,14 +44,14 @@ public class StructureDefinitionWriter
 			root.setAttribute("extends", def.parent.getFullClassname());
 		if(def.iconSource != null)
 			root.setAttribute("iconSource", def.iconSource);
-		for(DataItem n : def.guiRoot.getItems())
+		for(DefaultLeaf n : def.guiRoot.getItems())
 			writeNode(doc, root, n);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <S extends SDE> void writeNode(Document doc, Element parent, DataItem gui)
+	public static <S extends SDE> void writeNode(Document doc, Element parent, DefaultLeaf gui)
 	{
-		S obj = (S) gui.getObject();
+		S obj = (S) gui.getUserData();
 		SDEType<S> type = (SDEType<S>) SDETypes.fromClass(obj.getClass());
 		
 		String namespace = (obj instanceof StructureUnknown) ?
@@ -62,8 +62,8 @@ public class StructureDefinitionWriter
 				doc.createElement(type.tag);
 		type.write(obj, e);
 		
-		if(gui instanceof Folder)
-			for(DataItem n : ((Folder) gui).getItems())
+		if(gui instanceof DefaultBranch)
+			for(DefaultLeaf n : ((DefaultBranch) gui).getItems())
 				writeNode(doc, e, n);
 		
 		parent.appendChild(e);

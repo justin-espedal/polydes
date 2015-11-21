@@ -6,10 +6,10 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -47,7 +47,7 @@ public class StructureExtension extends SDE
 				.field("implementation")._string().add()
 				
 				.field("description")._string().expandingEditor().add()
-				.onUpdate(() -> preview.lightRefreshDataItem(previewKey))
+				.onUpdate(() -> preview.lightRefreshDefaultLeaf(previewKey))
 				
 				.finish();
 		}
@@ -108,7 +108,7 @@ public class StructureExtension extends SDE
 		}
 		
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureExtension value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureExtension value, int i)
 		{
 			Card parentCard = sheet.getFirstCardParent(parent);
 			
@@ -132,13 +132,13 @@ public class StructureExtension extends SDE
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureExtension value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureExtension value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureExtension value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureExtension value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -151,7 +151,7 @@ public class StructureExtension extends SDE
 		}
 
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureExtension value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureExtension value)
 		{
 			Card subcard = ((RowGroup) gui).getSubcard();
 			sheet.style.setDescription((JLabel) subcard.rows[0].rows[1].components[1], value.description);

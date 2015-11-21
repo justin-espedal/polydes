@@ -1,14 +1,15 @@
 package com.polydes.dialog.data;
 
+import com.polydes.common.nodes.DefaultEditableLeaf;
 import com.polydes.dialog.app.editors.DataItemEditor;
 
 /*
- * DataItem that is linked to a data editor.
+ * DefaultLeaf that is linked to a data editor.
  * If the editor is "dirty", so is this item.
  * Can receive updated contents from a dirty editor. 
  */
 
-public class LinkedDataItem extends DataItem
+public class LinkedDataItem extends DefaultEditableLeaf
 {
 	private DataItemEditor editor;
 	
@@ -35,7 +36,7 @@ public class LinkedDataItem extends DataItem
 	{
 		if(editor != null && editor.isDirty())
 		{
-			this.setContents(editor.getContents());
+			this.setUserData(editor.getContents());
 			editor.setClean();
 		}
 	}

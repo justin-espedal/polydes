@@ -9,7 +9,7 @@ public class TextSource extends LinkedDataItem
 	public TextSource(String name)
 	{
 		super(name);
-		contents = lines = new ArrayList<String>();
+		setUserData(lines = new ArrayList<String>());
 	}
 	
 	//for initial reading in, does not mark as changed
@@ -43,12 +43,12 @@ public class TextSource extends LinkedDataItem
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setContents(Object o)
+	public void setUserData(Object o)
 	{
 		if(o instanceof ArrayList)
 		{
 			lines = (ArrayList<String>) o;
-			super.setContents(o);
+			super.setUserData(o);
 		}
 	}
 }

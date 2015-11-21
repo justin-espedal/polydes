@@ -4,9 +4,9 @@ import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -68,25 +68,25 @@ public class StructureCommands extends SDE
 		}
 
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureCommands value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureCommands value, int i)
 		{
 			return null;
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCommands value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCommands value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCommands value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCommands value)
 		{
 			
 		}
 
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureCommands value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureCommands value)
 		{
 			
 		}

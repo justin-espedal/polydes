@@ -1,5 +1,7 @@
 package com.polydes.common.ui.darktree;
 
+import java.beans.PropertyChangeEvent;
+
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -100,16 +102,12 @@ public class DTreeModel<T extends Leaf<T,U>, U extends Branch<T,U>> implements T
 		treeListeners.removeListener(l);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void leafStateChanged(T source)
+	public void propertyChange(PropertyChangeEvent evt)
 	{
-		treeListeners.fire().treeNodesChanged(generateLeafModifyEvent(source));
-	}
-
-	@Override
-	public void leafNameChanged(T source, String oldName)
-	{
-		treeListeners.fire().treeNodesChanged(generateLeafModifyEvent(source));
+		if(model.leafClass.isAssignableFrom(evt.getSource().getClass()))
+			treeListeners.fire().treeNodesChanged(generateLeafModifyEvent((T) evt.getSource()));
 	}
 
 	@Override

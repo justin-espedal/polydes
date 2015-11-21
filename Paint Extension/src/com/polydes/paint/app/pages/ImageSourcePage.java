@@ -1,12 +1,12 @@
 package com.polydes.paint.app.pages;
 
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeSelectionEvent;
 import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.paint.app.editors.image.DrawArea;
 import com.polydes.paint.app.editors.image.ImageEditPane;
-import com.polydes.paint.data.DataItem;
-import com.polydes.paint.data.Folder;
 import com.polydes.paint.data.ImageSource;
 
 public class ImageSourcePage extends BasicPage
@@ -14,7 +14,7 @@ public class ImageSourcePage extends BasicPage
 	private ImageEditPane editorPane;
 	private DrawArea currentEditor;
 	
-	protected ImageSourcePage(Folder rootFolder)
+	protected ImageSourcePage(DefaultBranch rootFolder)
 	{
 		super(rootFolder);
 		
@@ -24,9 +24,9 @@ public class ImageSourcePage extends BasicPage
 	}
 	
 	@Override
-	public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
+	public void selectionChanged(NodeSelectionEvent<DefaultLeaf, DefaultBranch> e)
 	{
-		NodeSelection<DataItem, Folder> selection = folderModel.getSelection();
+		NodeSelection<DefaultLeaf, DefaultBranch> selection = folderModel.getSelection();
 		
 		if(selection.size() != 1)
 			return;

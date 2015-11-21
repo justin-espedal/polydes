@@ -6,8 +6,9 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
@@ -56,7 +57,7 @@ public class StructureDrawkey extends SDE
 				.finish();
 			
 			sheet.addPropertyChangeListener(event -> {
-				preview.lightRefreshDataItem(previewKey);
+				preview.lightRefreshDefaultLeaf(previewKey);
 			});
 		}
 	}
@@ -115,13 +116,13 @@ public class StructureDrawkey extends SDE
 		}
 		
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureDrawkey value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureDrawkey value, int i)
 		{
 			int offset = 1;
 			
 			Folder extF = ((Folder) parent.getParent());
-			for(DataItem di : extF.getItems())
-				if(di.getObject() instanceof StructureCommands)
+			for(DefaultLeaf di : extF.getItems())
+				if(di.getUserData() instanceof StructureCommands)
 					offset += ((Folder) di).getItems().size();
 			
 			RowGroup extGroup = (RowGroup) sheet.guiMap.get(parent.getParent());
@@ -140,13 +141,13 @@ public class StructureDrawkey extends SDE
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureDrawkey value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureDrawkey value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureDrawkey value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureDrawkey value)
 		{
 			RowGroup group = (RowGroup) gui;
 			Card card = group.card;
@@ -158,7 +159,7 @@ public class StructureDrawkey extends SDE
 		}
 		
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureDrawkey value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureDrawkey value)
 		{
 			sheet.style.setDescription((JLabel) ((RowGroup) gui).rows[0].components[1], value.name);
 		}

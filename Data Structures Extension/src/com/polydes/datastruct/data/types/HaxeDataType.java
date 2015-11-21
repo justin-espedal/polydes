@@ -77,7 +77,7 @@ public abstract class HaxeDataType implements RegistryObject
 	 * 																			<br />
 	 * - field  :  StructureField												<br />
 	 * - preview  :  PropertiesSheet											<br />
-	 * - previewKey  :  DataItem												<br />
+	 * - previewKey  :  DefaultLeaf												<br />
 	 */
 	public /*abstract*/ void applyToFieldPanel(StructureFieldPanel panel)
 	{

@@ -5,11 +5,13 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import com.polydes.common.nodes.Branch;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.DefaultNodeCreator;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.ui.filelist.TreePage;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -20,7 +22,7 @@ import com.polydes.datastruct.ui.list.ListUtils;
 import stencyl.sw.SW;
 import stencyl.sw.util.UI;
 
-public class StructurePage extends TreePage<DataItem,Folder>
+public class StructurePage extends TreePage<DefaultLeaf,DefaultBranch>
 {
 	private static StructurePage _instance;
 	
@@ -29,12 +31,11 @@ public class StructurePage extends TreePage<DataItem,Folder>
 	
 	public static StructurePage newPage(Folder rootFolder)
 	{
-		HierarchyModel<DataItem, Folder> model = new HierarchyModel<>(rootFolder, DataItem.class, Folder.class);
-		Folder.rootModels.put(rootFolder, model);
+		HierarchyModel<DefaultLeaf,DefaultBranch> model = new HierarchyModel<>(rootFolder, DefaultLeaf.class, DefaultBranch.class);
 		return new StructurePage(model);
 	}
 	
-	private StructurePage(HierarchyModel<DataItem, Folder> model)
+	private StructurePage(HierarchyModel<DefaultLeaf,DefaultBranch> model)
 	{
 		super(model);
 		
@@ -42,12 +43,12 @@ public class StructurePage extends TreePage<DataItem,Folder>
 		getFolderModel().setUniqueLeafNames(true);
 		
 		getTree().enablePropertiesButton();
-		getFolderModel().setNodeCreator(new DefaultNodeCreator<DataItem,Folder>()
+		getFolderModel().setNodeCreator(new DefaultNodeCreator<DefaultLeaf,DefaultBranch>()
 		{
 			//For our purposes here, the object these folders point to is a type limiter.
 			
 			@Override
-			public ArrayList<CreatableNodeInfo> getCreatableNodeList(Folder branchNode)
+			public ArrayList<CreatableNodeInfo> getCreatableNodeList(DefaultBranch branchNode)
 			{
 				StructureFolder parent = (StructureFolder) getFolderModel().getCreationParentFolder(getFolderModel().getSelection());
 				
@@ -61,7 +62,7 @@ public class StructurePage extends TreePage<DataItem,Folder>
 			}
 			
 			@Override
-			public DataItem createNode(CreatableNodeInfo selected, String nodeName)
+			public DefaultLeaf createNode(CreatableNodeInfo selected, String nodeName)
 			{
 				if(selected.name.equals("Folder"))
 					return new StructureFolder(nodeName);
@@ -76,17 +77,17 @@ public class StructurePage extends TreePage<DataItem,Folder>
 			}
 			
 			@Override
-			public ArrayList<NodeAction<DataItem>> getNodeActions(DataItem[] targets)
+			public ArrayList<NodeAction<DefaultLeaf>> getNodeActions(DefaultLeaf[] targets)
 			{
 				return null;
 			}
 			
 			@Override
-			public boolean attemptRemove(List<DataItem> toRemove)
+			public boolean attemptRemove(List<DefaultLeaf> toRemove)
 			{
 				int numStructuresToRemove = 0;
-				for(DataItem item : toRemove)
-					if(!(item instanceof Folder))
+				for(DefaultLeaf item : toRemove)
+					if(!(item instanceof Branch))
 						++numStructuresToRemove;
 				
 				String plural = (numStructuresToRemove > 1 ? "s" : "");
@@ -102,11 +103,11 @@ public class StructurePage extends TreePage<DataItem,Folder>
 			}
 			
 			@Override
-			public void nodeRemoved(DataItem toRemove)
+			public void nodeRemoved(DefaultLeaf toRemove)
 			{
-				if(toRemove.getObject() instanceof Structure)
+				if(toRemove.getUserData() instanceof Structure)
 				{
-					Structure s = (Structure) toRemove.getObject();
+					Structure s = (Structure) toRemove.getUserData();
 					Structures.structures.get(s.getTemplate()).remove(s);
 					Structures.structuresByID.remove(s.getID());
 					s.dispose();
@@ -114,7 +115,7 @@ public class StructurePage extends TreePage<DataItem,Folder>
 			}
 			
 			@Override
-			public void editNode(DataItem toEdit)
+			public void editNode(DefaultLeaf toEdit)
 			{
 				if(!(toEdit instanceof StructureFolder))
 					return;
@@ -161,7 +162,6 @@ public class StructurePage extends TreePage<DataItem,Folder>
 	public void dispose()
 	{
 		super.dispose();
-		Folder.rootModels.remove(Structures.root);
 		sidebar.removeAll();
 		sidebar = null;
 	}

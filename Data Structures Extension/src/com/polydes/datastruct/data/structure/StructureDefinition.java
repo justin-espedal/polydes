@@ -12,10 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.ext.RegistryObject;
+import com.polydes.common.nodes.DefaultEditableLeaf;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.object.EditableObject;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.core.Pair;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.folder.FolderPolicy;
 import com.polydes.datastruct.data.structure.elements.StructureField;
@@ -39,7 +40,7 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 	public String iconSource;
 	public String customCode = "";
 	private final LinkedHashMap<String, StructureField> fields;
-	public DataItem dref;
+	public DefaultLeaf dref;
 	public Folder guiRoot; //this is passed in from elsewhere.
 	private StructureDefinitionEditor editor;
 	
@@ -54,7 +55,7 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		
 		Structure.addType(this);
 		
-		dref = new DataItem(name, this);
+		dref = new DefaultEditableLeaf(name, this);
 		dref.setIcon(icon);
 		
 		guiRoot = new Folder("root", new StructureTable(this));
@@ -375,10 +376,10 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		}
 		
 		@Override
-		public boolean canAcceptItem(Folder folder, DataItem item)
+		public boolean canAcceptItem(Folder folder, DefaultLeaf item)
 		{
-			boolean tabset = folder.getObject() instanceof StructureTabset;
-			boolean tab = item.getObject() instanceof StructureTab;
+			boolean tabset = folder.getUserData() instanceof StructureTabset;
+			boolean tab = item.getUserData() instanceof StructureTab;
 			
 			if(tabset != tab)
 				return false;

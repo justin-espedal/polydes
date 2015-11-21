@@ -2,8 +2,9 @@ package com.polydes.dialog.data.stores;
 
 import java.io.File;
 
-import com.polydes.dialog.data.DataItem;
-import com.polydes.dialog.data.Folder;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
+import com.polydes.common.nodes.DefaultViewableBranch;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.io.Text;
 import com.polydes.dialog.io.Text.TextFolder;
@@ -33,14 +34,14 @@ public class Dialog extends TextStore
 		TextFolder root = Text.readSectionedText(file, "#");
 		for(TextObject object : root.parts.values())
 			load(this, object);
-		setClean();
+		setDirty(false);
 	}
 	
-	public void load(Folder f, TextObject o)
+	public void load(DefaultBranch f, TextObject o)
 	{
 		if(o instanceof TextFolder)
 		{
-			Folder newFolder = new Folder(o.name);
+			DefaultBranch newFolder = new DefaultViewableBranch(o.name);
 			for(TextObject object : ((TextFolder) o).parts.values())
 				load(newFolder, object);
 			f.addItem(newFolder);
@@ -48,7 +49,7 @@ public class Dialog extends TextStore
 		else if(o instanceof TextSection)
 		{
 			TextSource source = new TextSource(o.name);
-			source.setContents(((TextSection) o).parts);
+			source.setUserData(((TextSection) o).parts);
 			f.addItem(source);
 		}
 	}
@@ -60,19 +61,19 @@ public class Dialog extends TextStore
 		if(isDirty())
 		{
 			TextFolder toWrite = new TextFolder("root");
-			for(DataItem item : getItems())
+			for(DefaultLeaf item : getItems())
 				save(item, toWrite);
 			Text.writeSectionedText(file, toWrite, "#");
 		}
-		setClean();
+		setDirty(false);
 	}
 	
-	public void save(DataItem item, TextFolder f)
+	public void save(DefaultLeaf item, TextFolder f)
 	{
-		if(item instanceof Folder)
+		if(item instanceof DefaultBranch)
 		{
 			TextFolder newFolder = new TextFolder(item.getName());
-			for(DataItem d : ((Folder) item).getItems())
+			for(DefaultLeaf d : ((DefaultBranch) item).getItems())
 				save(d, newFolder);
 			f.add(newFolder);
 		}

@@ -7,6 +7,8 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,6 @@ import javax.swing.SwingUtilities;
 import com.polydes.common.comp.TitledPanel;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.Leaf;
-import com.polydes.common.nodes.LeafListener;
 import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.ui.object.ViewableObject;
 import com.polydes.common.util.PopupUtil;
@@ -31,7 +32,7 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 	protected String path;
 	protected int hash;
 	
-	protected ArrayList<LeafListener<SysFile,SysFolder>> listeners;
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	protected SysFolder parent;
 	
 	protected String name;
@@ -42,28 +43,7 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 		path = file.getAbsolutePath().intern();
 		hash = path.hashCode();
 		
-		listeners = new ArrayList<LeafListener<SysFile,SysFolder>>();
 		parent = null;
-	}
-	
-	@Override
-	public void setParent(SysFolder parent, boolean addToParent)
-	{
-		if(this.parent == parent)
-			return;
-		
-		if(parent == null && !addToParent)
-		{
-			this.parent = null;
-			return;
-		}
-		
-		if(this.parent != null)
-			this.parent.removeItem(this);
-		
-		this.parent = parent;
-		if(addToParent)
-			parent.addItem(this);
 	}
 	
 	public File getFile()
@@ -78,15 +58,27 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 	}
 
 	@Override
-	public void addListener(LeafListener<SysFile,SysFolder> l)
+	public void addListener(PropertyChangeListener l)
 	{
-		listeners.add(l);
+		pcs.addPropertyChangeListener(l);
+	}
+	
+	@Override
+	public void addListener(String property, PropertyChangeListener l)
+	{
+		pcs.addPropertyChangeListener(property, l);
 	}
 
 	@Override
-	public void removeListener(LeafListener<SysFile,SysFolder> l)
+	public void removeListener(PropertyChangeListener l)
 	{
-		listeners.remove(l);
+		pcs.removePropertyChangeListener(l);
+	}
+	
+	@Override
+	public void removeListener(String property, PropertyChangeListener l)
+	{
+		pcs.removePropertyChangeListener(property, l);
 	}
 
 	@Override
@@ -121,8 +113,7 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 		disposeView();
 		cachedIcon = null;
 		
-		for(LeafListener<SysFile,SysFolder> l : listeners)
-			l.leafStateChanged(this);
+		pcs.firePropertyChange(STATE, null, this);
 	}
 	
 	private ImageIcon cachedIcon = null;

@@ -1,20 +1,20 @@
 package com.polydes.paint.app.pages;
 
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeSelectionEvent;
 import com.polydes.common.ui.darktree.SelectionType;
 import com.polydes.paint.app.editors.bitmapfont.BMFontEditPane;
 import com.polydes.paint.app.editors.bitmapfont.FontDrawArea;
 import com.polydes.paint.data.BitmapFont;
-import com.polydes.paint.data.DataItem;
-import com.polydes.paint.data.Folder;
 
 public class BitmapFontPage extends BasicPage
 {
 	private BMFontEditPane editorPane;
 	private FontDrawArea currentEditor;
 	
-	protected BitmapFontPage(Folder rootFolder)
+	protected BitmapFontPage(DefaultBranch rootFolder)
 	{
 		super(rootFolder);
 		
@@ -24,9 +24,9 @@ public class BitmapFontPage extends BasicPage
 	}
 	
 	@Override
-	public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
+	public void selectionChanged(NodeSelectionEvent<DefaultLeaf, DefaultBranch> e)
 	{
-		NodeSelection<DataItem, Folder> selection = folderModel.getSelection();
+		NodeSelection<DefaultLeaf, DefaultBranch> selection = folderModel.getSelection();
 		
 		if(selection.size() != 1)
 			return;

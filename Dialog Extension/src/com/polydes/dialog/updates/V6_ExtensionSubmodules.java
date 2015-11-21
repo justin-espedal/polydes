@@ -9,9 +9,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.ext.ExtensionInterface;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.DataStructuresExtension;
-import com.polydes.datastruct.data.folder.DataItem;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.Structure;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -221,14 +221,14 @@ public class V6_ExtensionSubmodules implements Runnable
 		Structures.structures.get(type).add(toReturn);
 		Structures.structuresByID.put(id, toReturn);
 		
-		DataItem item = Structures.root;
+		DefaultLeaf item = Structures.root;
 		for(String pathPart : pathParts)
 		{
 			Folder f = (Folder) item;
 			if(f.getItemByName(pathPart) == null)
 				f.addItem(new StructureFolder(pathPart));
 			
-			item = (DataItem) f.getItemByName(pathPart);
+			item = (DefaultLeaf) f.getItemByName(pathPart);
 		}
 		((Folder) item).addItem(toReturn.dref);
 		

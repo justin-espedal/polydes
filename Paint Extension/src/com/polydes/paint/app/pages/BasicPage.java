@@ -10,35 +10,35 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import com.polydes.common.comp.MiniSplitPane;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.NodeSelection;
 import com.polydes.common.nodes.NodeSelectionEvent;
 import com.polydes.common.nodes.NodeSelectionListener;
 import com.polydes.common.ui.darktree.DarkTree;
-import com.polydes.paint.data.DataItem;
-import com.polydes.paint.data.Folder;
 
-public class BasicPage extends JPanel implements NodeSelectionListener<DataItem,Folder>
+public class BasicPage extends JPanel implements NodeSelectionListener<DefaultLeaf,DefaultBranch>
 {
 	protected Boolean listEditEnabled;
 	
 	protected MiniSplitPane splitPane;
-	protected HierarchyModel<DataItem,Folder> folderModel;
-	protected DarkTree<DataItem,Folder> tree;
+	protected HierarchyModel<DefaultLeaf,DefaultBranch> folderModel;
+	protected DarkTree<DefaultLeaf,DefaultBranch> tree;
 	
-	protected NodeSelection<DataItem,Folder> selection;
+	protected NodeSelection<DefaultLeaf,DefaultBranch> selection;
 	
 	protected BasicPage()
 	{
 		super(new BorderLayout());
 	}
 	
-	protected BasicPage(final Folder rootFolder)
+	protected BasicPage(final DefaultBranch rootFolder)
 	{
 		super(new BorderLayout());
 		
-		folderModel = new HierarchyModel<DataItem,Folder>(rootFolder, DataItem.class, Folder.class);
-		tree = new DarkTree<DataItem,Folder>(folderModel);
+		folderModel = new HierarchyModel<DefaultLeaf,DefaultBranch>(rootFolder, DefaultLeaf.class, DefaultBranch.class);
+		tree = new DarkTree<DefaultLeaf,DefaultBranch>(folderModel);
 		
 		splitPane = new MiniSplitPane();
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
@@ -70,7 +70,7 @@ public class BasicPage extends JPanel implements NodeSelectionListener<DataItem,
 	}
 	
 	@Override
-	public void selectionChanged(NodeSelectionEvent<DataItem, Folder> e)
+	public void selectionChanged(NodeSelectionEvent<DefaultLeaf, DefaultBranch> e)
 	{
 		
 	}

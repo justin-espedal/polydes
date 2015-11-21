@@ -7,8 +7,8 @@ import javax.swing.ImageIcon;
 import org.w3c.dom.Element;
 
 import com.polydes.common.ext.RegistryObject;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.datastruct.ui.table.GuiObject;
 import com.polydes.datastruct.ui.table.PropertiesSheet;
 
@@ -25,10 +25,10 @@ public abstract class SDEType<T extends SDE> implements RegistryObject
 	public abstract void write(T object, Element e);
 	public abstract T create(StructureDefinition def, String nodeName);
 	
-	public abstract GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, T value, int i);
-	public abstract void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
-	public abstract void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
-	public abstract void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, T value);
+	public abstract GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, T value, int i);
+	public abstract void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, T value);
+	public abstract void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, T value);
+	public abstract void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, T value);
 	
 	public void genCode(T value, StringBuilder builder) { }
 	

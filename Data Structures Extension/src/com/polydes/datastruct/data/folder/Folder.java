@@ -1,24 +1,15 @@
 package com.polydes.datastruct.data.folder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import com.polydes.common.nodes.Branch;
-import com.polydes.common.nodes.BranchListener;
-import com.polydes.common.nodes.HierarchyModel;
-import com.polydes.common.nodes.NodeUtils;
-import com.polydes.common.ui.filelist.BranchPage;
+import com.polydes.common.nodes.DefaultLeaf;
+import com.polydes.common.nodes.DefaultViewableBranch;
 import com.polydes.common.ui.object.EditableObject;
-import com.polydes.common.ui.object.ViewableObject;
 import com.polydes.common.util.Lang;
 import com.polydes.datastruct.res.Resources;
 
-
-public class Folder extends DataItem implements Branch<DataItem,Folder>, ViewableObject
+public class Folder extends DefaultViewableBranch
 {
 	public static FolderPolicy DEFAULT_POLICY;
 	static
@@ -33,10 +24,6 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 	protected FolderPolicy policy;
 	
 	public static final ImageIcon folderIcon = Resources.loadIcon("page/folder-small.png");
-	
-	protected ArrayList<BranchListener<DataItem,Folder>> fListeners;
-	private ArrayList<DataItem> items;
-	private HashSet<String> itemNames;
 	
 	public Folder(String name)
 	{
@@ -70,50 +57,22 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 	
 	public Folder(String name, EditableObject object)
 	{
-		super(name);
-		fListeners = new ArrayList<BranchListener<DataItem,Folder>>();
-		items = new ArrayList<DataItem>();
-		itemNames = new HashSet<String>();
+		super(name, object);
 		policy = null;
-		this.object = object;
 	}
 	
 	@Override
-	public void addFolderListener(BranchListener<DataItem,Folder> l)
+	public void addItem(DefaultLeaf item, int position)
 	{
-		fListeners.add(l);
-	}
-	
-	@Override
-	public void removeFolderListener(BranchListener<DataItem,Folder> l)
-	{
-		fListeners.remove(l);
-	}
-	
-	@Override
-	public void addItem(DataItem item)
-	{
-		addItem(item, items.size());
-	}
-	
-	@Override
-	public void addItem(DataItem item, int position)
-	{
-		items.add(position, item);
-		itemNames.add(item.getName());
-		if(item.getParent() != this)
-			item.setParent(this, false);
-		for(BranchListener<DataItem,Folder> l : fListeners) {l.branchLeafAdded(this, item, position);}
+		super.addItem(item, position);
 		if(item instanceof Folder && ((Folder) item).policy == null)
 			((Folder) item).setPolicy(policy);
-		
-		setDirty(true);
 	}
 	
 	public void setPolicy(FolderPolicy policy)
 	{
 		this.policy = policy;
-		for(DataItem item : items)
+		for(DefaultLeaf item : items)
 		{
 			if(item instanceof Folder && ((Folder) item).policy == null)
 				((Folder) item).setPolicy(policy);
@@ -126,60 +85,14 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 	}
 	
 	@Override
-	public ArrayList<DataItem> getItems()
-	{
-		return items;
-	}
-	
-	@Override
-	public DataItem getItemByName(String name)
-	{
-		for(DataItem item : items)
-		{
-			if(item.getName().equals(name))
-				return item;
-		}
-		
-		return null;
-	}
-	
-	@Override
-	public DataItem getItemAt(int position)
-	{
-		if(position < 0 || position >= items.size())
-			return null;
-		
-		return items.get(position);
-	}
-	
-	@Override
-	public int indexOfItem(DataItem item)
-	{
-		return items.indexOf(item);
-	}
-	
-	@Override
-	public void removeItem(DataItem item)
+	public void removeItem(DefaultLeaf item)
 	{
 		if(Lang.or(policy, DEFAULT_POLICY).duplicateItemNamesAllowed || itemNames.contains(item.getName()))
-		{
-			int pos = indexOfItem(item);
-			
-			if(pos != -1)
-			{
-				items.remove(item);
-				itemNames.remove(item.getName());
-				item.setParent(null, false);
-				
-				for(BranchListener<DataItem,Folder> l : fListeners) {l.branchLeafRemoved(this, item, pos);}
-			
-				setDirty(true);
-			}
-		}
+			super.removeItem(item);
 	}
 	
 	//This is currently never called.
-//	public void moveItem(DataItem item, int position)
+//	public void moveItem(DefaultLeaf item, int position)
 //	{
 //		int curPos = items.indexOf(item);
 //		if(curPos < position)
@@ -194,49 +107,12 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 //		setDirty(true);
 //	}
 	
-	@Override
-	public boolean hasItem(DataItem item)
-	{
-		return items.contains(item);
-	}
-	
-	public void unload()
-	{
-		for(DataItem item : items)
-		{
-			if(item instanceof Folder)
-			{
-				((Folder) item).unload();
-			}
-		}
-		items = new ArrayList<DataItem>();
-		itemNames = new HashSet<String>();
-		super.setDirty(false);
-	}
-	
-	@Override
-	public void setDirty(boolean value)
-	{
-		super.setDirty(value);
-		
-		if(!value)
-			for(DataItem item : items)
-				item.setDirty(false);
-	}
-
-	@Override
-	public void registerNameChange(String oldName, String newName)
-	{
-		itemNames.remove(oldName);
-		itemNames.add(newName);
-	}
-	
 	/*================================================*\
 	 | Folder Policies
 	\*================================================*/
 	
 	@Override
-	public final boolean canAcceptItem(DataItem item)
+	public final boolean canAcceptItem(DefaultLeaf item)
 	{
 		return Lang.or(policy, DEFAULT_POLICY).canAcceptItem(this, item);
 	}
@@ -275,30 +151,5 @@ public class Folder extends DataItem implements Branch<DataItem,Folder>, Viewabl
 	public ImageIcon getIcon()
 	{
 		return folderIcon;
-	}
-	
-	private BranchPage<DataItem, Folder> view;
-	public static HashMap<Folder, HierarchyModel<DataItem, Folder>> rootModels = new HashMap<>();
-	
-	@Override
-	public JPanel getView()
-	{
-		if(view == null)
-			view = new BranchPage<DataItem,Folder>(this, rootModels.get(NodeUtils.getRoot(this)));
-		return view;
-	}
-	
-	@Override
-	public void disposeView()
-	{
-		if(view != null)
-			view.dispose();
-		view = null;
-	}
-
-	@Override
-	public boolean fillsViewHorizontally()
-	{
-		return true;
 	}
 }

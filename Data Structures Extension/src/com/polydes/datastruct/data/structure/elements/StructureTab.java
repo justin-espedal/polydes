@@ -5,10 +5,10 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import com.polydes.common.io.XML;
+import com.polydes.common.nodes.DefaultBranch;
+import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.Lang;
-import com.polydes.datastruct.data.folder.DataItem;
-import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
 import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.StructureDefinition;
@@ -112,7 +112,7 @@ public class StructureTab extends SDE
 		}
 
 		@Override
-		public GuiObject psAdd(PropertiesSheet sheet, Folder parent, DataItem node, StructureTab value, int i)
+		public GuiObject psAdd(PropertiesSheet sheet, DefaultBranch parent, DefaultLeaf node, StructureTab value, int i)
 		{
 			Deck deckParent = getFirstDeckParent(sheet, parent);
 			
@@ -123,13 +123,13 @@ public class StructureTab extends SDE
 		}
 		
 		@Override
-		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
+		public void psRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTab value)
 		{
 			
 		}
 		
 		@Override
-		public void psRemove(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
+		public void psRemove(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTab value)
 		{
 			Card card = (Card) gui;
 			if(card.deck != null)
@@ -137,14 +137,14 @@ public class StructureTab extends SDE
 		}
 
 		@Override
-		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DataItem node, StructureTab value)
+		public void psLightRefresh(PropertiesSheet sheet, GuiObject gui, DefaultLeaf node, StructureTab value)
 		{
 			((Card) gui).button.setText(value.getLabel());
 		}
 		
-		private Deck getFirstDeckParent(PropertiesSheet sheet, DataItem n)
+		private Deck getFirstDeckParent(PropertiesSheet sheet, DefaultLeaf n)
 		{
-			while(!(n.getObject() instanceof StructureTabset))
+			while(!(n.getUserData() instanceof StructureTabset))
 				n = n.getParent();
 			
 			return (Deck) ((RowGroup) sheet.guiMap.get(n)).rows[3].components[0].getComponent(0);
