@@ -1,9 +1,11 @@
 package com.polydes.dialog.data.stores;
 
 import java.io.File;
+import java.util.ArrayList;
 
+import com.polydes.common.nodes.DefaultBranch;
 import com.polydes.common.nodes.DefaultLeaf;
-import com.polydes.dialog.data.LinkedDataItem;
+import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.io.Text;
 
@@ -11,9 +13,12 @@ public class Macros extends TextStore
 {
 	private static Macros _instance;
 	
+	private HierarchyModel<DefaultLeaf,DefaultBranch> folderModel;
+	
 	private Macros()
 	{
 		super("Macros");
+		folderModel = new HierarchyModel<DefaultLeaf, DefaultBranch>(this, DefaultLeaf.class, DefaultBranch.class);
 	}
 	
 	public static Macros get()
@@ -23,13 +28,18 @@ public class Macros extends TextStore
 		
 		return _instance;
 	}
+
+	public HierarchyModel<DefaultLeaf, DefaultBranch> getFolderModel()
+	{
+		return folderModel;
+	}
 	
 	@Override
 	public void load(File file)
 	{
-		TextSource info = new TextSource("-Info-");
-		TextSource tags = new TextSource("Tags");
-		TextSource characters = new TextSource("Characters");
+		TextSource info = new TextSource("-Info-", new ArrayList<>());
+		TextSource tags = new TextSource("Tags", new ArrayList<>());
+		TextSource characters = new TextSource("Characters", new ArrayList<>());
 		addItem(info);
 		addItem(tags);
 		addItem(characters);
@@ -53,22 +63,13 @@ public class Macros extends TextStore
 	@Override
 	public void saveChanges(File file)
 	{
-		for(DefaultLeaf item : getItems())
-		{
-			if(item.isDirty())
-			{
-				if(item instanceof LinkedDataItem)
-					((LinkedDataItem) item).updateContents();
-				
-				setDirty(true);
-			}
-		}
-		
 		if(isDirty())
 		{
 			Text.startWriting(file);
 			for(DefaultLeaf item : getItems())
 			{
+				if(item.isDirty())
+					((TextSource) item).updateLines();
 				for(String line : ((TextSource) item).getLines())
 					Text.writeLine(file, line);
 				Text.writeLine(file, "");

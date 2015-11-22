@@ -5,6 +5,7 @@ import java.io.File;
 import com.polydes.common.nodes.DefaultBranch;
 import com.polydes.common.nodes.DefaultLeaf;
 import com.polydes.common.nodes.DefaultViewableBranch;
+import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.io.Text;
 import com.polydes.dialog.io.Text.TextFolder;
@@ -15,9 +16,12 @@ public class Dialog extends TextStore
 {
 	private static Dialog _instance;
 	
+	private HierarchyModel<DefaultLeaf,DefaultBranch> folderModel;
+	
 	private Dialog()
 	{
 		super("Dialog");
+		folderModel = new HierarchyModel<DefaultLeaf, DefaultBranch>(this, DefaultLeaf.class, DefaultBranch.class);
 	}
 	
 	public static Dialog get()
@@ -26,6 +30,11 @@ public class Dialog extends TextStore
 			_instance = new Dialog();
 		
 		return _instance;
+	}
+	
+	public HierarchyModel<DefaultLeaf, DefaultBranch> getFolderModel()
+	{
+		return folderModel;
 	}
 	
 	@Override
@@ -48,16 +57,14 @@ public class Dialog extends TextStore
 		}
 		else if(o instanceof TextSection)
 		{
-			TextSource source = new TextSource(o.name);
-			source.setUserData(((TextSection) o).parts);
-			f.addItem(source);
+			TextSource text = new TextSource(o.name, ((TextSection) o).parts);
+			f.addItem(text);
 		}
 	}
 	
 	@Override
 	public void saveChanges(File file)
 	{
-		updateItem(this);
 		if(isDirty())
 		{
 			TextFolder toWrite = new TextFolder("root");
@@ -77,9 +84,11 @@ public class Dialog extends TextStore
 				save(d, newFolder);
 			f.add(newFolder);
 		}
-		else if(item instanceof TextSource)
+		else
 		{
 			TextSource source = (TextSource) item;
+			source.updateLines();
+			
 			TextSection newSection = new TextSection(item.getName());
 			newSection.parts = source.getLines();
 			f.add(newSection);

@@ -3,7 +3,6 @@ package com.polydes.dialog.app.editors.text;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -25,18 +23,14 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.TabSet;
 import javax.swing.text.TabStop;
 
-import com.polydes.dialog.app.editors.DataItemEditor;
+import com.polydes.common.comp.TitledPanel;
 import com.polydes.dialog.data.TextSource;
 
-public class TextArea extends DataItemEditor
+public class TextArea extends TitledPanel
 {
 	public static final Color TEXT_EDITOR_COLOR = new Color(43, 43, 43);
 	public static final Color TEXT_COLOR_BASE = Color.WHITE;
 	
-	public static final Font displayNameFont = new Font("Arial", Font.BOLD, 20);
-	
-	private Boolean changed;
-	private JLabel label;
 	private JTextPane textPane;
 
 	private StyledDocument doc;
@@ -50,43 +44,23 @@ public class TextArea extends DataItemEditor
 	
 	public TextArea(TextSource source, Highlighter highlighter)
 	{
-		super(new BorderLayout());
-
+		super(source.getName(), null);
+		label.setBackground(TEXT_EDITOR_COLOR);
+		
 		this.highlighter = highlighter;
 		
 		load(source);
 
-		changed = false;
-
-		add(label, BorderLayout.NORTH);
 		add(textPane, BorderLayout.CENTER);
-		/*
-		ArrayList<String> hintList = new ArrayList<String>();
-		hintList.add("<bc>");
-		hintList.add("<end>");
-		hintList.add("<but>");
-		hintList.add("<clear>");
-		hintList.add("<setattr>");
-		
-		new ListDataIntelliHints(textPane, hintList);
-		*/
 	}
 
 	private void load(TextSource source)
 	{
 		this.source = source;
 		
-		label = new JLabel(source.getName());
-		label.setBackground(TEXT_EDITOR_COLOR);
-		label.setForeground(new Color(0x717171));
-		label.setAlignmentX(LEFT_ALIGNMENT);
-		label.setFont(displayNameFont);
-		label.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
-		label.setOpaque(true);
-		
 		textPane = new JTextPane();
 		textPane.setBackground(TEXT_EDITOR_COLOR);
-
+		
 		textPane.setCaretColor(TEXT_COLOR_BASE);
 		textPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
 		this.setBorder(null);
@@ -203,8 +177,6 @@ public class TextArea extends DataItemEditor
 			}
 
 		});
-
-		source.setEditor(this);
 	}
 
 	public void updateDocumentStyle(int offset, int length)
@@ -234,15 +206,13 @@ public class TextArea extends DataItemEditor
 	{
 		highlighter.update(doc, offset, length);
 	}
-
-	@Override
-	public boolean isDirty()
+	
+	public void setDirty()
 	{
-		return changed;
+		source.setDirty(true);
 	}
-
-	@Override
-	public Object getContents()
+	
+	public ArrayList<String> getLines()
 	{
 		StyledDocument doc = textPane.getStyledDocument();
 
@@ -258,29 +228,7 @@ public class TextArea extends DataItemEditor
 			e.printStackTrace();
 		}
 
-		System.out.println(lines);
-
 		return lines;
-	}
-
-	@Override
-	public void setClean()
-	{
-		changed = false;
-		source.setDirty(false);
-	}
-
-	@Override
-	public void setDirty()
-	{
-		changed = true;
-		source.setDirty(true);
-	}
-	
-	@Override
-	public void nameChanged(String name)
-	{
-		label.setText(name);
 	}
 	
 	public JTextPane getTextPane()
@@ -289,8 +237,7 @@ public class TextArea extends DataItemEditor
 	}
 	
 	private boolean expandAllowed;
-
-	@Override
+	
 	public void allowExpandVertical(boolean value)
 	{
 		expandAllowed = value;

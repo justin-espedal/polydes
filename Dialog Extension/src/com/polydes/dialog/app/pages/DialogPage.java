@@ -1,6 +1,5 @@
 package com.polydes.dialog.app.pages;
 
-import com.polydes.dialog.app.editors.text.DialogHighlighter;
 import com.polydes.dialog.data.TextSource;
 import com.polydes.dialog.data.stores.Dialog;
 
@@ -10,11 +9,10 @@ public class DialogPage extends SourcePage<TextSource>
 	
 	private DialogPage()
 	{
-		super(TextSource.class, Dialog.get());
+		super(Dialog.get().getFolderModel());
 		
-		setListEditEnabled(true);
-		folderModel.setUniqueLeafNames(true);
-		textAreaHighlighter = new DialogHighlighter();
+		treePage.getTree().setListEditEnabled(true);
+		treePage.getFolderModel().setUniqueLeafNames(true);
 	}
 
 	public static DialogPage get()
@@ -25,7 +23,7 @@ public class DialogPage extends SourcePage<TextSource>
 		return _instance;
 	}
 
-	public static void dispose()
+	public static void disposeInstance()
 	{
 		_instance = null;
 	}

@@ -2,24 +2,75 @@ package com.polydes.dialog.data;
 
 import java.util.ArrayList;
 
-public class TextSource extends LinkedDataItem
+import javax.swing.JPanel;
+
+import com.polydes.common.nodes.DefaultEditableLeaf;
+import com.polydes.common.ui.object.EditableObject;
+import com.polydes.dialog.app.editors.text.BasicHighlighter;
+import com.polydes.dialog.app.editors.text.DialogHighlighter;
+import com.polydes.dialog.app.editors.text.Highlighter;
+import com.polydes.dialog.app.editors.text.TextArea;
+
+public class TextSource extends DefaultEditableLeaf
 {
-	private ArrayList<String> lines;
+	public static final Highlighter basicHighlighter = new BasicHighlighter();
+	public static final Highlighter dialogHighlighter = new DialogHighlighter();
 	
-	public TextSource(String name)
+	public class EditableText extends EditableObject
 	{
-		super(name);
-		setUserData(lines = new ArrayList<String>());
+		private ArrayList<String> lines;
+		
+		public EditableText(ArrayList<String> lines)
+		{
+			this.lines = lines;
+		}
+		
+		TextArea editor;
+		
+		@Override
+		public JPanel getEditor()
+		{
+			if(editor == null)
+				editor = new TextArea(TextSource.this, dialogHighlighter);
+			
+			return editor;
+		}
+		
+		public void updateLines()
+		{
+			if(editor != null)
+				lines = editor.getLines();
+		}
+		
+		@Override
+		public void revertChanges()
+		{
+			
+		}
+		
+		@Override
+		public boolean fillsViewHorizontally()
+		{
+			return true;
+		}
+		
+		@Override
+		public void disposeEditor()
+		{
+			
+		}
 	}
 	
-	//for initial reading in, does not mark as changed
-	public void addLine(String line)
+	public TextSource(String name, ArrayList<String> lines)
 	{
-		lines.add(line);
+		super(name, null);
+		setUserData(new EditableText(lines));
 	}
 	
 	public void trimLeadingTailingNewlines()
 	{
+		ArrayList<String> lines = ((EditableText) getUserData()).lines;
+		
 		for(int i = 0; i < lines.size(); ++i)
 		{
 			if(lines.get(i).isEmpty())
@@ -38,17 +89,22 @@ public class TextSource extends LinkedDataItem
 	
 	public ArrayList<String> getLines()
 	{
-		return lines;
+		return ((EditableText) getUserData()).lines;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setUserData(Object o)
+	public void updateLines()
 	{
-		if(o instanceof ArrayList)
-		{
-			lines = (ArrayList<String>) o;
-			super.setUserData(o);
-		}
+		((EditableText) getUserData()).updateLines();
+	}
+
+	public void addLine(String line)
+	{
+		((EditableText) getUserData()).lines.add(line);
+	}
+	
+	@Override
+	public boolean fillsViewHorizontally()
+	{
+		return true;
 	}
 }
