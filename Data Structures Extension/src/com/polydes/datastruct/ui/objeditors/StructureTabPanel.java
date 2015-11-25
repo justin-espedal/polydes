@@ -13,7 +13,7 @@ public class StructureTabPanel extends StructureObjectPanel
 		
 			.field("label")._string().add().onUpdate(() -> {
 				previewKey.setName(tab.getLabel());
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			})
 			
 			.finish();

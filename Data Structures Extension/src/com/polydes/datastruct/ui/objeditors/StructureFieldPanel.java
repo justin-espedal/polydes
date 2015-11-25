@@ -39,7 +39,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			
 			.field("hint")._string().expandingEditor().add()
 			
-			.field("optional")._boolean().add().onUpdate(() -> preview.refreshDefaultLeaf(previewKey))
+			.field("optional")._boolean().add().onUpdate(() -> preview.refreshLeaf(previewKey))
 			
 			.field("defaultValue").label("Default")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).add()
 			
@@ -52,7 +52,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			if(StructureField.formatVarname(oldLabel).equals(field.getVarname()))
 				sheet.updateField("varname", StructureField.formatVarname(field.getLabel()));
 			
-			preview.lightRefreshDefaultLeaf(previewKey);
+			preview.lightRefreshLeaf(previewKey);
 		});
 		
 		sheet.addPropertyChangeListener("type", event -> {
@@ -63,7 +63,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			
 			field.setTypeForPreview(type);
 			refreshFieldEditors();
-			preview.refreshDefaultLeaf(previewKey);
+			preview.refreshLeaf(previewKey);
 			
 			layoutContainer();
 			revalidate();
@@ -74,9 +74,9 @@ public class StructureFieldPanel extends StructureObjectPanel
 			String oldV = (String) event.getOldValue();
 			String newV = (String) event.getNewValue();
 			if(oldV.isEmpty() || newV.isEmpty())
-				preview.refreshDefaultLeaf(previewKey);
+				preview.refreshLeaf(previewKey);
 			else
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 		});
 		
 		refreshFieldEditors();
@@ -106,7 +106,7 @@ public class StructureFieldPanel extends StructureObjectPanel
 			.field("defaultValue")._editor(field.getType().dataType).loadProps(field.getEditorProperties()).change()
 			.finish();
 		if(preview != null)
-			preview.refreshDefaultLeaf(previewKey);
+			preview.refreshLeaf(previewKey);
 	}
 	
 	public StructureField getField()

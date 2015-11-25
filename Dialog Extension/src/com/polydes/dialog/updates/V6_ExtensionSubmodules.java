@@ -60,6 +60,7 @@ public class V6_ExtensionSubmodules implements Runnable
 					"charSpacing", "clearSound", "closeSound",
 					"endSound" })
 					set(db, prop, map.remove(prop));
+				map.remove("fitMsgToWindow"); //unused
 				
 				//Typing Scripts
 				set(ts, "defaultRandomTypeSounds", stringArrayToSoundArray(map.remove("defaultRandomTypeSounds")));

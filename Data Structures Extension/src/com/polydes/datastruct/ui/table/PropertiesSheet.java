@@ -76,19 +76,19 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	public JScrollPane scroller;
 	
 	/**
-	 * DefaultBranchModel is null if this isn't the preview of a structure definition editor
+	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> DefaultBranchModel)
+	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> folderModel)
 	{
-		this(model, DefaultBranchModel, PropertiesSheetStyle.DARK);
+		this(model, folderModel, PropertiesSheetStyle.DARK);
 	}
 	
 	public boolean isChangingLayout;
 	
 	/**
-	 * DefaultBranchModel is null if this isn't the preview of a structure definition editor
+	 * folderModel is null if this isn't the preview of a structure definition editor
 	 */
-	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> DefaultBranchModel, PropertiesSheetStyle style)
+	public PropertiesSheet(Structure model, HierarchyModel<DefaultLeaf,DefaultBranch> folderModel, PropertiesSheetStyle style)
 	{
 		root = new Table(style);
 		this.style = style;
@@ -111,15 +111,15 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 		fieldEditorMap = new HashMap<StructureField, DataEditor<?>>();
 		add(root);
 		
-		DefaultBranch rootDefaultBranch = model.getTemplate().guiRoot;
-		guiMap.put(rootDefaultBranch, root);
+		DefaultBranch rootFolder = model.getTemplate().guiRoot;
+		guiMap.put(rootFolder, root);
 		
 		isChangingLayout = true;
-		buildSheetFromDefaultBranch(rootDefaultBranch);
+		buildSheetFromBranch(rootFolder);
 		isChangingLayout = false;
 		
-		if(DefaultBranchModel != null)
-			DefaultBranchModel.addRepresentation(this);
+		if(folderModel != null)
+			folderModel.addRepresentation(this);
 		
 		for(DefaultLeaf n : guiMap.keySet())
 			if(guiMap.get(n) instanceof Card)
@@ -153,7 +153,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	
 	public void dispose()
 	{
-		removeDefaultLeaf(model.getTemplate().guiRoot);
+		removeLeaf(model.getTemplate().guiRoot);
 		guiMap.clear();
 		conditionalCards.clear();
 		root.removeAll();
@@ -255,7 +255,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 
 	/*================================================*\
-	 | DefaultBranch Hierarchy Representation
+	 | Hierarchy Representation
 	\*================================================*/
 	
 	@Override
@@ -265,30 +265,30 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@Override
-	public void itemAdded(DefaultBranch DefaultBranch, DefaultLeaf item, int position)
+	public void itemAdded(DefaultBranch branch, DefaultLeaf item, int position)
 	{
-		addDefaultLeaf(DefaultBranch, item, position);
+		addLeaf(branch, item, position);
 	}
 
 	@Override
-	public void itemRemoved(DefaultBranch DefaultBranch, DefaultLeaf item, int oldPosition)
+	public void itemRemoved(DefaultBranch branch, DefaultLeaf item, int oldPosition)
 	{
-		removeDefaultLeaf(item);
+		removeLeaf(item);
 	}
 	
-	public void buildSheetFromDefaultBranch(DefaultBranch DefaultBranch)
+	public void buildSheetFromBranch(DefaultBranch branch)
 	{
-		for(int i = 0; i < DefaultBranch.getItems().size(); ++i)
+		for(int i = 0; i < branch.getItems().size(); ++i)
 		{
-			DefaultLeaf d = DefaultBranch.getItemAt(i);
-			addDefaultLeaf(DefaultBranch, d, i);
+			DefaultLeaf d = branch.getItemAt(i);
+			addLeaf(branch, d, i);
 			if(d instanceof DefaultBranch)
-				buildSheetFromDefaultBranch((DefaultBranch) d); 
+				buildSheetFromBranch((DefaultBranch) d); 
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void addDefaultLeaf(DefaultBranch parent, DefaultLeaf n, int i)
+	public <S extends SDE> void addLeaf(DefaultBranch parent, DefaultLeaf n, int i)
 	{
 		S data = (S) n.getUserData();
 		
@@ -301,7 +301,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void removeDefaultLeaf(DefaultLeaf n)
+	public <S extends SDE> void removeLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
@@ -315,7 +315,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void refreshDefaultLeaf(DefaultLeaf n)
+	public <S extends SDE> void refreshLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;
@@ -331,7 +331,7 @@ public class PropertiesSheet extends JPanel implements HierarchyRepresentation<D
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S extends SDE> void lightRefreshDefaultLeaf(DefaultLeaf n)
+	public <S extends SDE> void lightRefreshLeaf(DefaultLeaf n)
 	{
 		if(!guiMap.containsKey(n))
 			return;

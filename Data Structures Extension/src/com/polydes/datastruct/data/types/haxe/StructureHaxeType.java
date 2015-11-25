@@ -164,7 +164,7 @@ public class StructureHaxeType extends HaxeDataType
 				condition.setText(conditionText);
 			
 			props.put(StructureType.SOURCE_FILTER, condition);
-			preview.refreshDefaultLeaf(previewKey);
+			preview.refreshLeaf(previewKey);
 		});
 	}
 	

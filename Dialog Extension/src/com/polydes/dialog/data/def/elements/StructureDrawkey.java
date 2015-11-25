@@ -57,7 +57,7 @@ public class StructureDrawkey extends SDE
 				.finish();
 			
 			sheet.addPropertyChangeListener(event -> {
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			});
 		}
 	}

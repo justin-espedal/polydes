@@ -80,16 +80,16 @@ public class StructureCommand extends SDE
 			
 			sheet.addPropertyChangeListener("name", event -> {
 				previewKey.setName(cmd.getDisplayLabel());
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			});	
 			
 			sheet.addPropertyChangeListener("description", event -> {
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			});
 			
 			sheet.addPropertyChangeListener("args", event -> {
 				previewKey.setName(cmd.getDisplayLabel());
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			});
 		}
 	}

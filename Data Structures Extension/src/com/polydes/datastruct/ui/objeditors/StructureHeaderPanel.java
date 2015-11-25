@@ -13,7 +13,7 @@ public class StructureHeaderPanel extends StructureObjectPanel
 		
 			.field("label")._string().add().onUpdate(() -> {
 				previewKey.setName(header.getLabel());
-				preview.lightRefreshDefaultLeaf(previewKey);
+				preview.lightRefreshLeaf(previewKey);
 			})
 			
 			.finish();

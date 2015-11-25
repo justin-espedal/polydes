@@ -82,7 +82,7 @@ public class ArrayHaxeType extends HaxeDataType
 		sheet.addPropertyChangeListener(genTypeProxy, event -> {
 			HaxeDataType newType = (HaxeDataType) event.getNewValue();
 			props.put(ArrayType.GEN_TYPE, newType.dataType);
-			preview.refreshDefaultLeaf(previewKey);
+			preview.refreshLeaf(previewKey);
 		});
 	}
 }

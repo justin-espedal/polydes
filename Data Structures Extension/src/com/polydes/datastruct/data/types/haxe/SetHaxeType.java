@@ -162,6 +162,6 @@ public class SetHaxeType extends HaxeDataType
 				break;
 		}
 		
-		panel.getPreview().refreshDefaultLeaf(panel.getPreviewKey());
+		panel.getPreview().refreshLeaf(panel.getPreviewKey());
 	}
 }

@@ -47,7 +47,7 @@ public class StructureExtension extends SDE
 				.field("implementation")._string().add()
 				
 				.field("description")._string().expandingEditor().add()
-				.onUpdate(() -> preview.lightRefreshDefaultLeaf(previewKey))
+				.onUpdate(() -> preview.lightRefreshLeaf(previewKey))
 				
 				.finish();
 		}

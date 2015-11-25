@@ -9,7 +9,7 @@ import com.polydes.common.res.ResourceLoader;
 
 public class DefaultBranch extends DefaultLeaf implements Branch<DefaultLeaf,DefaultBranch>
 {
-	public static final ImageIcon folderIcon = ResourceLoader.loadIcon("page/folder-small.png");
+	public static final ImageIcon folderIcon = ResourceLoader.loadIcon("filelist/folder.png");
 	
 	protected ArrayList<BranchListener<DefaultLeaf,DefaultBranch>> fListeners;
 	protected ArrayList<DefaultLeaf> items;
