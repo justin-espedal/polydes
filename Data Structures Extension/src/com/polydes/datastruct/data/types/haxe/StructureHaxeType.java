@@ -54,7 +54,7 @@ public class StructureHaxeType extends HaxeDataType
 		{
 			fieldmap += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getLabel(), f.getVarname());
 			variables += String.format("\tpublic var %s:%s;\n", f.getVarname(), getType(f));
-			typeinfo += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getVarname(), f.getType());
+			typeinfo += String.format("\t\tm.set(\"%s\", \"%s\");\n", f.getVarname(), f.getType().getHaxeType());
 		}
 		
 		s = StringUtils.replace(s, "[PACKAGE]", getPackage());

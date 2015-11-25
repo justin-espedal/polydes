@@ -16,6 +16,7 @@ abstract ExtrasImage(BitmapData) from BitmapData to BitmapData
 	{
 		if(s == "")
 			return null;
+		s = s.substring(0, s.lastIndexOf(".")); // strip .png from the end
 		if(Engine.IMG_BASE == "1x")
 			return Assets.getBitmapData("assets/data/"+ s +".png");
 		else
