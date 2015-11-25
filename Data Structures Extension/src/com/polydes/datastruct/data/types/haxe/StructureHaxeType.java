@@ -175,4 +175,10 @@ public class StructureHaxeType extends HaxeDataType
 			return ((Structure) value).getIcon();
 		return null;
 	}
+	
+	@Override
+	public boolean isIconProvider()
+	{
+		return true;
+	}
 }

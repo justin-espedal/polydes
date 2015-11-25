@@ -36,4 +36,10 @@ public class ExtrasImageHaxeType extends HaxeDataType
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isIconProvider()
+	{
+		return true;
+	}
 }

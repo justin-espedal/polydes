@@ -122,4 +122,9 @@ public abstract class HaxeDataType implements RegistryObject
 	{
 		return null;
 	}
+	
+	public boolean isIconProvider()
+	{
+		return false;
+	}
 }

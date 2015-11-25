@@ -55,4 +55,10 @@ public class StencylResourceHaxeType<T extends Resource> extends HaxeDataType
 			return new ImageIcon(Resources.getImage((AbstractResource) value));
 		return null;
 	}
+	
+	@Override
+	public boolean isIconProvider()
+	{
+		return true;
+	}
 }

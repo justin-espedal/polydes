@@ -172,10 +172,26 @@ public class StructureDefinitionEditor extends JPanel
 					return new DefaultEditableLeaf(nodeName, type.create(def, nodeName));
 			}
 			
+			NodeAction<DefaultLeaf> setAsIcon = new NodeAction<DefaultLeaf>("Set as Icon", null, leaf -> {
+				StructureField field = (StructureField) leaf.getUserData();
+				def.iconSource = field.getVarname();
+			});
+			
 			@Override
 			public ArrayList<NodeAction<DefaultLeaf>> getNodeActions(DefaultLeaf[] targets)
 			{
-				return null;
+				ArrayList<NodeAction<DefaultLeaf>> actions = new ArrayList<>();
+				if(targets.length == 1)
+				{
+					Object data = targets[0].getUserData();
+					if(data instanceof StructureField)
+					{
+						StructureField field = (StructureField) data;
+						if(field.getType().isIconProvider())
+							actions.add(setAsIcon);
+					}
+				}
+				return actions;
 			}
 			
 			@Override
