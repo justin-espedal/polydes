@@ -146,7 +146,7 @@ public class Structure extends EditableObject
 	
 	public boolean isPropertyEnabled(StructureField field)
 	{
-		return enabledFields.get(field);
+		return enabledFields.get(field) == Boolean.TRUE;
 	}
 	
 	public void setPropertyEnabled(StructureField field, boolean value)
