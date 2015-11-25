@@ -1,6 +1,8 @@
 package com.polydes.common.ui.filelist;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import com.polydes.common.comp.TitledPanel;
 import com.polydes.common.nodes.Branch;
@@ -9,7 +11,7 @@ import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.IconUtil;
 
-public class BranchPage<T extends Leaf<T,U>, U extends Branch<T,U>> extends TitledPanel
+public class BranchPage<T extends Leaf<T,U>, U extends Branch<T,U>> extends TitledPanel implements PropertyChangeListener
 {
 	private LeafList<T,U> list;
 	
@@ -19,6 +21,7 @@ public class BranchPage<T extends Leaf<T,U>, U extends Branch<T,U>> extends Titl
 		setBackground(PropertiesSheetStyle.DARK.pageBg);
 		
 		list = new LeafList<T,U>(folder, folderModel);
+		folder.addListener(Leaf.NAME, this);
 		
 		add(list, BorderLayout.CENTER);
 	}
@@ -32,7 +35,14 @@ public class BranchPage<T extends Leaf<T,U>, U extends Branch<T,U>> extends Titl
 	public void dispose()
 	{
 		super.dispose();
+		list.folder.removeListener(Leaf.NAME, this);
 		list.dispose();
 		list = null;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt)
+	{
+		label.setText((String) evt.getNewValue());
 	}
 }

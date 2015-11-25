@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -110,7 +111,8 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 
 	public void notifyChanged()
 	{
-		disposeView();
+		if(view != null)
+			updateView();
 		ImageIcon oldCached = cachedIcon;
 		cachedIcon = FileRenderer.generateThumb(file);
 		
@@ -150,7 +152,7 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 		return hash;
 	}
 
-	protected JPanel view = null;
+	protected TitledPanel view = null;
 	
 	@Override
 	public JPanel getView()
@@ -158,55 +160,63 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 		if(view == null)
 		{
 			view = new TitledPanel(getName(), null);
-			JPanel previewPanel = FilePreviewer.getPreview(this);
-			
-			previewPanel.addMouseListener(new MouseAdapter()
-			{
-				@Override
-				public void mousePressed(MouseEvent e)
-				{
-					maybeShowPopup(e);
-				}
-				
-				@Override
-				public void mouseReleased(MouseEvent e)
-				{
-					maybeShowPopup(e);
-				}
-				
-				@SuppressWarnings("unchecked")
-				private void maybeShowPopup(MouseEvent e)
-				{
-					if(e.isPopupTrigger())
-					{
-						HierarchyModel<SysFile,SysFolder> folderModel = FileMonitor.getExtrasModel();
-						
-						ArrayList<JMenuItem> menuItems = new ArrayList<>();
-						
-						ArrayList<NodeAction<SysFile>> actionItems = folderModel.getNodeActions(new SysFile[] {SysFile.this});
-						menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
-						
-						JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));
-						
-						PopupUtil.installListener(popup, (item) -> {
-							((NodeAction<SysFile>) item).callback.accept(SysFile.this);
-						});
-						
-						Point p = previewPanel.getMousePosition(true);
-						if(p == null)
-						{
-							p = MouseInfo.getPointerInfo().getLocation();
-							SwingUtilities.convertPointFromScreen(p, previewPanel);
-						}
-						popup.show(previewPanel, p.x, p.y);
-					}
-				}
-			});
-			
-			view.add(previewPanel, BorderLayout.CENTER);
+			updateView();
 		}
 		
 		return view;
+	}
+	
+	private void updateView()
+	{
+		JPanel previewPanel = FilePreviewer.getPreview(this);
+		
+		previewPanel.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				maybeShowPopup(e);
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				maybeShowPopup(e);
+			}
+			
+			@SuppressWarnings("unchecked")
+			private void maybeShowPopup(MouseEvent e)
+			{
+				if(e.isPopupTrigger())
+				{
+					HierarchyModel<SysFile,SysFolder> folderModel = FileMonitor.getExtrasModel();
+					
+					ArrayList<JMenuItem> menuItems = new ArrayList<>();
+					
+					ArrayList<NodeAction<SysFile>> actionItems = folderModel.getNodeActions(new SysFile[] {SysFile.this});
+					menuItems.addAll(Arrays.asList(PopupUtil.asMenuItems(actionItems)));
+					
+					JPopupMenu popup = PopupUtil.buildPopup(asArray(menuItems, JMenuItem.class));
+					
+					PopupUtil.installListener(popup, (item) -> {
+						((NodeAction<SysFile>) item).callback.accept(SysFile.this);
+					});
+					
+					Point p = previewPanel.getMousePosition(true);
+					if(p == null)
+					{
+						p = MouseInfo.getPointerInfo().getLocation();
+						SwingUtilities.convertPointFromScreen(p, previewPanel);
+					}
+					popup.show(previewPanel, p.x, p.y);
+				}
+			}
+		});
+		
+		JLabel label = view.label;
+		view.removeAll();
+		view.add(label, BorderLayout.NORTH);
+		view.add(previewPanel, BorderLayout.CENTER);
 	}
 
 	@Override

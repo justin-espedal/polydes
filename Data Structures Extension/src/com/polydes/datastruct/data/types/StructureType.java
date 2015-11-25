@@ -1,7 +1,10 @@
 package com.polydes.datastruct.data.types;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Predicate;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
@@ -12,6 +15,7 @@ import com.polydes.common.data.types.DataEditor;
 import com.polydes.common.data.types.DataEditorBuilder;
 import com.polydes.common.data.types.DataType;
 import com.polydes.common.data.types.EditorProperties;
+import com.polydes.common.nodes.Leaf;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import com.polydes.common.util.PredicateUtil;
 import com.polydes.datastruct.data.structure.Structure;
@@ -122,10 +126,11 @@ public class StructureType extends DataType<Structure>
 		}
 	}
 	
-	public class StructureEditor extends DataEditor<Structure>
+	public class StructureEditor extends DataEditor<Structure> implements PropertyChangeListener
 	{
 		private final RenderedPanel panel;
 		private final UpdatingCombo<Structure> editor;
+		private Structure oldStructure;
 		
 		public StructureEditor(EditorProperties props, Structure currentStructure)
 		{
@@ -138,7 +143,8 @@ public class StructureType extends DataType<Structure>
 				predicate = PredicateUtil.and(predicate, (s) -> s.getTemplate().is(def));
 			
 			editor = new UpdatingCombo<Structure>(allowSubtypes ? Structures.structuresByID.values() : Structures.getList(def), predicate);
-			editor.addActionListener(event -> updated());
+			editor.addActionListener(event -> valueUpdated(true));
+			oldStructure = null;
 			
 			panel = props.get(RENDER_PREVIEW) == Boolean.TRUE ?
 				new RenderedPanel(90, 60, 0) : null;
@@ -151,17 +157,56 @@ public class StructureType extends DataType<Structure>
 			panel = null;
 		}
 		
+		private void valueUpdated(boolean callUpdated)
+		{
+			Structure t = editor.getSelected();
+			if(t == oldStructure)
+				return;
+			if(panel != null)
+			{
+				if(oldStructure != null)
+					uninstallIconListener(oldStructure);
+				if(t != null)
+					installIconListener(t);
+				else
+					panel.setLabel(null);
+			}
+			oldStructure = t;
+			if(callUpdated)
+				updated();
+		}
+		
+		private void installIconListener(Structure t)
+		{
+			t.dref.addListener(Leaf.ICON, this);
+			setImageIcon(t.dref.getIcon());
+		}
+		
+		private void uninstallIconListener(Structure t)
+		{
+			t.dref.removeListener(Leaf.ICON, this);
+			panel.setLabel(t.getIcon().getImage());
+		}
+		
+		private void setImageIcon(ImageIcon icon)
+		{
+			if(icon == null)
+				panel.setLabel(null);
+			else
+				panel.setLabel(icon.getImage());
+		}
+		
+		@Override
+		public void propertyChange(PropertyChangeEvent evt)
+		{
+			setImageIcon((ImageIcon) evt.getNewValue());
+		}
+		
 		@Override
 		public void set(Structure t)
 		{
 			editor.setSelectedItem(t);
-			if(panel != null)
-			{
-				if(t == null || t.getIcon() == null)
-					panel.setLabel(null);
-				else
-					panel.setLabel(t.getIcon().getImage());
-			}
+			valueUpdated(false);
 		}
 		
 		@Override
@@ -183,6 +228,8 @@ public class StructureType extends DataType<Structure>
 		public void dispose()
 		{
 			super.dispose();
+			if(panel != null && oldStructure != null)
+				uninstallIconListener(oldStructure);
 			editor.dispose();
 		}
 	}

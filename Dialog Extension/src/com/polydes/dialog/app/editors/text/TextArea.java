@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -24,9 +26,10 @@ import javax.swing.text.TabSet;
 import javax.swing.text.TabStop;
 
 import com.polydes.common.comp.TitledPanel;
+import com.polydes.common.nodes.Leaf;
 import com.polydes.dialog.data.TextSource;
 
-public class TextArea extends TitledPanel
+public class TextArea extends TitledPanel implements PropertyChangeListener
 {
 	public static final Color TEXT_EDITOR_COLOR = new Color(43, 43, 43);
 	public static final Color TEXT_COLOR_BASE = Color.WHITE;
@@ -52,6 +55,8 @@ public class TextArea extends TitledPanel
 		load(source);
 
 		add(textPane, BorderLayout.CENTER);
+		
+		source.addListener(Leaf.NAME, this);
 	}
 
 	private void load(TextSource source)
@@ -250,5 +255,18 @@ public class TextArea extends TitledPanel
 			return new Dimension(getParent().getParent().getParent().getWidth(), Short.MAX_VALUE);
 		else
 			return new Dimension(getParent().getParent().getParent().getWidth(), getMinimumSize().height);
+	}
+	
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		source.removeListener(Leaf.NAME, this);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt)
+	{
+		label.setText((String) evt.getNewValue());
 	}
 }

@@ -42,8 +42,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	
 	protected JComponent currView;
 	
-	private ArrayList<JPanel> currPages;
-	
 	public TreePage(HierarchyModel<T,U> folderModel)
 	{
 		super(new BorderLayout());
@@ -60,8 +58,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 		multiScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		multiScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		multiScroller.getViewport().setBackground(PropertiesSheetStyle.DARK.pageBg);
-		
-		currPages = new ArrayList<JPanel>();
 		
 		setBackground(PropertiesSheetStyle.DARK.pageBg);
 		add(StatusBar.createStatusBar(), BorderLayout.SOUTH);
@@ -96,7 +92,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 			remove(currView);
 		
 		multiPage.removeAll();
-		currPages.clear();
 		
 		ArrayList<ViewableObject> toView = new ArrayList<ViewableObject>();
 		
@@ -130,7 +125,6 @@ public class TreePage<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 					multiPage.add(new HorizontalDivider(2));
 			}
 			
-			currPages.add(current.getView());
 			if(thisFill)
 				multiPage.add(current.getView());
 			else

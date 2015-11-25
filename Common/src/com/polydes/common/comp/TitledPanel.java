@@ -37,12 +37,6 @@ public class TitledPanel extends JPanel
 		revalidate();
 	}
 	
-	public void titleChanged(String title)
-	{
-		if(label != null)
-			label.setText(title);
-	}
-	
 	public void dispose()
 	{
 		removeAll();
