@@ -141,6 +141,7 @@ public class V6_ExtensionSubmodules implements Runnable
 			for(Structure scalingImage : loopDef(unknownDef))
 			{
 				Map<String,String> map = scalingImage.getUnknownData();
+				map.put("image", convertExtrasImage(map.get("image")));
 				map.put("origin", convertRatioPoint(map.get("origin")));
 				map.put("border", convertPointToInsets(map.remove("border")));
 				
@@ -238,6 +239,11 @@ public class V6_ExtensionSubmodules implements Runnable
 	private String convertAnimation(String s)
 	{
 		return s == null ? null : "[" + s.replace("-", ",") + "]";
+	}
+	
+	private String convertExtrasImage(String s)
+	{
+		return s == null ? null : s + ".png";
 	}
 	
 	private String convertRatioInt(String s)
