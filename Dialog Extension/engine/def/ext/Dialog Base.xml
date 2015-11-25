@@ -16,10 +16,7 @@
         </dg:drawkeys>
     </dg:extension>
     <field label="Message Window" name="msgWindow" type="dialog.ds.WindowTemplate" renderPreview="true"/>
-    <field default="false" label="Fit Message Area To Window" name="fitMsgToWindow" type="Bool"/>
-    <if condition="fitMsgToWindow == false">
-        <field hint="Position on screen of the message" label="Message Bounds" name="msgBounds" type="openfl.geom.Rectangle"/>
-    </if>
+    <field hint="Position on screen of the message. Message is fit to window bounds if this is disabled." label="Message Bounds" name="msgBounds" type="openfl.geom.Rectangle" optional="true"/>
     <field label="Message Font" name="msgFont" type="com.stencyl.models.Font" renderPreview="true"/>
     <field default="0.0" editor="Plain" hint="Seconds between characters being typed. (0.05, 20 characters / second)" label="Message Type Speed" name="msgTypeSpeed" step="0.01" type="Float"/>
     <field label="Message Start Sound" name="msgStartSound" type="com.stencyl.models.Sound" optional="true"/>

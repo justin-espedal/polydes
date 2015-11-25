@@ -53,8 +53,8 @@ public class V6_ExtensionSubmodules implements Runnable
 				Map<String,String> map = style.getUnknownData();
 				
 				//Dialog Base
-				for (String prop : new String[] {"msgWindow",
-					"fitMsgToWindow", "msgBounds", "msgFont",
+				for (String prop : new String[] {
+					"msgWindow", "msgBounds", "msgFont",
 					"msgTypeSpeed", "msgStartSound",
 					"controlAttribute", "lineSpacing",
 					"charSpacing", "clearSound", "closeSound",

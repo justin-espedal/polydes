@@ -28,7 +28,6 @@ class DialogBase extends dialog.core.DialogExtension
 	private var style:DialogBase;
 
 	public var msgWindow:Null<WindowTemplate>;
-	public var fitMsgToWindow:Bool;
 	public var msgBounds:Rectangle;
 	public var msgFont:Font;
 	public var msgTypeSpeed:Float;
@@ -79,7 +78,7 @@ class DialogBase extends dialog.core.DialogExtension
 				dg.paused = true;
 
 				window = new DialogWindow(style.msgWindow);
-				if(!style.fitMsgToWindow)
+				if(style.msgBounds != null)
 					window.setContentSize(dg.msgW, dg.msgH);
 				window.tweenCompleteNotify.push(function():Void
 				{
@@ -115,7 +114,7 @@ class DialogBase extends dialog.core.DialogExtension
 		addCallback(Dialog.RESTORE_DEFAULTS, function():Void
 		{
 			#if stencyl
-			if(style.fitMsgToWindow)
+			if(style.msgBounds == null)
 			{
 				if(window != null)
 				{

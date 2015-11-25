@@ -10,7 +10,7 @@
             <dg:drawkey name="Dialog Choice" />
         </dg:drawkeys>
     </dg:extension>
-    <field label="Window Name" name="windowTemplate" type="dialog.ds.WindowTemplate" renderPreview="true"/>
+    <field label="Window" name="windowTemplate" type="dialog.ds.WindowTemplate" renderPreview="true"/>
     <field label="Window Font" name="windowFont" type="com.stencyl.models.Font" renderPreview="true"/>
     <field default="" editor="Dropdown" label="Cursor Type" name="cursorType" options="[Use Image,Use Window]:String" type="com.polydes.datastruct.Selection"/>
     <if condition="cursorType == &amp;quot;Use Image&amp;quot;">
