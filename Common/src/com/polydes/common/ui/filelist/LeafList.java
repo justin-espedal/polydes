@@ -295,6 +295,9 @@ public class LeafList<T extends Leaf<T,U>, U extends Branch<T,U>> extends JList<
 	@Override
 	public void propertyChange(PropertyChangeEvent evt)
 	{
-		((LeafRenderer<T,U>) getCellRenderer()).refreshIcon((T) evt.getSource());
+		T changed = (T) evt.getSource();
+		((LeafRenderer<T,U>) getCellRenderer()).refreshIcon(changed);
+		int refreshedCell = folder.indexOfItem(changed);
+		repaint(getCellBounds(refreshedCell, refreshedCell));
 	}
 }

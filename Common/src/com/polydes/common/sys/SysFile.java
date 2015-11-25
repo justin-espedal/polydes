@@ -111,8 +111,10 @@ public class SysFile implements Leaf<SysFile,SysFolder>, ViewableObject
 	public void notifyChanged()
 	{
 		disposeView();
-		cachedIcon = null;
+		ImageIcon oldCached = cachedIcon;
+		cachedIcon = FileRenderer.generateThumb(file);
 		
+		pcs.firePropertyChange(ICON, oldCached, cachedIcon);
 		pcs.firePropertyChange(STATE, null, this);
 	}
 	
