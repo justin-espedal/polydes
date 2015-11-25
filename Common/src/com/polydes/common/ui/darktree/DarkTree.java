@@ -529,7 +529,7 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 	
 	private boolean eventIsOverSelection(MouseEvent e)
 	{
-		TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+		TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
 		if(path != null)
 			return tree.isPathSelected(path);
 		return false;
@@ -551,11 +551,9 @@ public class DarkTree<T extends Leaf<T,U>, U extends Branch<T,U>> extends JPanel
 			if(!selectionTargeted)
 			{
 				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+				tree.setSelectionPath(path);
 				if(path != null)
-				{
-					tree.setSelectionPath(path);
 					selectionTargeted = true;
-				}
 			}
 			
 			boolean singleFolderTargeted = !selectionTargeted ||
