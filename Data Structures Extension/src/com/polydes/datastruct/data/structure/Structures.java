@@ -188,7 +188,10 @@ public class Structures
 			{
 				if(field.isOptional() && !s.isPropertyEnabled(field))
 					continue;
-				toWrite.add(field.getVarname() + "=" + HaxeTypeConverter.encode(field.getType().dataType, s.getProperty(field)));
+				Object o = s.getProperty(field);
+				if(o == null)
+					continue;
+				toWrite.add(field.getVarname() + "=" + HaxeTypeConverter.encode(field.getType().dataType, o));
 			}
 			if(s.getUnknownData() != null)
 				for(Entry<String, String> entry : s.getUnknownData().entrySet())

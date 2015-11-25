@@ -66,15 +66,15 @@ public class ExtrasMap extends HashMap<String, Object>
 		if(key == null || key.isEmpty())
 			return (T) enm;
 		
+		String name = (String) get(key);
+		if(name == null)
+			return (T) enm;
+		
 		try
 		{
-			return (T) Enum.valueOf(enm.getClass(), (String) get(key));
+			return (T) Enum.valueOf(enm.getClass(), name);
 		}
-		catch(IllegalArgumentException ex)
-		{
-			return (T) enm;
-		}
-		catch(NullPointerException ex)
+		catch(IllegalArgumentException | NullPointerException ex)
 		{
 			return (T) enm;
 		}
