@@ -15,13 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
-
 import com.polydes.dialog.app.editors.text.TextArea;
 import com.polydes.dialog.app.pages.DialogPage;
 import com.polydes.dialog.app.pages.MacrosPage;
+import com.polydes.dialog.app.pages.PluginsPage;
 import com.polydes.dialog.res.Resources;
 
 import stencyl.sw.lnf.Theme;
+
 public class MainEditor extends JPanel
 {
 	private static MainEditor _instance;
@@ -32,6 +33,7 @@ public class MainEditor extends JPanel
 	private ButtonGroup buttonGroup;
 	private JToggleButton dialogButton;
 	private JToggleButton macrosButton;
+	private JToggleButton pluginsButton;
 	
 	private JPanel buttonBar;
 	private JPanel currentPage;
@@ -83,9 +85,11 @@ public class MainEditor extends JPanel
 		
 		dialogButton = createButton("Dialog", Resources.loadIcon("main/dialog.png"));
 		macrosButton = createButton("Macros", Resources.loadIcon("main/macros.png"));
+		pluginsButton = createButton("Plugins", Resources.loadIcon("main/plugins.png"));
 		
 		buttonBar.add(dialogButton);
 		buttonBar.add(macrosButton);
+		buttonBar.add(pluginsButton);
 		
 		buttonPanel.add(buttonBar, BorderLayout.NORTH);
 		buttonPanel.add(StatusBar.createStatusBar(), BorderLayout.SOUTH);
@@ -168,6 +172,11 @@ public class MainEditor extends JPanel
 			currentPage = MacrosPage.get();			
 			macrosButton.setSelected(true);			
 		}
+		else if(pageName.equals("Plugins"))
+		{
+			currentPage = PluginsPage.get();			
+			pluginsButton.setSelected(true);			
+		}
 		
 		add(currentPage, BorderLayout.CENTER);
 		
@@ -177,8 +186,8 @@ public class MainEditor extends JPanel
 	
 	public static void disposePages()
 	{
-		DialogPage.dispose();
-		MacrosPage.dispose();
+		DialogPage.disposeInstance();
+		MacrosPage.disposeInstance();
 		
 		_instance = null;
 	}

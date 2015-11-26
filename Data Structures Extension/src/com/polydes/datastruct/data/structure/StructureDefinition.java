@@ -82,21 +82,33 @@ public class StructureDefinition extends EditableObject implements RegistryObjec
 		this.name = name;
 	}
 	
+	/**
+	 * Display name
+	 */
 	public String getName()
 	{
 		return name;
 	}
 	
+	/**
+	 * com.package.Class
+	 */
 	public String getFullClassname()
 	{
 		return classname;
 	}
 	
+	/**
+	 * (com.package.)Class
+	 */
 	public String getSimpleClassname()
 	{
 		return StringUtils.substringAfterLast(classname, ".");
 	}
 	
+	/**
+	 * com.package(.Class)
+	 */
 	public String getPackage()
 	{
 		if(classname.indexOf('.') == -1)

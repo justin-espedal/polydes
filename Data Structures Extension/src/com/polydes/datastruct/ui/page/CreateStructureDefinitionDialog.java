@@ -48,6 +48,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 	AutoVerifyField classField;
 	AutoVerifyField packageField;
 	
+	JButton parentTypeClearButton;
 	UpdatingCombo<StructureDefinition> parentTypeChooser;
 	
 	JButton okButton;
@@ -120,7 +121,7 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		packageField = new AutoVerifyField(packageVerifier, "");
 		parentTypeChooser = new UpdatingCombo<StructureDefinition>(DataStructuresExtension.get().getStructureDefinitions().values(), null);
 		parentTypeChooser.setBackground(null);
-		JButton parentTypeClearButton = new JButton("Clear");
+		parentTypeClearButton = new JButton("Clear");
 		parentTypeClearButton.addActionListener(e -> parentTypeChooser.setSelectedItem(null));
 		parentTypeClearButton.setBackground(null);
 		
@@ -197,6 +198,13 @@ public class CreateStructureDefinitionDialog extends StencylDialog
 		classField.getTextField().setText(StringUtils.deleteWhitespace(text));
 		verify();
 		setVisible(true);
+	}
+	
+	public void setParentClass(StructureDefinition def)
+	{
+		parentTypeChooser.setSelectedItem(def);
+		parentTypeChooser.setEnabled(false);
+		parentTypeClearButton.setEnabled(false);
 	}
 	
 	public void setDefinition(StructureDefinition def)

@@ -22,6 +22,7 @@ public class TitledPanel extends JPanel
 	public TitledPanel(String title, ImageIcon icon)
 	{
 		super(new BorderLayout());
+		setBackground(PropertiesSheetStyle.DARK.pageBg);
 		
 		label = new JLabel(title);
 		label.setBackground(PropertiesSheetStyle.DARK.pageBg);
