@@ -19,15 +19,13 @@ public abstract class ExtendableObjectRegistry<T extends RegistryObject>
 	
 	public void registerItem(String owner, T object)
 	{
+		if(!extendedMap.containsKey(owner))
+			extendedMap.put(owner, new HashMap<>());
+		
 		if(isUnknown(owner, object.getKey()))
 			realizeUnknown(owner, object.getKey(), object);
 		else
-		{
-			if(!extendedMap.containsKey(owner))
-				extendedMap.put(owner, new HashMap<>());
-			
 			extendedMap.get(owner).put(object.getKey(), object);
-		}
 	}
 	
 	public void clearAll()
@@ -57,7 +55,7 @@ public abstract class ExtendableObjectRegistry<T extends RegistryObject>
 	
 	public boolean hasItem(String owner, String key)
 	{
-		return extendedMap.get(owner).containsKey(key);
+		return extendedMap.containsKey(owner) && extendedMap.get(owner).containsKey(key);
 	}
 	
 	private static String[] copy(Collection<String> strings)
@@ -113,7 +111,9 @@ public abstract class ExtendableObjectRegistry<T extends RegistryObject>
 			roRealizers.put(owner, new HashMap<>());
 		roRealizers.get(owner).put(key, new ArrayList<>());
 		
-		registerItem(owner, newObject);
+		if(!extendedMap.containsKey(owner))
+			extendedMap.put(owner, new HashMap<>());
+		extendedMap.get(owner).put(key, newObject);
 	}
 	
 	public abstract T generatePlaceholder(String owner, String key);

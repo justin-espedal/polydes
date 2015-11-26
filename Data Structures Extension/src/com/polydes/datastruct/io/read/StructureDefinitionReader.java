@@ -8,7 +8,6 @@ import com.polydes.common.nodes.DefaultEditableLeaf;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.SDE;
-import com.polydes.datastruct.data.structure.SDEType;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 
@@ -19,7 +18,7 @@ public class StructureDefinitionReader
 	public static void read(Element root, StructureDefinition model)
 	{
 		if(root.hasAttribute("extends"))
-			model.parent = DataStructuresExtension.get().getStructureDefinitions().getItem(root.getAttribute("extends"));
+			DataStructuresExtension.get().getStructureDefinitions().requestValue(root.getAttribute("extends"), def -> model.parent = def);
 		if(root.hasAttribute("iconSource"))
 			model.iconSource = root.getAttribute("iconSource");
 		readFields(root, model, model.guiRoot);
@@ -34,19 +33,22 @@ public class StructureDefinitionReader
 				String ns = e.getNamespaceURI();
 				if(ns == null)
 					ns = SDETypes.BASE_OWNER;
-				SDEType<?> type = DataStructuresExtension.get().getSdeTypes().getItem(ns, e.getLocalName());
-				SDE newItem = type.read(model, e);
-				
-				if(type.isBranchNode)
-				{
-					Folder item = new Folder(newItem.getDisplayLabel(), newItem);
-					readFields(e, model, item);
-					gui.addItem(item);
-				}
-				else
-				{
-					gui.addItem(new DefaultEditableLeaf(newItem.getDisplayLabel(), newItem));
-				}
+				DataStructuresExtension.get().getSdeTypes().requestValue(ns, e.getLocalName(), type -> {
+					
+					SDE newItem = type.read(model, e);
+					
+					if(type.isBranchNode)
+					{
+						Folder item = new Folder(newItem.getDisplayLabel(), newItem);
+						readFields(e, model, item);
+						gui.addItem(item);
+					}
+					else
+					{
+						gui.addItem(new DefaultEditableLeaf(newItem.getDisplayLabel(), newItem));
+					}
+					
+				});
 			}
 		}
 	}
