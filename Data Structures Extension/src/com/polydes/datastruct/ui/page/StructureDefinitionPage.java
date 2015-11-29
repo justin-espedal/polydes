@@ -296,6 +296,13 @@ public class StructureDefinitionPage extends JPanel
 		definitionsfm.getSelection().clear();
 	}
 	
+	public void selectDefinition(StructureDefinition def)
+	{
+		if(editorModel != null)
+			editorModel.getSelection().clear();
+		definitionsfm.getSelection().set(def.dref);
+	}
+	
 	private static final ArrayList<CreatableNodeInfo> createNodeList = new ArrayList<CreatableNodeInfo>();
 	static
 	{

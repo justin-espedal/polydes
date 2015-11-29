@@ -8,8 +8,10 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.polydes.common.comp.HorizontalDivider;
 import com.polydes.common.comp.TitledPanel;
@@ -21,18 +23,26 @@ import com.polydes.common.nodes.HierarchyModel;
 import com.polydes.common.nodes.NodeCreator.CreatableNodeInfo;
 import com.polydes.common.nodes.NodeCreator.NodeAction;
 import com.polydes.common.nodes.NodeSelection;
+import com.polydes.common.nodes.NodeUtils;
 import com.polydes.common.sw.Snippets;
 import com.polydes.datastruct.DataStructuresExtension;
 import com.polydes.datastruct.data.folder.Folder;
 import com.polydes.datastruct.data.structure.StructureDefinition;
 import com.polydes.datastruct.ui.page.CreateStructureDefinitionDialog;
+import com.polydes.datastruct.ui.page.StructureDefinitionPage;
+import com.polydes.datastruct.ui.page.StructureDefinitionsWindow;
 import com.polydes.dialog.DialogExtension;
 import com.polydes.dialog.app.PluginList;
 import com.polydes.dialog.app.editors.text.TextArea;
 import com.polydes.dialog.data.def.elements.StructureExtension;
 import com.polydes.dialog.res.Resources;
 
+import stencyl.core.engine.snippet.ISnippet;
+import stencyl.core.lib.Game;
+import stencyl.sw.SW;
+import stencyl.sw.util.Locations;
 import stencyl.sw.util.UI;
+import stencyl.sw.util.dg.MessageDialog;
 
 public class PluginsPage extends JPanel
 {
@@ -45,11 +55,27 @@ public class PluginsPage extends JPanel
 	private PluginList userDefsList;
 	
 	public static NodeAction<DefaultLeaf> editPluginStructure = new NodeAction<DefaultLeaf>("Edit Structure", null, leaf -> {
-		
+		SwingUtilities.invokeLater(() -> {
+			StructureDefinition selectDef = (StructureDefinition) leaf.getUserData();
+			StructureDefinitionPage.get().selectDefinition(selectDef);
+		});
+		StructureDefinitionsWindow.get().setVisible(true);
 	});
 	
 	public static NodeAction<DefaultLeaf> editPluginCode = new NodeAction<DefaultLeaf>("Edit Code", null, leaf -> {
+		StructureDefinition def = (StructureDefinition) leaf.getUserData();
 		
+		NodeUtils.recursiveRun(def.guiRoot, (DefaultLeaf defLeaf) -> {
+			if(defLeaf.getUserData() instanceof StructureExtension)
+			{
+				String implementingClass = ((StructureExtension) defLeaf.getUserData()).implementation;
+				implementingClass = StringUtils.substringAfter(implementingClass, Locations.SCRIPTS_PACKAGE);
+				ISnippet toEdit = Game.getGame().getSnippetByClassname(implementingClass);
+				if(toEdit == null)
+					MessageDialog.showErrorDialog("No implementation", "Couldn't find behavior with classname \"" + implementingClass + "\".");
+				SW.get().getWorkspace().openResource(toEdit, false);
+			}
+		});
 	});
 	
 	public static NodeAction<DefaultLeaf> duplicatePlugin = new NodeAction<DefaultLeaf>("Duplicate", null, leaf -> {
