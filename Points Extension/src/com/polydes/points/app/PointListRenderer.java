@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import stencyl.sw.util.Fonts;
+import stencyl.sw.SW;
 
 public class PointListRenderer extends JPanel implements TableCellRenderer
 {
@@ -23,7 +23,7 @@ public class PointListRenderer extends JPanel implements TableCellRenderer
 		super(new BorderLayout());
 		
 		label = new JLabel();
-		label.setFont(Fonts.getBoldFont());
+		label.setFont(SW.get().getFonts().getBoldFont());
 		label.setForeground(Color.WHITE);
 		label.setBackground(null);
 		setBackground(null);

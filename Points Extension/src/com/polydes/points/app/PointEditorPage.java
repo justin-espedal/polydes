@@ -64,9 +64,9 @@ import com.polydes.points.res.Resources;
 import stencyl.core.engine.actor.IActorType;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.Resource;
+import stencyl.sw.SW;
 import stencyl.sw.data.EditableAnimation;
 import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.Fonts;
 import stencyl.sw.util.UI;
 import stencyl.sw.util.comp.GroupButton;
 import stencyl.sw.util.comp.GroupToggleButton;
@@ -679,7 +679,7 @@ public class PointEditorPage extends JPanel
 	private JLabel label(String text)
 	{
 		JLabel label = new JLabel(text);
-		label.setFont(Fonts.getBoldFont());
+		label.setFont(SW.get().getFonts().getBoldFont());
 		label.setForeground(Color.WHITE);
 		
 		return label;

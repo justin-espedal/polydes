@@ -13,6 +13,7 @@ import com.polydes.extrasmanager.data.FileClipboard;
 
 import stencyl.sw.util.FileHelper;
 import stencyl.sw.util.UI;
+import stencyl.sw.util.UI.Choice;
 import stencyl.sw.util.dg.YesNoQuestionDialog;
 
 //TODO: Move this to IO and move interface stuff to somewhere in app.
@@ -74,8 +75,8 @@ public class FileOperations
 	
 	public static void deleteFiles(List<File> files)
 	{
-		YesNoQuestionDialog dg = new YesNoQuestionDialog("Delete Files", "Are you sure you want to delete the selected files?", "", new String[] {"Yes", "No"}, true);
-		if(dg.getResult() == UI.Choice.YES)
+		Choice result = YesNoQuestionDialog.showYesNoPrompt("Delete Files", "Are you sure you want to delete the selected files?");
+		if(result == UI.Choice.YES)
 		{
 			for(Object o : files)
 				FileHelper.delete((File) o);

@@ -13,16 +13,15 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import layout.TableLayout;
-import layout.TableLayoutConstants;
-import layout.TableLayoutConstraints;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.polydes.datastruct.data.structure.elements.StructureCondition;
 import com.polydes.datastruct.ui.utils.Geometry;
 
-import stencyl.sw.util.Fonts;
+import layout.TableLayout;
+import layout.TableLayoutConstants;
+import layout.TableLayoutConstraints;
+import stencyl.sw.SW;
 
 public class Card extends JPanel implements GuiObject
 {
@@ -239,7 +238,7 @@ public class Card extends JPanel implements GuiObject
 			text,
 			TitledBorder.CENTER,
 			TitledBorder.TOP,
-			Fonts.getNormalFont(),
+			SW.get().getFonts().getNormalFont(),
 			table.style.labelColor
 		);
 	}
@@ -292,7 +291,7 @@ public class Card extends JPanel implements GuiObject
 		if(!visible)// && !condition.hideWhenFalse)
 		{
 			String draw = "Hidden";
-			Font font = Fonts.getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
+			Font font = SW.get().getFonts().getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
 			
 			Point drawAt = Geometry.getCenteredStringTopLeft(draw, g, font, this);
 			
