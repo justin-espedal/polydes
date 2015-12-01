@@ -1,9 +1,11 @@
 package com.polydes.common.data.types.builtin;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import com.polydes.common.comp.RenderedPanel;
@@ -245,6 +247,14 @@ public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 		public DropdownResourceEditor()
 		{
 			editor = new UpdatingCombo<T>(getList(), null);
+			editor.setIconProvider(resource -> {
+				if(resource == null)
+					return null;
+				Image resourceImage = Resources.getImage(resource);
+				if(resourceImage == null)
+					return null;
+				return new ImageIcon(resourceImage);
+			});
 			
 			editor.addActionListener(new ActionListener()
 			{

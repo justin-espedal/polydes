@@ -15,10 +15,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.function.Function;
 
 import javax.activation.ActivationDataFlavor;
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -175,6 +177,11 @@ public class DataListEditor extends JPanel implements KeyListener, MouseListener
 		}
 		
 		this.genTypeProps = genTypeProps;
+	}
+	
+	public void setIconProvider(Function<Object, ImageIcon> iconProvider)
+	{
+		renderer.setIconProvider(iconProvider);
 	}
 	
 	public DataList getModel()

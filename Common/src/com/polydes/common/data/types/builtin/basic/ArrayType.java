@@ -283,5 +283,10 @@ public class ArrayType extends DataType<DataList>
 			super.dispose();
 			editor.dispose();
 		}
+		
+		public DataListEditor getEditorComponent()
+		{
+			return editor;
+		}
 	}
 }

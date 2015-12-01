@@ -143,6 +143,7 @@ public class StructureType extends DataType<Structure>
 				predicate = PredicateUtil.and(predicate, (s) -> s.getTemplate().is(def));
 			
 			editor = new UpdatingCombo<Structure>(allowSubtypes ? Structures.structuresByID.values() : Structures.getList(def), predicate);
+			editor.setIconProvider(struct -> struct == null ? null : struct.getIcon());
 			editor.addActionListener(event -> valueUpdated(true));
 			oldStructure = null;
 			

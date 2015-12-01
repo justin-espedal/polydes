@@ -1,18 +1,24 @@
 package com.polydes.common.comp;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import com.polydes.common.collections.CollectionObserver;
 import com.polydes.common.collections.CollectionUpdateListener;
+import com.polydes.common.util.IconUtil;
 
 /**
  * An UpdatingCombo automatically begins to observe the list it's passed.
@@ -59,6 +65,12 @@ public class UpdatingCombo<T> extends JComboBox<T>
 	public void setComparator(Comparator<T> comparator)
 	{
 		model.setComparator(comparator);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setIconProvider(Function<T, ImageIcon> provider)
+	{
+		setRenderer(new IconComboCellRenderer<T>(provider));
 	}
 }
 
@@ -173,5 +185,36 @@ class UpdatingModel<T> extends DefaultComboBoxModel<T> implements CollectionUpda
 		list = null;
 		filter = null;
 		objects.clear();
+	}
+}
+
+class IconComboCellRenderer<T> extends BasicComboBoxRenderer.UIResource
+{
+	private Function<T, ImageIcon> iconProvider;
+	
+	public IconComboCellRenderer(Function<T, ImageIcon> iconProvider)
+	{
+		this.iconProvider = iconProvider;
+	}
+	
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	@Override
+	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+	{
+		super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		
+		setIcon(IconUtil.getIcon(iconProvider.apply((T) value), 14));
+
+		if(index == -1)
+		{
+			setOpaque(false);
+			setForeground(list.getForeground());
+		}
+		else
+		{
+			setOpaque(true);
+		}
+
+		return this;
 	}
 }
