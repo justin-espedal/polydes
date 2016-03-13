@@ -37,15 +37,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
-import stencyl.sw.SW;
-import stencyl.sw.app.lists.AbstractItemRenderer;
-import stencyl.sw.app.lists.ListListener;
-import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.Fonts;
-import stencyl.sw.util.Util;
-import stencyl.sw.util.comp.GroupButton;
-import stencyl.thirdparty.misc.comp.FileDrop;
-
 import com.explodingpixels.macwidgets.HudWidgetFactory;
 import com.jidesoft.swing.PaintPanel;
 import com.polydes.common.nodes.Leaf;
@@ -61,6 +52,14 @@ import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.data.folder.SysFolder;
 import com.polydes.extrasmanager.io.FileOperations;
 import com.polydes.extrasmanager.res.Resources;
+
+import stencyl.sw.SW;
+import stencyl.sw.app.lists.AbstractItemRenderer;
+import stencyl.sw.app.lists.ListListener;
+import stencyl.sw.lnf.Theme;
+import stencyl.sw.util.Util;
+import stencyl.sw.util.comp.GroupButton;
+import stencyl.thirdparty.misc.comp.FileDrop;
 
 public class FileList extends JList<Leaf<SysFile>> implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {
@@ -126,7 +125,7 @@ public class FileList extends JList<Leaf<SysFile>> implements MouseListener, Mou
 		
 		setBorder(null);
 		setBackground(Theme.BG_COLOR);
-		setFont(Fonts.getTitleBoldFont());
+		setFont(SW.get().getFonts().getTitleBoldFont());
 		
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -472,7 +471,7 @@ public class FileList extends JList<Leaf<SysFile>> implements MouseListener, Mou
 	        
 			label = HudWidgetFactory.createHudLabel("Extras");
 			label.setForeground(Theme.TEXT_COLOR);
-			label.setFont(Fonts.getTitleBoldFont());
+			label.setFont(SW.get().getFonts().getTitleBoldFont());
 			
 			/*
 			searchField = new QuickListFilterField(listModel);

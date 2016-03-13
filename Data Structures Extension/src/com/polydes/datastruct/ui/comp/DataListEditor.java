@@ -25,14 +25,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import stencyl.sw.actions.Actions;
-import stencyl.sw.actions.SAction;
-import stencyl.sw.lnf.Theme;
-import stencyl.sw.loc.LanguagePack;
-import stencyl.sw.util.Fonts;
-import stencyl.sw.util.UI;
-import stencyl.sw.util.comp.GroupButton;
-
 import com.jidesoft.swing.JidePopupMenu;
 import com.jidesoft.swing.PaintPanel;
 import com.polydes.common.util.Lang;
@@ -47,6 +39,14 @@ import com.polydes.datastruct.data.types.builtin.DynamicType.DynamicEditor;
 import com.polydes.datastruct.ui.MiniDialog;
 import com.polydes.datastruct.ui.table.PropertiesSheetStyle;
 import com.polydes.datastruct.ui.utils.Layout;
+
+import stencyl.sw.SW;
+import stencyl.sw.actions.Actions;
+import stencyl.sw.actions.SAction;
+import stencyl.sw.lnf.Theme;
+import stencyl.sw.loc.LanguagePack;
+import stencyl.sw.util.UI;
+import stencyl.sw.util.comp.GroupButton;
 
 public class DataListEditor extends JPanel implements ActionListener, MouseListener, ListSelectionListener
 {
@@ -92,7 +92,7 @@ public class DataListEditor extends JPanel implements ActionListener, MouseListe
 		list.setBackground(Theme.LIGHT_BG_COLOR);
 		list.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		list.setForeground(Theme.TEXT_COLOR);
-		list.setFont(Fonts.getNormalFont());
+		list.setFont(SW.get().getFonts().getNormalFont());
 		list.addListSelectionListener(this);
 		list.addMouseListener(this);
 		list.setCellRenderer(renderer);

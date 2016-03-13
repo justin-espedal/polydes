@@ -26,8 +26,8 @@ import com.polydes.extrasmanager.data.Mime;
 import com.polydes.extrasmanager.data.folder.SysFile;
 import com.polydes.extrasmanager.res.Resources;
 
+import stencyl.sw.SW;
 import stencyl.sw.lnf.Theme;
-import stencyl.sw.util.Fonts;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
 import stencyl.sw.util.gfx.ImageUtil;
@@ -87,7 +87,7 @@ public class FileListRenderer extends JLabel implements ListCellRenderer<Leaf<Sy
 		setForeground(Theme.TEXT_COLOR);
 		
 		setIconTextGap(3);
-		setFont(Fonts.getNormalFont());
+		setFont(SW.get().getFonts().getNormalFont());
 	}
 
 	@Override

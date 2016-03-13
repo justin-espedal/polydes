@@ -14,7 +14,7 @@ import javax.swing.border.Border;
 
 import com.polydes.datastruct.res.Resources;
 
-import stencyl.sw.util.Fonts;
+import stencyl.sw.SW;
 import stencyl.sw.util.UI;
 import stencyl.sw.util.comp.RoundedLabel;
 
@@ -106,8 +106,8 @@ public abstract class PropertiesSheetStyle
 			labelColor = Color.WHITE;
 			softLabelColor = labelColor.darker();
 			
-			labelFont = Fonts.getBoldFont();
-			softLabelFont = Fonts.getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
+			labelFont = SW.get().getFonts().getBoldFont();
+			softLabelFont = SW.get().getFonts().getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
 			
 			fieldDimension = new Dimension(300, 20);
 			border = BorderFactory.createEmptyBorder(20, 20, 20, 20);
@@ -155,8 +155,8 @@ public abstract class PropertiesSheetStyle
 			labelColor = Color.BLACK;
 			softLabelColor = new Color(65, 65, 65);
 			
-			labelFont = Fonts.getNormalFont();
-			softLabelFont = Fonts.getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
+			labelFont = SW.get().getFonts().getNormalFont();
+			softLabelFont = SW.get().getFonts().getNormalFont().deriveFont(Font.BOLD|Font.ITALIC);
 			
 			fieldDimension = new Dimension(150, 20);
 			border = BorderFactory.createEmptyBorder(7, 7, 7, 7);
