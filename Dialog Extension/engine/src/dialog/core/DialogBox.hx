@@ -534,17 +534,7 @@ class DialogBox #if unity extends MonoBehaviour #end
 		}
 		else
 		{
-			try
-			{
-				//TODO: is this correct? The first argument isn't the proper object to be calling on.
-				return Reflect.callMethod(cmds.get(tag.name), cmds.get(tag.name), tag.argArray);
-			}
-			catch( error:Dynamic )
-			{
-				trace('Error occurred while executing command: $tag');
-				trace(error);
-				return null;
-			}
+			return Reflect.callMethod(cmds.get(tag.name), cmds.get(tag.name), tag.argArray);
 		}
 	}
 
