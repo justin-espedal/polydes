@@ -205,7 +205,7 @@ public class Structures
 					continue;
 				toWrite.add(field.getVarname() + "=" + field.getType().checkEncode(s.getProperty(field)));
 			}
-			FileUtils.writeLines(new File(file, item.getName()), toWrite);
+			FileUtils.writeLines(new File(file, item.getName()), toWrite, "\n");
 		}
 	}
 
