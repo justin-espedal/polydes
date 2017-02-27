@@ -25,10 +25,10 @@ import com.polydes.common.data.types.EditorProperties;
 import com.polydes.common.sys.FileRenderer;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
+import misc.comp.ImagePreview;
 import stencyl.sw.SW;
 import stencyl.sw.util.comp.GroupButton;
 import stencyl.sw.util.filechooser.ImageFileView;
-import stencyl.thirdparty.misc.comp.ImagePreview;
 
 public class FileType extends DataType<File>
 {

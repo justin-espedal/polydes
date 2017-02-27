@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
+import misc.gfx.GraphicsUtilities;
 
 public class Resources
 {

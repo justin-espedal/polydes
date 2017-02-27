@@ -50,7 +50,7 @@ public class Types extends ObjectRegistry<DataType<?>>
 	public static FileType _File = new FileType();
 	public static FilePathType _FilePath = new FilePathType();
 	
-	public static StencylResourceType<IActorType> _Actor = new StencylResourceType<>(ResourceTypes.actor);
+	public static StencylResourceType<IActorType> _Actor = new StencylResourceType<>(ResourceTypes.actortype);
 	public static StencylResourceType<EditableBackground> _Background = new StencylResourceType<>(ResourceTypes.background);
 	public static StencylResourceType<EditableFont> _Font = new StencylResourceType<>(ResourceTypes.font);
 	public static StencylResourceType<SceneModel> _Scene = new StencylResourceType<>(ResourceTypes.scene);

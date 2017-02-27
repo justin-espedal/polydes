@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.polydes.common.data.types.Types;
 import com.polydes.common.ui.darktree.DarkTree;
 import com.polydes.datastruct.data.structure.SDETypes;
 import com.polydes.datastruct.data.structure.StructureDefinitions;

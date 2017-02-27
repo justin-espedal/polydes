@@ -194,7 +194,7 @@ public class StencylResourceType<T extends AbstractResource> extends DataType<T>
 		{
 			T result = null;
 			
-			if(stencylResourceType == ResourceTypes.actor)
+			if(stencylResourceType == ResourceTypes.actortype)
 			{
 				ActorChooser chooser = new ActorChooser((Resource) selected);
 				result = (T) chooser.getChosenActor();

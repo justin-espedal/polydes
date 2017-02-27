@@ -18,7 +18,7 @@ import stencyl.sw.data.EditableTileset;
 import stencyl.sw.editors.font.BitmapFontPage;
 import stencyl.sw.util.Loader;
 import stencyl.sw.util.Locations;
-import stencyl.thirdparty.pulpcore.assettools.ConvertFontTask;
+import pulpcore.assettools.ConvertFontTask;
 
 public class Resources
 {

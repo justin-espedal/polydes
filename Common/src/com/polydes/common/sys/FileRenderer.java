@@ -18,8 +18,8 @@ import javax.swing.ImageIcon;
 
 import com.polydes.common.res.ResourceLoader;
 
+import misc.gfx.GraphicsUtilities;
 import stencyl.sw.util.gfx.ImageUtil;
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class FileRenderer
 {

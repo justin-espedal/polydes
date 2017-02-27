@@ -2,8 +2,8 @@ package com.polydes.common.util;
 
 import javax.swing.ImageIcon;
 
+import misc.gfx.GraphicsUtilities;
 import stencyl.sw.util.gfx.ImageUtil;
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class IconUtil
 {

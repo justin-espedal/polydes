@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.Calendar;
 
 import javax.imageio.ImageIO;
@@ -38,7 +39,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import pulpcore.util.Base64;
 import stencyl.core.lib.Game;
 import stencyl.sw.ext.BaseExtension;
 import stencyl.sw.ext.OptionsPanel;
@@ -729,7 +729,7 @@ public class ImgurExtension extends BaseExtension
 
 				log.info("Encoding image...");
 
-				encodedImg = Base64.encode(bytes);
+				encodedImg = Base64.getEncoder().encodeToString(bytes);
 				URL url = new URL(IMGUR_POST_URI);
 				String data = URLEncoder.encode("image", "UTF-8") + "="
 						+ URLEncoder.encode(encodedImg, "UTF-8");

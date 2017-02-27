@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Common/Dropbox/stencylworks/extensions/com.polydes.datastruct.jar" sourcepath="/Data Structures Extension/src"/>
 	<classpathentry kind="lib" path="libs/tablelayout.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/J:/Java/docs/tablelayout/"/>
@@ -11,5 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
 	<classpathentry kind="var" path="SW_JAR"/>
 	<classpathentry kind="var" path="COMMON_JAR"/>
+	<classpathentry kind="var" path="DATASTRUCT_JAR"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

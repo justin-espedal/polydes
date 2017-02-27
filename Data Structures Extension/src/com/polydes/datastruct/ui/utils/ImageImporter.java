@@ -10,11 +10,11 @@ import javax.swing.JFileChooser;
 
 import com.polydes.datastruct.utils.PngFilter;
 
+import misc.comp.ImagePreview;
 import stencyl.sw.SW;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.filechooser.ImageFileView;
-import stencyl.thirdparty.misc.comp.ImagePreview;
 
 public class ImageImporter implements ActionListener
 {

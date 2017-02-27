@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.polydes.common.comp.DisabledPanel;
 import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
+import misc.gfx.GraphicsUtilities;
 
 public class FilePreviewer
 {

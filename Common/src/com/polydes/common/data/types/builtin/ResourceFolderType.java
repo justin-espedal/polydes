@@ -15,7 +15,6 @@ import com.polydes.common.ui.propsheet.PropertiesSheetStyle;
 import stencyl.core.lib.Folder;
 import stencyl.core.lib.Game;
 import stencyl.core.lib.ResourceType;
-import stencyl.core.lib.ResourceTypes;
 import stencyl.sw.util.Util;
 
 public class ResourceFolderType extends DataType<Folder>
@@ -106,7 +105,7 @@ public class ResourceFolderType extends DataType<Folder>
 		public void setType(ResourceType type)
 		{
 			this.type = type;
-			editor.setFilter(type == null ? null : (f) -> this.type == ResourceTypes.getTypeByName(f.getType()));
+			editor.setFilter(type == null ? null : (f) -> this.type == f.getType());
 		}
 		
 		@Override

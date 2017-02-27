@@ -32,8 +32,8 @@ public class Snippets
 				-1,
 				0,
 				SnippetType.ARBITRARY,
-				false,
-				0,
+				-1,
+				-1,
 				false,
 				true,
 				packageName

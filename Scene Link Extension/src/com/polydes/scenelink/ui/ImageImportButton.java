@@ -17,11 +17,11 @@ import com.polydes.scenelink.SceneLinkExtension;
 import com.polydes.scenelink.res.Resources;
 import com.polydes.scenelink.util.PngFilter;
 
+import misc.comp.ImagePreview;
 import stencyl.sw.SW;
 import stencyl.sw.ext.FileHandler;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.filechooser.ImageFileView;
-import stencyl.thirdparty.misc.comp.ImagePreview;
 
 public class ImageImportButton extends JButton implements ActionListener
 {
