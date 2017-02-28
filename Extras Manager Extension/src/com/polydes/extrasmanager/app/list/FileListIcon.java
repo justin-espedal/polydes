@@ -18,9 +18,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import misc.gfx.GraphicsUtilities;
 import stencyl.sw.app.lists.AbstractListIcon;
 import stencyl.sw.util.Loader;
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
 
 public class FileListIcon implements Icon 
 {

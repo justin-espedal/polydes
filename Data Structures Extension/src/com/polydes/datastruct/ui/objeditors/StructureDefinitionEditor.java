@@ -44,7 +44,7 @@ import com.polydes.datastruct.res.Resources;
 import com.polydes.datastruct.ui.UIConsts;
 import com.polydes.datastruct.ui.list.ListUtils;
 
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
+import misc.gfx.GraphicsUtilities;
 
 public class StructureDefinitionEditor extends JPanel
 {

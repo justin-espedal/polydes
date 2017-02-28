@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 
-import stencyl.thirdparty.misc.gfx.PunchIconFactory;
+import misc.gfx.PunchIconFactory;
 
 
 public class Resources

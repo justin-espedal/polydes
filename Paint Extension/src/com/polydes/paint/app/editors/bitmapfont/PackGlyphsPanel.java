@@ -48,7 +48,7 @@ public final class PackGlyphsPanel extends JPanel implements ActionListener, Fie
 	private BitmapFont font;
 	private FontDrawArea area;
 	
-	private JComboBox packChooser;
+	private JComboBox<String> packChooser;
 	
 	private AutoVerifyField[] avfs;
 	
@@ -250,7 +250,7 @@ public final class PackGlyphsPanel extends JPanel implements ActionListener, Fie
 		packedPanel.setBackground(Theme.LIGHT_BG_COLOR);
 		packedPanel.setLayout(new BoxLayout(packedPanel, BoxLayout.X_AXIS));
 		
-		packChooser = new JComboBox(new String[] {"Packed", "Unpacked"});
+		packChooser = new JComboBox<String>(new String[] {"Packed", "Unpacked"});
 		packChooser.setBackground(null);
 		packChooser.setOpaque(false);
 		
@@ -343,7 +343,7 @@ public final class PackGlyphsPanel extends JPanel implements ActionListener, Fie
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		JComboBox box = (JComboBox) e.getSource();
+		JComboBox<?> box = (JComboBox<?>) e.getSource();
 		
 		if(box.equals(packChooser))
 		{

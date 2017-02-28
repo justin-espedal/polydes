@@ -53,13 +53,13 @@ import com.polydes.extrasmanager.data.folder.SysFolder;
 import com.polydes.extrasmanager.io.FileOperations;
 import com.polydes.extrasmanager.res.Resources;
 
+import misc.comp.FileDrop;
 import stencyl.sw.SW;
 import stencyl.sw.app.lists.AbstractItemRenderer;
 import stencyl.sw.app.lists.ListListener;
 import stencyl.sw.lnf.Theme;
 import stencyl.sw.util.Util;
 import stencyl.sw.util.comp.GroupButton;
-import stencyl.thirdparty.misc.comp.FileDrop;
 
 public class FileList extends JList<Leaf<SysFile>> implements MouseListener, MouseMotionListener, FileClipboard.Listener
 {

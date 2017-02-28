@@ -13,7 +13,7 @@
 	<property name="description" value="Paint Extension." />
 	<property name="author" value="Justin Espedal" />
 	<property name="internalVersion" value="2" />
-	<property name="version" value="0.2.0" />
+	<property name="version" value="0.3.0" />
 	
 	<include file="../Common/build-helper.xml" as="common" />
 	

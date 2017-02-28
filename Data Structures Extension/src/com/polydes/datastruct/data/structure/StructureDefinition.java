@@ -20,7 +20,7 @@ import com.polydes.datastruct.data.types.Types;
 import com.polydes.datastruct.ui.objeditors.StructureDefinitionEditor;
 import com.polydes.datastruct.ui.page.StructurePage;
 
-import stencyl.thirdparty.misc.gfx.GraphicsUtilities;
+import misc.gfx.GraphicsUtilities;
 
 public class StructureDefinition extends EditableObject
 {

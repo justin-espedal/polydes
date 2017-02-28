@@ -12,7 +12,7 @@
 	<property name="name" value="Imgur Extension" />
 	<property name="description" value="Upload toolset screenshots directly to Imgur." />
 	<property name="author" value="Hectate" />
-	<property name="version" value="1.0.0" />
+	<property name="version" value="1.1.0" />
 	
 	<include file="../Common/build-helper.xml" as="common" />
 	
