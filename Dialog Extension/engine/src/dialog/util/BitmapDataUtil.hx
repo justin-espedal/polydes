@@ -131,7 +131,16 @@ class BitmapDataUtil
   {
 		#if stencyl
 
-		var newImg:BitmapData = new BitmapData(Std.int(src.width * sX), Std.int(src.height * sY), true, 0);
+		var newWidth = Std.int(src.width * sX);
+		var newHeight = Std.int(src.height * sY);
+		
+		if(newWidth <= 0 || newHeight <= 0)
+		{
+			return new BitmapData(1, 1, true, 0);
+		}
+
+		var newImg:BitmapData = new BitmapData(newWidth, newHeight, true, 0);
+
 		var matrix:Matrix = new Matrix();
 		matrix.scale(sX, sY);
 		newImg.draw(src, matrix);

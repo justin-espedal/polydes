@@ -95,6 +95,7 @@ class DialogWindow
 			var pos:IntPoint = new IntPoint(position.x + origin.x, position.y + origin.y);
 
 			this.tween = new WindowTween(img.image, pos, tween);
+			update(0);
 
 			preScaledImg = null;
 		}
@@ -104,12 +105,12 @@ class DialogWindow
 		}
 	}
 
-	public function update():Void
+	public function update(step:Int):Void
 	{
 		if(tween == null)
 			return;
 
-		tween.update(10);
+		tween.update(step);
 		var progress:Float = tween.elapsed / tween.duration;
 
 		#if stencyl

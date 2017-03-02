@@ -87,7 +87,7 @@ class DialogBase extends DialogExtension
 			});
 			addCallback(Dialog.ALWAYS, function():Void
 			{
-				window.update();
+				window.update(10);
 			});
 
 		}

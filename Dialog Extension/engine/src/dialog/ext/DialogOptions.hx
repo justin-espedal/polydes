@@ -110,7 +110,7 @@ class DialogOptions extends DialogExtension
 			if(!visible || window == null)
 				return;
 
-			window.update();
+			window.update(10);
 
 			if(windowPause > 0)
 			{
