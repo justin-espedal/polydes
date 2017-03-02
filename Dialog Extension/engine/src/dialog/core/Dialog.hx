@@ -41,7 +41,8 @@ class Dialog
 	public static inline var WHEN_MESSAGE_HIDDEN:Int = 9;
 	public static inline var WHEN_TEXT_OVERFLOWS:Int = 10;
 	public static inline var WHEN_MESSAGE_CLEARED:Int = 11;
-	public static inline var RESTORE_DEFAULTS:Int = 12;
+	public static inline var WHEN_MESSAGE_BOX_CLEARED:Int = 12;
+	public static inline var RESTORE_DEFAULTS:Int = 13;
 
 	//used to loop through all the constants
 	public static var callbackConstants:Array<Int> =
@@ -58,6 +59,7 @@ class Dialog
 		WHEN_MESSAGE_HIDDEN,
 		WHEN_TEXT_OVERFLOWS,
 		WHEN_MESSAGE_CLEARED,
+		WHEN_MESSAGE_BOX_CLEARED,
 		RESTORE_DEFAULTS
 	];
 
